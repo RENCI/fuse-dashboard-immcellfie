@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  client:
+    container_name: fuse-dashboard-immcellfie
+    build:
+      args:
+        NODE_ENV: production
+      context: .
+      dockerfile: Dockerfile-prod
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 80:80
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: ${IPAM_CONFIG_SUBNET_DASHBOARD}
