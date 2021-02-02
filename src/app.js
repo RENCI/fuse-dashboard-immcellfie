@@ -7,9 +7,15 @@ export const App = () => {
   return (
     <Router>
       <Container>
-        <Navbar bg="dark" variant="dark" expand="md">
+        <Navbar bg="dark" variant="dark" expand="md" className="mb-4">
           <Navbar.Brand>
-            ImmCellFIE Dashboard
+            <img 
+              src="/txlogo-cropped-alpha-2.png" 
+              alt="translational science logo"
+              height="25px"
+              className="mr-2"              
+            />
+            <span className="align-middle">ImmCellFIE Dashboard</span>
           </Navbar.Brand>
           <Navbar.Toggle />
           <Navbar.Collapse>
