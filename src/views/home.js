@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Card, Form, InputGroup, Button } from "react-bootstrap";
+import { DataContext } from "../contexts";
+import { api } from "../api";
 
 export const Home = () => {
+  const [, dataDispatch] = useContext(DataContext);
   const [id, setId] = useState("");
 
   const onIdChange = evt => {
@@ -12,8 +15,11 @@ export const Home = () => {
     console.log("Submit " + id);
   };
 
-  const onLoadPracticeClick = () => {
-    console.log("Load Practice");
+  const onLoadPracticeClick = async () => {
+    const [input, output] = await api.loadPracticeData(); 
+
+    dataDispatch({ type: "setInput", data: input });
+    dataDispatch({ type: "setOutput", data: output });
   };
 
   return (    
