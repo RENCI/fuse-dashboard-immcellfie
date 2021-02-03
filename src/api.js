@@ -15,10 +15,12 @@ const parseInput = data => {
 const parseOutput = data => {
   return {
     data: d3.csvParseRows(data, row => {
+      row = d3.merge(row.map(d => d.split("\t")));
+
       return {
         id: row[0],
         phenotype: row.slice(1, 4),
-        values: row.slice(4)
+        values: row.slice(4).map(d => +d)
       };
     }).slice(4)
   };
