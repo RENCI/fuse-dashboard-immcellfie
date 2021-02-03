@@ -1,7 +1,17 @@
+<<<<<<< HEAD
 import React, { useState } from "react";
 import { Card, Form, InputGroup, Button } from "react-bootstrap";
 
 export const Home = () => {
+=======
+import React, { useState, useContext } from "react";
+import { Card, Form, InputGroup, Button } from "react-bootstrap";
+import { DataContext } from "../contexts";
+import { api } from "../api";
+
+export const Home = () => {
+  const [, dataDispatch] = useContext(DataContext);
+>>>>>>> 67a8191e38606aeb01cdbc03ff46557357ef2c35
   const [id, setId] = useState("");
 
   const onIdChange = evt => {
@@ -12,8 +22,16 @@ export const Home = () => {
     console.log("Submit " + id);
   };
 
+<<<<<<< HEAD
   const onLoadPracticeClick = () => {
     console.log("Load Practice");
+=======
+  const onLoadPracticeClick = async () => {
+    const [input, output] = await api.loadPracticeData(); 
+
+    dataDispatch({ type: "setInput", data: input });
+    dataDispatch({ type: "setOutput", data: output });
+>>>>>>> 67a8191e38606aeb01cdbc03ff46557357ef2c35
   };
 
   return (    

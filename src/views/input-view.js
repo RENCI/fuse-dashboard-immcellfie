@@ -1,7 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
+import { DataContext } from "../contexts";
 
 export const InputView = () => {
+  const [data] = useContext(DataContext);
+
+  const { input } = data;
+
   return (
-    <h1>Input</h1>
+    <pre>{ input ? JSON.stringify(input, null, 2) : "No input" }</pre>
   ); 
 };
