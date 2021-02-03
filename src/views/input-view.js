@@ -23,6 +23,7 @@ export const InputView = () => {
     <>
       { input ? 
         <>
+          <h4>Input gene expression data</h4>
           <VegaWrapper spec={ heatmap } data={ heatmapData } height={ input.data.length * 10 + "px" } />
         </>
       : <h4>No input</h4>
