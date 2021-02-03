@@ -21,7 +21,7 @@ const spec = {
       field: "id", 
       type: "ordinal",
       sort: {
-        op: "mean",
+        op: "median",
         field: "value",
         order: "descending"
       }
