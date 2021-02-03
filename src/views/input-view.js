@@ -7,6 +7,6 @@ export const InputView = () => {
   const { input } = data;
 
   return (
-    <div>{ input ? JSON.stringify(input) : "No input" }</div>
+    <pre>{ input ? JSON.stringify(input, null, 2) : "No input" }</pre>
   ); 
 };

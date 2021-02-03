@@ -7,6 +7,6 @@ export const OutputView = () => {
   const { output } = data;
 
   return (
-    <div>{ output ? JSON.stringify(output) : "No output" }</div>
+    <pre>{ output ? JSON.stringify(output, null, 2) : "No output" }</pre>
   );  
 };

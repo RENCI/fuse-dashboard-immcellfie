@@ -35,8 +35,6 @@ export const api = {
       const inputData = parseInput(input.data);
       const outputData = parseOutput(output.data);
 
-      console.log(outputData);
-
       return [inputData, outputData];
     }
     catch (error) {
