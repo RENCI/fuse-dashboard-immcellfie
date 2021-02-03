@@ -5,7 +5,7 @@ const parseInput = data => {
   return {
     data: d3.tsvParseRows(data, row => {
       return {
-        id: row[0],
+        gene: row[0],
         values: row.slice(1).map(d => +d)
       };
     })
@@ -18,7 +18,7 @@ const parseOutput = data => {
       row = d3.merge(row.map(d => d.split("\t")));
 
       return {
-        id: row[0],
+        gene: row[0],
         phenotype: row.slice(1, 4),
         values: row.slice(4).map(d => +d)
       };
