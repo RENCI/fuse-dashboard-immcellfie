@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import * as d3 from "d3";
 import { DataContext } from "../contexts";
 import { VegaWrapper } from "../components/vega-wrapper";
 import { heatmap, treemap } from "../vega-specs";
@@ -30,8 +31,7 @@ export const OutputView = () => {
     c.phenotype.forEach((d, i, a) => { 
       p[d] = {
         name: d,
-        parent: parent[i] === null ? "root" : a[parent[i]],
-        value: 1
+        parent: parent[i] === null ? "root" : a[parent[i]]
       };
     });
 
@@ -50,11 +50,8 @@ export const OutputView = () => {
 
   hierarchyData.push({
     name: "root",
-    parent: null,
-    value: 1
+    parent: null
   });
-
-  console.log(hierarchyData);
 
   return (
     <>

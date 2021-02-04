@@ -48,10 +48,12 @@ export const treemap = {
     {
       name: "leaves",
       source: "data",
-      transform: [{
-        type: "filter",
-        expr: "!datum.children"
-      }]
+      transform: [
+        {
+          type: "filter",
+          expr: "!datum.children"
+        }
+      ]
     }
   ],
   scales: [
@@ -61,8 +63,10 @@ export const treemap = {
       range: { scheme: "category20" }
     },
     {
-      name: "value",
-      type: "linear"
+      name: "score",
+      type: "linear",
+      domain: { data: "leaves", field: "value" },
+      range: { scheme: "yellowgreenblue" }
     }
   ],
   marks: [
@@ -106,10 +110,9 @@ export const treemap = {
       encode: {
         enter: {
           fill: { 
-            scale: "value",
+            scale: "score",
             field: "value"
-           },
-          stroke: { value: "#fff" }
+          }
         },
         update: {
           x: { field: "x0" },
