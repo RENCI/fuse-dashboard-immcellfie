@@ -2,7 +2,9 @@ export const treemap = {
   $schema: "https://vega.github.io/schema/vega/v5.json",
   width: 960,
   height: 960,
+  title: { text: "Metabolic task treemap" },
   autosize: {
+    type: "fit",
     resize: true
   },
   signals: [
@@ -54,8 +56,7 @@ export const treemap = {
         type: "filter",
         expr: "datum.depth === 1"
       }]
-    },
-/*    
+    },    
     {
       name: "middle",
       source: "data",
@@ -63,8 +64,7 @@ export const treemap = {
         type: "filter",
         expr: "datum.depth === 2"
       }]
-    },
-*/    
+    },    
     {
       name: "bottom",
       source: "data",
@@ -107,8 +107,7 @@ export const treemap = {
             scale: "top",
             field: "name"
           },
-          opacity: { value: 0.5 },
-          tooltip: { signal: "datum.name"}
+          opacity: { value: 0.5 }
         },
         update: {
           x: { field: "x0" },
@@ -118,15 +117,19 @@ export const treemap = {
         }
       }
     },
-    /*
     {
       type: "rect",
       from: { data: "middle" },
       encode: {
         enter: {
+          fill: { 
+            scale: "color",
+            field: "score"
+          },
           stroke: {
             value: "#666"
-          }
+          },
+          tooltip: { signal: "datum.name"}
         },
         update: {
           x: { field: "x0" },
@@ -136,7 +139,6 @@ export const treemap = {
         }
       }
     },    
-    */
     {
       type: "rect",
       from: { data: "bottom" },

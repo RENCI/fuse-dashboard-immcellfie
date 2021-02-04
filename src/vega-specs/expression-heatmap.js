@@ -1,10 +1,21 @@
-export const heatmap = {
+export const expressionHeatmap = {
   $schema: "https://vega.github.io/schema/vega-lite/v4.json",
   width: "container",
-  height: { step: 5 },
+  height: { step: 2 },
+  title: "Gene expression heat map",
   autosize: {
     resize: true
   },
+  params: [
+    {
+      name: "sortBy",
+      value: "median",
+      bind: {
+        input: "select",
+        options: ["median", "mean", "max", "min"]
+      }
+    }
+  ],
   data: {
     name: "data"
   },
@@ -18,13 +29,13 @@ export const heatmap = {
       type: "ordinal",
       axis: null,
       sort: {
-        op: "median",
-        field: "score",
+        op: { signal: "sortBy" },
+        field: "value",
         order: "descending"
       }
     },
     x: {
-      field: "id", 
+      field: "patient", 
       type: "ordinal",
       axis: {
         orient: "top"
@@ -32,20 +43,13 @@ export const heatmap = {
       scale: {
         round: true
       }
-    },
+    },  
     color: { 
-      field: "score",
-      type: "quantitative"
-    }
-  }
-/*    
-    color: { 
-      field: "score",
+      field: "value",
       type: "quantitative",
       scale: {
         type: "symlog"
       }
     }
   }
-*/  
 };

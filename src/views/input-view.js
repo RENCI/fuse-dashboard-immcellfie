@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { DataContext } from "../contexts";
 import { VegaWrapper } from "../components/vega-wrapper";
-import { heatmap } from "../vega-specs";
+import { expressionHeatmap } from "../vega-specs";
 
 export const InputView = () => {
   const [data] = useContext(DataContext);
@@ -13,7 +13,7 @@ export const InputView = () => {
     return p.concat(c.values.map((d, i) => {
       return {
         gene: c.gene,
-        id: i,
+        patient: i,
         value: d
       };
     }));
@@ -23,8 +23,11 @@ export const InputView = () => {
     <>
       { input ? 
         <>
-          <h4>Input gene expression data</h4>
-          <VegaWrapper spec={ heatmap } data={ heatmapData } height={ input.data.length * 10 + "px" } />
+          <h4>Input data</h4>
+          <VegaWrapper 
+            spec={ expressionHeatmap } 
+            data={ heatmapData } 
+          />
         </>
       : <h4>No input</h4>
       }
