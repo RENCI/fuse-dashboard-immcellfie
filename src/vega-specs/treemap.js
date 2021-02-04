@@ -1,14 +1,14 @@
 export const treemap = {
   $schema: "https://vega.github.io/schema/vega/v5.json",
-  width: 1000,
-  height: 1000,
+  width: 960,
+  height: 960,
   autosize: {
     resize: true
   },
   signals: [
     {
       name: "width",
-      value: 1000,
+      value: 960,
       on: [
         {
           events: {
@@ -38,7 +38,7 @@ export const treemap = {
           round: true,
           size: [
             { signal: "width" }, 
-            { signal: "height" }
+            { signal: "width" }
           ]
         },
         {
