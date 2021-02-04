@@ -31,9 +31,13 @@ export const OutputView = () => {
     c.phenotype.forEach((d, i, a) => { 
       p[d] = {
         name: d,
-        parent: parent[i] === null ? "root" : a[parent[i]]
+        parent: parent[i] === null ? "root" : a[parent[i]],
       };
     });
+
+    p[c.phenotype[0]].score = c.values.reduce((p, c) => {
+      return p + c;
+    }, 0) / c.values.length;
 
     c.values.forEach((d, i) => {
       const id = c.phenotype[0] + "_" + i;
@@ -52,6 +56,8 @@ export const OutputView = () => {
     name: "root",
     parent: null
   });
+
+  console.log(hierarchyData);
 
   return (
     <>

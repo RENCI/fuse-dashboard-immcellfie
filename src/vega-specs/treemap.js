@@ -14,10 +14,10 @@ export const treemap = {
         {
           type: "treemap",
           method: "squarify",
-          ratio: 1.6,
+          ratio: 1,
           paddingInner: 0,
           paddingOuter: 5,
-          round: false,
+          round: true,
           size: [
             { signal: "width" }, 
             { signal: "height" }
@@ -37,12 +37,22 @@ export const treemap = {
         expr: "datum.depth === 1"
       }]
     },
+/*    
     {
       name: "middle",
       source: "data",
       transform: [{
         type: "filter",
         expr: "datum.depth === 2"
+      }]
+    },
+*/    
+    {
+      name: "bottom",
+      source: "data",
+      transform: [{
+        type: "filter",
+        expr: "datum.depth === 3"
       }]
     },
     {
@@ -60,7 +70,7 @@ export const treemap = {
     {
       name: "color",
       type: "ordinal",
-      range: { scheme: "category20" }
+      range: { scheme: "tableau10" }
     },
     {
       name: "score",
@@ -78,7 +88,8 @@ export const treemap = {
           fill: {
             scale: "color",
             field: "name"
-          }
+          },
+          opacity: { value: 0.5 }
         },
         update: {
           x: { field: "x0" },
@@ -88,13 +99,37 @@ export const treemap = {
         }
       }
     },
+    /*
     {
       type: "rect",
       from: { data: "middle" },
       encode: {
         enter: {
-          fill: { value: "none" },
-          stroke: { value: "#666" }
+          stroke: {
+            value: "#666"
+          }
+        },
+        update: {
+          x: { field: "x0" },
+          y: { field: "y0" },
+          x2: { field: "x1" },
+          y2: { field: "y1" }
+        }
+      }
+    },    
+    */
+    {
+      type: "rect",
+      from: { data: "bottom" },
+      encode: {
+        enter: {
+          fill: { 
+            scale: "score",
+            field: "score"
+          },
+          stroke: {
+            value: "#fff"
+          }
         },
         update: {
           x: { field: "x0" },
