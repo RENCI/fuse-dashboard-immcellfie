@@ -1,7 +1,25 @@
 export const treemap = {
   $schema: "https://vega.github.io/schema/vega/v5.json",
-  width: 960,
-  height: 960,
+  width: 1000,
+  height: 1000,
+  autosize: {
+    resize: true
+  },
+  signals: [
+    {
+      name: "width",
+      value: 1000,
+      on: [
+        {
+          events: {
+            source: "window",
+            type: "resize"
+          },
+          update: "containerSize()[0]"
+        }
+      ]
+    }
+  ],
   data: [
     {
       name: "data",
@@ -82,14 +100,15 @@ export const treemap = {
   marks: [
     {
       type: "rect",
-      from: { data: "top" },
+      from: { data: "top" },      
       encode: {
         enter: {
           fill: {
             scale: "top",
             field: "name"
           },
-          opacity: { value: 0.5 }
+          opacity: { value: 0.5 },
+          tooltip: { signal: "datum.name"}
         },
         update: {
           x: { field: "x0" },
@@ -129,7 +148,8 @@ export const treemap = {
           },
           stroke: {
             value: "#fff"
-          }
+          },
+          tooltip: { signal: "datum.name"}
         },
         update: {
           x: { field: "x0" },
@@ -142,6 +162,7 @@ export const treemap = {
     {
       type: "rect",
       from: { data: "leaves" },
+      interactive: false,
       encode: {
         enter: {
           fill: { 
@@ -154,6 +175,25 @@ export const treemap = {
           y: { field: "y0" },
           x2: { field: "x1" },
           y2: { field: "y1" }
+        }
+      }
+    },
+    {
+      type: "text",
+      from: { data: "top" },
+      interactive: false,
+      encode: {
+        enter: {
+          align: { value: "center" },
+          baseline: { value: "middle" },
+          fill: { value: "#000" },
+          text: { field: "label" },
+          fontSize: { value: 18 },
+          fillOpacity: { value: 0.5 }
+        },
+        update: {
+          x: { signal: "0.5 * (datum.x0 + datum.x1)" },
+          y: { signal: "0.5 * (datum.y0 + datum.y1)" }
         }
       }
     }

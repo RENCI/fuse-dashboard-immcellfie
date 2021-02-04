@@ -33,6 +33,7 @@ export const OutputView = () => {
     c.phenotype.forEach((d, i, a) => { 
       p[d] = {
         name: d,
+        label: d.replace(" METABOLISM", ""),
         parent: parent[i] === null ? "root" : a[parent[i]],
       };
     });

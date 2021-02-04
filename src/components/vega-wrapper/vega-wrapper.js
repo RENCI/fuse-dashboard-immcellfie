@@ -8,7 +8,7 @@ const options = {
     compiled: false,
     editor: false
   },
-  renderer: "svg"
+//  renderer: "svg"
 };
 
 export const VegaWrapper = ({ spec, data }) => {
