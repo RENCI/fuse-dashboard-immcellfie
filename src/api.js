@@ -14,15 +14,18 @@ const parseInput = data => {
 
 const parseOutput = data => {
   return {
-    data: d3.csvParseRows(data, row => {
-      row = d3.merge(row.map(d => d.split("\t")));
+    data: d3.tsvParseRows(data, row => {
+      if (row.length !== 3) return null;
+
+      const info = d3.csvParseRows(row[0])[0];
 
       return {
-        gene: row[0],
-        phenotype: row.slice(1, 4),
-        values: row.slice(4).map(d => +d)
+        gene: info[0],
+        phenotype: info.slice(1, 4),
+        scores: d3.csvParseRows(row[1])[0].map(d => +d),
+        values: d3.csvParseRows(row[2])[0].map(d => +d)
       };
-    }).slice(4)
+    })
   };
 };
 

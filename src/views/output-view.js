@@ -11,16 +11,18 @@ export const OutputView = () => {
 
   // Transform to work with vega-lite heatmap
   const heatmapData = !output ? [] : output.data.reduce((p, c) => {
-    return p.concat(c.values.map((d, i) => {
+    return p.concat(c.scores.map((d, i) => {
       return {
         gene: c.gene,
         id: i,
-        value: d
+        score: d,
+        value: c.values[i]
       };
     }));
   }, []);
 
   // Create hierarchy
+  // XXX: Consider stratifying here to make it easier to aggregate scores/values
   const hierarchyData = !output ? [] : Object.values(output.data.reduce((p, c) => {
     const parent = {
       0: 2,
@@ -35,17 +37,22 @@ export const OutputView = () => {
       };
     });
 
-    p[c.phenotype[0]].score = c.values.reduce((p, c) => {
+    p[c.phenotype[0]].score = c.scores.reduce((p, c) => {
+      return p + c;
+    }, 0) / c.scores.length;
+
+    p[c.phenotype[0]].value = c.values.reduce((p, c) => {
       return p + c;
     }, 0) / c.values.length;
 
-    c.values.forEach((d, i) => {
+    c.scores.forEach((d, i) => {
       const id = c.phenotype[0] + "_" + i;
 
       p[id] = {
         name: id,
         parent: c.phenotype[0],
-        value: d
+        score: d,
+        value: c.values[i]
       };
     });
 
@@ -56,8 +63,6 @@ export const OutputView = () => {
     name: "root",
     parent: null
   });
-
-  console.log(hierarchyData);
 
   return (
     <>

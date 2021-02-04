@@ -68,14 +68,14 @@ export const treemap = {
   ],
   scales: [
     {
-      name: "color",
+      name: "top",
       type: "ordinal",
       range: { scheme: "tableau10" }
     },
     {
-      name: "score",
+      name: "color",
       type: "linear",
-      domain: { data: "leaves", field: "value" },
+      domain: { data: "leaves", field: "score" },
       range: { scheme: "yellowgreenblue" }
     }
   ],
@@ -86,7 +86,7 @@ export const treemap = {
       encode: {
         enter: {
           fill: {
-            scale: "color",
+            scale: "top",
             field: "name"
           },
           opacity: { value: 0.5 }
@@ -124,7 +124,7 @@ export const treemap = {
       encode: {
         enter: {
           fill: { 
-            scale: "score",
+            scale: "color",
             field: "score"
           },
           stroke: {
@@ -145,8 +145,8 @@ export const treemap = {
       encode: {
         enter: {
           fill: { 
-            scale: "score",
-            field: "value"
+            scale: "color",
+            field: "score"
           }
         },
         update: {

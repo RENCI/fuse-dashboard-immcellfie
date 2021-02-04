@@ -19,7 +19,7 @@ export const heatmap = {
       axis: null,
       sort: {
         op: "median",
-        field: "value",
+        field: "score",
         order: "descending"
       }
     },
@@ -34,11 +34,18 @@ export const heatmap = {
       }
     },
     color: { 
-      field: "value",
+      field: "score",
+      type: "quantitative"
+    }
+  }
+/*    
+    color: { 
+      field: "score",
       type: "quantitative",
       scale: {
         type: "symlog"
       }
     }
   }
+*/  
 };
