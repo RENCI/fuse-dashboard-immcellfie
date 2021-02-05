@@ -11,6 +11,7 @@ export const taskHeatmap = {
       name: "value",
       value: "score",
       bind: {
+        name: "Value: ",
         input: "select",
         options: ["score", "activity"]
       }
@@ -19,6 +20,7 @@ export const taskHeatmap = {
       name: "sortBy",
       value: "median",
       bind: {
+        name: "Sort by: ",
         input: "select",
         options: ["median", "mean", "max", "min"]
       }

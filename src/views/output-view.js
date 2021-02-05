@@ -72,13 +72,13 @@ export const OutputView = () => {
       return child.data.scores ? child.data.scores : [child.data.score];
     }));
 
-    node.data.score = d3.max(node.data.scores);
+    node.data.score = d3.median(node.data.scores);
 
     node.data.activities = d3.merge(node.children.map(child => {
       return child.data.activities ? child.data.activities : [child.data.activity];
     }));
 
-    node.data.activity = d3.max(node.data.activities);
+    node.data.activity = d3.median(node.data.activities);
   });
 
   return (

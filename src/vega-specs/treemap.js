@@ -4,7 +4,7 @@ export const treemap = {
   height: 960,
   title: { text: "Metabolic task treemap" },
   autosize: {
-    type: "fit",
+    type: "pad",
     resize: true
   },
   signals: [
@@ -20,6 +20,26 @@ export const treemap = {
           update: "containerSize()[0]"
         }
       ]
+    },
+    {
+      name: "value",
+      value: "score",
+      bind: {
+        name: "Value: ",
+        input: "select",
+        options: ["score", "activity"]
+      }
+    },
+    {
+      name: "depth",
+      value: 4,
+      bind: {
+        name: "Depth: ",
+        input: "range",
+        min: 1,
+        max: 4, 
+        step: 1
+      }
     }
   ],
   data: [
@@ -32,6 +52,15 @@ export const treemap = {
           parentKey: "parent"
         },
         {
+          type: "filter",
+          expr: "datum.depth > 0 && datum.depth <= depth",          
+        },
+        {
+          type: "formula",
+          expr: "datum[value]",
+          as: "value"
+        },
+        {
           type: "treemap",
           method: "squarify",
           ratio: 1,
@@ -42,35 +71,23 @@ export const treemap = {
             { signal: "width" }, 
             { signal: "width" }
           ]
-        },
-        {
-          type: "filter",
-          expr: "datum.depth > 0"
         }
       ]
     },
-    {
+    { 
       name: "top",
       source: "data",
       transform: [{
         type: "filter",
         expr: "datum.depth === 1"
       }]
-    },    
+    },
     {
-      name: "middle",
+      name: "nodes",
       source: "data",
       transform: [{
         type: "filter",
-        expr: "datum.depth === 2"
-      }]
-    },    
-    {
-      name: "bottom",
-      source: "data",
-      transform: [{
-        type: "filter",
-        expr: "datum.depth === 3"
+        expr: "datum.depth < depth"
       }]
     },
     {
@@ -79,79 +96,40 @@ export const treemap = {
       transform: [
         {
           type: "filter",
-          expr: "!datum.children"
+          expr: "datum.depth === depth"
         }
       ]
     }
   ],
   scales: [
     {
-      name: "top",
-      type: "ordinal",
-      range: { scheme: "tableau10" }
-    },
-    {
       name: "color",
       type: "linear",
-      domain: { data: "leaves", field: "score" },
+      domain: { data: "data", field: "value" },
       range: { scheme: "yellowgreenblue" }
+    },
+    {
+      name: "stroke",
+      type: "ordinal",
+      domain: [1, 2, 3, 4],
+      range: ["#fff", "#fff", "#fff", null]
     }
   ],
   marks: [
     {
       type: "rect",
-      from: { data: "top" },      
+      from: { data: "nodes" },      
       encode: {
         enter: {
           fill: {
-            scale: "top",
-            field: "name"
-          },
-          opacity: { value: 0.5 }
-        },
-        update: {
-          x: { field: "x0" },
-          y: { field: "y0" },
-          x2: { field: "x1" },
-          y2: { field: "y1" }
-        }
-      }
-    },
-    {
-      type: "rect",
-      from: { data: "middle" },
-      encode: {
-        enter: {
-          fill: { 
             scale: "color",
-            field: "score"
+            field: "value"
           },
-          stroke: {
-            value: "#666"
+          stroke: { 
+            scale: "stroke",
+            field: "depth"
           },
-          tooltip: { signal: "datum.name"}
-        },
-        update: {
-          x: { field: "x0" },
-          y: { field: "y0" },
-          x2: { field: "x1" },
-          y2: { field: "y1" }
-        }
-      }
-    },    
-    {
-      type: "rect",
-      from: { data: "bottom" },
-      encode: {
-        enter: {
-          fill: { 
-            scale: "color",
-            field: "score"
-          },
-          stroke: {
-            value: "#fff"
-          },
-          tooltip: { signal: "datum.name"}
+          tooltip: { signal: "datum.name" }
         },
         update: {
           x: { field: "x0" },
@@ -169,7 +147,11 @@ export const treemap = {
         enter: {
           fill: { 
             scale: "color",
-            field: "score"
+            field: "value"
+          },
+          stroke: { 
+            scale: "stroke",
+            field: "depth"
           }
         },
         update: {
