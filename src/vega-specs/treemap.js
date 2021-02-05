@@ -113,6 +113,12 @@ export const treemap = {
       range: ["#fff", "#fff", "#fff", null]
     }
   ],
+  legends: [
+    {
+      fill: "color",
+      title: "value"
+    }
+  ],
   marks: [
     {
       type: "rect",
