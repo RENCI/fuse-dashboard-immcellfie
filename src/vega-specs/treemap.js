@@ -1,34 +1,31 @@
 export const treemap = {
   $schema: "https://vega.github.io/schema/vega/v5.json",
-  width: 960,
-  height: 960,
+  width: { signal: "containerWidth" },
+  height: { signal: "containerWidth" },
   title: { text: "Metabolic task treemap" },
   autosize: {
-    type: "pad",
+    type: "fit",
     resize: true
   },
-  signals: [
+  signals: [        
     {
-      name: "width",
-      value: 960,
+      name: "containerWidth",
+      value: 1032,
       on: [
         {
-          events: {
-            source: "window",
-            type: "resize"
-          },
+          events: [
+            {
+              source: "window",
+              type: "resize"
+            },
+            {
+              source: "window",
+              type: "load"
+            }
+          ],
           update: "containerSize()[0]"
         }
       ]
-    },
-    {
-      name: "value",
-      value: "score",
-      bind: {
-        name: "Value: ",
-        input: "select",
-        options: ["score", "activity"]
-      }
     },
     {
       name: "depth",
@@ -39,6 +36,15 @@ export const treemap = {
         min: 1,
         max: 4, 
         step: 1
+      }
+    },      
+    {
+      name: "value",
+      value: "score",
+      bind: {
+        name: "Value: ",
+        input: "select",
+        options: ["score", "activity"]
       }
     }
   ],
@@ -52,25 +58,25 @@ export const treemap = {
           parentKey: "parent"
         },
         {
-          type: "filter",
-          expr: "datum.depth > 0 && datum.depth <= depth",          
-        },
-        {
-          type: "formula",
-          expr: "datum[value]",
-          as: "value"
-        },
-        {
           type: "treemap",
           method: "squarify",
           ratio: 1,
           paddingInner: 0,
-          paddingOuter: 5,
+          paddingOuter: 8,
           round: true,
           size: [
             { signal: "width" }, 
             { signal: "width" }
           ]
+        },
+        {
+          type: "filter",
+          expr: "datum.depth > 0 && datum.depth <= depth",
+        },
+        {
+          type: "formula",
+          expr: "datum[value]",
+          as: "value"
         }
       ]
     },
@@ -87,7 +93,7 @@ export const treemap = {
       source: "data",
       transform: [{
         type: "filter",
-        expr: "datum.depth < 4"
+        expr: "datum.depth < 4",
       }]
     },
     { 
@@ -110,7 +116,7 @@ export const treemap = {
       name: "stroke",
       type: "ordinal",
       domain: [1, 2, 3, 4],
-      range: ["#fff", "#fff", "#fff", null]
+      range: ["#000", "#666", "#bbb", null]
     }
   ],
   legends: [
@@ -122,42 +128,62 @@ export const treemap = {
   marks: [
     {
       type: "rect",
-      from: { data: "nodes" },            
+      from: { data: "nodes" },        
+      interactive: false,    
       encode: {
-        enter: {
-          stroke: { 
-            scale: "stroke",
-            field: "depth"
-          },
-        },
         update: {
           fill: {
             scale: "color",
             field: "value"
           },
-          tooltip: { signal: "datum.name" },
+          stroke: { 
+            scale: "stroke",
+            field: "depth"
+          },
           x: { field: "x0" },
           y: { field: "y0" },
           x2: { field: "x1" },
-          y2: { field: "y1" }
+          y2: { field: "y1" },
+          zindex: { field: "depth" }
         }
       }
     },
     {
       type: "rect",
-      from: { data: "data" },        
-      interactive: false,    
+      from: { data: "nodes" },
       encode: {
         enter: {
-          stroke: { 
-            scale: "stroke",
-            field: "depth"
-          },
+          fill: { value: "#000" },
+          fillOpacity: { value: 0 },
+          strokeWidth: { value: 3 }
         },
+        update: {
+          stroke: { value: "none" },
+          x: { field: "x0" },
+          y: { field: "y0" },
+          x2: { field: "x1" },
+          y2: { field: "y1" },
+          zindex: { field: "depth" },
+          tooltip: { signal: "datum.name" }
+        },
+        hover: {
+          stroke: { value: "#a50f15" }
+        }
+      }
+    },
+    {
+      type: "rect",
+      from: { data: "leaves" },        
+      interactive: false,    
+      encode: {
         update: {
           fill: {
             scale: "color",
             field: "value"
+          },
+          stroke: { 
+            scale: "stroke",
+            field: "depth"
           },
           x: { field: "x0" },
           y: { field: "y0" },

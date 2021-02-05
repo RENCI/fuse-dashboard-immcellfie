@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import { Card } from "react-bootstrap";
 import * as d3 from "d3";
 import { DataContext } from "../contexts";
 import { VegaWrapper } from "../components/vega-wrapper";
@@ -86,8 +87,22 @@ export const OutputView = () => {
       { output ? 
         <>
           <h4>Cellfie output</h4>
-          <VegaWrapper spec={ taskHeatmap } data={ heatmapData } />
-          <VegaWrapper spec={ treemap } data={ hierarchyData } />
+          <Card className="mt-3">
+            <Card.Body>
+              <VegaWrapper 
+                spec={ treemap } 
+                data={ hierarchyData } 
+              />
+            </Card.Body>
+          </Card>
+          <Card>
+            <Card.Body>
+              <VegaWrapper 
+                spec={ taskHeatmap } 
+                data={ heatmapData } 
+              />
+            </Card.Body>
+          </Card>
         </>
       : <h4>No output</h4>
       }
