@@ -82,23 +82,21 @@ export const treemap = {
         expr: "datum.depth === 1"
       }]
     },
-    {
+    { 
       name: "nodes",
       source: "data",
       transform: [{
         type: "filter",
-        expr: "datum.depth < depth"
+        expr: "datum.depth < 4"
       }]
     },
-    {
+    { 
       name: "leaves",
       source: "data",
-      transform: [
-        {
-          type: "filter",
-          expr: "datum.depth === depth"
-        }
-      ]
+      transform: [{
+        type: "filter",
+        expr: "datum.depth === 4"
+      }]
     }
   ],
   scales: [
@@ -118,20 +116,20 @@ export const treemap = {
   marks: [
     {
       type: "rect",
-      from: { data: "nodes" },      
+      from: { data: "nodes" },            
       encode: {
         enter: {
-          fill: {
-            scale: "color",
-            field: "value"
-          },
           stroke: { 
             scale: "stroke",
             field: "depth"
           },
-          tooltip: { signal: "datum.name" }
         },
         update: {
+          fill: {
+            scale: "color",
+            field: "value"
+          },
+          tooltip: { signal: "datum.name" },
           x: { field: "x0" },
           y: { field: "y0" },
           x2: { field: "x1" },
@@ -141,20 +139,20 @@ export const treemap = {
     },
     {
       type: "rect",
-      from: { data: "leaves" },
-      interactive: false,
+      from: { data: "data" },        
+      interactive: false,    
       encode: {
         enter: {
-          fill: { 
-            scale: "color",
-            field: "value"
-          },
           stroke: { 
             scale: "stroke",
             field: "depth"
-          }
+          },
         },
         update: {
+          fill: {
+            scale: "color",
+            field: "value"
+          },
           x: { field: "x0" },
           y: { field: "y0" },
           x2: { field: "x1" },
