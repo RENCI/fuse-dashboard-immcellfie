@@ -60,7 +60,7 @@ export const OutputView = () => {
     parent: null
   });
 
-  // Stratify to and aggregate scores and activities
+  // Stratify to aggregate scores and activities
   const tree = d3.stratify()
       .id(d => d.name)
       .parentId(d => d.parent)
@@ -73,13 +73,36 @@ export const OutputView = () => {
       return child.data.scores ? child.data.scores : [child.data.score];
     }));
 
-    node.data.score = d3.median(node.data.scores);
+    node.data.score = d3.mean(node.data.scores);
 
     node.data.activities = d3.merge(node.children.map(child => {
       return child.data.activities ? child.data.activities : [child.data.activity];
     }));
 
-    node.data.activity = d3.median(node.data.activities);
+    node.data.activity = d3.mean(node.data.activities);
+  });
+
+  tree.eachBefore(node => {
+    if (node.depth === 0) {
+      node.data.tooltip = {};
+    }
+    else {
+      if (node.depth === 1) {
+        node.data.tooltip = {
+          title: "1. " + node.data.name
+        };
+      }
+      else {
+        node.data.tooltip = {
+          ...node.parent.data.tooltip
+        };
+
+        node.data.tooltip[node.depth] = node.data.name;
+      }
+
+      node.data.tooltip.score = node.data.score;
+      node.data.tooltip.activity = node.data.activity;
+    }
   });
 
   return (

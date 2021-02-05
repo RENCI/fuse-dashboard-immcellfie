@@ -164,7 +164,7 @@ export const treemap = {
           x2: { field: "x1" },
           y2: { field: "y1" },
           zindex: { field: "depth" },
-          tooltip: { signal: "datum.name" }
+          tooltip: { signal: "datum.tooltip" }
         },
         hover: {
           stroke: { value: "#a50f15" }
