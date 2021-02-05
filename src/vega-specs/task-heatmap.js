@@ -35,6 +35,14 @@ export const taskHeatmap = {
       as: "value"
     }
   ],
+  selection: {
+    highlight: {
+      type: "single",
+      on: "mouseover",
+      empty: "none",
+      clear: "mouseout"
+    }
+  },
   mark: { 
     type: "rect",
     tooltip: true
@@ -59,9 +67,23 @@ export const taskHeatmap = {
         round: true
       }
     },
-    color: { 
+    fill: { 
       field: "value",
       type: "quantitative"
+    },
+    stroke: { 
+      condition: {
+        selection: "highlight",
+        value: "#a50f15"
+      },
+      value: "none"
+    },
+    order: {
+      condition: {
+        selection: "highlight", 
+        value: 1
+      }, 
+      value: 0
     }
   } 
 };

@@ -84,25 +84,19 @@ export const OutputView = () => {
 
   tree.eachBefore(node => {
     if (node.depth === 0) {
-      node.data.tooltip = {};
-    }
-    else {
-      if (node.depth === 1) {
-        node.data.tooltip = {
-          title: "1. " + node.data.name
-        };
-      }
-      else {
-        node.data.tooltip = {
-          ...node.parent.data.tooltip
-        };
+      node.data.phenotype = [];
 
-        node.data.tooltip[node.depth] = node.data.name;
-      }
-
-      node.data.tooltip.score = node.data.score;
-      node.data.tooltip.activity = node.data.activity;
+      return;
     }
+
+    node.data.phenotype = node.parent.data.phenotype.concat(node.data.name);
+
+    node.data.tooltip = {
+      title: node.data.name,
+      score: node.data.score,
+      activity: node.data.activity,
+      phenotype: node.parent.data.phenotype.join(" → ")
+    };    
   });
 
   return (
