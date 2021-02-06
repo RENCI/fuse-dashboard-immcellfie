@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Card } from "react-bootstrap";
+import { Tabs, Tab } from "react-bootstrap";
 import * as d3 from "d3";
 import { DataContext } from "../contexts";
 import { VegaWrapper } from "../components/vega-wrapper";
@@ -107,22 +107,30 @@ export const OutputView = () => {
       { output ? 
         <>
           <h4>Cellfie output</h4>
-          <Card className="mt-3">
-            <Card.Body>
-              <VegaWrapper 
-                spec={ treemap } 
-                data={ hierarchyData } 
-              />
-            </Card.Body>
-          </Card>
-          <Card>
-            <Card.Body>
-              <VegaWrapper 
-                spec={ taskHeatmap } 
-                data={ heatmapData } 
-              />
-            </Card.Body>
-          </Card>
+          <Tabs>
+            <Tab 
+              eventKey="heatmap" 
+              title="Heatmap" 
+              mountOnEnter={ true } 
+              unmountOnExit={ true }
+            >
+              <div className="mt-3">
+                <VegaWrapper 
+                  spec={ taskHeatmap } 
+                  data={ heatmapData } 
+                />
+              </div>
+            </Tab>
+            <Tab eventKey="treemap" title="Treemap">
+              <div className="mt-3">
+                <VegaWrapper 
+                  className="mt-3"
+                  spec={ treemap } 
+                  data={ hierarchyData } 
+                />
+              </div>  
+            </Tab>
+          </Tabs>          
         </>
       : <h4>No output</h4>
       }
