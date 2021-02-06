@@ -22,7 +22,7 @@ export const taskHeatmap = {
       bind: {
         name: "Sort by: ",
         input: "select",
-        options: ["median", "mean", "max", "min"]
+        options: ["median", "mean", "max"]
       }
     }
   ],

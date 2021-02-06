@@ -94,9 +94,12 @@ export const OutputView = () => {
     node.data.tooltip = {
       title: node.data.name,
       score: node.data.score,
-      activity: node.data.activity,
-      phenotype: node.parent.data.phenotype.join(" → ")
+      activity: node.data.activity
     };    
+
+    if (node.depth > 1) {
+      node.data.tooltip.phenotype = node.parent.data.phenotype.join(" → ")
+    }
   });
 
   return (

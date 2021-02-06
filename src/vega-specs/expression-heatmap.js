@@ -12,7 +12,7 @@ export const expressionHeatmap = {
       value: "median",
       bind: {
         input: "select",
-        options: ["median", "mean", "max", "min"]
+        options: ["median", "mean", "max"]
       }
     }
   ],
