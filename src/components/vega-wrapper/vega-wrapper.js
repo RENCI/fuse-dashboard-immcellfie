@@ -50,6 +50,8 @@ export const VegaWrapper = ({ spec, data }) => {
     <div 
       style={{ width: "100%" }} 
       ref={ div } 
-    />
+    >
+      Loading...
+    </div>
   );
 };
