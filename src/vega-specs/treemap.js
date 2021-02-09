@@ -29,7 +29,7 @@ export const treemap = {
     },
     {
       name: "depth",
-      value: 4,
+      value: 1,
       bind: {
         name: "Depth: ",
         input: "range",
@@ -46,7 +46,27 @@ export const treemap = {
         input: "select",
         options: ["score", "activity"]
       }
-    }
+    },      
+    {
+      name: "labelOpacity",
+      value: "0.75",
+      bind: {
+        name: "Label opacity: ",
+        input: "range",
+        min: 0,
+        max: 1, 
+        step: 0.05
+      }
+    },
+    {
+      name: "colorScheme",
+      value: "lightgreyred",
+      bind: {
+        name: "Color scheme: ",
+        input: "select",
+        options: ["lightgreyred", "yellowgreenblue"]
+      }
+    }  
   ],
   data: [
     {
@@ -109,14 +129,23 @@ export const treemap = {
     {
       name: "color",
       type: "linear",
-      domain: { data: "data", field: "value" },
-      range: { scheme: "yellowgreenblue" }
+      domain: { 
+        data: "data", 
+        field: "value" 
+      },
+      range: { scheme: { signal: "colorScheme" } }
     },
     {
       name: "stroke",
       type: "ordinal",
       domain: [1, 2, 3, 4],
       range: ["#000", "#666", "#bbb", null]
+    },
+    {
+      name: "strokeWidth",
+      type: "ordinal",
+      domain: [1, 2, 3, 4],
+      range: [3, 2, 1, 0]
     }
   ],
   legends: [
@@ -140,6 +169,10 @@ export const treemap = {
             scale: "stroke",
             field: "depth"
           },
+          strokeWidth: {
+            scale: "strokeWidth",
+            field: "depth"
+          },
           x: { field: "x0" },
           y: { field: "y0" },
           x2: { field: "x1" },
@@ -155,7 +188,7 @@ export const treemap = {
         enter: {
           fill: { value: "#000" },
           fillOpacity: { value: 0 },
-          strokeWidth: { value: 3 }
+          strokeWidth: { value: 4 }
         },
         update: {
           stroke: { value: "none" },
@@ -185,6 +218,10 @@ export const treemap = {
             scale: "stroke",
             field: "depth"
           },
+          strokeWidth: {
+            scale: "strokeWidth",
+            field: "depth"
+          },
           x: { field: "x0" },
           y: { field: "y0" },
           x2: { field: "x1" },
@@ -198,16 +235,18 @@ export const treemap = {
       interactive: false,
       encode: {
         enter: {
+          text: { field: "label" },
           align: { value: "center" },
           baseline: { value: "middle" },
           fill: { value: "#000" },
-          text: { field: "label" },
           fontSize: { value: 18 },
-          fillOpacity: { value: 0.5 }
+          fontWeight: { value: "bold" },
+          blend: { value: "difference" }
         },
         update: {
           x: { signal: "0.5 * (datum.x0 + datum.x1)" },
-          y: { signal: "0.5 * (datum.y0 + datum.y1)" }
+          y: { signal: "0.5 * (datum.y0 + datum.y1)" },
+          opacity: { signal: "labelOpacity" }
         }
       }
     }

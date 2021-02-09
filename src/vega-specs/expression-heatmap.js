@@ -14,6 +14,15 @@ export const expressionHeatmap = {
         input: "select",
         options: ["median", "mean", "max"]
       }
+    },
+    {
+      name: "colorScheme",
+      value: "lightgreyred",
+      bind: {
+        name: "Color scheme: ",
+        input: "select",
+        options: ["lightgreyred", "yellowgreenblue"]
+      }
     }
   ],
   data: {
@@ -48,6 +57,7 @@ export const expressionHeatmap = {
       field: "value",
       type: "quantitative",
       scale: {
+        scheme: { signal: "colorScheme" },
         type: "symlog"
       }
     }

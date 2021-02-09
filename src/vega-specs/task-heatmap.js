@@ -1,7 +1,9 @@
 export const taskHeatmap = {
   $schema: "https://vega.github.io/schema/vega-lite/v4.json",
   width: "container",
-  height: { step: 10 },
+  height: { 
+    step: 10 
+  },
   title: "Metabolic task heatmap",
   autosize: {
     resize: true
@@ -23,6 +25,15 @@ export const taskHeatmap = {
         name: "Sort by: ",
         input: "select",
         options: ["median", "mean", "max"]
+      }
+    },
+    {
+      name: "colorScheme",
+      value: "lightgreyred",
+      bind: {
+        name: "Color scheme: ",
+        input: "select",
+        options: ["lightgreyred", "yellowgreenblue"]
       }
     }
   ],
@@ -69,7 +80,10 @@ export const taskHeatmap = {
     },
     fill: { 
       field: "value",
-      type: "quantitative"
+      type: "quantitative",
+      scale: {
+        scheme: { signal: "colorScheme" },
+      }
     },
     stroke: { 
       condition: {
