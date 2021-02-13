@@ -3,7 +3,7 @@ import { Tabs, Tab } from "react-bootstrap";
 import * as d3 from "d3";
 import { DataContext } from "../contexts";
 import { VegaWrapper } from "../components/vega-wrapper";
-import { taskHeatmap, treemap } from "../vega-specs";
+import { taskHeatmap, treemap, enclosure } from "../vega-specs";
 
 export const OutputView = () => {
   const [data] = useContext(DataContext);
@@ -126,6 +126,15 @@ export const OutputView = () => {
                 <VegaWrapper 
                   className="mt-3"
                   spec={ treemap } 
+                  data={ hierarchyData } 
+                />
+              </div>  
+            </Tab>
+            <Tab eventKey="enclosure" title="Enclosure diagram">
+              <div className="mt-3">
+                <VegaWrapper 
+                  className="mt-3"
+                  spec={ enclosure } 
                   data={ hierarchyData } 
                 />
               </div>  

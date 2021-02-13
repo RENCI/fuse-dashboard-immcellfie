@@ -35,8 +35,8 @@ const parseOutput = data => {
 export const api = {
   loadPracticeData: async () => {
     try {
-      const input = await axios.get("/data/cellfie/HPA.tsv");
-      const output = await axios.get("/data/cellfie/HPA.expected");
+      const input = await axios.get(`${process.env.REACT_APP_DATA_API_ROOT}HPA.tsv`);
+      const output = await axios.get(`${process.env.REACT_APP_DATA_API_ROOT}HPA.expected`);
 
       const inputData = parseInput(input.data);
       const outputData = parseOutput(output.data);
