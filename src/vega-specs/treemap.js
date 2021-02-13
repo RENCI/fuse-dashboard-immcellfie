@@ -157,7 +157,7 @@ export const treemap = {
   marks: [
     {
       type: "rect",
-      from: { data: "nodes" },        
+      from: { data: "data" }, 
       interactive: false,    
       encode: {
         update: {
@@ -201,31 +201,6 @@ export const treemap = {
         },
         hover: {
           stroke: { value: "#a50f15" }
-        }
-      }
-    },
-    {
-      type: "rect",
-      from: { data: "leaves" },        
-      interactive: false,    
-      encode: {
-        update: {
-          fill: {
-            scale: "color",
-            field: "value"
-          },
-          stroke: { 
-            scale: "stroke",
-            field: "depth"
-          },
-          strokeWidth: {
-            scale: "strokeWidth",
-            field: "depth"
-          },
-          x: { field: "x0" },
-          y: { field: "y0" },
-          x2: { field: "x1" },
-          y2: { field: "y1" }
         }
       }
     },
