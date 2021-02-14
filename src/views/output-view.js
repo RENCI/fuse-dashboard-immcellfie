@@ -107,12 +107,13 @@ export const OutputView = () => {
       { output ? 
         <>
           <h4>Cellfie output</h4>
-          <Tabs>
+          <Tabs
+            mountOnEnter={ true }
+            unmountOnExit={ true }
+          >
             <Tab 
               eventKey="heatmap" 
-              title="Heatmap" 
-              mountOnEnter={ true } 
-              unmountOnExit={ true }
+              title="Heatmap"
             >
               <div className="mt-3">
                 <VegaWrapper 
@@ -121,7 +122,10 @@ export const OutputView = () => {
                 />
               </div>
             </Tab>
-            <Tab eventKey="treemap" title="Treemap">
+            <Tab 
+              eventKey="treemap" 
+              title="Treemap"
+            >
               <div className="mt-3">
                 <VegaWrapper 
                   className="mt-3"
@@ -130,7 +134,10 @@ export const OutputView = () => {
                 />
               </div>  
             </Tab>
-            <Tab eventKey="enclosure" title="Enclosure diagram">
+            <Tab 
+              eventKey="enclosure" 
+              title="Enclosure diagram"
+            >
               <div className="mt-3">
                 <VegaWrapper 
                   className="mt-3"
