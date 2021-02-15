@@ -82,6 +82,8 @@ export const OutputView = () => {
     node.data.activity = d3.mean(node.data.activities);
   });
 
+  const format = d3.format('.2f')
+
   tree.eachBefore(node => {
     if (node.depth === 0) {
       node.data.phenotype = [];
@@ -93,8 +95,8 @@ export const OutputView = () => {
 
     node.data.tooltip = {
       title: node.data.name,
-      score: node.data.score,
-      activity: node.data.activity
+      score: format(node.data.score),
+      activity: format(node.data.activity)
     };    
 
     if (node.depth > 1) {
