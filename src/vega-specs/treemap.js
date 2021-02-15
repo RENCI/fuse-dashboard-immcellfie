@@ -200,7 +200,7 @@ export const treemap = {
           tooltip: { signal: "datum.tooltip" }
         },
         hover: {
-          stroke: { value: "#a50f15" }
+          stroke: { signal: "colorScheme === 'lightgreyred' ? '#2171b5' : '#a50f15'" }
         }
       }
     },

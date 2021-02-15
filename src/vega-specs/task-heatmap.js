@@ -88,7 +88,7 @@ export const taskHeatmap = {
     stroke: { 
       condition: {
         selection: "highlight",
-        value: "#a50f15"
+        value: { signal: "colorScheme === 'lightgreyred' ? '#2171b5' : '#a50f15'" }
       },
       value: "none"
     },
