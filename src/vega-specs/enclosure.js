@@ -68,12 +68,6 @@ export const enclosure = {
       }
     }
   ],
-  legends: [
-    {
-      fill: "color",
-      title: "value"
-    }
-  ],
   data: [
     {
       name: "data",
@@ -94,11 +88,6 @@ export const enclosure = {
         {
           type: "filter",
           expr: "datum.depth > 0 && datum.depth <= depth",
-        },
-        {
-          type: "formula",
-          expr: "datum[value]",
-          as: "value"
         }
       ]
     },
@@ -133,7 +122,7 @@ export const enclosure = {
       type: "linear",
       domain: { 
         data: "data", 
-        field: "value" 
+        field: { signal: "value" } 
       },
       range: { scheme: { signal: "colorScheme" } }
     },
@@ -149,6 +138,12 @@ export const enclosure = {
       domain: [1, 2, 3, 4],
       range: [3, 2, 1, 0]
     }
+  ],  
+  legends: [
+    {
+      fill: "color",
+      title: { signal: "value" }
+    }
   ],
   marks: [
     {
@@ -159,7 +154,7 @@ export const enclosure = {
         update: {
           fill: {
             scale: "color",
-            field: "value"
+            field: { signal: "value" }
           },
           stroke: { 
             scale: "stroke",

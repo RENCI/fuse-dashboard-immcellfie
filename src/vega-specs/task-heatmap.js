@@ -10,6 +10,17 @@ export const taskHeatmap = {
   },
   params: [
     {
+      name: "depth",
+      value: 3,
+      bind: {
+        name: "Depth: ",
+        input: "range",
+        min: 1,
+        max: 3, 
+        step: 1
+      }
+    },
+    {
       name: "value",
       value: "score",
       bind: {
@@ -42,8 +53,15 @@ export const taskHeatmap = {
   },
   transform: [
     {
+      filter: "datum.depth === depth",
+    },
+    {
+      flatten: ["data.genes", "data.scores", "data.activities"],
+      as: ["gene", "score", "activity"]
+    },
+    {
       calculate: "datum[value]",
-      as: "value"
+      as: ["value"]
     }
   ],
   selection: {
@@ -60,13 +78,14 @@ export const taskHeatmap = {
   },
   encoding: {
     y: {
-      field: "task", 
+      field: "data.name", 
       type: "ordinal",
       sort: {
         op: { signal: "sortBy" },
-        field: "score",
+        field: "value",
         order: "descending"
-      }
+      },
+      title: "phenotype"
     },
     x: {
       field: "gene", 
@@ -78,7 +97,7 @@ export const taskHeatmap = {
         round: true
       }
     },
-    fill: { 
+    fill: {      
       field: "value",
       type: "quantitative",
       scale: {

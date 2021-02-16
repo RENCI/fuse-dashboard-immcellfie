@@ -10,18 +10,6 @@ export const OutputView = () => {
 
   const { output } = data;
 
-  // Transform to work with vega-lite heatmap
-  const heatmapData = !output ? [] : output.tasks.reduce((data, task) => {
-    return data.concat(task.scores.map((score, i) => {
-      return {
-        task: task.phenotype[0],
-        gene: i,
-        score: score,
-        activity: task.activities[i]
-      };
-    }));
-  }, []);
-
   // Create hierarchy
   const hierarchyData = !output ? [] : Object.values(output.tasks.reduce((data, task) => {
     // Add nodes for phenotype
@@ -45,7 +33,7 @@ export const OutputView = () => {
       const id = parent + "_" + i;
 
       data[id] = {
-        name: id,
+        name: "gene " + i,
         parent: parent,
         score: score,
         activity: task.activities[i]
@@ -68,21 +56,44 @@ export const OutputView = () => {
 
   tree.eachAfter(node => {
     if (!node.children) return;
-    
-    node.data.scores = d3.merge(node.children.map(child => {
-      return child.data.scores ? child.data.scores : [child.data.score];
-    }));
 
-    node.data.score = d3.mean(node.data.scores);
+    node.children.forEach(child => {
+      if (child.data.allScores) {
+        if (!node.data.allScores) {
+          node.data.allScores = [...child.data.allScores];
+          node.data.allActivities = [...child.data.allActivities];
+        }
+        else {
+          child.data.allScores.forEach((scores, i) => {
+            node.data.allScores[i] = node.data.allScores[i].concat(scores);
+          });
 
-    node.data.activities = d3.merge(node.children.map(child => {
-      return child.data.activities ? child.data.activities : [child.data.activity];
-    }));
+          child.data.allActivities.forEach((activities, i) => {
+            node.data.allActivities[i] = node.data.allActivities[i].concat(activities);
+          });
+        }
+      }
+      else {
+        if (!node.data.allScores) {
+          node.data.allScores = [];
+          node.data.allActivities = [];
+        }
 
-    node.data.activity = d3.mean(node.data.activities);
+        node.data.allScores.push([child.data.score]);
+        node.data.allActivities.push([child.data.activity]);
+      }
+    });
+
+    node.data.scores = node.data.allScores.map(d => d3.mean(d));
+    node.data.score = d3.mean(d3.merge(node.data.allScores));
+
+    node.data.activities = node.data.allActivities.map(d => d3.mean(d));
+    node.data.activity = d3.mean(d3.merge(node.data.allActivities));
+
+    node.data.genes = d3.range(0, node.data.scores.length);
   });
 
-  const format = d3.format('.2f')
+  const format = d3.format('.2f');
 
   tree.eachBefore(node => {
     if (node.depth === 0) {
@@ -100,7 +111,7 @@ export const OutputView = () => {
     };    
 
     if (node.depth > 1) {
-      node.data.tooltip.phenotype = node.parent.data.phenotype.join(" → ")
+      node.data.tooltip.phenotype = node.parent.data.phenotype.join(" → ");
     }
   });
 
@@ -120,7 +131,7 @@ export const OutputView = () => {
               <div className="mt-3">
                 <VegaWrapper 
                   spec={ taskHeatmap } 
-                  data={ heatmapData } 
+                  data={ tree.descendants() } 
                 />
               </div>
             </Tab>
