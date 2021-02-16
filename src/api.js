@@ -22,10 +22,13 @@ const parseOutput = data => {
       // Reorder phenotype info to go from task to system
       const phenotype = [info[1], info[3], info[2]];
 
+      const scores = d3.csvParseRows(row[1])[0].map(d => +d);
+
       return {
         id: info[0],
+        name: info[1],        
         phenotype: phenotype,
-        scores: d3.csvParseRows(row[1])[0].map(d => +d),
+        scores: scores,
         activities: d3.csvParseRows(row[2])[0].map(d => +d)
       };
     })

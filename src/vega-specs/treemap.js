@@ -92,11 +92,6 @@ export const treemap = {
         {
           type: "filter",
           expr: "datum.depth > 0 && datum.depth <= depth",
-        },
-        {
-          type: "formula",
-          expr: "datum[value]",
-          as: "value"
         }
       ]
     },
@@ -131,7 +126,7 @@ export const treemap = {
       type: "linear",
       domain: { 
         data: "data", 
-        field: "value" 
+        field: { signal: "value" } 
       },
       range: { scheme: { signal: "colorScheme" } }
     },
@@ -151,7 +146,7 @@ export const treemap = {
   legends: [
     {
       fill: "color",
-      title: "value"
+      title: { signal: "value" }
     }
   ],
   marks: [
@@ -163,7 +158,7 @@ export const treemap = {
         update: {
           fill: {
             scale: "color",
-            field: "value"
+            field: { signal: "value" }
           },
           stroke: { 
             scale: "stroke",
