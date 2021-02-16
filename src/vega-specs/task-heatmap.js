@@ -10,6 +10,17 @@ export const taskHeatmap = {
   },
   params: [
     {
+      name: "depth",
+      value: 3,
+      bind: {
+        name: "Depth: ",
+        input: "range",
+        min: 1,
+        max: 3, 
+        step: 1
+      }
+    },
+    {
       name: "value",
       value: "score",
       bind: {
@@ -20,11 +31,11 @@ export const taskHeatmap = {
     },
     {
       name: "sortBy",
-      value: "median",
+      value: "mean",
       bind: {
         name: "Sort by: ",
         input: "select",
-        options: ["median", "mean", "max"]
+        options: ["mean", "median", "max"]
       }
     },
     {
@@ -42,8 +53,15 @@ export const taskHeatmap = {
   },
   transform: [
     {
+      filter: "datum.depth === depth",
+    },
+    {
+      flatten: ["data.patients", "data.scores", "data.activities"],
+      as: ["patient", "score", "activity"]
+    },
+    {
       calculate: "datum[value]",
-      as: "value"
+      as: ["value"]
     }
   ],
   selection: {
@@ -60,16 +78,17 @@ export const taskHeatmap = {
   },
   encoding: {
     y: {
-      field: "task", 
+      field: "data.name", 
       type: "ordinal",
       sort: {
         op: { signal: "sortBy" },
-        field: "score",
+        field: "value",
         order: "descending"
-      }
+      },
+      title: "task phenotype"
     },
     x: {
-      field: "gene", 
+      field: "patient", 
       type: "ordinal",
       axis: {
         orient: "top"
@@ -78,11 +97,14 @@ export const taskHeatmap = {
         round: true
       }
     },
-    fill: { 
+    fill: {      
       field: "value",
       type: "quantitative",
       scale: {
         scheme: { signal: "colorScheme" },
+      },
+      legend: {
+        title: { signal: "value" }
       }
     },
     stroke: { 
