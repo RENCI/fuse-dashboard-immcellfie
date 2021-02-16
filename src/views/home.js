@@ -15,6 +15,12 @@ export const Home = () => {
     setId(evt.target.value);
   };
 
+  const onIdKeyPress = evt => {
+    if (evt.key === "Enter") {
+      onSubmitClick();
+    }
+  };
+
   const onSubmitClick = () => {
     setSubmitting(true);
 
@@ -60,6 +66,7 @@ export const Home = () => {
                 type="text"
                 value={ id }
                 onChange={ onIdChange } 
+                onKeyPress={ onIdKeyPress }
               />
             </InputGroup>
           </Form.Group>
