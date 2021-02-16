@@ -115,6 +115,8 @@ export const OutputView = () => {
     }
   });
 
+  console.log(tree.leaves())
+
   return (
     <>
       { output ? 

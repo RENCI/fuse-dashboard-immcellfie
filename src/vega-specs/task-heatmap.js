@@ -73,8 +73,7 @@ export const taskHeatmap = {
     }
   },
   mark: { 
-    type: "rect",
-    tooltip: true
+    type: "rect"
   },
   encoding: {
     y: {
@@ -120,6 +119,12 @@ export const taskHeatmap = {
         value: 1
       }, 
       value: 0
-    }
+    },
+    tooltip: [ 
+      { field: "id", title: "name" },
+      { field: "patient", title: "patient" },
+      { field: "score" }, 
+      { field: "activity" } 
+    ]
   } 
 };
