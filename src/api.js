@@ -28,7 +28,6 @@ const parseOutput = data => {
         id: info[0],
         name: info[1],        
         phenotype: phenotype,
-        genes: d3.range(0, scores.length),
         scores: scores,
         activities: d3.csvParseRows(row[2])[0].map(d => +d)
       };

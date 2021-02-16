@@ -33,7 +33,7 @@ export const OutputView = () => {
       const id = parent + "_" + i;
 
       data[id] = {
-        name: "gene " + i,
+        name: "patient " + i,
         parent: parent,
         score: score,
         activity: task.activities[i]
@@ -90,7 +90,7 @@ export const OutputView = () => {
     node.data.activities = node.data.allActivities.map(d => d3.mean(d));
     node.data.activity = d3.mean(d3.merge(node.data.allActivities));
 
-    node.data.genes = d3.range(0, node.data.scores.length);
+    node.data.patients = d3.range(0, node.data.scores.length);
   });
 
   const format = d3.format('.2f');

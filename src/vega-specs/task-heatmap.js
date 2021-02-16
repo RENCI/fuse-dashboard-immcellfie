@@ -31,11 +31,11 @@ export const taskHeatmap = {
     },
     {
       name: "sortBy",
-      value: "median",
+      value: "mean",
       bind: {
         name: "Sort by: ",
         input: "select",
-        options: ["median", "mean", "max"]
+        options: ["mean", "median", "max"]
       }
     },
     {
@@ -56,8 +56,8 @@ export const taskHeatmap = {
       filter: "datum.depth === depth",
     },
     {
-      flatten: ["data.genes", "data.scores", "data.activities"],
-      as: ["gene", "score", "activity"]
+      flatten: ["data.patients", "data.scores", "data.activities"],
+      as: ["patient", "score", "activity"]
     },
     {
       calculate: "datum[value]",
@@ -85,10 +85,10 @@ export const taskHeatmap = {
         field: "value",
         order: "descending"
       },
-      title: "phenotype"
+      title: "task phenotype"
     },
     x: {
-      field: "gene", 
+      field: "patient", 
       type: "ordinal",
       axis: {
         orient: "top"
@@ -102,6 +102,9 @@ export const taskHeatmap = {
       type: "quantitative",
       scale: {
         scheme: { signal: "colorScheme" },
+      },
+      legend: {
+        title: { signal: "value" }
       }
     },
     stroke: { 
