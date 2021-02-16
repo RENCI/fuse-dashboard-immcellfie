@@ -1,11 +1,14 @@
 import React, { useState, useContext } from "react";
-import { Card, Form, InputGroup, Button } from "react-bootstrap";
+import { Card, Form, InputGroup, Button, Alert } from "react-bootstrap";
+import { SpinnerButton } from "../components/spinner-button"
 import { DataContext } from "../contexts";
 import { api } from "../api";
 
 export const Home = () => {
   const [, dataDispatch] = useContext(DataContext);
   const [id, setId] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState();
 
   const onIdChange = evt => {
     setId(evt.target.value);
@@ -16,10 +19,15 @@ export const Home = () => {
   };
 
   const onLoadPracticeClick = async () => {
+    setLoading(true);
+
     const [input, output] = await api.loadPracticeData(); 
 
     dataDispatch({ type: "setInput", data: input });
     dataDispatch({ type: "setOutput", data: output });
+
+    setLoading(false);
+    setMessage("Practice data loaded");
   };
 
   return (    
@@ -47,12 +55,18 @@ export const Home = () => {
             <Form.Text>OR</Form.Text>
           </Form.Group>
           <Form.Group>   
-            <Button 
+            <SpinnerButton 
               variant="outline-secondary"
+              spin={ loading }
               onClick={ onLoadPracticeClick }>
                 Load practice data
-            </Button>
+            </SpinnerButton>
           </Form.Group>
+          { message && 
+            <Form.Group>  
+              <Alert variant="primary">{ message }</Alert>
+            </Form.Group>  
+          }
         </Card.Body>
       </Card>
     </>
