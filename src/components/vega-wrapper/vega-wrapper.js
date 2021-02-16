@@ -1,5 +1,7 @@
 import React, { useRef, useEffect, useCallback } from "react";
+import { Spinner } from "react-bootstrap";
 import vegaEmbed from "vega-embed";
+import "./vega-wrapper.css";
 
 const options = {
   actions: {
@@ -47,11 +49,14 @@ export const VegaWrapper = ({ spec, data }) => {
   }, [updateVisualization]);
 
   return (
-    <div 
-      style={{ width: "100%" }} 
-      ref={ div } 
-    >
-      Loading...
+    <div className="wrapperDiv" ref={ div }>
+      Loading 
+      <Spinner 
+        className="ml-1"
+        animation="border" 
+        size="sm" 
+        as="span" 
+      />
     </div>
   );
 };
