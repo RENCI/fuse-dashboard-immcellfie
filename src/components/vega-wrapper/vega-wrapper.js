@@ -54,6 +54,7 @@ export const VegaWrapper = ({ spec, data }) => {
       <Spinner 
         className="ml-1"
         animation="border" 
+        variant="info"
         size="sm" 
         as="span" 
       />

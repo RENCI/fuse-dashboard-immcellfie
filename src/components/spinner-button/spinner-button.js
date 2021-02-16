@@ -1,11 +1,11 @@
 import React from "react";
 import { Button, Spinner } from "react-bootstrap";
 
-export const SpinnerButton = ({ children, variant, spin, onClick }) => {
+export const SpinnerButton = ({ children, variant, disabled, spin, onClick }) => {
   return (
     <Button
       variant={ variant }
-      disabled={ spin }
+      disabled={ disabled }
       onClick={ onClick }>
       { children }      
       { spin && 
