@@ -3,8 +3,7 @@ import Builder from "escher";
 import { json } from "d3-fetch";
 import "./escher-wrapper.css"; 
 
-
-export const EscherWrapper = ({ map }) => {
+export const EscherWrapper = ({ map, onLoaded }) => {
   const div = useRef();
   const builder = useRef()
 
@@ -37,13 +36,17 @@ export const EscherWrapper = ({ map }) => {
 
   useEffect(() => {
     json(map).then(map => { 
-      if (builder.current) builder.current.load_map(map);
+      if (builder.current) {
+        builder.current.load_map(map);
+
+        onLoaded();
+      }
     }).catch(error => {
       console.log(error);
     });
   }, [builder.current, map])
 
-  return (
+  return (       
     <div className="wrapperDiv" ref={ div }></div>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useCallback } from "react";
-import { Spinner } from "react-bootstrap";
 import vegaEmbed from "vega-embed";
+import { LoadingSpinner } from "../loading-spinner";
 import "./vega-wrapper.css";
 
 const options = {
@@ -50,14 +50,7 @@ export const VegaWrapper = ({ spec, data }) => {
 
   return (
     <div className="wrapperDiv" ref={ div }>
-      Loading 
-      <Spinner 
-        className="ml-1"
-        animation="border" 
-        variant="info"
-        size="sm" 
-        as="span" 
-      />
+      <LoadingSpinner />
     </div>
   );
 };

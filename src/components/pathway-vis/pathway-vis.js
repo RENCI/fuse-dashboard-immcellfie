@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Form } from "react-bootstrap";
 import { EscherWrapper } from "../escher-wrapper";
+import { LoadingSpinner } from "../loading-spinner";
 import "./pathway-vis.css";
 
 const { Group, Control, Label } = Form;
@@ -17,6 +18,7 @@ const maps = [
 ];
 
 export const PathwayVis = () => {
+  const [loading, setLoading] = useState(true);
   const [map, setMap] = useState(maps[0]);
 
   const options = maps.map((map, i) => (
@@ -28,19 +30,32 @@ export const PathwayVis = () => {
     </option>
   ));
 
+  const onMapChange = evt => {
+    setMap(evt.target.value);
+    setLoading(true);
+  }
+
+  const onLoaded = () => {
+    setLoading(false);
+  }
+
   return (
     <>
       <Group>
-        <Label>Select map</Label>
+        <Label>{ loading ? <LoadingSpinner /> : "Select map" }</Label>
         <Control 
           as="select"
           value={ map }
-          onChange={ evt => setMap(evt.target.value) }
+          disabled={ loading }
+          onChange={ onMapChange }
         >
           { options }
         </Control>
       </Group>
-      <EscherWrapper map={ map ? path + map + ".json" : null } />
+      <EscherWrapper 
+        map={ map ? path + map + ".json" : null } 
+        onLoaded={ onLoaded }
+      />
     </>
   );
 };
