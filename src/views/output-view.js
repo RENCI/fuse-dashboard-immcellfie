@@ -4,7 +4,7 @@ import * as d3 from "d3";
 import { DataContext } from "../contexts";
 import { VegaWrapper } from "../components/vega-wrapper";
 import { taskHeatmap, treemap, enclosure } from "../vega-specs";
-import { EscherWrapper } from "../components/escher-wrapper";
+import { PathwayVis } from "../components/pathway-vis";
 
 export const OutputView = () => {
   const [data] = useContext(DataContext);
@@ -165,7 +165,7 @@ export const OutputView = () => {
               title="Pathway map "
             >
               <div className="mt-3">
-                <EscherWrapper />
+                <PathwayVis />
               </div>
             </Tab>
           </Tabs>          
