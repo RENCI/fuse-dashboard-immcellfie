@@ -13,6 +13,9 @@ ENV NODE_VERSION 10.13.0
 
 # Install and cache app dependencies
 COPY package*.json ./
+RUN apk update && \
+    apk add --update git && \
+    apk add --update openssh
 RUN npm install
 
 EXPOSE 80
