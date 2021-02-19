@@ -5,38 +5,8 @@ import "./escher-wrapper.css";
 
 export const EscherWrapper = () => {
   const div = useRef();
-  
-  const draw = () => {
-    json("/data/escher/iJO1366.json").then(model => {  
-      const options1 = {
-        menu: 'all',
-        use_3d_transform: true,
-        enable_editing: true,
-        enable_keys: true,
-        first_load_callback,
-        fill_screen: false,
-        never_ask_before_quit: true,
-        show_gene_reaction_rules: false,
-        full_screen_button: true,
-        reaction_data: { PPS: 20, THZPSN3: 20 },
-        metabolite_data: { atp_c: 20 },
-        // reaction_no_data_size: 25,
-        // metabolite_no_data_size: 25,
-        canvas_size_and_loc: {
-          x: -900,
-          y: -900,
-          width: 2000,
-          height: 2000
-        }
-      };
-  
-      Builder(null, model, null, div.current, options1)
-    }).catch(error => {
-      console.log(error);
-    });
-  }
 
-  const first_load_callback = builder => {
+  const first_load_callback_old = builder => {
     // Draw the reaction
     const draw = (bigg_id, loc, rot) => {
       builder.map.new_reaction_from_scratch(bigg_id, loc, rot);
@@ -68,6 +38,37 @@ export const EscherWrapper = () => {
     // After building a reaction, Escher selects the newest
     // metabolite. Unselect it like this.
     builder.map.select_none();
+  };
+
+  const first_load_callback = builder => {
+    json("/data/escher/Amino_Acids_Metabolism.json").then(map => { 
+      builder.load_map(map);
+    }).catch(error => {
+      console.log(error);
+    });
+  };
+  
+  const draw = () => {     
+    const options = {
+      menu: 'all',
+      scroll_behavior: 'zoom',
+      use_3d_transform: false,
+      enable_editing: false,
+      enable_keys: true,
+      enable_search: false,
+      fill_screen: false,
+      zoom_to_element: null,
+      full_screen_button: true,
+      starting_reaction: null,
+      never_ask_before_quit: true,        
+      show_gene_reaction_rules: false,
+      hide_secondary_metabolites: false,
+      show_gene_reaction_rules: false,
+      hide_all_labels: false,    
+      first_load_callback
+    };
+
+    Builder(null, null, null, div.current, options)
   };
 
   useEffect(() => {
