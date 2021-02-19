@@ -4,6 +4,7 @@ import * as d3 from "d3";
 import { DataContext } from "../contexts";
 import { VegaWrapper } from "../components/vega-wrapper";
 import { taskHeatmap, treemap, enclosure } from "../vega-specs";
+import { PathwayVis } from "../components/pathway-vis";
 
 export const OutputView = () => {
   const [data] = useContext(DataContext);
@@ -125,17 +126,6 @@ export const OutputView = () => {
             unmountOnExit={ true }
           >
             <Tab 
-              eventKey="heatmap" 
-              title="Heatmap"
-            >
-              <div className="mt-3">
-                <VegaWrapper 
-                  spec={ taskHeatmap } 
-                  data={ tree.descendants() } 
-                />
-              </div>
-            </Tab>
-            <Tab 
               eventKey="treemap" 
               title="Treemap"
             >
@@ -158,6 +148,25 @@ export const OutputView = () => {
                   data={ hierarchyData } 
                 />
               </div>  
+            </Tab>
+            <Tab 
+              eventKey="heatmap" 
+              title="Heatmap"
+            >
+              <div className="mt-3">
+                <VegaWrapper 
+                  spec={ taskHeatmap } 
+                  data={ tree.descendants() } 
+                />
+              </div>
+            </Tab>
+            <Tab 
+              eventKey="escher" 
+              title="Pathway map "
+            >
+              <div className="mt-3">
+                <PathwayVis />
+              </div>
             </Tab>
           </Tabs>          
         </>
