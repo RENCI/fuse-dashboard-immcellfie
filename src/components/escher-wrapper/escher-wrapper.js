@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import Builder from "escher";
-import { json } from "d3-fetch";
+import { json, csv } from "d3-fetch";
 import "./escher-wrapper.css"; 
 
 export const EscherWrapper = ({ map, onLoaded }) => {
@@ -9,6 +9,16 @@ export const EscherWrapper = ({ map, onLoaded }) => {
 
   const first_load_callback = escherBuilder => {
     builder.current = escherBuilder;
+
+    csv("/data/escher/EscherDataTest1.csv").then(data => {
+      const reactionData = data.reduce((reactionData, reaction) => {
+        reactionData[reaction.RxnID] = reaction.RxnScore;
+
+        return reactionData;
+      }, {});
+
+      builder.current.set_reaction_data([reactionData]);
+    });
   };
 
   useEffect(() => {
