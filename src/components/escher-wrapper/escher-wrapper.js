@@ -1,7 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import Builder from "escher";
 import { json, csv } from "d3-fetch";
-import * as d3 from "d3-selection";
 import "./escher-wrapper.css"; 
 
 export const EscherWrapper = ({ map, onLoaded }) => {
@@ -37,7 +36,6 @@ export const EscherWrapper = ({ map, onLoaded }) => {
       never_ask_before_quit: true,        
       show_gene_reaction_rules: false,
       hide_secondary_metabolites: false,
-      show_gene_reaction_rules: false,
       hide_all_labels: false,
       first_load_callback
     };
@@ -55,7 +53,7 @@ export const EscherWrapper = ({ map, onLoaded }) => {
     }).catch(error => {
       console.log(error);
     });
-  }, [builder.current, map])
+  }, [map, onLoaded])
 
   return (       
     <div className="wrapperDiv" ref={ div }></div>
