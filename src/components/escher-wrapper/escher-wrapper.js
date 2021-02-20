@@ -1,11 +1,12 @@
 import React, { useRef, useEffect } from "react";
 import Builder from "escher";
 import { json, csv } from "d3-fetch";
+import * as d3 from "d3-selection";
 import "./escher-wrapper.css"; 
 
 export const EscherWrapper = ({ map, onLoaded }) => {
   const div = useRef();
-  const builder = useRef()
+  const builder = useRef();
 
   const first_load_callback = escherBuilder => {
     builder.current = escherBuilder;
@@ -28,7 +29,7 @@ export const EscherWrapper = ({ map, onLoaded }) => {
       use_3d_transform: false,
       enable_editing: false,
       enable_keys: true,
-      enable_search: false,
+      enable_search: true,
       fill_screen: false,
       zoom_to_element: null,
       full_screen_button: true,
