@@ -1,9 +1,10 @@
 import React, { useContext } from "react";
 import { Tabs, Tab } from "react-bootstrap";
 import * as d3 from "d3";
+import d3VoronoiTreemap from "d3-voronoi-treemap";
 import { DataContext } from "../contexts";
 import { VegaWrapper } from "../components/vega-wrapper";
-import { taskHeatmap, treemap, enclosure } from "../vega-specs";
+import { taskHeatmap, treemap, enclosure, voronoiTreemap } from "../vega-specs";
 import { PathwayVis } from "../components/pathway-vis";
 
 export const OutputView = () => {
