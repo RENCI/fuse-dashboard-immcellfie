@@ -123,17 +123,20 @@ export const OutputView = () => {
   const height = 980;
   const prng = d3.randomUniform.source(d3.randomLcg(0))();
 
+  const n = 64;
+  const clip = d3.range(0, n).map(d => {
+    return [
+      Math.cos(d / n * Math.PI * 2) * width / 2 + width / 2, 
+      Math.sin(d / n * Math.PI * 2) * width / 2 + width / 2
+    ];
+  });
+
   tree
     .count()
     .sort((a, b) => b.height - a.height || b.data.score - a.data.score);
 
   const voronoi = d3VoronoiTreemap()
-    .clip([
-      [0, 0],
-      [0, height],
-      [width, height],
-      [width, 0],
-    ])
+    .clip(clip)
     .prng(prng)
     .maxIterationCount(5);
 
