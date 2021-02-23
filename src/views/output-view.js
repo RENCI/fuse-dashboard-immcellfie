@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import { Tabs, Tab } from "react-bootstrap";
 import * as d3 from "d3";
-import { voronoiTreemap as d3VoronoiTreemap } from "d3-voronoi-treemap";
 import { DataContext } from "../contexts";
 import { VegaWrapper } from "../components/vega-wrapper";
 import { taskHeatmap } from "../vega-specs";
@@ -117,36 +116,6 @@ export const OutputView = () => {
       node.data.tooltip.phenotype = node.parent.data.phenotype.join(" → ");
     }
   });
-
-  // Voronoi
-  const width = 980;
-  const height = 980;
-  const prng = d3.randomUniform.source(d3.randomLcg(0))();
-
-  const n = 64;
-  const clip = d3.range(0, n).map(d => {
-    return [
-      Math.cos(d / n * Math.PI * 2) * width / 2 + width / 2, 
-      Math.sin(d / n * Math.PI * 2) * width / 2 + width / 2
-    ];
-  });
-
-  tree
-    .count()
-    .sort((a, b) => b.height - a.height || b.data.score - a.data.score);
-
-  const voronoi = d3VoronoiTreemap()
-    .clip(clip)
-    .prng(prng)
-    .maxIterationCount(5);
-
-  voronoi(tree);
-
-  tree.each(d => {
-    d.path = d3.line()(d.polygon) + "z";
-  });
-
-  console.log(tree.descendants());
 
   return (
     <>

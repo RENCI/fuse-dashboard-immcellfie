@@ -1,7 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Form, ToggleButtonGroup, ToggleButton } from "react-bootstrap";
+import * as d3 from "d3";
+import { voronoiTreemap as d3VoronoiTreemap } from "d3-voronoi-treemap";
 import { VegaWrapper } from "../vega-wrapper";
 import { treemap, enclosure, voronoiTreemap } from "../../vega-specs";
+import { LoadingSpinner } from "../loading-spinner";
 import "./hierarchy-vis.css";
 
 const { Group } = Form; 
@@ -25,10 +28,13 @@ const visualizations = [
 ];
 
 export const HierarchyVis = ({ data, tree }) => {
+  const [loading, setLoading] = useState(true);
   const [vis, setVis] = useState(visualizations[0]);
   const vegaRef = useRef();
 
   const onVisChange = evt => {
+    setLoading(true);
+
     const vis = visualizations.find(({ name }) => name === evt.target.value);
 
     setVis(vis);
@@ -37,6 +43,45 @@ export const HierarchyVis = ({ data, tree }) => {
   useEffect(() => {
     console.log(vegaRef.current ? vegaRef.current.offsetWidth : "");
   }, []);
+
+  useEffect(() => {
+    if (vis.name === "voronoi" && !tree.descendants()[0].polygon) {
+      setTimeout(() => {
+        const width = 980;
+        const prng = d3.randomUniform.source(d3.randomLcg(0))();
+
+        const n = 64;
+        const clip = d3.range(0, n).map(d => {
+          return [
+            Math.cos(d / n * Math.PI * 2) * width / 2 + width / 2, 
+            Math.sin(d / n * Math.PI * 2) * width / 2 + width / 2
+          ];
+        });
+
+        tree
+          .count()
+          .sort((a, b) => b.height - a.height || b.data.score - a.data.score);
+
+        const voronoi = d3VoronoiTreemap()
+          .clip(clip)
+          .prng(prng)
+          .maxIterationCount(10);
+
+        voronoi(tree);
+
+        tree.each(d => {
+          d.path = d3.line()(d.polygon) + "z";
+        });
+
+        console.log(tree.descendants());
+
+        setLoading(false);
+      }, 0);      
+    }
+    else {
+      setLoading(false);
+    }
+  }, [vis, tree]);
 
   return (
     <>
@@ -60,6 +105,7 @@ export const HierarchyVis = ({ data, tree }) => {
         </ToggleButtonGroup>
       </Group>
       <div ref={vegaRef }>
+          { loading &&<LoadingSpinner /> }
         <VegaWrapper
           spec={ vis.spec }
           data={ vis.spec === voronoiTreemap ? tree.descendants() : data }
