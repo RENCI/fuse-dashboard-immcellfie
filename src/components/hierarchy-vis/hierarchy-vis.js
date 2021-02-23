@@ -41,13 +41,10 @@ export const HierarchyVis = ({ data, tree }) => {
   };
 
   useEffect(() => {
-    console.log(vegaRef.current ? vegaRef.current.offsetWidth : "");
-  }, []);
-
-  useEffect(() => {
     if (vis.name === "voronoi" && !tree.descendants()[0].polygon) {
+      // Create Voronoi diagram, use setTimout so loading state can update
       setTimeout(() => {
-        const width = 980;
+        const width = vegaRef.current.clientWidth * 0.8;
         const prng = d3.randomUniform.source(d3.randomLcg(0))();
 
         const n = 64;
@@ -105,11 +102,12 @@ export const HierarchyVis = ({ data, tree }) => {
         </ToggleButtonGroup>
       </Group>
       <div ref={vegaRef }>
-          { loading &&<LoadingSpinner /> }
-        <VegaWrapper
-          spec={ vis.spec }
-          data={ vis.spec === voronoiTreemap ? tree.descendants() : data }
-        />
+        { loading ? <LoadingSpinner /> : 
+          <VegaWrapper
+            spec={ vis.spec }
+            data={ vis.spec === voronoiTreemap ? tree.descendants() : data }
+          />
+        }
       </div>
     </>
   );
