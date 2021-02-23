@@ -79,9 +79,9 @@ export const enclosure = {
         },
         {
           type: "pack",
-          padding: 1,   
+          padding: 1,    
           sort: {
-            field: ["depth", "data.score"],
+            field: ["depth", "data.name"],
             order: ["ascending", "descending"]
           },
           size: [

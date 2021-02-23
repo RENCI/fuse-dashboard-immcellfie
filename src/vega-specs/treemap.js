@@ -85,7 +85,7 @@ export const treemap = {
           paddingOuter: 8,
           round: true,    
           sort: {
-            field: ["depth", "data.score"],
+            field: ["depth", "data.name"],
             order: ["ascending", "descending"]
           },
           size: [

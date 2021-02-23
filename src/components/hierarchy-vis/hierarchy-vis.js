@@ -73,7 +73,7 @@ export const HierarchyVis = ({ data, tree }) => {
         console.log(tree.descendants());
 
         setLoading(false);
-      }, 0);      
+      }, 10);      
     }
     else {
       setLoading(false);
