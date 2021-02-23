@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Tabs, Tab } from "react-bootstrap";
 import * as d3 from "d3";
-import d3VoronoiTreemap from "d3-voronoi-treemap";
+import { voronoiTreemap as d3VoronoiTreemap } from "d3-voronoi-treemap";
 import { DataContext } from "../contexts";
 import { VegaWrapper } from "../components/vega-wrapper";
 import { taskHeatmap, treemap, enclosure, voronoiTreemap } from "../vega-specs";
@@ -117,6 +117,33 @@ export const OutputView = () => {
     }
   });
 
+  // Voronoi
+  const width = 800;
+  const height = 800;
+
+  tree.count();
+
+  const voronoi = d3VoronoiTreemap().clip([
+    [0, 0],
+    [0, height],
+    [width, height],
+    [width, 0],
+  ]);
+
+  voronoi(tree);
+
+  tree.each(d => {
+    d.label = d.data.label;
+    d.score = d.data.score;
+    d.activity = d.data.activity;
+    d.tooltip = d.data.tooltip;
+    d.path = d3.line()(d.polygon) + "z";
+    d.x = d3.mean(d.polygon, d => d[0]);
+    d.y = d3.mean(d.polygon, d => d[1]);
+  });
+
+  console.log(tree.descendants());
+
   return (
     <>
       { output ? 
@@ -147,6 +174,18 @@ export const OutputView = () => {
                   className="mt-3"
                   spec={ enclosure } 
                   data={ hierarchyData } 
+                />
+              </div>  
+            </Tab>
+            <Tab 
+              eventKey="voronoi" 
+              title="Voronoi treemap"
+            >
+              <div className="mt-3">
+                <VegaWrapper 
+                  className="mt-3"
+                  spec={ voronoiTreemap } 
+                  data={ tree.descendants() } 
                 />
               </div>  
             </Tab>

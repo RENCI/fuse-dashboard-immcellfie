@@ -106,14 +106,6 @@ export const enclosure = {
         type: "filter",
         expr: "datum.depth < 4",
       }]
-    },
-    { 
-      name: "leaves",
-      source: "data",
-      transform: [{
-        type: "filter",
-        expr: "datum.depth === 4"
-      }]
     }
   ],
   scales: [
