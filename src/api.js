@@ -66,8 +66,6 @@ export const api = {
       const outputData = parseTSVOutput(output.data);
       //const outputData = parseCSVOutput(output.data);
 
-      console.log(outputData);
-
       return [inputData, outputData];
     }
     catch (error) {

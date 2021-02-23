@@ -75,6 +75,11 @@ export const voronoiTreemap = {
         {
           type: "filter",
           expr: "datum.depth > 0 && datum.depth <= depth",
+        },
+        {
+          type: "formula",
+          as: "value",
+          expr: "datum.data[value]"
         }
       ]
     },
@@ -101,7 +106,7 @@ export const voronoiTreemap = {
       type: "linear",
       domain: { 
         data: "data", 
-        field: { signal: "value" } 
+        field: "value"
       },
       range: { scheme: { signal: "colorScheme" } }
     },
@@ -133,7 +138,7 @@ export const voronoiTreemap = {
         update: {
           fill: {
             scale: "color",
-            field: { signal: "value" }
+            field: "value"
           },
           stroke: { 
             scale: "stroke",
@@ -182,7 +187,7 @@ export const voronoiTreemap = {
         update: {
           stroke: { value: "none" },
           path: { field: "path" },
-          tooltip: { signal: "datum.tooltip" }
+          tooltip: { signal: "datum.data.tooltip" }
         },
         hover: {
           stroke: { signal: "colorScheme === 'lightgreyred' ? '#2171b5' : '#a50f15'" }
@@ -195,7 +200,7 @@ export const voronoiTreemap = {
       interactive: false,
       encode: {
         enter: {
-          text: { field: "label" },
+          text: { field: "data.label" },
           align: { value: "center" },
           baseline: { value: "middle" },
           fill: { value: "#000" },
@@ -204,8 +209,8 @@ export const voronoiTreemap = {
           blend: { value: "difference" }
         },
         update: {
-          x: { field: "x" },
-          y: { field: "y" },
+          x: { field: "polygon.site.x" },
+          y: { field: "polygon.site.y" },
           opacity: { signal: "labelOpacity" }
         }
       }      

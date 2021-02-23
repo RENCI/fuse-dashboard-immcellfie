@@ -134,18 +134,13 @@ export const OutputView = () => {
       [width, height],
       [width, 0],
     ])
-    .prng(prng);
+    .prng(prng)
+    .maxIterationCount(5);
 
   voronoi(tree);
 
   tree.each(d => {
-    d.label = d.data.label;
-    d.score = d.data.score;
-    d.activity = d.data.activity;
-    d.tooltip = d.data.tooltip;
     d.path = d3.line()(d.polygon) + "z";
-    d.x = d3.mean(d.polygon, d => d[0]);
-    d.y = d3.mean(d.polygon, d => d[1]);
   });
 
   console.log(tree.descendants());
