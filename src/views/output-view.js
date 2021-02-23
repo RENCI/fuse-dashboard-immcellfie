@@ -119,17 +119,22 @@ export const OutputView = () => {
   });
 
   // Voronoi
-  const width = 800;
-  const height = 800;
+  const width = 980;
+  const height = 980;
+  const prng = d3.randomUniform.source(d3.randomLcg(0))();
 
-  tree.count();
+  tree
+    .count()
+    .sort((a, b) => b.height - a.height || b.data.score - a.data.score);
 
-  const voronoi = d3VoronoiTreemap().clip([
-    [0, 0],
-    [0, height],
-    [width, height],
-    [width, 0],
-  ]);
+  const voronoi = d3VoronoiTreemap()
+    .clip([
+      [0, 0],
+      [0, height],
+      [width, height],
+      [width, 0],
+    ])
+    .prng(prng);
 
   voronoi(tree);
 

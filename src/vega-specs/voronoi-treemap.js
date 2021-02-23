@@ -143,15 +143,18 @@ export const voronoiTreemap = {
             scale: "strokeWidth",
             field: "depth"
           },
-          path: { field: "path" },
-          zindex: { field: "depth" }
+          path: { field: "path" }
         }
       }
     },
     {
       type: "path",
       from: { data: "data" }, 
-      interactive: false,    
+      interactive: false, 
+      sort: { 
+        field: "datum.depth",
+        order: "descending"
+      },   
       encode: {
         update: {
           fill: "none",
@@ -163,8 +166,7 @@ export const voronoiTreemap = {
             scale: "strokeWidth",
             field: "depth"
           },
-          path: { field: "path" },
-          zindex: { field: "height" }
+          path: { field: "path" }
         }
       }
     },
@@ -180,7 +182,6 @@ export const voronoiTreemap = {
         update: {
           stroke: { value: "none" },
           path: { field: "path" },
-          zindex: { field: "depth" },
           tooltip: { signal: "datum.tooltip" }
         },
         hover: {

@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Form, ToggleButtonGroup, ToggleButton } from "react-bootstrap";
 import { VegaWrapper } from "../vega-wrapper";
 import { treemap, enclosure, voronoiTreemap } from "../../vega-specs";
-import { LoadingSpinner } from "../loading-spinner";
 import "./hierarchy-vis.css";
 
-const { Group, Control, Label } = Form; 
+const { Group } = Form; 
 
 const visualizations = [
   {
@@ -26,18 +25,18 @@ const visualizations = [
 ];
 
 export const HierarchyVis = ({ data, tree }) => {
-  const [loading, setLoading] = useState(true);
   const [vis, setVis] = useState(visualizations[0]);
-
-  const onLoaded = () => {
-    setLoading(false);
-  };
+  const vegaRef = useRef();
 
   const onVisChange = evt => {
     const vis = visualizations.find(({ name }) => name === evt.target.value);
 
     setVis(vis);
   };
+
+  useEffect(() => {
+    console.log(vegaRef.current ? vegaRef.current.offsetWidth : "");
+  }, []);
 
   return (
     <>
@@ -60,10 +59,12 @@ export const HierarchyVis = ({ data, tree }) => {
           ))}
         </ToggleButtonGroup>
       </Group>
-      <VegaWrapper
-        spec={ vis.spec }
-        data={ vis.spec === voronoiTreemap ? tree.descendants() : data }
-      />
+      <div ref={vegaRef }>
+        <VegaWrapper
+          spec={ vis.spec }
+          data={ vis.spec === voronoiTreemap ? tree.descendants() : data }
+        />
+      </div>
     </>
   );
 };

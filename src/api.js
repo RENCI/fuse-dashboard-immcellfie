@@ -12,7 +12,7 @@ const parseInput = data => {
   };
 };
 
-const parseOutput = data => {
+const parseTSVOutput = data => {
   return {
     tasks: d3.tsvParseRows(data, row => {
       if (row.length !== 3) return null;
@@ -35,14 +35,38 @@ const parseOutput = data => {
   };
 };
 
+const parseCSVOutput = data => {
+  return {
+    tasks: d3.csvParseRows(data, (row, i) => {
+      if (i === 0) return;
+
+      const offset = 4;
+      const n = (row.length - offset) / 2;
+
+      return {
+        id: row[0],
+        name: row[1],        
+        phenotype: [row[1], row[3], row[2]],
+        scores: row.slice(offset, offset + n).map(d => +d),
+        activities: row.slice(offset + n).map(d => +d),
+      };      
+    })
+  };
+};
+
 export const api = {
   loadPracticeData: async () => {
     try {
       const input = await axios.get(`${process.env.REACT_APP_DATA_API_ROOT}HPA.tsv`);
       const output = await axios.get(`${process.env.REACT_APP_DATA_API_ROOT}HPA.expected`);
+      //const output = await axios.get(`${process.env.REACT_APP_DATA_API_ROOT}ASD.output`);
+      //const output = await axios.get(`${process.env.REACT_APP_DATA_API_ROOT}TD.output`);
 
       const inputData = parseInput(input.data);
-      const outputData = parseOutput(output.data);
+      const outputData = parseTSVOutput(output.data);
+      //const outputData = parseCSVOutput(output.data);
+
+      console.log(outputData);
 
       return [inputData, outputData];
     }
