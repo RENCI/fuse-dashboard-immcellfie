@@ -5,7 +5,7 @@ import "./escher-wrapper.css";
 
 export const EscherWrapper = ({ map, onLoaded }) => {
   const div = useRef();
-  const builder = useRef()
+  const builder = useRef();
 
   const first_load_callback = escherBuilder => {
     builder.current = escherBuilder;
@@ -28,7 +28,7 @@ export const EscherWrapper = ({ map, onLoaded }) => {
       use_3d_transform: false,
       enable_editing: false,
       enable_keys: true,
-      enable_search: false,
+      enable_search: true,
       fill_screen: false,
       zoom_to_element: null,
       full_screen_button: true,
@@ -36,7 +36,6 @@ export const EscherWrapper = ({ map, onLoaded }) => {
       never_ask_before_quit: true,        
       show_gene_reaction_rules: false,
       hide_secondary_metabolites: false,
-      show_gene_reaction_rules: false,
       hide_all_labels: false,
       first_load_callback
     };
@@ -54,7 +53,7 @@ export const EscherWrapper = ({ map, onLoaded }) => {
     }).catch(error => {
       console.log(error);
     });
-  }, [builder.current, map])
+  }, [map, onLoaded])
 
   return (       
     <div className="wrapperDiv" ref={ div }></div>

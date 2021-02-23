@@ -1,8 +1,8 @@
-export const treemap = {
+export const voronoiTreemap = {
   $schema: "https://vega.github.io/schema/vega/v5.json",
   width: { signal: "containerWidth" },
   height: { signal: "containerWidth" },
-  title: { text: "Metabolic task treemap" },
+  title: { text: "Metabolic task Voronoi treemap" },
   autosize: {
     type: "fit",
     resize: true
@@ -73,27 +73,6 @@ export const treemap = {
       name: "data",
       transform: [
         {
-          type: "stratify",
-          key: "name",
-          parentKey: "parent"
-        },
-        {
-          type: "treemap",
-          method: "squarify",
-          ratio: 1,
-          paddingInner: 0,
-          paddingOuter: 8,
-          round: true,    
-          sort: {
-            field: ["depth", "data.score"],
-            order: ["ascending", "descending"]
-          },
-          size: [
-            { signal: "width" }, 
-            { signal: "width" }
-          ]
-        },
-        {
           type: "filter",
           expr: "datum.depth > 0 && datum.depth <= depth",
         }
@@ -108,7 +87,7 @@ export const treemap = {
       }]
     },
     { 
-      name: "interior",
+      name: "nodes",
       source: "data",
       transform: [{
         type: "filter",
@@ -147,13 +126,9 @@ export const treemap = {
   ],
   marks: [
     {
-      type: "rect",
+      type: "path",
       from: { data: "data" }, 
       interactive: false,    
-      sort: {
-        field: ["height", "value"],
-        order: ["descending", "descending"]
-      },
       encode: {
         update: {
           fill: {
@@ -168,16 +143,34 @@ export const treemap = {
             scale: "strokeWidth",
             field: "depth"
           },
-          x: { field: "x0" },
-          y: { field: "y0" },
-          x2: { field: "x1" },
-          y2: { field: "y1" }
+          path: { field: "path" },
+          zindex: { field: "depth" }
         }
       }
     },
     {
-      type: "rect",
-      from: { data: "interior" },
+      type: "path",
+      from: { data: "data" }, 
+      interactive: false,    
+      encode: {
+        update: {
+          fill: "none",
+          stroke: { 
+            scale: "stroke",
+            field: "depth"
+          },
+          strokeWidth: {
+            scale: "strokeWidth",
+            field: "depth"
+          },
+          path: { field: "path" },
+          zindex: { field: "height" }
+        }
+      }
+    },
+    {
+      type: "path",
+      from: { data: "nodes" },
       encode: {
         enter: {
           fill: { value: "#000" },
@@ -186,10 +179,8 @@ export const treemap = {
         },
         update: {
           stroke: { value: "none" },
-          x: { field: "x0" },
-          y: { field: "y0" },
-          x2: { field: "x1" },
-          y2: { field: "y1" },
+          path: { field: "path" },
+          zindex: { field: "depth" },
           tooltip: { signal: "datum.tooltip" }
         },
         hover: {
@@ -212,11 +203,11 @@ export const treemap = {
           blend: { value: "difference" }
         },
         update: {
-          x: { signal: "0.5 * (datum.x0 + datum.x1)" },
-          y: { signal: "0.5 * (datum.y0 + datum.y1)" },
+          x: { field: "x" },
+          y: { field: "y" },
           opacity: { signal: "labelOpacity" }
         }
-      }
-    }
+      }      
+    } 
   ]
 };

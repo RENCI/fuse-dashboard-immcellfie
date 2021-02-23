@@ -4,3 +4,11 @@
   display: flex;
   align-items: center;
 }
+
+.menu-bar > li {
+  display: none !important;
+}
+
+.menu-bar > li:nth-child(5) {
+  display: block !important;
+}

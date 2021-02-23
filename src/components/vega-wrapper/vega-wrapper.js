@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback } from "react";
+import React, { useRef, useEffect } from "react";
 import vegaEmbed from "vega-embed";
 import { LoadingSpinner } from "../loading-spinner";
 import "./vega-wrapper.css";
@@ -17,13 +17,13 @@ export const VegaWrapper = ({ spec, data }) => {
   const view = useRef(null);
   const div = useRef(null);
 
-  const updateVisualization = useCallback(() => {
-    if (!view.current) return;
+  const updateVisualization = (view, data) => {
+    if (!view) return;
 
-    view.current
+    view
       .data("data", data)
       .run();
-  }, [data]);
+  };
 
   useEffect(() => {
     // Remove old visualization
@@ -35,18 +35,14 @@ export const VegaWrapper = ({ spec, data }) => {
     vegaEmbed(div.current, spec, options).then(result => {
       view.current = result.view;
 
-      updateVisualization();
+      updateVisualization(view.current, data);
     });
 
     return () => {
       // Clean up
       view.current.finalize();
     };
-  }, [spec, updateVisualization]);
-
-  useEffect(() => {
-    updateVisualization();
-  }, [updateVisualization]);
+  }, [spec, data]);
 
   return (
     <div className="wrapperDiv" ref={ div }>
