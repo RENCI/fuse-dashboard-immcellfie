@@ -4,7 +4,8 @@ import * as d3 from "d3";
 import { voronoiTreemap as d3VoronoiTreemap } from "d3-voronoi-treemap";
 import { DataContext } from "../contexts";
 import { VegaWrapper } from "../components/vega-wrapper";
-import { taskHeatmap, treemap, enclosure, voronoiTreemap } from "../vega-specs";
+import { taskHeatmap } from "../vega-specs";
+import { HierarchyVis } from "../components/hierarchy-vis";
 import { PathwayVis } from "../components/pathway-vis";
 
 export const OutputView = () => {
@@ -153,41 +154,16 @@ export const OutputView = () => {
             mountOnEnter={ true }
             unmountOnExit={ true }
           >
-            <Tab 
-              eventKey="treemap" 
-              title="Treemap"
+            <Tab
+              eventKey="hierarchy"
+              title="Hierarchy"
             >
               <div className="mt-3">
-                <VegaWrapper 
-                  className="mt-3"
-                  spec={ treemap } 
-                  data={ hierarchyData } 
+                <HierarchyVis
+                  data={ hierarchyData }
+                  tree={ tree } 
                 />
-              </div>  
-            </Tab>
-            <Tab 
-              eventKey="enclosure" 
-              title="Enclosure diagram"
-            >
-              <div className="mt-3">
-                <VegaWrapper 
-                  className="mt-3"
-                  spec={ enclosure } 
-                  data={ hierarchyData } 
-                />
-              </div>  
-            </Tab>
-            <Tab 
-              eventKey="voronoi" 
-              title="Voronoi treemap"
-            >
-              <div className="mt-3">
-                <VegaWrapper 
-                  className="mt-3"
-                  spec={ voronoiTreemap } 
-                  data={ tree.descendants() } 
-                />
-              </div>  
+              </div>
             </Tab>
             <Tab 
               eventKey="heatmap" 
