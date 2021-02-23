@@ -79,7 +79,11 @@ export const enclosure = {
         },
         {
           type: "pack",
-          padding: 1,
+          padding: 1,   
+          sort: {
+            field: ["depth", "data.score"],
+            order: ["ascending", "descending"]
+          },
           size: [
             { signal: "width" }, 
             { signal: "width" }
@@ -100,7 +104,7 @@ export const enclosure = {
       }]
     },
     { 
-      name: "nodes",
+      name: "interior",
       source: "data",
       transform: [{
         type: "filter",
@@ -166,14 +170,13 @@ export const enclosure = {
           },
           x: { field: "x" },
           y: { field: "y" },
-          size: { signal: "4 * datum.r * datum.r" },
-          zindex: { field: "depth" }
+          size: { signal: "4 * datum.r * datum.r" }
         }
       }
     },
     {
       type: "symbol",
-      from: { data: "nodes" },
+      from: { data: "interior" },
       encode: {
         enter: {
           fill: { value: "#000" },
@@ -185,7 +188,6 @@ export const enclosure = {
           x: { field: "x" },
           y: { field: "y" },
           size: { signal: "4 * datum.r * datum.r" },
-          zindex: { field: "depth" },
           tooltip: { signal: "datum.tooltip" }
         },
         hover: {
