@@ -83,7 +83,11 @@ export const treemap = {
           ratio: 1,
           paddingInner: 0,
           paddingOuter: 8,
-          round: true,
+          round: true,    
+          sort: {
+            field: ["depth", "data.score"],
+            order: ["ascending", "descending"]
+          },
           size: [
             { signal: "width" }, 
             { signal: "width" }
@@ -104,7 +108,7 @@ export const treemap = {
       }]
     },
     { 
-      name: "nodes",
+      name: "interior",
       source: "data",
       transform: [{
         type: "filter",
@@ -154,6 +158,10 @@ export const treemap = {
       type: "rect",
       from: { data: "data" }, 
       interactive: false,    
+      sort: {
+        field: ["height", "value"],
+        order: ["descending", "descending"]
+      },
       encode: {
         update: {
           fill: {
@@ -171,14 +179,13 @@ export const treemap = {
           x: { field: "x0" },
           y: { field: "y0" },
           x2: { field: "x1" },
-          y2: { field: "y1" },
-          zindex: { field: "depth" }
+          y2: { field: "y1" }
         }
       }
     },
     {
       type: "rect",
-      from: { data: "nodes" },
+      from: { data: "interior" },
       encode: {
         enter: {
           fill: { value: "#000" },
@@ -191,7 +198,6 @@ export const treemap = {
           y: { field: "y0" },
           x2: { field: "x1" },
           y2: { field: "y1" },
-          zindex: { field: "depth" },
           tooltip: { signal: "datum.tooltip" }
         },
         hover: {
