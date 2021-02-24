@@ -136,10 +136,16 @@ export const voronoiTreemap = {
       interactive: false,    
       encode: {
         update: {
-          fill: {
-            scale: "color",
-            field: "value"
-          },
+          fill: [
+            {
+              test: "!isValid(datum.value)",
+              value: "#c6dbef"
+            },
+            {
+              scale: "color",
+              field: "value"
+            }            
+          ],
           stroke: { 
             scale: "stroke",
             field: "depth"

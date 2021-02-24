@@ -90,7 +90,7 @@ export const taskHeatmap = {
             round: true
           }
         },
-        fill: {      
+        fill: {   
           field: "value",
           type: "quantitative",
           scale: {
@@ -107,9 +107,9 @@ export const taskHeatmap = {
           { field: "activity" } 
         ]
       } 
-    },
+    }
+/*    ,
     {
-      /*
       transform: [
         {
           aggregate: [{
@@ -120,7 +120,6 @@ export const taskHeatmap = {
           groupby: ["data.name"]
         },
       ],
-      */
       selection: {
         highlight: {
           type: "single",
@@ -150,5 +149,6 @@ export const taskHeatmap = {
         }
       } 
     }
+*/    
   ]
 };

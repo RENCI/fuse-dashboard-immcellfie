@@ -95,7 +95,8 @@ export const OutputView = () => {
     node.data.subjects = d3.range(0, node.data.scores.length);
   });
 
-  const format = d3.format('.2f');
+  const format = d3.format(".2f")
+  const formatNumber = d => isNaN(d) ? "Inconclusive" : format(d);
 
   tree.eachBefore(node => {
     if (node.depth === 0) {
@@ -108,8 +109,8 @@ export const OutputView = () => {
 
     node.data.tooltip = {
       title: node.data.name,
-      score: format(node.data.score),
-      activity: format(node.data.activity)
+      score: formatNumber(node.data.score),
+      activity: formatNumber(node.data.activity)
     };    
 
     if (node.depth > 1) {
