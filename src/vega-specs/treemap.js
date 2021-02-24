@@ -29,23 +29,11 @@ export const treemap = {
     },
     {
       name: "depth",
-      value: 1,
-      bind: {
-        name: "Depth: ",
-        input: "range",
-        min: 1,
-        max: 4, 
-        step: 1
-      }
+      value: 1
     },      
     {
       name: "value",
-      value: "score",
-      bind: {
-        name: "Value: ",
-        input: "select",
-        options: ["score", "activity"]
-      }
+      value: "score"
     },      
     {
       name: "labelOpacity",

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Form, ToggleButtonGroup, ToggleButton } from "react-bootstrap";
+import { Form, Col, ToggleButtonGroup, ToggleButton } from "react-bootstrap";
 import * as d3 from "d3";
 import { voronoiTreemap as d3VoronoiTreemap } from "d3-voronoi-treemap";
 import { VegaWrapper } from "../vega-wrapper";
@@ -7,7 +7,7 @@ import { treemap, enclosure, voronoiTreemap } from "../../vega-specs";
 import { LoadingSpinner } from "../loading-spinner";
 import "./hierarchy-vis.css";
 
-const { Group } = Form; 
+const { Group, Label, Control, Row } = Form; 
 
 const visualizations = [
   {
@@ -29,6 +29,8 @@ const visualizations = [
 
 export const HierarchyVis = ({ data, tree }) => {
   const [loading, setLoading] = useState(true);
+  const [depth, setDepth] = useState(1);
+  const [value, setValue] = useState("score");
   const [vis, setVis] = useState(visualizations[0]);
   const vegaRef = useRef();
 
@@ -82,72 +84,67 @@ export const HierarchyVis = ({ data, tree }) => {
 
   return (
     <>
-      <Group>
-        <ToggleButtonGroup 
-          type="radio"
-          name="visButtons"
-          value={ vis.name }
-        >
-          { visualizations.map(({ name, label }, i) => (
-            <ToggleButton 
-              key={ i }
+      <Form className="mb-4">
+        <Row>
+          <Group as={ Col }>
+            <ToggleButtonGroup 
               type="radio"
-              variant="outline-primary"
-              value={ name }
-              onChange={ onVisChange }
+              name="visButtons"
+              value={ vis.name }
             >
-              { label }
-            </ToggleButton>
-          ))}
-        </ToggleButtonGroup>
-      </Group>
+              { visualizations.map(({ name, label }, i) => (
+                <ToggleButton 
+                  key={ i }
+                  type="radio"
+                  variant="outline-primary"
+                  value={ name }
+                  onChange={ onVisChange }
+                >
+                  { label }
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
+          </Group>
+        </Row>
+        <Row>
+          <Group as={ Col }>
+            <Label size="sm">Value</Label>
+            <Control
+              size="sm"
+              as="select"
+              value={ value }
+              onChange={ evt => setValue(evt.target.value) }          
+            >
+              <option>score</option>
+              <option>activity</option>
+            </Control>
+          </Group>
+          <Group as={ Col }>
+            <Label size="sm">Depth: { depth }</Label>        
+            <Control 
+              size="sm"
+              className="mt-1"
+              type="range"
+              min={ 1 }
+              max={ 4 }         
+              value={ depth }
+              onChange={ evt => setDepth(evt.target.value) } 
+            />
+          </Group>
+        </Row>
+      </Form>
       <div ref={vegaRef }>
         { loading ? <LoadingSpinner /> : 
           <VegaWrapper
             spec={ vis.spec }
             data={ vis.spec === voronoiTreemap ? tree.descendants() : data }
+            signals={[
+              { name: "value", value: value },
+              { name: "depth", value: depth }
+            ]}
           />
         }
       </div>
     </>
   );
-};
-
-/*
-<Tab 
-              eventKey="treemap" 
-              title="Treemap"
-            >
-              <div className="mt-3">
-                <VegaWrapper 
-                  className="mt-3"
-                  spec={ treemap } 
-                  data={ hierarchyData } 
-                />
-              </div>  
-            </Tab>
-            <Tab 
-              eventKey="enclosure" 
-              title="Enclosure diagram"
-            >
-              <div className="mt-3">
-                <VegaWrapper 
-                  className="mt-3"
-                  spec={ enclosure } 
-                  data={ hierarchyData } 
-                />
-              </div>  
-            </Tab>
-            <Tab 
-              eventKey="voronoi" 
-              title="Voronoi treemap"
-            >
-              <div className="mt-3">
-                <VegaWrapper 
-                  className="mt-3"
-                  spec={ voronoiTreemap } 
-                  data={ tree.descendants() } 
-                />
-              </div>  
-            </Tab>
-*/            
+};           
