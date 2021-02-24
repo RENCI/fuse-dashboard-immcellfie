@@ -45,7 +45,7 @@ export const HierarchyVis = ({ data, tree }) => {
       // Create Voronoi diagram, use setTimout so loading state can update
       setTimeout(() => {
         const width = vegaRef.current.clientWidth * 0.8;
-        const prng = d3.randomUniform.source(d3.randomLcg(0))();
+        const prng = d3.randomUniform.source(d3.randomLcg(0.2))();
 
         const n = 64;
         const clip = d3.range(0, n).map(d => {
