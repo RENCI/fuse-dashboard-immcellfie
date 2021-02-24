@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import { Tabs, Tab } from "react-bootstrap";
 import * as d3 from "d3";
-import { voronoiTreemap as d3VoronoiTreemap } from "d3-voronoi-treemap";
 import { DataContext } from "../contexts";
 import { VegaWrapper } from "../components/vega-wrapper";
 import { taskHeatmap } from "../vega-specs";
@@ -36,7 +35,7 @@ export const OutputView = () => {
       const id = parent + "_" + i;
 
       data[id] = {
-        name: "patient " + i,
+        name: "subject " + i,
         parent: parent,
         score: score,
         activity: task.activities[i]
@@ -93,10 +92,11 @@ export const OutputView = () => {
     node.data.activities = node.data.allActivities.map(d => d3.mean(d));
     node.data.activity = d3.mean(d3.merge(node.data.allActivities));
 
-    node.data.patients = d3.range(0, node.data.scores.length);
+    node.data.subjects = d3.range(0, node.data.scores.length);
   });
 
-  const format = d3.format('.2f');
+  const format = d3.format(".2f")
+  const formatNumber = d => isNaN(d) ? "Inconclusive" : format(d);
 
   tree.eachBefore(node => {
     if (node.depth === 0) {
@@ -109,41 +109,14 @@ export const OutputView = () => {
 
     node.data.tooltip = {
       title: node.data.name,
-      score: format(node.data.score),
-      activity: format(node.data.activity)
+      score: formatNumber(node.data.score),
+      activity: formatNumber(node.data.activity)
     };    
 
     if (node.depth > 1) {
       node.data.tooltip.phenotype = node.parent.data.phenotype.join(" → ");
     }
   });
-
-  // Voronoi
-  const width = 800;
-  const height = 800;
-
-  tree.count();
-
-  const voronoi = d3VoronoiTreemap().clip([
-    [0, 0],
-    [0, height],
-    [width, height],
-    [width, 0],
-  ]);
-
-  voronoi(tree);
-
-  tree.each(d => {
-    d.label = d.data.label;
-    d.score = d.data.score;
-    d.activity = d.data.activity;
-    d.tooltip = d.data.tooltip;
-    d.path = d3.line()(d.polygon) + "z";
-    d.x = d3.mean(d.polygon, d => d[0]);
-    d.y = d3.mean(d.polygon, d => d[1]);
-  });
-
-  console.log(tree.descendants());
 
   return (
     <>

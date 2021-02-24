@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Form } from "react-bootstrap";
+import { Form, Card } from "react-bootstrap";
 import { EscherWrapper } from "../escher-wrapper";
 import { LoadingSpinner } from "../loading-spinner";
 import "./pathway-vis.css";
 
 const { Group, Control, Label } = Form;
+const { Body } = Card;
 
 const path = "/data/escher/";
 
@@ -52,10 +53,14 @@ export const PathwayVis = () => {
           { options }
         </Control>
       </Group>
-      <EscherWrapper 
-        map={ map ? path + map + ".json" : null } 
-        onLoaded={ onLoaded }
-      />
+      <Card>
+        <Body className={ "p-0" }>
+          <EscherWrapper 
+            map={ map ? path + map + ".json" : null } 
+            onLoaded={ onLoaded }
+          />
+        </Body>
+      </Card>
     </>
   );
 };

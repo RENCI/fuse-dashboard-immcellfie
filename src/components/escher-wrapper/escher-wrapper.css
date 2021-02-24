@@ -1,8 +1,10 @@
 .wrapperDiv {
   width: 100%;
   height: 800px;
-  display: flex;
-  align-items: center;
+}
+
+.search-menu-container-inline {
+  width: auto !important;
 }
 
 .menu-bar > li {

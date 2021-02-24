@@ -44,7 +44,7 @@ export const expressionHeatmap = {
       }
     },
     x: {
-      field: "patient", 
+      field: "subject", 
       type: "ordinal",
       axis: {
         orient: "top"

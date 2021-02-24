@@ -75,6 +75,11 @@ export const voronoiTreemap = {
         {
           type: "filter",
           expr: "datum.depth > 0 && datum.depth <= depth",
+        },
+        {
+          type: "formula",
+          as: "value",
+          expr: "datum.data[value]"
         }
       ]
     },
@@ -101,7 +106,7 @@ export const voronoiTreemap = {
       type: "linear",
       domain: { 
         data: "data", 
-        field: { signal: "value" } 
+        field: "value"
       },
       range: { scheme: { signal: "colorScheme" } }
     },
@@ -131,10 +136,16 @@ export const voronoiTreemap = {
       interactive: false,    
       encode: {
         update: {
-          fill: {
-            scale: "color",
-            field: { signal: "value" }
-          },
+          fill: [
+            {
+              test: "!isValid(datum.value)",
+              value: "#c6dbef"
+            },
+            {
+              scale: "color",
+              field: "value"
+            }            
+          ],
           stroke: { 
             scale: "stroke",
             field: "depth"
@@ -143,15 +154,18 @@ export const voronoiTreemap = {
             scale: "strokeWidth",
             field: "depth"
           },
-          path: { field: "path" },
-          zindex: { field: "depth" }
+          path: { field: "path" }
         }
       }
     },
     {
       type: "path",
       from: { data: "data" }, 
-      interactive: false,    
+      interactive: false, 
+      sort: { 
+        field: "datum.depth",
+        order: "descending"
+      },   
       encode: {
         update: {
           fill: "none",
@@ -163,8 +177,7 @@ export const voronoiTreemap = {
             scale: "strokeWidth",
             field: "depth"
           },
-          path: { field: "path" },
-          zindex: { field: "height" }
+          path: { field: "path" }
         }
       }
     },
@@ -180,8 +193,7 @@ export const voronoiTreemap = {
         update: {
           stroke: { value: "none" },
           path: { field: "path" },
-          zindex: { field: "depth" },
-          tooltip: { signal: "datum.tooltip" }
+          tooltip: { signal: "datum.data.tooltip" }
         },
         hover: {
           stroke: { signal: "colorScheme === 'lightgreyred' ? '#2171b5' : '#a50f15'" }
@@ -194,7 +206,7 @@ export const voronoiTreemap = {
       interactive: false,
       encode: {
         enter: {
-          text: { field: "label" },
+          text: { field: "data.label" },
           align: { value: "center" },
           baseline: { value: "middle" },
           fill: { value: "#000" },
@@ -203,8 +215,8 @@ export const voronoiTreemap = {
           blend: { value: "difference" }
         },
         update: {
-          x: { field: "x" },
-          y: { field: "y" },
+          x: { field: "polygon.site.x" },
+          y: { field: "polygon.site.y" },
           opacity: { signal: "labelOpacity" }
         }
       }      

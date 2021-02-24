@@ -85,7 +85,7 @@ export const treemap = {
           paddingOuter: 8,
           round: true,    
           sort: {
-            field: ["depth", "data.score"],
+            field: ["depth", "data.name"],
             order: ["ascending", "descending"]
           },
           size: [
@@ -156,10 +156,16 @@ export const treemap = {
       },
       encode: {
         update: {
-          fill: {
-            scale: "color",
-            field: { signal: "value" }
-          },
+          fill: [
+            {
+              test: "!isValid(datum[value])",
+              value: "#c6dbef"
+            },
+            {
+              scale: "color",
+              field: { signal: "value" }
+            }            
+          ],
           stroke: { 
             scale: "stroke",
             field: "depth"

@@ -12,7 +12,9 @@ const parseInput = data => {
   };
 };
 
-const parseOutput = data => {
+const parseNumber = d => d < 0 ? NaN : +d;
+
+const parseTSVOutput = data => {
   return {
     tasks: d3.tsvParseRows(data, row => {
       if (row.length !== 3) return null;
@@ -22,15 +24,34 @@ const parseOutput = data => {
       // Reorder phenotype info to go from task to system
       const phenotype = [info[1], info[3], info[2]];
 
-      const scores = d3.csvParseRows(row[1])[0].map(d => +d);
+      const scores = d3.csvParseRows(row[1])[0].map(parseNumber);
 
       return {
         id: info[0],
         name: info[1],        
         phenotype: phenotype,
         scores: scores,
-        activities: d3.csvParseRows(row[2])[0].map(d => +d)
+        activities: d3.csvParseRows(row[2])[0].map(parseNumber)
       };
+    })
+  };
+};
+
+const parseCSVOutput = data => {
+  return {
+    tasks: d3.csvParseRows(data, (row, i) => {
+      if (i === 0) return;
+
+      const offset = 4;
+      const n = (row.length - offset) / 2;
+
+      return {
+        id: row[0],
+        name: row[1],        
+        phenotype: [row[1], row[3], row[2]],
+        scores: row.slice(offset, offset + n).map(parseNumber),
+        activities: row.slice(offset + n).map(parseNumber)
+      };      
     })
   };
 };
@@ -40,9 +61,14 @@ export const api = {
     try {
       const input = await axios.get(`${process.env.REACT_APP_DATA_API_ROOT}HPA.tsv`);
       const output = await axios.get(`${process.env.REACT_APP_DATA_API_ROOT}HPA.expected`);
+      //const output = await axios.get(`${process.env.REACT_APP_DATA_API_ROOT}ASD.output`);
+      //const output = await axios.get(`${process.env.REACT_APP_DATA_API_ROOT}TD.output`);
 
       const inputData = parseInput(input.data);
-      const outputData = parseOutput(output.data);
+      const outputData = parseTSVOutput(output.data);
+      //const outputData = parseCSVOutput(output.data);
+
+      console.log(outputData);
 
       return [inputData, outputData];
     }
