@@ -16,7 +16,7 @@ export const InputView = () => {
     return data.concat(row.values.map((value, i) => {
       return {
         gene: row.gene,
-        patient: i,
+        subject: i,
         value: value
       };
     }));

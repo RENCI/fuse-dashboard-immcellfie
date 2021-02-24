@@ -56,75 +56,99 @@ export const taskHeatmap = {
       filter: "datum.depth === depth",
     },
     {
-      flatten: ["data.patients", "data.scores", "data.activities"],
-      as: ["patient", "score", "activity"]
+      flatten: ["data.subjects", "data.scores", "data.activities"],
+      as: ["subject", "score", "activity"]
     },
     {
       calculate: "datum[value]",
       as: ["value"]
     }
   ],
-  selection: {
-    highlight: {
-      type: "single",
-      on: "mouseover",
-      empty: "none",
-      clear: "mouseout"
+  layer: [
+    {
+      mark: { 
+        type: "rect"
+      },
+      encoding: {
+        y: {
+          field: "data.name", 
+          type: "ordinal",
+          sort: {
+            op: { signal: "sortBy" },
+            field: "value",
+            order: "descending"
+          },
+          title: "task phenotype"
+        },
+        x: {
+          field: "subject", 
+          type: "ordinal",
+          axis: {
+            orient: "top"
+          },
+          scale: {
+            round: true
+          }
+        },
+        fill: {      
+          field: "value",
+          type: "quantitative",
+          scale: {
+            scheme: { signal: "colorScheme" },
+          },
+          legend: {
+            title: { signal: "value" }
+          }
+        },
+        tooltip: [ 
+          { field: "id", title: "name" },
+          { field: "subject", title: "subject" },
+          { field: "score" }, 
+          { field: "activity" } 
+        ]
+      } 
+    },
+    {
+      /*
+      transform: [
+        {
+          aggregate: [{
+            op: "mean",
+            field: "value",
+            as: "mean_value"
+          }],
+          groupby: ["data.name"]
+        },
+      ],
+      */
+      selection: {
+        highlight: {
+          type: "single",
+          on: "mouseover",
+          empty: "none",
+          clear: "mouseout"
+        }
+      },
+      mark: { 
+        type: "rect"
+      },
+      encoding: {
+        y: { 
+          field: "data.name",
+          type: "ordinal",
+          sort: {
+            field: "mean_value",
+            order: "descending"
+          },
+        },
+        fill: { value: "none" },
+        stroke: { 
+          condition: {
+            selection: "highlight",
+            value: { signal: "colorScheme === 'lightgreyred' ? '#2171b5' : '#a50f15'" }
+          }
+        }
+      } 
     }
-  },
-  mark: { 
-    type: "rect"
-  },
-  encoding: {
-    y: {
-      field: "data.name", 
-      type: "ordinal",
-      sort: {
-        op: { signal: "sortBy" },
-        field: "value",
-        order: "descending"
-      },
-      title: "task phenotype"
-    },
-    x: {
-      field: "patient", 
-      type: "ordinal",
-      axis: {
-        orient: "top"
-      },
-      scale: {
-        round: true
-      }
-    },
-    fill: {      
-      field: "value",
-      type: "quantitative",
-      scale: {
-        scheme: { signal: "colorScheme" },
-      },
-      legend: {
-        title: { signal: "value" }
-      }
-    },
-    stroke: { 
-      condition: {
-        selection: "highlight",
-        value: { signal: "colorScheme === 'lightgreyred' ? '#2171b5' : '#a50f15'" }
-      },
-      value: "none"
-    },
-    order: {
-      condition: {
-        selection: "highlight", 
-        value: 1
-      }, 
-      value: 0
-    },
-    tooltip: [ 
-      { field: "id", title: "name" },
-      { field: "patient", title: "patient" },
-      { field: "score" }, 
-      { field: "activity" } 
-    ]
-  } 
+  ]
 };
