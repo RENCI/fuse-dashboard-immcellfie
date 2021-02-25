@@ -4,6 +4,15 @@ import { SpinnerButton } from "../components/spinner-button"
 import { DataContext } from "../contexts";
 import { api } from "../api";
 
+const practiceData = {
+  input: "HPA.tsv",
+  output: "HPA.expected",
+  outputType: "tsv"
+  //output: "ASD.output",
+  //output: "TD.output",
+  //outputType: "csv"
+};
+
 export const Home = () => {
   const [, dataDispatch] = useContext(DataContext);
   const [id, setId] = useState("");
@@ -33,10 +42,10 @@ export const Home = () => {
   const onLoadPracticeClick = async () => {
     setLoading(true);
 
-    const [input, output] = await api.loadPracticeData(); 
+    const [input, output] = await api.loadPracticeData(practiceData.input, practiceData.output);
 
-    dataDispatch({ type: "setInput", data: input });
-    dataDispatch({ type: "setOutput", data: output });
+    dataDispatch({ type: "setInput", file: input });
+    dataDispatch({ type: "setOutput", file: output, fileType: practiceData.outputType });
 
     setLoading(false);
     setMessage("Practice data loaded");

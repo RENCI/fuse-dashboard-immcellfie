@@ -45,7 +45,7 @@ export const VegaWrapper = ({ spec, data, signals }) => {
       // Clean up
       view.current.finalize();
     };
-  }, [spec, data]);
+  }, [spec, data, signals]);
 
   useEffect(() => {
     if (!view.current) return;
