@@ -29,42 +29,29 @@ export const enclosure = {
     },
     {
       name: "depth",
-      value: 1,
-      bind: {
-        name: "Depth: ",
-        input: "range",
-        min: 1,
-        max: 4, 
-        step: 1
-      }
+      value: 1
     },      
     {
       name: "value",
-      value: "score",
-      bind: {
-        name: "Value: ",
-        input: "select",
-        options: ["score", "activity"]
-      }
-    },    
+      value: "score"
+    },
+    {
+      name: "colorScheme",
+      value: "lightgreyred"
+    },
+    {
+      name: "domain",
+      value: [0, 1]
+    },
     {
       name: "labelOpacity",
-      value: "0.75",
+      value: 0.75,
       bind: {
         name: "Label opacity: ",
         input: "range",
         min: 0,
         max: 1, 
         step: 0.05
-      }
-    },
-    {
-      name: "colorScheme",
-      value: "lightgreyred",
-      bind: {
-        name: "Color scheme: ",
-        input: "select",
-        options: ["lightgreyred", "yellowgreenblue"]
       }
     }
   ],
@@ -81,8 +68,8 @@ export const enclosure = {
           type: "pack",
           padding: 1,    
           sort: {
-            field: ["depth", "data.name"],
-            order: ["ascending", "descending"]
+            field: ["data.name"],
+            order: ["descending"]
           },
           size: [
             { signal: "width" }, 
@@ -116,10 +103,7 @@ export const enclosure = {
     {
       name: "color",
       type: "linear",
-      domain: { 
-        data: "data", 
-        field: { signal: "value" } 
-      },
+      domain: { signal: "domain" },
       range: { scheme: { signal: "colorScheme" } }
     },
     {
@@ -145,7 +129,7 @@ export const enclosure = {
     {
       type: "symbol",
       from: { data: "data" }, 
-      interactive: false,  
+      interactive: false,      
       encode: {
         update: {
           fill: [
@@ -168,13 +152,14 @@ export const enclosure = {
           },
           x: { field: "x" },
           y: { field: "y" },
-          size: { signal: "4 * datum.r * datum.r" }
+          size: { signal: "4 * datum.r * datum.r" },
+          zindex: { field: "depth" }
         }
       }
     },
     {
       type: "symbol",
-      from: { data: "interior" },
+      from: { data: "interior" }, 
       encode: {
         enter: {
           fill: { value: "#000" },
@@ -186,6 +171,7 @@ export const enclosure = {
           x: { field: "x" },
           y: { field: "y" },
           size: { signal: "4 * datum.r * datum.r" },
+          zindex: { field: "depth" },
           tooltip: { signal: "datum.tooltip" }
         },
         hover: {

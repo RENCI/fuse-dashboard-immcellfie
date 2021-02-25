@@ -29,42 +29,29 @@ export const treemap = {
     },
     {
       name: "depth",
-      value: 1,
-      bind: {
-        name: "Depth: ",
-        input: "range",
-        min: 1,
-        max: 4, 
-        step: 1
-      }
+      value: 1
     },      
     {
       name: "value",
-      value: "score",
-      bind: {
-        name: "Value: ",
-        input: "select",
-        options: ["score", "activity"]
-      }
-    },      
+      value: "score"
+    },
+    {
+      name: "colorScheme",
+      value: "lightgreyred"
+    },
+    {
+      name: "domain",
+      value: [0, 1]
+    },
     {
       name: "labelOpacity",
-      value: "0.75",
+      value: 0.75,
       bind: {
         name: "Label opacity: ",
         input: "range",
         min: 0,
         max: 1, 
         step: 0.05
-      }
-    },
-    {
-      name: "colorScheme",
-      value: "lightgreyred",
-      bind: {
-        name: "Color scheme: ",
-        input: "select",
-        options: ["lightgreyred", "yellowgreenblue"]
       }
     }  
   ],
@@ -85,8 +72,8 @@ export const treemap = {
           paddingOuter: 8,
           round: true,    
           sort: {
-            field: ["depth", "data.name"],
-            order: ["ascending", "descending"]
+            field: ["data.name"],
+            order: ["descending"]
           },
           size: [
             { signal: "width" }, 
@@ -120,10 +107,7 @@ export const treemap = {
     {
       name: "color",
       type: "linear",
-      domain: { 
-        data: "data", 
-        field: { signal: "value" } 
-      },
+      domain: { signal: "domain" },
       range: { scheme: { signal: "colorScheme" } }
     },
     {
@@ -149,11 +133,7 @@ export const treemap = {
     {
       type: "rect",
       from: { data: "data" }, 
-      interactive: false,    
-      sort: {
-        field: ["height", "value"],
-        order: ["descending", "descending"]
-      },
+      interactive: false,
       encode: {
         update: {
           fill: [
@@ -177,7 +157,8 @@ export const treemap = {
           x: { field: "x0" },
           y: { field: "y0" },
           x2: { field: "x1" },
-          y2: { field: "y1" }
+          y2: { field: "y1" },
+          zindex: { field: "depth" }
         }
       }
     },
@@ -188,7 +169,8 @@ export const treemap = {
         enter: {
           fill: { value: "#000" },
           fillOpacity: { value: 0 },
-          strokeWidth: { value: 4 }
+          strokeWidth: { value: 4 },
+          tooltip: { signal: "datum.tooltip" }
         },
         update: {
           stroke: { value: "none" },
@@ -196,6 +178,7 @@ export const treemap = {
           y: { field: "y0" },
           x2: { field: "x1" },
           y2: { field: "y1" },
+          zindex: { field: "depth" },
           tooltip: { signal: "datum.tooltip" }
         },
         hover: {

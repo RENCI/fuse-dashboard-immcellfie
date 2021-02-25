@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Form, ToggleButtonGroup, ToggleButton } from "react-bootstrap";
+import { Form, Col, ToggleButtonGroup, ToggleButton } from "react-bootstrap";
 import * as d3 from "d3";
 import { voronoiTreemap as d3VoronoiTreemap } from "d3-voronoi-treemap";
 import { VegaWrapper } from "../vega-wrapper";
@@ -7,7 +7,7 @@ import { treemap, enclosure, voronoiTreemap } from "../../vega-specs";
 import { LoadingSpinner } from "../loading-spinner";
 import "./hierarchy-vis.css";
 
-const { Group } = Form; 
+const { Group, Label, Control, Row } = Form; 
 
 const visualizations = [
   {
@@ -27,8 +27,16 @@ const visualizations = [
   }
 ];
 
+const colorMaps = [
+  "lightgreyred",
+  "yellowgreenblue"
+];
+
 export const HierarchyVis = ({ data, tree }) => {
   const [loading, setLoading] = useState(true);
+  const [depth, setDepth] = useState(1);
+  const [colorMap, setColorMap] = useState(colorMaps[0]);
+  const [value, setValue] = useState("score");
   const [vis, setVis] = useState(visualizations[0]);
   const vegaRef = useRef();
 
@@ -70,8 +78,6 @@ export const HierarchyVis = ({ data, tree }) => {
           d.path = d3.line()(d.polygon) + "z";
         });
 
-        console.log(tree.descendants());
-
         setLoading(false);
       }, 10);      
     }
@@ -80,74 +86,87 @@ export const HierarchyVis = ({ data, tree }) => {
     }
   }, [vis, tree]);
 
+  const domain = value === "activity" ? [0, 1] :
+    d3.extent(tree.descendants().filter(d => d.depth === depth), d => d.data.score);
+
   return (
     <>
-      <Group>
-        <ToggleButtonGroup 
-          type="radio"
-          name="visButtons"
-          value={ vis.name }
-        >
-          { visualizations.map(({ name, label }, i) => (
-            <ToggleButton 
-              key={ i }
+      <Form className="mb-4">
+        <Row>
+          <Group as={ Col }>
+            <ToggleButtonGroup 
               type="radio"
-              variant="outline-primary"
-              value={ name }
-              onChange={ onVisChange }
+              name="visButtons"
+              value={ vis.name }
             >
-              { label }
-            </ToggleButton>
-          ))}
-        </ToggleButtonGroup>
-      </Group>
+              { visualizations.map(({ name, label }, i) => (
+                <ToggleButton 
+                  key={ i }
+                  type="radio"
+                  variant="outline-primary"
+                  value={ name }
+                  onChange={ onVisChange }
+                >
+                  { label }
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
+          </Group>
+        </Row>
+        <Row>
+          <Group as={ Col }>
+            <Label size="sm">Depth: { depth }</Label>        
+            <Control 
+              size="sm"
+              className="my-1"
+              type="range"
+              min={ 1 }
+              max={ 4 }         
+              value={ depth }
+              onChange={ evt => setDepth(+evt.target.value) } 
+            />
+          </Group>
+          <Group as={ Col }>
+            <Label size="sm">Value</Label>
+            <Control
+              size="sm"
+              as="select"
+              value={ value }
+              onChange={ evt => setValue(evt.target.value) }          
+            >
+              <option>score</option>
+              <option>activity</option>
+            </Control>
+          </Group>
+          <Group as={ Col }>
+          <Label size="sm">Color scheme</Label>
+            <Control
+              size="sm"
+              as="select"
+              value={ colorMap }
+              onChange={ evt => setColorMap(evt.target.value) }          
+            >
+              { colorMaps.map((colorMap, i) => (
+                <option key={ i }>{ colorMap }</option>
+              ))}
+            </Control>
+          </Group>
+        </Row>
+      </Form>
       <div ref={vegaRef }>
         { loading ? <LoadingSpinner /> : 
           <VegaWrapper
             spec={ vis.spec }
             data={ vis.spec === voronoiTreemap ? tree.descendants() : data }
+            signals={[
+              { name: "depth", value: depth },
+              { name: "value", value: value },
+              { name: "colorScheme", value: colorMap },
+              { name: "domain", value: domain }
+            ]}
           />
         }
       </div>
     </>
   );
-};
-
-/*
-<Tab 
-              eventKey="treemap" 
-              title="Treemap"
-            >
-              <div className="mt-3">
-                <VegaWrapper 
-                  className="mt-3"
-                  spec={ treemap } 
-                  data={ hierarchyData } 
-                />
-              </div>  
-            </Tab>
-            <Tab 
-              eventKey="enclosure" 
-              title="Enclosure diagram"
-            >
-              <div className="mt-3">
-                <VegaWrapper 
-                  className="mt-3"
-                  spec={ enclosure } 
-                  data={ hierarchyData } 
-                />
-              </div>  
-            </Tab>
-            <Tab 
-              eventKey="voronoi" 
-              title="Voronoi treemap"
-            >
-              <div className="mt-3">
-                <VegaWrapper 
-                  className="mt-3"
-                  spec={ voronoiTreemap } 
-                  data={ tree.descendants() } 
-                />
-              </div>  
-            </Tab>
-*/            
+};           
