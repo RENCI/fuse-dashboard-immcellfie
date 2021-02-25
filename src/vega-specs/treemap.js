@@ -34,7 +34,15 @@ export const treemap = {
     {
       name: "value",
       value: "score"
-    },      
+    },
+    {
+      name: "colorScheme",
+      value: "lightgreyred"
+    },
+    {
+      name: "domain",
+      value: [0, 1]
+    },
     {
       name: "labelOpacity",
       value: "0.75",
@@ -44,15 +52,6 @@ export const treemap = {
         min: 0,
         max: 1, 
         step: 0.05
-      }
-    },
-    {
-      name: "colorScheme",
-      value: "lightgreyred",
-      bind: {
-        name: "Color scheme: ",
-        input: "select",
-        options: ["lightgreyred", "yellowgreenblue"]
       }
     }  
   ],
@@ -108,10 +107,7 @@ export const treemap = {
     {
       name: "color",
       type: "linear",
-      domain: { 
-        data: "data", 
-        field: { signal: "value" } 
-      },
+      domain: { signal: "domain" },
       range: { scheme: { signal: "colorScheme" } }
     },
     {

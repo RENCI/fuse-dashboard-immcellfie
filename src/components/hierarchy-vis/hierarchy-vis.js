@@ -27,9 +27,15 @@ const visualizations = [
   }
 ];
 
+const colorMaps = [
+  "lightgreyred",
+  "yellowgreenblue"
+];
+
 export const HierarchyVis = ({ data, tree }) => {
   const [loading, setLoading] = useState(true);
   const [depth, setDepth] = useState(1);
+  const [colorMap, setColorMap] = useState(colorMaps[0]);
   const [value, setValue] = useState("score");
   const [vis, setVis] = useState(visualizations[0]);
   const vegaRef = useRef();
@@ -72,8 +78,6 @@ export const HierarchyVis = ({ data, tree }) => {
           d.path = d3.line()(d.polygon) + "z";
         });
 
-        console.log(tree.descendants());
-
         setLoading(false);
       }, 10);      
     }
@@ -81,6 +85,9 @@ export const HierarchyVis = ({ data, tree }) => {
       setLoading(false);
     }
   }, [vis, tree]);
+
+  const domain = value === "activity" ? [0, 1] :
+    d3.extent(tree.descendants().filter(d => d.depth === depth), d => d.data.score);
 
   return (
     <>
@@ -108,6 +115,18 @@ export const HierarchyVis = ({ data, tree }) => {
         </Row>
         <Row>
           <Group as={ Col }>
+            <Label size="sm">Depth: { depth }</Label>        
+            <Control 
+              size="sm"
+              className="my-1"
+              type="range"
+              min={ 1 }
+              max={ 4 }         
+              value={ depth }
+              onChange={ evt => setDepth(+evt.target.value) } 
+            />
+          </Group>
+          <Group as={ Col }>
             <Label size="sm">Value</Label>
             <Control
               size="sm"
@@ -120,16 +139,17 @@ export const HierarchyVis = ({ data, tree }) => {
             </Control>
           </Group>
           <Group as={ Col }>
-            <Label size="sm">Depth: { depth }</Label>        
-            <Control 
+          <Label size="sm">Color scheme</Label>
+            <Control
               size="sm"
-              className="mt-1"
-              type="range"
-              min={ 1 }
-              max={ 4 }         
-              value={ depth }
-              onChange={ evt => setDepth(evt.target.value) } 
-            />
+              as="select"
+              value={ colorMap }
+              onChange={ evt => setColorMap(evt.target.value) }          
+            >
+              { colorMaps.map((colorMap, i) => (
+                <option key={ i }>{ colorMap }</option>
+              ))}
+            </Control>
           </Group>
         </Row>
       </Form>
@@ -139,8 +159,10 @@ export const HierarchyVis = ({ data, tree }) => {
             spec={ vis.spec }
             data={ vis.spec === voronoiTreemap ? tree.descendants() : data }
             signals={[
+              { name: "depth", value: depth },
               { name: "value", value: value },
-              { name: "depth", value: depth }
+              { name: "colorScheme", value: colorMap },
+              { name: "domain", value: domain }
             ]}
           />
         }
