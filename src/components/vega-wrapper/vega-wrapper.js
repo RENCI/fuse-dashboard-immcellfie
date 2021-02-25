@@ -37,8 +37,8 @@ export const VegaWrapper = ({ spec, data, signals }) => {
       setSignals(view.current, signals);
 
       view.current
-      .data("data", data)      
-      .run();
+        .data("data", data)      
+        .run();
     });
 
     return () => {

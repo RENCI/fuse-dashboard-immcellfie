@@ -45,7 +45,7 @@ export const enclosure = {
     },
     {
       name: "labelOpacity",
-      value: "0.75",
+      value: 0.75,
       bind: {
         name: "Label opacity: ",
         input: "range",
@@ -68,8 +68,8 @@ export const enclosure = {
           type: "pack",
           padding: 1,    
           sort: {
-            field: ["depth", "data.name"],
-            order: ["ascending", "descending"]
+            field: ["data.name"],
+            order: ["descending"]
           },
           size: [
             { signal: "width" }, 
@@ -129,7 +129,7 @@ export const enclosure = {
     {
       type: "symbol",
       from: { data: "data" }, 
-      interactive: false,  
+      interactive: false,      
       encode: {
         update: {
           fill: [
@@ -152,13 +152,14 @@ export const enclosure = {
           },
           x: { field: "x" },
           y: { field: "y" },
-          size: { signal: "4 * datum.r * datum.r" }
+          size: { signal: "4 * datum.r * datum.r" },
+          zindex: { field: "depth" }
         }
       }
     },
     {
       type: "symbol",
-      from: { data: "interior" },
+      from: { data: "interior" }, 
       encode: {
         enter: {
           fill: { value: "#000" },
@@ -170,8 +171,8 @@ export const enclosure = {
           x: { field: "x" },
           y: { field: "y" },
           size: { signal: "4 * datum.r * datum.r" },
-          tooltip: { signal: "datum.tooltip" },
-          zindex: 1
+          zindex: { field: "depth" },
+          tooltip: { signal: "datum.tooltip" }
         },
         hover: {
           stroke: { signal: "colorScheme === 'lightgreyred' ? '#2171b5' : '#a50f15'" }

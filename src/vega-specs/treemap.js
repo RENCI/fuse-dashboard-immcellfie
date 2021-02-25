@@ -45,7 +45,7 @@ export const treemap = {
     },
     {
       name: "labelOpacity",
-      value: "0.75",
+      value: 0.75,
       bind: {
         name: "Label opacity: ",
         input: "range",
@@ -72,8 +72,8 @@ export const treemap = {
           paddingOuter: 8,
           round: true,    
           sort: {
-            field: ["depth", "data.name"],
-            order: ["ascending", "descending"]
+            field: ["data.name"],
+            order: ["descending"]
           },
           size: [
             { signal: "width" }, 
@@ -133,11 +133,7 @@ export const treemap = {
     {
       type: "rect",
       from: { data: "data" }, 
-      interactive: false,    
-      sort: {
-        field: ["height", "value"],
-        order: ["descending", "descending"]
-      },
+      interactive: false,
       encode: {
         update: {
           fill: [
@@ -161,7 +157,8 @@ export const treemap = {
           x: { field: "x0" },
           y: { field: "y0" },
           x2: { field: "x1" },
-          y2: { field: "y1" }
+          y2: { field: "y1" },
+          zindex: { field: "depth" }
         }
       }
     },
@@ -172,7 +169,8 @@ export const treemap = {
         enter: {
           fill: { value: "#000" },
           fillOpacity: { value: 0 },
-          strokeWidth: { value: 4 }
+          strokeWidth: { value: 4 },
+          tooltip: { signal: "datum.tooltip" }
         },
         update: {
           stroke: { value: "none" },
@@ -180,8 +178,8 @@ export const treemap = {
           y: { field: "y0" },
           x2: { field: "x1" },
           y2: { field: "y1" },
-          tooltip: { signal: "datum.tooltip" },
-          zindex: 1
+          zindex: { field: "depth" },
+          tooltip: { signal: "datum.tooltip" }
         },
         hover: {
           stroke: { signal: "colorScheme === 'lightgreyred' ? '#2171b5' : '#a50f15'" }
