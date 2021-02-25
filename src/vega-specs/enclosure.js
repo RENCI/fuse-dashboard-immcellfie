@@ -170,7 +170,8 @@ export const enclosure = {
           x: { field: "x" },
           y: { field: "y" },
           size: { signal: "4 * datum.r * datum.r" },
-          tooltip: { signal: "datum.tooltip" }
+          tooltip: { signal: "datum.tooltip" },
+          zindex: 1
         },
         hover: {
           stroke: { signal: "colorScheme === 'lightgreyred' ? '#2171b5' : '#a50f15'" }

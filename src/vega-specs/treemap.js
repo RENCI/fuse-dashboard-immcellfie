@@ -180,7 +180,8 @@ export const treemap = {
           y: { field: "y0" },
           x2: { field: "x1" },
           y2: { field: "y1" },
-          tooltip: { signal: "datum.tooltip" }
+          tooltip: { signal: "datum.tooltip" },
+          zindex: 1
         },
         hover: {
           stroke: { signal: "colorScheme === 'lightgreyred' ? '#2171b5' : '#a50f15'" }

@@ -177,7 +177,8 @@ export const voronoiTreemap = {
         update: {
           stroke: { value: "none" },
           path: { field: "path" },
-          tooltip: { signal: "datum.data.tooltip" }
+          tooltip: { signal: "datum.data.tooltip" },
+          zindex: 1
         },
         hover: {
           stroke: { signal: "colorScheme === 'lightgreyred' ? '#2171b5' : '#a50f15'" }
