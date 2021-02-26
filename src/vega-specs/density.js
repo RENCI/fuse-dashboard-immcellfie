@@ -1,9 +1,10 @@
 export const density = {
   $schema: "https://vega.github.io/schema/vega-lite/v4.json",
   title: "Distribution",
-  height: 50,
+  width: "container",
+  height: 100,
   autosize: {
-    type: "pad",
+    type: "fit",
     resize: true
   },
   data: {

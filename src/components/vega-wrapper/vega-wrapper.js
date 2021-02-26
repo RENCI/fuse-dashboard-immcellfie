@@ -4,17 +4,7 @@ import vegaEmbed from "vega-embed";
 import { LoadingSpinner } from "../loading-spinner";
 import "./vega-wrapper.css";
 
-const options = {
-  actions: {
-    export: true,
-    source: true,
-    compiled: false,
-    editor: false
-  },
-  renderer: "svg"
-};
-
-export const VegaWrapper = ({ spec, data, signals, tooltip }) => {
+export const VegaWrapper = ({ options, spec, data, signals, tooltip }) => {
   const view = useRef(null);
   const div = useRef(null);
   const [tooltipProps, setTooltipProps] = useState(null);
@@ -74,6 +64,7 @@ export const VegaWrapper = ({ spec, data, signals, tooltip }) => {
       <div 
         ref={ div }
         className="wrapperDiv"
+        style={{ height: "auto" }}
       >
         <LoadingSpinner />
       </div>
@@ -83,6 +74,15 @@ export const VegaWrapper = ({ spec, data, signals, tooltip }) => {
 };
 
 VegaWrapper.defaultProps = {
+  options: {
+    actions: {
+      export: true,
+      source: true,
+      compiled: false,
+      editor: false
+    },
+    renderer: "svg"
+  },
   data: [],
   signals: [],
   tooltip: null
@@ -90,6 +90,7 @@ VegaWrapper.defaultProps = {
 
 VegaWrapper.propTypes = {
   spec: PropTypes.object.isRequired,
+  options: PropTypes.object,
   data: PropTypes.array,
   signals: PropTypes.array,
   tooltip: PropTypes.element
