@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import PropTypes from "prop-types";
 import vegaEmbed from "vega-embed";
+import { tooltip } from "./tooltip";
 import { LoadingSpinner } from "../loading-spinner";
 import "./vega-wrapper.css";
 
@@ -22,7 +23,7 @@ export const VegaWrapper = ({ spec, data, signals }) => {
     signals.forEach(({ name, value }) => {
       view.signal(name, value);
     });
-  };
+  };  
 
   useEffect(() => {
     // Remove old visualization
@@ -38,6 +39,7 @@ export const VegaWrapper = ({ spec, data, signals }) => {
 
       view.current
         .data("data", data)      
+        .tooltip(tooltip)
         .run();
     });
 
