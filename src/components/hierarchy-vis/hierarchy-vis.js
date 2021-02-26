@@ -3,6 +3,7 @@ import { Form, Col, ToggleButtonGroup, ToggleButton } from "react-bootstrap";
 import * as d3 from "d3";
 import { voronoiTreemap as d3VoronoiTreemap } from "d3-voronoi-treemap";
 import { VegaWrapper } from "../vega-wrapper";
+import { VegaTooltip } from "../vega-tooltip";
 import { treemap, enclosure, voronoiTreemap } from "../../vega-specs";
 import { LoadingSpinner } from "../loading-spinner";
 import "./hierarchy-vis.css";
@@ -164,6 +165,7 @@ export const HierarchyVis = ({ data, tree }) => {
               { name: "colorScheme", value: colorMap },
               { name: "domain", value: domain }
             ]}
+            tooltip={ <VegaTooltip /> }
           />
         }
       </div>

@@ -1,7 +1,6 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import vegaEmbed from "vega-embed";
-import { tooltip } from "./tooltip";
 import { LoadingSpinner } from "../loading-spinner";
 import "./vega-wrapper.css";
 
@@ -15,15 +14,25 @@ const options = {
   renderer: "svg"
 };
 
-export const VegaWrapper = ({ spec, data, signals }) => {
+export const VegaWrapper = ({ spec, data, signals, tooltip }) => {
   const view = useRef(null);
   const div = useRef(null);
+  const [tooltipProps, setTooltipProps] = useState(null);
 
   const setSignals = (view, signals) => {
     signals.forEach(({ name, value }) => {
       view.signal(name, value);
     });
   };  
+
+  const tooltipCallback = (handler, event, item, value) => {
+    setTooltipProps({
+      handler: handler,
+      event: event,
+      item: item,
+      value: value
+    });
+  };
 
   useEffect(() => {
     // Remove old visualization
@@ -37,17 +46,20 @@ export const VegaWrapper = ({ spec, data, signals }) => {
 
       setSignals(view.current, signals);
 
+      if (tooltip) {
+        view.current.tooltip(tooltipCallback);
+      }
+
       view.current
-        .data("data", data)      
-        .tooltip(tooltip)
+        .data("data", data)              
         .run();
     });
 
     return () => {
       // Clean up
-      view.current.finalize();
+      if (view.current) view.current.finalize();
     };
-  }, [spec, data, signals]);
+  }, [spec, data, signals, tooltip]);
 
   useEffect(() => {
     if (!view.current) return;
@@ -58,19 +70,27 @@ export const VegaWrapper = ({ spec, data, signals }) => {
   }, [signals]);
 
   return (
-    <div className="wrapperDiv" ref={ div }>
-      <LoadingSpinner />
-    </div>
+    <>
+      <div 
+        ref={ div }
+        className="wrapperDiv"
+      >
+        <LoadingSpinner />
+      </div>
+      { tooltip && React.cloneElement(tooltip, tooltipProps) }
+    </>
   );
 };
 
 VegaWrapper.defaultProps = {
   data: [],
-  signals: []
+  signals: [],
+  tooltip: null
 };
 
 VegaWrapper.propTypes = {
   spec: PropTypes.object.isRequired,
   data: PropTypes.array,
-  signals: PropTypes.array
+  signals: PropTypes.array,
+  tooltip: PropTypes.element
 };
