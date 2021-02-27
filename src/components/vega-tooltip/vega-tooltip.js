@@ -27,13 +27,19 @@ const calculatePosition = (event, tooltipBox, offsetX, offsetY) => {
 const format = d3.format(".2f")
 const formatNumber = d => isNaN(d) ? "Inconclusive" : format(d);
 
+const collectValues = allValues => {
+  return d3.merge(allValues.map(values => values.filter(value => !isNaN(value)).map(value => ({ value: value }))));
+};
+
 export const VegaTooltip = ({ handler, event, item, value }) => {
-  const [data, setData] = useState([]);
+  const [scores, setScores] = useState([]);
+  const [activities, setActivities] = useState([]);
   const div = useRef();
 
   useEffect(() => {
     if (value) {
-      setData(d3.merge(value.allScores.map(d => d.filter(d => !isNaN(d)).map(d => ({ value: d })))));
+      setScores(collectValues(value.allScores));
+      setActivities(collectValues(value.allActivities));
     }
   }, [value]);
 
@@ -65,7 +71,12 @@ export const VegaTooltip = ({ handler, event, item, value }) => {
             }
             <VegaWrapper
               spec={ spec } 
-              data={ data } 
+              data={ scores } 
+              options={{ actions: false }}
+            />
+            <VegaWrapper
+              spec={ spec } 
+              data={ activities } 
               options={{ actions: false }}
             />
           </Text>
