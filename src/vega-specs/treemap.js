@@ -169,8 +169,7 @@ export const treemap = {
         enter: {
           fill: { value: "#000" },
           fillOpacity: { value: 0 },
-          strokeWidth: { value: 4 },
-          tooltip: { signal: "datum.tooltip" }
+          strokeWidth: { value: 4 }
         },
         update: {
           stroke: { value: "none" },
@@ -179,7 +178,7 @@ export const treemap = {
           x2: { field: "x1" },
           y2: { field: "y1" },
           zindex: { field: "depth" },
-          tooltip: { signal: "datum.tooltip" }
+          tooltip: { signal: "datum" }
         },
         hover: {
           stroke: { signal: "colorScheme === 'lightgreyred' ? '#2171b5' : '#a50f15'" }

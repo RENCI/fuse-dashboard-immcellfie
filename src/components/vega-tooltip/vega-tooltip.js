@@ -24,19 +24,24 @@ const calculatePosition = (event, tooltipBox, offsetX, offsetY) => {
   return { x, y };
 };
 
+const format = d3.format(".2f")
+const formatNumber = d => isNaN(d) ? "Inconclusive" : format(d);
+
 export const VegaTooltip = ({ handler, event, item, value }) => {
   const [data, setData] = useState([]);
   const div = useRef();
 
   useEffect(() => {
-    if (item) {
-      setData(d3.merge(item.datum.allScores.map(d => d.filter(d => !isNaN(d)).map(d => ({ value: d })))));
+    if (value) {
+      setData(d3.merge(value.allScores.map(d => d.filter(d => !isNaN(d)).map(d => ({ value: d })))));
     }
-  }, [item]);
+  }, [value]);
 
   const { x, y } = event && div.current ? 
     calculatePosition(event, div.current.getBoundingClientRect(), 0, 0) : 
     { x: 0, y: 0 };
+
+  const spec = value && value.allScores[0].length === 1 ? histogram : density;
 
   return (
     <div 
@@ -51,55 +56,32 @@ export const VegaTooltip = ({ handler, event, item, value }) => {
       <Card>
         { value &&
           <Body>
-            <Subtitle>{ value.title }</Subtitle>  
+            <Subtitle>{ value.name }</Subtitle>  
             <Text>    
-              <div><small>Score: { value.score }</small></div>
-              <div><small>Activity: { value.activity }</small></div>
+              <div><small>Score: { formatNumber(value.score) }</small></div>
+              <div><small>Activity: { formatNumber(value.activity) }</small></div>
             </Text>
           </Body> 
         }
         <Footer>
           <VegaWrapper
-            spec={ density } 
+            spec={ spec } 
             data={ data } 
             options={{ actions: false }}
           />
         </Footer>
-        { value && value.phenotype &&
+        { value && value.phenotype.length > 1 &&
           <Footer>
-            { value.phenotype }
+            <small>
+              { value.phenotype.map((level, i) => (
+                <div style={{ marginLeft: i + "em" }}>
+                  { level }
+                </div>
+              ))}
+            </small>
           </Footer>
         }
       </Card>
     </div>
   );
 };
-
-/*
-  if (!el) {
-    el = document.createElement("div");
-    document.body.appendChild(el);
-  }
-
-  if (!tooltipView) {
-    vegaEmbed(el, density, options).then(result => {
-      tooltipView = result.view;
-    });
-  }
-
-  if (value === null) {
-    el.setAttribute("style", "visiblity: hidden;");
-
-    return;
-  }
-  
-  const { x, y } = calculatePosition(event, el.getBoundingClientRect(), 0, 0);
-
-  el.setAttribute("style", `visiblity: visible; position: fixed; z-index: 1000; pointer-events: none; top: ${y}px; left: ${x}px`)
-
-  const values = d3.merge(item.datum.allScores.map(d => d.filter(d => !isNaN(d)).map(d => ({ value: d }))));
-
-  tooltipView
-    .data("data", values)
-    .run();  
-*/ 
