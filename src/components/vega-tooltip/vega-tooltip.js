@@ -54,22 +54,22 @@ export const VegaTooltip = ({ handler, event, item, value }) => {
       }}
     >   
       <Card>
-        { value &&
-          <Body>
-            <Subtitle>{ value.name }</Subtitle>  
-            <Text>    
-              <div><small>Score: { formatNumber(value.score) }</small></div>
-              <div><small>Activity: { formatNumber(value.activity) }</small></div>
-            </Text>
-          </Body> 
-        }
-        <Footer>
-          <VegaWrapper
-            spec={ spec } 
-            data={ data } 
-            options={{ actions: false }}
-          />
-        </Footer>
+        <Body>
+          { value && <Subtitle>{ value.name }</Subtitle> }
+          <Text className="mt-1">    
+            { value &&
+              <small>
+                <div>Score: { formatNumber(value.score) }</div>
+                <div>Activity: { formatNumber(value.activity) }</div>
+              </small>
+            }
+            <VegaWrapper
+              spec={ spec } 
+              data={ data } 
+              options={{ actions: false }}
+            />
+          </Text>
+        </Body> 
         { value && value.phenotype.length > 1 &&
           <Footer>
             <small>
