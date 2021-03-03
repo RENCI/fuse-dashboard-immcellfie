@@ -9,13 +9,13 @@ const { Subtitle, Body, Text, Footer } = Card;
 
 // Borrowed from vega-tooltip
 const calculatePosition = (event, tooltipBox, itemBox, offsetX, offsetY) => {
-  let x = itemBox.x + (itemBox.width - tooltipBox.width) / 2 + offsetX;
+  let x = event.clientX + offsetX;
 
   if (x + tooltipBox.width > window.innerWidth) {
     x = +event.clientX - offsetX - tooltipBox.width;
   }
 
-  let y = itemBox.height + offsetY;
+  let y = event.clientY + offsetY;
 
   if (y + tooltipBox.height > window.innerHeight) {
     y = +event.clientY - offsetY - tooltipBox.height;
