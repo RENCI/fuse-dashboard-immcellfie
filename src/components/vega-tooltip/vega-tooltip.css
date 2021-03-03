@@ -1,0 +1,6 @@
+.vegaTooltip {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;  
+  width: 300px;
+}

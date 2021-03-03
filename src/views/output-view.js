@@ -95,9 +95,6 @@ export const OutputView = () => {
     node.data.subjects = d3.range(0, node.data.scores.length);
   });
 
-  const format = d3.format(".2f")
-  const formatNumber = d => isNaN(d) ? "Inconclusive" : format(d);
-
   tree.eachBefore(node => {
     if (node.depth === 0) {
       node.data.phenotype = [];
@@ -105,17 +102,7 @@ export const OutputView = () => {
       return;
     }
 
-    node.data.phenotype = node.parent.data.phenotype.concat(node.data.name);
-
-    node.data.tooltip = {
-      title: node.data.name,
-      score: formatNumber(node.data.score),
-      activity: formatNumber(node.data.activity)
-    };    
-
-    if (node.depth > 1) {
-      node.data.tooltip.phenotype = node.parent.data.phenotype.join(" → ");
-    }
+    node.data.phenotype = node.parent.data.phenotype.concat(node.data.name);  
   });
 
   return (
