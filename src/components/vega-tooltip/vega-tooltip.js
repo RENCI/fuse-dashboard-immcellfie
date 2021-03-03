@@ -5,17 +5,17 @@ import * as d3 from "d3";
 import { histogram, density } from "../../vega-specs";
 import "./vega-tooltip.css";
 
-const { Title, Subtitle, Body, Text, Footer } = Card;
+const { Subtitle, Body, Text, Footer } = Card;
 
 // Borrowed from vega-tooltip
-const calculatePosition = (event, tooltipBox, offsetX, offsetY) => {
-  let x = event.clientX + offsetX;
+const calculatePosition = (event, tooltipBox, itemBox, offsetX, offsetY) => {
+  let x = itemBox.x + (itemBox.width - tooltipBox.width) / 2 + offsetX;
 
   if (x + tooltipBox.width > window.innerWidth) {
     x = +event.clientX - offsetX - tooltipBox.width;
   }
 
-  let y = event.clientY + offsetY;
+  let y = itemBox.height + offsetY;
 
   if (y + tooltipBox.height > window.innerHeight) {
     y = +event.clientY - offsetY - tooltipBox.height;
@@ -43,50 +43,59 @@ export const VegaTooltip = ({ handler, event, item, value }) => {
     }
   }, [value]);
 
-  const { x, y } = event && div.current ? 
-    calculatePosition(event, div.current.getBoundingClientRect(), 0, 0) : 
+  const { x, y } = event && div.current ?
+    calculatePosition(event, div.current.getBoundingClientRect(), handler.getItemBoundingClientRect(item), 0, 0) :
     { x: 0, y: 0 };
 
   const spec = value && value.allScores[0].length === 1 ? histogram : density;
 
   return (
-    <div 
-      ref={ div }
+    <div
+      ref={div}
       className="vegaTooltip"
-      style={{ 
-        visibility: div.current && value ? "visible" : "hidden", 
-        top: y + "px", 
-        left: x + "px" 
+      style={{
+        visibility: div.current && value ? "visible" : "hidden",
+        top: y + "px",
+        left: x + "px"
       }}
-    >   
+    >
       <Card>
         <Body>
-          { value && <Subtitle>{ value.name }</Subtitle> }
-          <Text className="mt-1">    
-            { value &&
+          {value && <Subtitle>{value.name}</Subtitle>}
+          <Text className="mt-1">
+            {value &&
               <small>
-                <div>Score: { formatNumber(value.score) }</div>
-                <div>Activity: { formatNumber(value.activity) }</div>
+                <div>Mean score: {formatNumber(value.score)}</div>
+                <div>Mean activity: {formatNumber(value.activity)}</div>
               </small>
             }
-            <VegaWrapper
-              spec={ spec } 
-              data={ scores } 
-              options={{ actions: false }}
-            />
-            <VegaWrapper
-              spec={ spec } 
-              data={ activities } 
-              options={{ actions: false }}
-            />
           </Text>
-        </Body> 
-        { value && value.phenotype.length > 1 &&
+          <div className="text-center">
+            <small>Distributions</small>
+            <VegaWrapper
+              spec={spec}
+              data={scores}
+              options={{ actions: false }}
+              signals={[
+                { name: "valueName", value: "score" }
+              ]}
+            />
+            <VegaWrapper
+              spec={spec}
+              data={activities}
+              options={{ actions: false }}
+              signals={[
+                { name: "valueName", value: "activity" }
+              ]}
+            />
+          </div>
+        </Body>
+        {value && value.phenotype.length > 1 &&
           <Footer>
             <small>
-              { value.phenotype.map((level, i) => (
+              {value.phenotype.map((level, i) => (
                 <div style={{ marginLeft: i + "em" }}>
-                  { level }
+                  { level}
                 </div>
               ))}
             </small>
