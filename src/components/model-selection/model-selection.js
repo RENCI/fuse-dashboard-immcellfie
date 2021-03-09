@@ -47,15 +47,17 @@ export const ModelSelection = ({ outputName, outputType }) => {
     setModel(models.find(({ name }) => name === evt.target.value));
   }
 
-  const onRunCellfieClick = async () => {
+  const onRunCellfieClick = () => {
     setRunning(true);
 
-    const output = await api.loadPracticeData(outputName);
+    setTimeout(async () => {
+      const output = await api.loadPracticeData(outputName);
 
-    dataDispatch({ type: "setOutput", file: output, fileType: outputType });
+      dataDispatch({ type: "setOutput", file: output, fileType: outputType });
 
-    setRunning(false);
-    setMessage("CellFIE output data loaded");
+      setRunning(false);
+      setMessage("CellFIE output data loaded");
+    }, 1000);
   };
 
   return (

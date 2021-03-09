@@ -75,6 +75,11 @@ const reducer = (state, action) => {
         output: action.fileType === "tsv" ? parseTSVOutput(action.file) : parseCSVOutput(action.file)
       };
 
+    case "clearData":
+      return {
+        ...initialState
+      };
+
     default: 
       throw new Error("Invalid data context action: " + action.type);
   }

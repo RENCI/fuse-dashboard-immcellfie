@@ -27,6 +27,8 @@ export const DataSelection = ({ inputName }) => {
   const onSubmitClick = () => {
     setSubmitting(true);
 
+    dataDispatch({ type: "clearData" });
+
     setTimeout(() => {
       setSubmitting(false);
       setMessage(<>Submitting ID <strong>{ id }</strong> failed</>);
@@ -35,6 +37,8 @@ export const DataSelection = ({ inputName }) => {
 
   const onLoadPracticeClick = async () => {
     setLoading(true);
+
+    dataDispatch({ type: "clearData" });
 
     const input = await api.loadPracticeData(inputName);
 
