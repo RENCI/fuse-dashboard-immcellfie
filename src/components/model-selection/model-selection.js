@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
-import { Row, Col, Card, Form, Button, InputGroup } from "react-bootstrap";
+import { Row, Col, Card, Form, Alert } from "react-bootstrap";
+import { SpinnerButton } from "../spinner-button";
 import { DataContext } from "../../contexts";
 import { api } from "../../api";
 
@@ -25,11 +26,13 @@ const models = [
   { organism: "rat", name: "iRno" }
 ];
 
-export const ModelSelection = () => {
-  const [data] = useContext(DataContext);
+export const ModelSelection = ({ outputName, outputType }) => {
+  const [, dataDispatch] = useContext(DataContext);
   const [organism, setOrganism] = useState("human");
   const [currentModels, setCurrentModels] = useState(models.filter(({ organism }) => organism === "human"));
   const [model, setModel] = useState(models.find(({ organism }) => organism === "human"));
+  const [running, setRunning] = useState(false);
+  const [message, setMessage] = useState();
 
   const onOrganismChange = evt => {
     const value = evt.target.value;
@@ -43,6 +46,17 @@ export const ModelSelection = () => {
   const onModelChange = evt => {
     setModel(models.find(({ name }) => name === evt.target.value));
   }
+
+  const onRunCellfieClick = async () => {
+    setRunning(true);
+
+    const output = await api.loadPracticeData(outputName);
+
+    dataDispatch({ type: "setOutput", file: output, fileType: outputType });
+
+    setRunning(false);
+    setMessage("CellFIE output data loaded");
+  };
 
   return (
     <Card>
@@ -104,12 +118,21 @@ export const ModelSelection = () => {
         </Row>
         <Row>
           <Col>
-            <Button 
-              size="lg" 
-              block
-            >
-              Run CellFIE
-            </Button>
+            <Group>
+              <SpinnerButton 
+                block
+                disabled={ running }
+                spin={ running }
+                onClick={ onRunCellfieClick }
+              >
+                Run CellFIE
+              </SpinnerButton>
+            </Group>
+            { message && 
+              <Group>  
+                <Alert variant="info">{ message }</Alert>
+              </Group>  
+            }
           </Col>
         </Row>
       </Body>
