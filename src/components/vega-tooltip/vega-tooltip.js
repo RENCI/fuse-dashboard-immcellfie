@@ -9,13 +9,16 @@ const { Subtitle, Body, Text, Footer } = Card;
 
 // Borrowed from vega-tooltip
 const calculatePosition = (event, tooltipBox, itemBox, offsetX, offsetY) => {
-  let x = event.clientX + offsetX;
+  let x = itemBox.x + (itemBox.width - tooltipBox.width) / 2 + offsetX;
 
   if (x + tooltipBox.width > window.innerWidth) {
     x = +event.clientX - offsetX - tooltipBox.width;
   }
+  else if (x < 0) {
+    x = 0;
+  }
 
-  let y = event.clientY + offsetY;
+  let y = itemBox.y - tooltipBox.height - offsetY;
 
   if (y + tooltipBox.height > window.innerHeight) {
     y = +event.clientY - offsetY - tooltipBox.height;
@@ -52,7 +55,7 @@ export const VegaTooltip = ({ handler, event, item, value }) => {
   return (
     <div
       ref={div}
-      className="vegaTooltip"
+      className="vegaTooltip shadow"
       style={{
         visibility: div.current && value ? "visible" : "hidden",
         top: y + "px",
