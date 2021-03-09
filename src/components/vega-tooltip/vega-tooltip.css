@@ -4,3 +4,7 @@
   pointer-events: none;  
   width: 300px;
 }
+
+.vegaTooltip .card {
+  background: rgba(255, 255, 255, 0.95);
+}
