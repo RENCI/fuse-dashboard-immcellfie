@@ -1,15 +1,34 @@
 export const expressionHeatmap = {
-  
   $schema: "https://vega.github.io/schema/vega/v5.json",
-  width: "container",
-  //height: { step: 2 },
-  height: 800,
+  width: { signal: "containerWidth - 80" },
+  height: 1,
+  padding: "auto",
   title: "Gene expression heat map",
   autosize: {
-    type: "fit",
-    resize: true
+    type: "pad",
+    resize: true,
+    contains: "padding"
   },
   signals: [
+    {
+      name: "containerWidth",
+      value: 1032,
+      on: [
+        {
+          events: [
+            {
+              source: "window",
+              type: "resize"
+            },
+            {
+              source: "window",
+              type: "load"
+            }
+          ],
+          update: "containerSize()[0]"
+        }
+      ]
+    },
     {
       name: "sortBy",
       value: "median",
@@ -28,45 +47,48 @@ export const expressionHeatmap = {
       }
     }
   ],
-  data: {
-    name: "data"
-  },
+  data: [
+    {
+      name: "data"
+    }
+  ],
+
   scales: [
     {
       name: "x",
       type: "band",
       domain: { 
-        data: "data",
-        field: "id"
+        data: "data", 
+        field: "id" 
       },
-      range: 800
+      range: "width",
+      nice: true
     },
     {
       name: "y",
       type: "band",
-      domain: {
-        data: "data",
-        field: "gene"
+      domain: { 
+        data: "data", 
+        field: "gene",        
+        sort: {
+          op: { signal: "sortBy" },
+          field: "value",
+          order: "descending"
+        }
       },
-      range: 800
+      range: { "step" : 4 }
     },
     {
       name: "colorA",
-      type: "linear",      
-      domain: { 
-        data: "data",
-        field: "value"
-      },
-      range: { scheme: "teals" }
+      type: "symlog", 
+      domain: { data: "data", field: "value" },
+      range: { scheme: "browns" }
     },
     {
       name: "colorB",
-      type: "linear",      
-      domain: { 
-        data: "data",
-        field: "value"
-      },
-      range: { scheme: "browns" }
+      type: "symlog", 
+      domain: { data: "data", field: "value" },
+      range: { scheme: "teals" }
     }
   ],
   legends: [
@@ -78,7 +100,7 @@ export const expressionHeatmap = {
       fill: "colorB",
       title: "Group B"
     },
-  ],
+  ],  
   marks: [
     {
       type: "rect",
@@ -86,8 +108,7 @@ export const expressionHeatmap = {
       encode: {
         update: {
           fill: { 
-            //scale: { signal: "'color' + datum.group" },
-            scale: "colorA",
+            scale: { signal: "'color' + datum.group" },
             field: "value"
           },
           x: { 
