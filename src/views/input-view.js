@@ -13,11 +13,11 @@ export const InputView = () => {
 
   // Transform to work with vega-lite heatmap
   const heatmapData = !input ? [] : input.data.reduce((data, row) => {
-    return data.concat(row.values.map((value, i) => {
+    return data.concat(row.subjects.map((subject, i, a) => {
       return {
         gene: row.gene,
-        subject: i,
-        value: value
+        ...subject,
+        group: i < a.length / 2 ? "A" : "B"
       };
     }));
   }, []);

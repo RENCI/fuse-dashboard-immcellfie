@@ -3,6 +3,7 @@ import { Row, Col } from "react-bootstrap";
 import { DataContext } from "../contexts";
 import { DataSelection } from "../components/data-selection";
 import { ModelSelection } from "../components/model-selection";
+import { DataGrouping } from "../components/data-grouping";
 
 const practiceData = {
   input: "HPA.tsv",
@@ -32,6 +33,13 @@ export const Home = () => {
               outputName={ practiceData.output } 
               outputType={ practiceData.outputType }
             />
+          </Col>
+        </Row>
+      }
+      { data.output && 
+        <Row className="mt-4">
+          <Col>
+            <DataGrouping />
           </Col>
         </Row>
       }

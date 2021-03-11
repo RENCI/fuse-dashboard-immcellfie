@@ -11,7 +11,12 @@ const parseInput = data => {
     data: d3.tsvParseRows(data, row => {
       return {
         gene: row[0],
-        values: row.slice(1).map(d => +d)
+        subjects: row.slice(1).map((d, i) => {
+          return {
+            id: i,
+            value: +d
+          }
+        })
       };
     })
   };

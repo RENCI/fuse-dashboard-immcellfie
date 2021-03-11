@@ -11,7 +11,7 @@ const organisms = [
   "human",
   "mouse",
   "rat",
-  "hamster"
+  "Chinese hamster"
 ];
 
 const models = [
@@ -19,7 +19,7 @@ const models = [
   { organism: "human", name: "recon_v1" },
   { organism: "human", name: "recon_v2" },
   { organism: "human", name: "recon_v2.2" },
-  { organism: "hamster", name: "iCHOv1" },
+  { organism: "Chinese hamster", name: "iCHOv1" },
   { organism: "mouse", name: "iMM1416" },
   { organism: "mouse", name: "inesMouseModel" },
   { organism: "mouse", name: "quek" },
@@ -92,7 +92,7 @@ export const ModelSelection = ({ outputName, outputType }) => {
             </Group>
           </Col>
           <Col>
-            <Label>Model Parameters</Label>
+            <Label>Model parameters</Label>
             <Group controlId="parameter1">
               <Label><small>Parameter 1</small></Label>
               <Control 
