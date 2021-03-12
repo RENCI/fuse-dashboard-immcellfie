@@ -6,14 +6,22 @@ const { Title, Body } = Card;
 const { Label, Group, Switch } = Form;
 
 export const DataGrouping = () => {
-  const [data, dataDispatch] = useContext(DataContext);
+  const [{ output }, dataDispatch] = useContext(DataContext);
   const [groupData, setGroupData] = useState(false);
 
   const onGroupChange = evt => {
-    //setId(evt.target.value);
-    console.log(evt.target.checked);
+    if (evt.target.checked) {
+      // Just split in two for now
+      const groups = output && output.tasks.length > 0 ? 
+        output.tasks[0].scores.map((score, i, a) => {
+          return i < a.length / 2 ? "A" : "B";
+        }) : null;
 
-    console.log(data);
+      dataDispatch({ type: "setGroups", groups: groups });
+    }
+    else {
+      dataDispatch({ type: "setGroups", groups: null });
+    }
   };
 
   return (

@@ -8,17 +8,16 @@ import { expressionHeatmap } from "../vega-specs";
 const { Body } = Card;
 
 export const InputView = () => {
-  const [data] = useContext(DataContext);
-
-  const { input } = data;
+  const [{ input, groups }] = useContext(DataContext);
 
   // Transform to work with vega-lite heatmap
   const heatmapData = !input ? [] : input.data.reduce((data, row) => {
-    return data.concat(row.subjects.map((subject, i, a) => {
+    return data.concat(row.values.map((value, i, a) => {
       return {
         gene: row.gene,
-        ...subject,
-        group: i < a.length / 2 ? "A" : "B"
+        value: value,
+        id: i,
+        group: groups ? groups[i] : "A"
       };
     }));
   }, []);

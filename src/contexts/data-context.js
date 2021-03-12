@@ -3,7 +3,8 @@ import * as d3 from "d3";
 
 const initialState = {
    input: null,
-   output: null 
+   output: null,
+   groups: null
 };
 
 const parseInput = data => {
@@ -11,12 +12,7 @@ const parseInput = data => {
     data: d3.tsvParseRows(data, row => {
       return {
         gene: row[0],
-        subjects: row.slice(1).map((d, i) => {
-          return {
-            id: i,
-            value: +d
-          }
-        })
+        values: row.slice(1).map(d => +d)
       };
     })
   };
@@ -83,6 +79,12 @@ const reducer = (state, action) => {
     case "clearData":
       return {
         ...initialState
+      };
+
+    case "setGroups":
+      return {
+        ...state,
+        groups: action.groups
       };
 
     default: 
