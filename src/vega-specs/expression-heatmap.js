@@ -57,9 +57,9 @@ export const expressionHeatmap = {
     {
       name: "x",
       type: "band",
-      domain: { 
-        data: "data", 
-        field: "id" 
+      domain: {
+        data: "data",
+        field: "id"
       },
       range: "width",
       nice: true
@@ -67,26 +67,26 @@ export const expressionHeatmap = {
     {
       name: "y",
       type: "band",
-      domain: { 
-        data: "data", 
-        field: "gene",        
+      domain: {
+        data: "data",
+        field: "gene",
         sort: {
           op: { signal: "sortBy" },
           field: "value",
           order: "descending"
         }
       },
-      range: { "step" : 4 }
+      range: { "step": 4 }
     },
     {
       name: "colorA",
-      type: "symlog", 
+      type: "symlog",
       domain: { data: "data", field: "value" },
       range: { scheme: "browns" }
     },
     {
       name: "colorB",
-      type: "symlog", 
+      type: "symlog",
       domain: { data: "data", field: "value" },
       range: { scheme: "teals" }
     }
@@ -100,18 +100,18 @@ export const expressionHeatmap = {
       fill: "colorB",
       title: "Group B"
     },
-  ],  
+  ],
   marks: [
     {
       type: "rect",
-      from: { data: "data" }, 
+      from: { data: "data" },
       encode: {
         update: {
-          fill: { 
+          fill: {
             scale: { signal: "'color' + datum.group" },
             field: "value"
           },
-          x: { 
+          x: {
             scale: "x",
             field: "id"
           },
@@ -121,7 +121,7 @@ export const expressionHeatmap = {
           },
           width: {
             scale: "x",
-            band: 1
+            band: 1.05
           },
           height: {
             scale: "y",
@@ -131,74 +131,4 @@ export const expressionHeatmap = {
       }
     }
   ]
-/*  
-  $schema: "https://vega.github.io/schema/vega-lite/v4.json",
-  width: "container",
-  height: { step: 2 },
-  title: "Gene expression heat map",
-  autosize: {
-    resize: true
-  },
-  params: [
-    {
-      name: "sortBy",
-      value: "median",
-      bind: {
-        input: "select",
-        options: ["median", "mean", "max"]
-      }
-    },
-    {
-      name: "colorScheme",
-      value: "lightgreyred",
-      bind: {
-        name: "Color scheme: ",
-        input: "select",
-        options: ["lightgreyred", "yellowgreenblue"]
-      }
-    }
-  ],
-  data: {
-    name: "data"
-  },
-  transform:[
-    { "filter": "datum.group === 'A'" }
-  ],
-  mark: { 
-    type: "rect",
-    tooltip: true
-  },
-  encoding: {
-    column: { field: "group" },
-    y: {
-      field: "gene", 
-      type: "ordinal",
-      axis: null,
-      sort: {
-        op: { signal: "sortBy" },
-        field: "value",
-        order: "descending"
-      }
-    },
-    x: {
-      field: "id", 
-      title: "subject",
-      type: "ordinal",
-      axis: {
-        orient: "top"
-      },
-      scale: {
-        round: true
-      }
-    },  
-    color: { 
-      field: "value",
-      type: "quantitative",
-      scale: {
-        scheme: { signal: "colorScheme" },
-        type: "symlog"
-      }
-    }
-  }
-*/  
 };
