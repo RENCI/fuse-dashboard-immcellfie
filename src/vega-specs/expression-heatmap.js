@@ -104,7 +104,7 @@ export const expressionHeatmap = {
       fill: "colorB",
       title: "Group B",
       values: { signal: "ticks"}
-    },
+    }
   ],
   marks: [
     {
@@ -131,7 +131,8 @@ export const expressionHeatmap = {
           height: {
             scale: "y",
             band: 1
-          }
+          },
+          tooltip: { signal: "{ title: 'Value: ' + datum.value, 'Subject': datum.id, 'Group': datum.group, 'Gene': datum.gene }" }
         }
       }
     }
