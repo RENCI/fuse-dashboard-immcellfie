@@ -94,6 +94,13 @@ export const expressionHeatmap = {
       range: { scheme: "teals" }
     }
   ],
+  axes: [
+    {
+      scale: "x",
+      orient: "top",
+      title: "Subjects"
+    }
+  ],
   legends: [
     {
       fill: "colorA",
