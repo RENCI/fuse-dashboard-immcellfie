@@ -54,6 +54,14 @@ export const expressionHeatmap = {
   data: [
     {
       name: "data"
+    },
+    { 
+      name: "groups",
+      source: "data",
+      transform: [{
+        type: "aggregate",
+        groupby: ["group"]
+      }]
     }
   ],
   scales: [
@@ -103,14 +111,23 @@ export const expressionHeatmap = {
   ],
   legends: [
     {
+      type: "gradient",
       fill: "colorA",
-      title: "Group A",
+      title: { signal: "data('groups').length > 1 ? 'Group ' + data('groups')[0].group : 'Values'" },
       values: { signal: "ticks"}
     },
     {
+      type: "gradient",
       fill: "colorB",
-      title: "Group B",
-      values: { signal: "ticks"}
+      title: { signal: "data('groups').length > 1 ? 'Group ' + data('groups')[1].group : ''" },
+      values: { signal: "data('groups').length > 1 ? ticks : []" },
+      encode: {
+        gradient: { 
+          update: {
+            opacity: { signal: "data('groups').length > 1 ? 1 : 0" }
+          }
+        }
+      }
     }
   ],
   marks: [
@@ -144,4 +161,85 @@ export const expressionHeatmap = {
       }
     }
   ]
+/*
+  $schema: "https://vega.github.io/schema/vega-lite/v4.json",
+  width: 200,
+  title: "Gene expression heat map",
+  autosize: {
+    resize: true
+  },
+  params: [
+    {
+      name: "sortBy",
+      value: "median",
+      bind: {
+        input: "select",
+        options: ["median", "mean", "max"]
+      }
+    },
+    {
+      name: "colorScheme",
+      value: "lightgreyred",
+      bind: {
+        name: "Color scheme: ",
+        input: "select",
+        options: ["lightgreyred", "yellowgreenblue"]
+      }
+    },
+    {
+      name: "ticks",
+      value: [0, 1]      
+    }
+  ],
+  data: {
+    name: "data"
+  },
+  facet: { 
+    column: { field: "group" } 
+  },
+  spec: {
+    height: { step: 4 },
+    mark: { 
+      type: "rect",
+      tooltip: true
+    },
+    encoding: {
+      y: {
+        field: "gene", 
+        type: "ordinal",
+        axis: null,
+        sort: {
+          op: { signal: "sortBy" },
+          field: "value",
+          order: "descending"
+        }
+      },
+      x: {
+        field: "id", 
+        title: "subject",
+        type: "ordinal",
+        axis: {
+          orient: "top"
+        },
+        scale: {
+          round: true
+        }
+      },  
+      color: { 
+        field: "value",
+        type: "quantitative",
+        scale: {
+          scheme: { signal: "colorScheme" },
+          type: "symlog"
+        }
+      }
+    }
+  },
+  resolve: { 
+    scale: { 
+      x: "independent",
+      y: "shared"
+    } 
+  }
+*/  
 };

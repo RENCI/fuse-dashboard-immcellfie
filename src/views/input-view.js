@@ -27,6 +27,8 @@ export const InputView = () => {
   const ticks = [0, ...d3.range(1, 10).map(d => Math.pow(10, d))].filter(d => d < maxValue);
   ticks.push(maxValue);
 
+  console.log(heatmapData);
+
   return (
     <>
       { input ? 
