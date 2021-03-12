@@ -45,6 +45,10 @@ export const expressionHeatmap = {
         input: "select",
         options: ["lightgreyred", "yellowgreenblue"]
       }
+    },
+    {
+      name: "ticks",
+      value: [0, 1]      
     }
   ],
   data: [
@@ -52,7 +56,6 @@ export const expressionHeatmap = {
       name: "data"
     }
   ],
-
   scales: [
     {
       name: "x",
@@ -94,11 +97,13 @@ export const expressionHeatmap = {
   legends: [
     {
       fill: "colorA",
-      title: "Group A"
+      title: "Group A",
+      values: { signal: "ticks"}
     },
     {
       fill: "colorB",
-      title: "Group B"
+      title: "Group B",
+      values: { signal: "ticks"}
     },
   ],
   marks: [
