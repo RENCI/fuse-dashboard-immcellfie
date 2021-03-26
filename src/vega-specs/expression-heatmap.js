@@ -53,15 +53,27 @@ export const expressionHeatmap = {
   ],
   data: [
     {
-      name: "data"
+      name: "data",
+      transform: [{
+        type: "formula",
+        as: "group",
+        expr: "datum.group ? datum.group : { number: 0, name: '' }" 
+      }]
     },
     { 
       name: "groups",
       source: "data",
-      transform: [{
-        type: "aggregate",
-        groupby: ["group"]
-      }]
+      transform: [
+        {
+          type: "project",
+          fields: ["group.name"],
+          as: ["name"]
+        },        
+        {
+          type: "aggregate",
+          groupby: ["name"]
+        }
+      ]
     }
   ],
   scales: [
@@ -88,15 +100,15 @@ export const expressionHeatmap = {
         }
       },
       range: { "step": 4 }
-    },
+    },    
     {
-      name: "colorA",
+      name: "color0",
       type: "symlog",
       domain: { data: "data", field: "value" },
       range: { scheme: "browns" }
     },
     {
-      name: "colorB",
+      name: "color1",
       type: "symlog",
       domain: { data: "data", field: "value" },
       range: { scheme: "teals" }
@@ -112,14 +124,14 @@ export const expressionHeatmap = {
   legends: [
     {
       type: "gradient",
-      fill: "colorA",
-      title: { signal: "data('groups').length > 1 ? 'Group ' + data('groups')[0].group : 'Values'" },
+      fill: "color0",
+      title: { signal: "data('groups').length > 1 ? 'Group ' + data('groups')[0].name : 'Values'" },
       values: { signal: "ticks"}
     },
     {
       type: "gradient",
-      fill: "colorB",
-      title: { signal: "data('groups').length > 1 ? 'Group ' + data('groups')[1].group : ''" },
+      fill: "color1",
+      title: { signal: "data('groups').length > 1 ? 'Group ' + data('groups')[1].name : ''" },
       values: { signal: "data('groups').length > 1 ? ticks : []" },
       encode: {
         gradient: { 
@@ -137,7 +149,7 @@ export const expressionHeatmap = {
       encode: {
         update: {
           fill: {
-            scale: { signal: "'color' + datum.group" },
+            scale: { signal: "'color' + datum.group.number" },
             field: "value"
           },
           x: {
@@ -156,7 +168,7 @@ export const expressionHeatmap = {
             scale: "y",
             band: 1
           },
-          tooltip: { signal: "{ title: 'Value: ' + datum.value, 'Subject': datum.id, 'Group': datum.group, 'Gene': datum.gene }" }
+          tooltip: { signal: "{ title: 'Value: ' + datum.value, 'Subject': datum.id, 'Group': datum.group.name, 'Gene': datum.gene }" }
         }
       }
     }

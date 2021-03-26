@@ -28,16 +28,22 @@ const visualizations = [
   }
 ];
 
-const colorMaps = [
+const valueColorMaps = [
   "lightgreyred",
   "yellowgreenblue"
 ];
 
-export const HierarchyVis = ({ data, tree }) => {
+const changeColorMaps = [
+  "blueorange"
+];
+
+export const HierarchyVis = ({ data, tree, hasGroups }) => {
   const [loading, setLoading] = useState(true);
   const [depth, setDepth] = useState(1);
-  const [colorMap, setColorMap] = useState(colorMaps[0]);
   const [value, setValue] = useState("score");
+  const [scaleType, setScaleType] = useState("linearScale");
+  const [colorMaps, setColorMaps] = useState(valueColorMaps);
+  const [colorMap, setColorMap] = useState(colorMaps[0]);
   const [vis, setVis] = useState(visualizations[0]);
   const vegaRef = useRef();
 
@@ -47,6 +53,20 @@ export const HierarchyVis = ({ data, tree }) => {
     const vis = visualizations.find(({ name }) => name === evt.target.value);
 
     setVis(vis);
+  };
+
+  const onValueChange = evt => {
+    const value = evt.target.value;
+
+    const isChange = value.includes("Change");
+
+    const colorMaps = isChange ? changeColorMaps : valueColorMaps;
+
+    setValue(value);
+    setScaleType(isChange ? "logScale" : "linearScale");
+    setColorMaps(colorMaps);
+
+    if (!colorMaps.includes(colorMap)) setColorMap(colorMaps[0]);
   };
 
   useEffect(() => {
@@ -87,8 +107,17 @@ export const HierarchyVis = ({ data, tree }) => {
     }
   }, [vis, tree]);
 
+  const logRange = values => {
+    const extent = d3.extent(values);
+
+    const max = Math.max(1 / extent[0], extent[1]);
+
+    return [1 / max, max];
+  };
+
   const domain = value === "activity" ? [0, 1] :
-    d3.extent(tree.descendants().filter(d => d.depth === depth), d => d.data.score);
+    value.includes("Change") ? logRange(tree.descendants().filter(d => d.depth === depth).map(d => d.data[value])) :
+    d3.extent(tree.descendants().filter(d => d.depth === depth), d => d.data[value]);
 
   return (
     <>
@@ -133,10 +162,12 @@ export const HierarchyVis = ({ data, tree }) => {
               size="sm"
               as="select"
               value={ value }
-              onChange={ evt => setValue(evt.target.value) }          
+              onChange={ onValueChange }          
             >
-              <option>score</option>
-              <option>activity</option>
+              <option value="score">score</option>
+              <option value="activity">activity</option>
+              <option disabled={ !hasGroups } value="scoreFoldChange">score fold change</option>
+              <option disabled={ !hasGroups } value="activityFoldChange">activity fold change</option>
             </Control>
           </Group>
           <Group as={ Col }>
@@ -162,6 +193,7 @@ export const HierarchyVis = ({ data, tree }) => {
             signals={[
               { name: "depth", value: depth },
               { name: "value", value: value },
+              { name: "scaleType", value: scaleType },
               { name: "colorScheme", value: colorMap },
               { name: "domain", value: domain }
             ]}

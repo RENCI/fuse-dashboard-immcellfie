@@ -12,12 +12,12 @@ export const InputView = () => {
 
   // Transform to work with vega-lite heatmap
   const heatmapData = !input ? [] : input.data.reduce((data, row) => {
-    return data.concat(row.values.map((value, i, a) => {
+    return data.concat(row.values.map((value, i) => {
       return {
         gene: row.gene,
         value: value,
         id: i,
-        group: groups ? groups[i] : "A"
+        group: groups ? groups[i] : null
       };
     }));
   }, []);

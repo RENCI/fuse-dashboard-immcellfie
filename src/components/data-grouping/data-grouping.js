@@ -13,7 +13,12 @@ export const DataGrouping = () => {
       // Just split in two for now
       const groups = output && output.tasks.length > 0 ? 
         output.tasks[0].scores.map((score, i, a) => {
-          return i < a.length / 2 ? "A" : "B";
+          const number = i < a.length / 2 ? 0 : 1;
+
+          return {
+            number: number,
+            name: number === 0 ? "A" : "B"
+          };
         }) : null;
 
       dataDispatch({ type: "setGroups", groups: groups });

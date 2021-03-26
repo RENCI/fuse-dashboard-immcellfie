@@ -10,7 +10,7 @@ import { PathwayVis } from "../components/pathway-vis";
 export const OutputView = () => {
   const [data] = useContext(DataContext);
 
-  const { output } = data;
+  const { output, groups } = data;
 
   // Create hierarchy
   const hierarchyData = !output ? [] : Object.values(output.tasks.reduce((data, task) => {
@@ -38,7 +38,7 @@ export const OutputView = () => {
         name: "subject " + i,
         parent: parent,
         score: score,
-        activity: task.activities[i]
+        activity: task.activities[i]       
       };
     });
 
@@ -92,6 +92,24 @@ export const OutputView = () => {
     node.data.activities = node.data.allActivities.map(d => d3.mean(d));
     node.data.activity = d3.mean(d3.merge(node.data.allActivities));
 
+    // Compute fold change
+    if (groups) {
+      const group0Score = d3.mean(d3.merge(node.data.allScores.filter((scores, i) => {
+        return groups[i].number === 0;
+      })));
+
+      const group1Score = d3.mean(d3.merge(node.data.allScores.filter((scores, i) => {
+        return groups[i].number === 1;
+      })));
+
+      node.data.scoreFoldChange = Math.pow(group0Score / group1Score, 2);
+      node.data.activityFoldChange = 1;
+    }
+    else {
+      node.data.scoreFoldChange = 1;
+      node.data.activityFoldChange = 1;
+    }
+
     node.data.subjects = d3.range(0, node.data.scores.length);
   });
 
@@ -122,6 +140,7 @@ export const OutputView = () => {
                 <HierarchyVis
                   data={ hierarchyData }
                   tree={ tree } 
+                  hasGroups={ groups !== null }
                 />
               </div>
             </Tab>
