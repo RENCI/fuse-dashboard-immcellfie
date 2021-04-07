@@ -134,7 +134,7 @@ export const treemap = {
       range: [3, 2, 1, 0]
     }
   ],
-  legends: [,
+  legends: [
     {
       fill: "linearScale",
       title: { signal: "value" }

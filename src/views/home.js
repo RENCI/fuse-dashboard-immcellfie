@@ -8,10 +8,11 @@ import { DataGrouping } from "../components/data-grouping";
 const practiceData = {
   input: "HPA.tsv",
   output: "HPA.expected",
-  outputType: "tsv"
+  outputType: "tsv",
   //output: "ASD.output",
   //output: "TD.output",
-  //outputType: "csv"
+  //outputType: "csv",
+  phenotype: "TestPhenotypes.csv"
 };
 
 export const Home = () => {
@@ -23,6 +24,7 @@ export const Home = () => {
         <Col>
           <DataSelection 
             inputName={ practiceData.input } 
+            phenotypeName={ practiceData.phenotype }
           />
         </Col>
       </Row>

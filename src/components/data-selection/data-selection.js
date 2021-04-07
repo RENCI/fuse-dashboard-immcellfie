@@ -7,7 +7,7 @@ import { api } from "../../api";
 const { Title, Body } = Card;
 const { Label, Group, Control, Text } = Form;
 
-export const DataSelection = ({ inputName }) => {
+export const DataSelection = ({ inputName, phenotypeName }) => {
   const [, dataDispatch] = useContext(DataContext);
   const [id, setId] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -41,8 +41,10 @@ export const DataSelection = ({ inputName }) => {
     dataDispatch({ type: "clearData" });
 
     const input = await api.loadPracticeData(inputName);
+    const phenotypes = await api.loadPracticeData(phenotypeName);
 
     dataDispatch({ type: "setInput", file: input });
+    dataDispatch({ type: "setPhenotypes", file: phenotypes });
 
     setLoading(false);
     setMessage("Practice input data loaded");

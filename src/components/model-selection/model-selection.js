@@ -66,8 +66,8 @@ export const ModelSelection = ({ outputName, outputType }) => {
         <Title>Model Selection</Title>
         <Row>
           <Col>
-            <Group>
-              <Label>Organism</Label>
+            <Group controlId="organism_select">
+              <Label><h6>Organism</h6></Label>
               <Control 
                 as="select"
                 value={ organism }
@@ -78,8 +78,8 @@ export const ModelSelection = ({ outputName, outputType }) => {
                 ))}
               </Control>
             </Group>
-            <Group>
-              <Label>Model</Label>
+            <Group controlId="model_select">
+            <Label><h6>Model</h6></Label>
               <Control 
                 as="select"
                 value={ model.name }
@@ -92,7 +92,7 @@ export const ModelSelection = ({ outputName, outputType }) => {
             </Group>
           </Col>
           <Col>
-            <Label>Model parameters</Label>
+            <Label><h6>Model parameters</h6></Label>
             <Group controlId="parameter1">
               <Label><small>Parameter 1</small></Label>
               <Control 
