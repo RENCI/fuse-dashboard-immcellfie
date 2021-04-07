@@ -1,12 +1,11 @@
 import axios from "axios";
 
 export const api = {
-  loadPracticeData: async (inputName, outputName) => {
+  loadPracticeData: async name => {
     try {
-      const input = await axios.get(`${process.env.REACT_APP_DATA_API_ROOT}${inputName}`);
-      const output = await axios.get(`${process.env.REACT_APP_DATA_API_ROOT}${outputName}`);
+      const response = await axios.get(`${process.env.REACT_APP_DATA_API_ROOT}${name}`);
 
-      return [input.data, output.data];
+      return response.data;
     }
     catch (error) {
       console.log(error);

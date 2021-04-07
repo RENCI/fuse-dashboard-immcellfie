@@ -36,6 +36,10 @@ export const treemap = {
       value: "score"
     },
     {
+      name: "scaleType",
+      value: "linear"
+    },
+    {
       name: "colorScheme",
       value: "lightgreyred"
     },
@@ -105,8 +109,15 @@ export const treemap = {
   ],
   scales: [
     {
-      name: "color",
+      name: "linearScale",
       type: "linear",
+      domain: { signal: "domain" },
+      range: { scheme: { signal: "colorScheme" } }
+    },
+    {
+      name: "logScale",
+      type: "log",
+      base: 2,
       domain: { signal: "domain" },
       range: { scheme: { signal: "colorScheme" } }
     },
@@ -125,7 +136,11 @@ export const treemap = {
   ],
   legends: [
     {
-      fill: "color",
+      fill: "linearScale",
+      title: { signal: "value" }
+    },
+    {
+      fill: "logScale",
       title: { signal: "value" }
     }
   ],
@@ -138,11 +153,17 @@ export const treemap = {
         update: {
           fill: [
             {
-              test: "!isValid(datum[value])",
-              value: "#c6dbef"
+              test: "!isValid(datum[value]) && colorScheme === 'blueorange'",
+              //value: "#ccc"
+              value: "#fff"
             },
             {
-              scale: "color",
+              test: "!isValid(datum[value])",
+              //value: "#c6dbef"
+              value: "#fff"
+            },
+            {
+              scale: { signal: "scaleType" },
               field: { signal: "value" }
             }            
           ],

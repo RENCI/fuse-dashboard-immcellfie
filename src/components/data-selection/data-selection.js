@@ -7,16 +7,7 @@ import { api } from "../../api";
 const { Title, Body } = Card;
 const { Label, Group, Control, Text } = Form;
 
-const practiceData = {
-  input: "HPA.tsv",
-  output: "HPA.expected",
-  outputType: "tsv"
-  //output: "ASD.output",
-  //output: "TD.output",
-  //outputType: "csv"
-};
-
-export const DataSelection = () => {
+export const DataSelection = ({ inputName, phenotypeName }) => {
   const [, dataDispatch] = useContext(DataContext);
   const [id, setId] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -36,6 +27,8 @@ export const DataSelection = () => {
   const onSubmitClick = () => {
     setSubmitting(true);
 
+    dataDispatch({ type: "clearData" });
+
     setTimeout(() => {
       setSubmitting(false);
       setMessage(<>Submitting ID <strong>{ id }</strong> failed</>);
@@ -45,13 +38,16 @@ export const DataSelection = () => {
   const onLoadPracticeClick = async () => {
     setLoading(true);
 
-    const [input, output] = await api.loadPracticeData(practiceData.input, practiceData.output);
+    dataDispatch({ type: "clearData" });
+
+    const input = await api.loadPracticeData(inputName);
+    const phenotypes = await api.loadPracticeData(phenotypeName);
 
     dataDispatch({ type: "setInput", file: input });
-    dataDispatch({ type: "setOutput", file: output, fileType: practiceData.outputType });
+    dataDispatch({ type: "setPhenotypes", file: phenotypes });
 
     setLoading(false);
-    setMessage("Practice data loaded");
+    setMessage("Practice input data loaded");
   };
 
   const disabled = loading || submitting;
@@ -90,8 +86,9 @@ export const DataSelection = () => {
             variant="outline-secondary"
             disabled={ disabled }
             spin={ loading }
-            onClick={ onLoadPracticeClick }>
-              Load practice data
+            onClick={ onLoadPracticeClick }
+          >
+            Load practice data
           </SpinnerButton>
         </Group>
         { message && 

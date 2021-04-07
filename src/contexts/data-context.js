@@ -3,7 +3,9 @@ import * as d3 from "d3";
 
 const initialState = {
    input: null,
-   output: null 
+   output: null,
+   phenotypes: null,
+   groups: null
 };
 
 const parseInput = data => {
@@ -42,6 +44,8 @@ const parseTSVOutput = data => {
   };
 };
 
+const parsePhenotypes = data => d3.csvParse(data);
+
 const parseCSVOutput = data => {
   return {
     tasks: d3.csvParseRows(data, (row, i) => {
@@ -68,11 +72,28 @@ const reducer = (state, action) => {
         ...state,
         input: parseInput(action.file)
       };
+
+    case "setPhenotypes":
+      return {
+        ...state,
+        phenotypes: parsePhenotypes(action.file)
+      };
     
     case "setOutput":
       return {
         ...state,
         output: action.fileType === "tsv" ? parseTSVOutput(action.file) : parseCSVOutput(action.file)
+      };
+
+    case "clearData":
+      return {
+        ...initialState
+      };
+
+    case "setGroups":
+      return {
+        ...state,
+        groups: action.groups
       };
 
     default: 

@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
-import { Row, Col, Card, Form, Button, InputGroup } from "react-bootstrap";
+import { Row, Col, Card, Form, Alert } from "react-bootstrap";
+import { SpinnerButton } from "../spinner-button";
 import { DataContext } from "../../contexts";
 import { api } from "../../api";
 
@@ -10,7 +11,7 @@ const organisms = [
   "human",
   "mouse",
   "rat",
-  "hamster"
+  "Chinese hamster"
 ];
 
 const models = [
@@ -18,18 +19,20 @@ const models = [
   { organism: "human", name: "recon_v1" },
   { organism: "human", name: "recon_v2" },
   { organism: "human", name: "recon_v2.2" },
-  { organism: "hamster", name: "iCHOv1" },
+  { organism: "Chinese hamster", name: "iCHOv1" },
   { organism: "mouse", name: "iMM1416" },
   { organism: "mouse", name: "inesMouseModel" },
   { organism: "mouse", name: "quek" },
   { organism: "rat", name: "iRno" }
 ];
 
-export const ModelSelection = () => {
-  const [data] = useContext(DataContext);
+export const ModelSelection = ({ outputName, outputType }) => {
+  const [, dataDispatch] = useContext(DataContext);
   const [organism, setOrganism] = useState("human");
   const [currentModels, setCurrentModels] = useState(models.filter(({ organism }) => organism === "human"));
   const [model, setModel] = useState(models.find(({ organism }) => organism === "human"));
+  const [running, setRunning] = useState(false);
+  const [message, setMessage] = useState();
 
   const onOrganismChange = evt => {
     const value = evt.target.value;
@@ -44,14 +47,27 @@ export const ModelSelection = () => {
     setModel(models.find(({ name }) => name === evt.target.value));
   }
 
+  const onRunCellfieClick = () => {
+    setRunning(true);
+
+    setTimeout(async () => {
+      const output = await api.loadPracticeData(outputName);
+
+      dataDispatch({ type: "setOutput", file: output, fileType: outputType });
+
+      setRunning(false);
+      setMessage("CellFIE output data loaded");
+    }, 1000);
+  };
+
   return (
     <Card>
       <Body>
         <Title>Model Selection</Title>
         <Row>
           <Col>
-            <Group>
-              <Label>Organism</Label>
+            <Group controlId="organism_select">
+              <Label><h6>Organism</h6></Label>
               <Control 
                 as="select"
                 value={ organism }
@@ -62,8 +78,8 @@ export const ModelSelection = () => {
                 ))}
               </Control>
             </Group>
-            <Group>
-              <Label>Model</Label>
+            <Group controlId="model_select">
+            <Label><h6>Model</h6></Label>
               <Control 
                 as="select"
                 value={ model.name }
@@ -76,7 +92,7 @@ export const ModelSelection = () => {
             </Group>
           </Col>
           <Col>
-            <Label>Model Parameters</Label>
+            <Label><h6>Model parameters</h6></Label>
             <Group controlId="parameter1">
               <Label><small>Parameter 1</small></Label>
               <Control 
@@ -104,12 +120,21 @@ export const ModelSelection = () => {
         </Row>
         <Row>
           <Col>
-            <Button 
-              size="lg" 
-              block
-            >
-              Run CellFIE
-            </Button>
+            <Group>
+              <SpinnerButton 
+                block
+                disabled={ running }
+                spin={ running }
+                onClick={ onRunCellfieClick }
+              >
+                Run CellFIE
+              </SpinnerButton>
+            </Group>
+            { message && 
+              <Group>  
+                <Alert variant="info">{ message }</Alert>
+              </Group>  
+            }
           </Col>
         </Row>
       </Body>

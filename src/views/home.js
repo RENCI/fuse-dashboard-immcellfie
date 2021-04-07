@@ -3,6 +3,17 @@ import { Row, Col } from "react-bootstrap";
 import { DataContext } from "../contexts";
 import { DataSelection } from "../components/data-selection";
 import { ModelSelection } from "../components/model-selection";
+import { DataGrouping } from "../components/data-grouping";
+
+const practiceData = {
+  input: "HPA.tsv",
+  output: "HPA.expected",
+  outputType: "tsv",
+  //output: "ASD.output",
+  //output: "TD.output",
+  //outputType: "csv",
+  phenotype: "TestPhenotypes.csv"
+};
 
 export const Home = () => {
   const [data] = useContext(DataContext);
@@ -11,13 +22,26 @@ export const Home = () => {
     <>
       <Row>
         <Col>
-          <DataSelection />
+          <DataSelection 
+            inputName={ practiceData.input } 
+            phenotypeName={ practiceData.phenotype }
+          />
         </Col>
       </Row>
       { data.input && 
         <Row className="mt-4">
           <Col>
-            <ModelSelection />
+            <ModelSelection 
+              outputName={ practiceData.output } 
+              outputType={ practiceData.outputType }
+            />
+          </Col>
+        </Row>
+      }
+      { data.output && 
+        <Row className="mt-4">
+          <Col>
+            <DataGrouping />
           </Col>
         </Row>
       }
