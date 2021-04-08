@@ -1,9 +1,10 @@
 import React, { useContext, useReducer, useEffect} from "react";
 import { Card, Form, Row, Col } from "react-bootstrap";
+import { CheckCircle } from "react-bootstrap-icons";
 import { DataContext } from "../../contexts";
 
 const { Title, Body } = Card;
-const { Label, Group, Switch, Control } = Form;
+const { Label, Group, Control } = Form;
 
 const excludedPhenotypes = [
   "participant_id",
@@ -37,9 +38,6 @@ export const DataGrouping = () => {
 
       case "setValue":               
         const newState = [...state];
-
-        console.log(newState);
-        console.log(action);
 
         const phenotype = newState[action.group].find(({ name }) => name === action.phenotype);
         
@@ -86,8 +84,6 @@ export const DataGrouping = () => {
     dispatch({ type: "initialize", phenotypeValues: phenotypeValues });
   }, [phenotypes])
 
-
-
   const onGroupControlChange = (group, phenotype, value) => {
     dispatch({ type: "setValue", group: group, phenotype: phenotype, value: value })
   };
@@ -96,14 +92,17 @@ export const DataGrouping = () => {
 
   const groupControls = (group, i) => (
     <Col key={ i }>
-      <h6>Group { i }</h6>
+      <h6>Group { i + 1 }</h6>
       { group.map((phenotype, j) => (
         <Group key={ j } controlId={ phenotype.name + "_" + i + "_select" }>
-          <Label><small className="capitalize">{ nameLabel(phenotype.name) }</small></Label>
+          <Label>
+            <small className={ phenotype.value === "Any" ? null : "font-weight-bold" }>
+              { nameLabel(phenotype.name) }
+            </small>
+          </Label>
           <Control 
-            as="select"
+            as="select"              
             size="sm"
-            className={ phenotype.value === "Any" ? null : "border-success" }
             value={ phenotype.value }
             onChange={ evt => onGroupControlChange(i, phenotype.name, evt.target.value )}
           >
