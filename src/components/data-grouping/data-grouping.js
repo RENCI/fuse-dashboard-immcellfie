@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useContext, useReducer, useEffect} from "react";
 import { Card, Form, Row, Col } from "react-bootstrap";
 import { DataContext } from "../../contexts";
 
@@ -18,92 +18,112 @@ const timeSort = {
 };
 
 export const DataGrouping = () => {
-  const [{ output, phenotypes, groups }, dataDispatch] = useContext(DataContext);
+  const [{ output, phenotypes }, dataDispatch] = useContext(DataContext);
+  const [ state, dispatch ] = useReducer((state, action) => {
+    switch (action.type) {
+      case "initialize":
+        const initializeGroup = phenotypeValues => (
+          phenotypeValues.map(({ name, values }) => ({
+            name: name,
+            values: [...values],
+            value: "Any"
+          }))
+        );
 
-  console.log(phenotypes);
+        return [
+          initializeGroup(action.phenotypeValues),
+          initializeGroup(action.phenotypeValues)
+        ];
 
-  const onGroupChange = evt => {
-    if (evt.target.checked) {
-      // Just split in two for now
-      const groups = output && output.tasks.length > 0 ? 
-        output.tasks[0].scores.map((score, i, a) => {
-          const number = i < a.length / 2 ? 0 : 1;
+      case "setValue":               
+        const newState = [...state];
+
+        console.log(newState);
+        console.log(action);
+
+        const phenotype = newState[action.group].find(({ name }) => name === action.phenotype);
+        
+        if (!phenotype) return state;
+
+        phenotype.value = action.value;
+
+        return newState;
+  
+      default:
+        console.log("Invalid group action");
+    }
+  }, []);
+
+  useEffect(() => {
+    const phenotypeValues = !phenotypes ? [] :
+      phenotypes.columns
+        .filter(column => !excludedPhenotypes.includes(column))
+        .map(column => {
+          const values = Array.from(phenotypes.reduce((values, row) => {
+            values.add(row[column]);
+            return values;
+          }, new Set()));
+
+          const numeric = values.reduce((numeric, value) => numeric && !isNaN(value), true);
+
+          if (numeric) {
+            values.forEach((value, i, values) => values[i] = +values[i]);
+            values.sort((a, b) => a - b);
+          }
+          else if (column === "study_time_collected_unit") {
+            values.sort((a, b) => timeSort[a] - timeSort[b]);
+          }
+          else {
+            values.sort();
+          }
 
           return {
-            number: number,
-            name: number === 0 ? "A" : "B"
+            name: column,
+            values: values
           };
-        }) : null;
+        });
 
-      dataDispatch({ type: "setGroups", groups: groups });
-    }
-    else {
-      dataDispatch({ type: "setGroups", groups: null });
-    }
+    dispatch({ type: "initialize", phenotypeValues: phenotypeValues });
+  }, [phenotypes])
+
+
+
+  const onGroupControlChange = (group, phenotype, value) => {
+    dispatch({ type: "setValue", group: group, phenotype: phenotype, value: value })
   };
-
-  const phenotypeValues = !phenotypes ? [] :
-    phenotypes.columns
-      .filter(column => !excludedPhenotypes.includes(column))
-      .map(column => {
-        const values = Array.from(phenotypes.reduce((values, row) => {
-          values.add(row[column]);
-          return values;
-        }, new Set()));
-
-        const numeric = values.reduce((numeric, value) => numeric && !isNaN(value), true);
-
-        if (numeric) {
-          values.forEach((value, i, values) => values[i] = +values[i]);
-          values.sort((a, b) => a - b);
-        }
-        else if (column === "study_time_collected_unit") {
-          values.sort((a, b) => timeSort[a] - timeSort[b]);
-        }
-        else {
-          values.sort();
-        }
-
-        return {
-          name: column,
-          values: values
-        };
-      });
 
   const nameLabel = name => (name[0].toUpperCase() + name.substring(1)).replace(/_/gi, " ");
 
-  const groupControls = group => {
-    return phenotypeValues.map((phenotype, i) => (
-      <Group key={ i } controlId={ phenotype.name + "_" + group + "_select" }>
-        <Label><small className="capitalize">{ nameLabel(phenotype.name) }</small></Label>
-        <Control 
-          as="select"
-          size="sm"
-          className="border-success"
-        >
-          <option>Any</option>
-          <option disabled>──────────</option>
-          { phenotype.values.map((value, i) => (
-            <option key={ i }>{ value }</option>
-          ))}
-        </Control>
-      </Group>
-    ));
-  };
+  const groupControls = (group, i) => (
+    <Col key={ i }>
+      <h6>Group { i }</h6>
+      { group.map((phenotype, j) => (
+        <Group key={ j } controlId={ phenotype.name + "_" + i + "_select" }>
+          <Label><small className="capitalize">{ nameLabel(phenotype.name) }</small></Label>
+          <Control 
+            as="select"
+            size="sm"
+            className={ phenotype.value === "Any" ? null : "border-success" }
+            value={ phenotype.value }
+            onChange={ evt => onGroupControlChange(i, phenotype.name, evt.target.value )}
+          >
+            <option>Any</option>
+            <option disabled>──────────</option>
+            { phenotype.values.map((value, k) => (
+              <option key={ k }>{ value }</option>
+            ))}
+          </Control>
+        </Group>      
+      )) }
+    </Col>
+  );
 
   return (
     <Card>
       <Body>
         <Title>Data Grouping</Title>
         <Row>
-          <Col>
-            <h6>Group 1</h6>
-            { groupControls("1") }
-          </Col>
-          <Col>
-            <h6>Group 2</h6>
-            { groupControls("2") }
-          </Col>
+          { state.map(groupControls) }
         </Row>
       </Body>
     </Card>
