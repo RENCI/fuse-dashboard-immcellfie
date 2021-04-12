@@ -12,7 +12,7 @@ const practiceData = {
   //output: "ASD.output",
   //output: "TD.output",
   //outputType: "csv",
-  phenotype: "TestPhenotypes.csv"
+  phenotype: "testphenotypes.csv"
 };
 
 export const Home = () => {
