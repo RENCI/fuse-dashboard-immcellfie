@@ -4,6 +4,7 @@ import { Card } from "react-bootstrap";
 import { DataContext } from "../contexts";
 import { VegaWrapper } from "../components/vega-wrapper";
 import { expressionHeatmap } from "../vega-specs";
+import { DataMissing } from "../components/data-missing";
 
 const { Body } = Card;
 
@@ -46,7 +47,7 @@ export const InputView = () => {
             </Body>
           </Card>
         </>
-      : <h4>No input</h4>
+      : <DataMissing>No expression data loaded</DataMissing>
       }
     </>
   ); 

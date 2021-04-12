@@ -2,15 +2,23 @@ import React, { useContext } from "react";
 import { Tabs, Tab } from "react-bootstrap";
 import * as d3 from "d3";
 import { DataContext } from "../contexts";
+import { ModelSelection } from "../components/model-selection";
 import { VegaWrapper } from "../components/vega-wrapper";
 import { taskHeatmap } from "../vega-specs";
 import { HierarchyVis } from "../components/hierarchy-vis";
 import { PathwayVis } from "../components/pathway-vis";
+import { DataMissing } from "../components/data-missing";
+
+const practiceData = {
+  output: "HPA.expected",
+  outputType: "tsv",
+  //output: "ASD.output",
+  //output: "TD.output",
+  //outputType: "csv"
+};
 
 export const OutputView = () => {
-  const [data] = useContext(DataContext);
-
-  const { output, groups } = data;
+  const [{ phenotypes, output, groups }] = useContext(DataContext);
 
   // Create hierarchy
   const hierarchyData = !output ? [] : Object.values(output.tasks.reduce((data, task) => {
@@ -125,6 +133,12 @@ export const OutputView = () => {
 
   return (
     <>
+      { !phenotypes ? <DataMissing message="No data loaded" /> : 
+        <ModelSelection 
+          outputName={ practiceData.output } 
+          outputType={ practiceData.outputType }
+        /> 
+      }
       { output ? 
         <>
           <h4>Cellfie output</h4>
@@ -165,7 +179,7 @@ export const OutputView = () => {
             </Tab>
           </Tabs>          
         </>
-      : <h4>No output</h4>
+      : <DataMissing>No CellFIE output</DataMissing>
       }
     </>
   );  

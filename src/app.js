@@ -2,7 +2,14 @@ import React from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
 import { PersonCircle } from "react-bootstrap-icons";
-import { Home, InputView, OutputView, AdminView, UserView } from "./views";
+import { 
+  Home, 
+  SubgroupView,
+  InputView, 
+  OutputView, 
+  AdminView, 
+  UserView 
+} from "./views";
 import { DataProvider } from "./contexts";
 
 export const App = () => { 
@@ -24,8 +31,9 @@ export const App = () => {
             <Navbar.Collapse>
               <Nav>
                 <Nav.Link as={ Link } to="/">Home</Nav.Link>
-                <Nav.Link as={ Link } to="/input">Input Data</Nav.Link>
-                <Nav.Link as={ Link } to="/output">Output Data</Nav.Link>
+                <Nav.Link as={ Link } to="/create-subgroups">Create subgroups</Nav.Link>
+                <Nav.Link as={ Link } to="/run-cellfie">Run CellFIE</Nav.Link>
+                <Nav.Link as={ Link } to="/expression-data">Expression data</Nav.Link>
               </Nav>
             </Navbar.Collapse>
             <Navbar.Collapse className="justify-content-end">
@@ -40,8 +48,9 @@ export const App = () => {
           </Navbar>
           <Switch>
             <Route exact path="/"><Home /></Route>
-            <Route exact path="/input"><InputView /></Route>
-            <Route exact path="/output"><OutputView /></Route>
+            <Route exact path="/create-subgroups"><SubgroupView /></Route>
+            <Route exact path="/run-cellfie"><OutputView /></Route>
+            <Route exact path="/expression-data"><InputView /></Route>
             <Route exact path="/admin"><AdminView /></Route>
             <Route exact path="/user"><UserView /></Route>
           </Switch>

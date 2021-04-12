@@ -1,5 +1,7 @@
 import React, { useState, useContext } from "react";
-import { Card, Form, InputGroup, Alert } from "react-bootstrap";
+import { useHistory } from "react-router-dom";
+import { Card, Form, InputGroup, Alert, Row, Col, Button } from "react-bootstrap";
+import { Diagram3, Columns, Table } from "react-bootstrap-icons";
 import { SpinnerButton } from "../spinner-button";
 import { DataContext } from "../../contexts";
 import { api } from "../../api";
@@ -8,7 +10,8 @@ const { Title, Body } = Card;
 const { Label, Group, Control, Text } = Form;
 
 export const DataSelection = ({ inputName, phenotypeName }) => {
-  const [, dataDispatch] = useContext(DataContext);
+  const history = useHistory();
+  const [{ phenotypes }, dataDispatch] = useContext(DataContext);
   const [id, setId] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -37,6 +40,7 @@ export const DataSelection = ({ inputName, phenotypeName }) => {
 
   const onLoadPracticeClick = async () => {
     setLoading(true);
+    setMessage();
 
     dataDispatch({ type: "clearData" });
 
@@ -95,6 +99,37 @@ export const DataSelection = ({ inputName, phenotypeName }) => {
           <Group>  
             <Alert variant="info">{ message }</Alert>
           </Group>  
+        }
+        { phenotypes &&
+          <Row>
+            <Col>
+              <Button 
+                variant="link" 
+                block
+                onClick={ () => history.push("/create-subgroups") }
+              >
+                <Diagram3 className="mr-2 mb-1"/>Create subgroups
+              </Button>
+            </Col>
+            <Col>
+              <Button 
+                variant="link" 
+                block
+                onClick={ () => history.push("/run-cellfie") }
+              >
+                <Columns className="mr-2 mb-1"/>Run CellFIE
+              </Button>
+            </Col>
+            <Col>
+              <Button 
+                variant="link" 
+                block
+                onClick={ () => history.push("/expression-data") }
+              >
+                <Table className="mr-2 mb-1"/>Load expression data
+              </Button>
+            </Col>
+          </Row>
         }
       </Body>
     </Card>
