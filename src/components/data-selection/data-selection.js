@@ -9,7 +9,7 @@ import { api } from "../../api";
 const { Title, Body, Footer } = Card;
 const { Label, Group, Control, Text } = Form;
 
-export const DataSelection = ({ inputName, phenotypeName }) => {
+export const DataSelection = ({ phenotypeName }) => {
   const history = useHistory();
   const [{ phenotypes }, dataDispatch] = useContext(DataContext);
   const [id, setId] = useState("");
@@ -44,14 +44,12 @@ export const DataSelection = ({ inputName, phenotypeName }) => {
 
     dataDispatch({ type: "clearData" });
 
-    const input = await api.loadPracticeData(inputName);
-    const phenotypes = await api.loadPracticeData(phenotypeName);
+    const data = await api.loadPracticeData(phenotypeName);
 
-    dataDispatch({ type: "setInput", file: input });
-    dataDispatch({ type: "setPhenotypes", file: phenotypes });
+    dataDispatch({ type: "setPhenotypes", file: data });
 
     setLoading(false);
-    setMessage("Practice input data loaded");
+    setMessage("Practice data loaded");
   };
 
   const disabled = loading || submitting;
@@ -128,7 +126,7 @@ export const DataSelection = ({ inputName, phenotypeName }) => {
                 block
                 onClick={ () => history.push("/expression-data") }
               >
-                <Table className="mr-2 mb-1"/>Load expression data
+                <Table className="mr-2 mb-1"/>See expression data
               </Button>
             </Col>
           </Row>
