@@ -6,7 +6,7 @@ import { SpinnerButton } from "../spinner-button";
 import { DataContext } from "../../contexts";
 import { api } from "../../api";
 
-const { Title, Body } = Card;
+const { Title, Body, Footer } = Card;
 const { Label, Group, Control, Text } = Form;
 
 export const DataSelection = ({ inputName, phenotypeName }) => {
@@ -100,13 +100,15 @@ export const DataSelection = ({ inputName, phenotypeName }) => {
             <Alert variant="info">{ message }</Alert>
           </Group>  
         }
-        { phenotypes &&
+      </Body>
+      { phenotypes &&
+        <Footer>
           <Row>
             <Col>
               <Button 
                 variant="link" 
                 block
-                onClick={ () => history.push("/create-subgroups") }
+                onClick={ () => history.push("/subgroups") }
               >
                 <Diagram3 className="mr-2 mb-1"/>Create subgroups
               </Button>
@@ -115,7 +117,7 @@ export const DataSelection = ({ inputName, phenotypeName }) => {
               <Button 
                 variant="link" 
                 block
-                onClick={ () => history.push("/run-cellfie") }
+                onClick={ () => history.push("/cellfie") }
               >
                 <Columns className="mr-2 mb-1"/>Run CellFIE
               </Button>
@@ -130,8 +132,8 @@ export const DataSelection = ({ inputName, phenotypeName }) => {
               </Button>
             </Col>
           </Row>
-        }
-      </Body>
+        </Footer>
+      }
     </Card>
   );
 };           

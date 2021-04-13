@@ -31,8 +31,8 @@ export const App = () => {
             <Navbar.Collapse>
               <Nav>
                 <Nav.Link as={ Link } to="/">Home</Nav.Link>
-                <Nav.Link as={ Link } to="/create-subgroups">Create subgroups</Nav.Link>
-                <Nav.Link as={ Link } to="/run-cellfie">Run CellFIE</Nav.Link>
+                <Nav.Link as={ Link } to="/subgroups">Subgroups</Nav.Link>
+                <Nav.Link as={ Link } to="/cellfie">CellFIE</Nav.Link>
                 <Nav.Link as={ Link } to="/expression-data">Expression data</Nav.Link>
               </Nav>
             </Navbar.Collapse>
@@ -48,8 +48,8 @@ export const App = () => {
           </Navbar>
           <Switch>
             <Route exact path="/"><Home /></Route>
-            <Route exact path="/create-subgroups"><SubgroupView /></Route>
-            <Route exact path="/run-cellfie"><OutputView /></Route>
+            <Route exact path="/subgroups"><SubgroupView /></Route>
+            <Route exact path="/cellfie"><OutputView /></Route>
             <Route exact path="/expression-data"><InputView /></Route>
             <Route exact path="/admin"><AdminView /></Route>
             <Route exact path="/user"><UserView /></Route>

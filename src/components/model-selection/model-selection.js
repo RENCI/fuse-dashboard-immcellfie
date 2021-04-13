@@ -63,7 +63,7 @@ export const ModelSelection = ({ outputName, outputType }) => {
   return (
     <Card>
       <Body>
-        <Title>Model Selection</Title>
+        <Title>CellFIE Model Selection</Title>
         <Row>
           <Col>
             <Group controlId="organism_select">
