@@ -1,10 +1,27 @@
 import React, { createContext, useReducer } from "react";
 import * as d3 from "d3";
 
+const excludedPhenotypes = [
+  "participant_id",
+  "biosample_accession"
+];
+
+const timeSort = {
+  Hours: 0,
+  Days: 1,
+  Months: 2,
+  Years: 3
+};
+
 const initialState = {
-  // Phenotype data used for grouping
+  // Phenotype data for each subject
+  phenotypeData: null,
+
+  // Phenotype options created from phenotype data
   phenotypes: null,
-  groups: null,
+
+  // Subgroups
+  subgroups: null,
 
   // Expression data used as CellFIE input
   input: null,
@@ -75,6 +92,45 @@ const parseCSVOutput = data => {
       };      
     })
   };
+};
+
+const createPhenotypes = phenotypeData => {
+  return phenotypeData.columns
+    .filter(column => !excludedPhenotypes.includes(column))
+    .map(column => {
+      const values = phenotypeData.reduce((values, row) => {
+        const v = row[column];
+        let value = values.find(({ value }) => value === v);
+
+        if (!value) {
+          value = { value: v, count: 0 };
+          values.push(value);
+        }
+
+        value.count++;
+
+        return values;
+      }, []);
+
+      const numeric = values.reduce((numeric, value) => numeric && !isNaN(value.value), true);
+
+      // Sort
+      if (numeric) {
+        values.forEach((value, i, values) => values[i].value = +values[i].value);
+        values.sort((a, b) => a.value - b.value);
+      }
+      else if (column === "study_time_collected_unit") {
+        values.sort((a, b) => timeSort[a.value] - timeSort[b.value]);
+      }
+      else {
+        values.sort((a, b) => a.value < b.value ? -1 : a.value > b.value ? 1 : 0);
+      }
+
+      return {
+        name: column,
+        values: values
+      };
+    });
 };
 
 const createHierarchy = output => {
@@ -196,10 +252,17 @@ const createTree = hierarchy => {
   return tree;
 };
 
-const applyPhenotypes = (output, phenotypes) => {
-  console.log(output);
-  console.log(phenotypes);
-};
+const createSubgroup = (name, phenotypes, phenotypeData) => {
+  return {
+    name: name,
+    phenotypes: phenotypes,
+    subjects: phenotypeData.filter(subject => {
+      return phenotypes.reduce((present, phenotype) => {
+        return present && subject[phenotype.name] === phenotype.value;
+      }, true);
+    })
+  }
+}
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -209,18 +272,25 @@ const reducer = (state, action) => {
         input: parseInput(action.file)
       };
 
-    case "setPhenotypes":
+    case "setPhenotypes": {
+      const phenotypeData = parsePhenotypes(action.file);
+      const phenotypes = createPhenotypes(phenotypeData);
+
+      // Create initial group with all subjects
+      const subgroups = [createSubgroup("All", [], phenotypeData)];
+
       return {
         ...state,
-        phenotypes: parsePhenotypes(action.file)
+        phenotypeData: phenotypeData,
+        phenotypes: phenotypes,
+        subgroups: subgroups
       };
+    }
     
-    case "setOutput":
+    case "setOutput": {
       const output = action.fileType === "tsv" ? parseTSVOutput(action.file) : parseCSVOutput(action.file);
       const hierarchy = createHierarchy(output);
       const tree = createTree(hierarchy);
-
-      applyPhenotypes(output, state.phenotypes);
 
       return {
         ...state,
@@ -228,16 +298,61 @@ const reducer = (state, action) => {
         hierarchy: hierarchy,
         tree: tree
       };
+    }
 
     case "clearData":
       return {
         ...initialState
       };
 
-    case "setGroups":
+    case "addSubgroup": {
+      const subgroup = createSubgroup(action.name, [], state.phenotypeData);
+
       return {
         ...state,
-        groups: action.groups
+        subgroups: [
+          ...state.subgroups,
+          subgroup
+        ]
+      };
+    }
+
+    case "removeSubgroup": {
+      if (action.index < 0 || action.index > state.subgroups.length - 1) {
+        return state;
+      }
+
+      const subgroups = [...state.subgroups];
+      subgroups.splice(action.index, 1);
+
+      return {
+        ...state,
+        subgroups: subgroups
+      };
+    }
+
+    case "setSubgroupName": {
+      if (action.index < 0 || action.index > state.subgroups.length - 1) {
+        return state;
+      }
+
+      const subgroups = [...state.subgroups];
+
+      subgroups[action.index] = {
+        ...subgroups[action.index],
+        name: action.name
+      };
+
+      return {
+        ...state,
+        subgroups: subgroups
+      };
+    }
+
+    case "setSubgroups":
+      return {
+        ...state,
+        subgroups: action.subgroups
       };
 
     default: 

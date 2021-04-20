@@ -1,25 +1,48 @@
 import React, { useContext, useReducer, useEffect} from "react";
-import { Card, Form, Row, Col } from "react-bootstrap";
-import { CheckCircle } from "react-bootstrap-icons";
+import { Card, Button, ListGroup, ListGroupItem } from "react-bootstrap";
+import { PlusCircle} from "react-bootstrap-icons";
 import { DataContext } from "../../contexts";
+import { Subgroup } from "./subgroup";
 
-const { Title, Body } = Card;
-const { Label, Group, Control } = Form;
-
-const excludedPhenotypes = [
-  "participant_id",
-  "biosample_accession"
-];
-
-const timeSort = {
-  Hours: 0,
-  Days: 1,
-  Months: 2,
-  Years: 3
-};
+const { Title, Body, Footer } = Card;
 
 export const DataGrouping = () => {
-  const [{ output, phenotypes }, dataDispatch] = useContext(DataContext);
+  const [{ phenotypes, subgroups }, dataDispatch] = useContext(DataContext);
+
+  console.log(phenotypes, subgroups);
+
+  const onAddClick = () => {
+    dataDispatch({ type: "addSubgroup", name: "Subgroup " + subgroups.length });
+  };
+
+  return (
+    <Card>
+      <Body>
+        <Title>Data Grouping</Title>
+      </Body>
+      <ListGroup className="list-group-flush">
+        { subgroups.map((subgroup, i) => (
+          <ListGroupItem key={ subgroup.name }>
+            <Subgroup subgroup={ subgroup } index={ i }/>
+          </ListGroupItem>
+        ))}
+      </ListGroup>
+      <Footer>
+        <Button
+          onClick={ onAddClick }
+        >
+          <PlusCircle className="mb-1 mr-1" />
+          Add subgroup
+        </Button>
+      </Footer>
+    </Card>
+  );
+};
+
+/*
+
+export const DataGrouping = () => {
+  const [{ phenotypes, groups }, dataDispatch] = useContext(DataContext);
   const [ state, dispatch ] = useReducer((state, action) => {
     switch (action.type) {
       case "initialize":
@@ -52,37 +75,8 @@ export const DataGrouping = () => {
     }
   }, []);
 
-  useEffect(() => {
-    const phenotypeValues = !phenotypes ? [] :
-      phenotypes.columns
-        .filter(column => !excludedPhenotypes.includes(column))
-        .map(column => {
-          const values = Array.from(phenotypes.reduce((values, row) => {
-            values.add(row[column]);
-            return values;
-          }, new Set()));
-
-          const numeric = values.reduce((numeric, value) => numeric && !isNaN(value), true);
-
-          if (numeric) {
-            values.forEach((value, i, values) => values[i] = +values[i]);
-            values.sort((a, b) => a - b);
-          }
-          else if (column === "study_time_collected_unit") {
-            values.sort((a, b) => timeSort[a] - timeSort[b]);
-          }
-          else {
-            values.sort();
-          }
-
-          return {
-            name: column,
-            values: values
-          };
-        });
-
-    dispatch({ type: "initialize", phenotypeValues: phenotypeValues });
-  }, [phenotypes])
+  console.log(phenotypes);
+  console.log(groups);
 
   const onGroupControlChange = (group, phenotype, value) => {
     dispatch({ type: "setValue", group: group, phenotype: phenotype, value: value })
@@ -128,3 +122,5 @@ export const DataGrouping = () => {
     </Card>
   );
 };           
+
+*/

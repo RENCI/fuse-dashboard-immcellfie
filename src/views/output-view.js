@@ -14,6 +14,7 @@ const practiceData = {
 
 export const OutputView = () => {
   const [{ phenotypes, output }] = useContext(DataContext);
+  
   return (
     <>
       { !phenotypes ? <DataMissing message="No data loaded" /> : 

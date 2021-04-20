@@ -1,0 +1,59 @@
+import React, { useState, useRef, useEffect } from "react";
+import { Form, FormControl } from "react-bootstrap";
+import "./label-edit.css";
+
+const { Label, Group } = Form;
+
+export const LabelEdit = ({ subgroup, onChange }) => {
+  const [editName, setEditName] = useState(false);
+  const [name, setName] = useState(subgroup.name);
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [editName, inputRef.current]);
+
+  const onNameLabelClick = () => {
+    setEditName(true);
+  };
+
+  const onNameInputBlur = () => {
+    setEditName(false);
+
+    onChange(name);
+  };
+
+  const onNameInputChange = evt => {
+    setName(evt.target.value);
+  };
+
+  const onKeyPress = evt => {
+    if (evt.code === "Enter") {
+      inputRef.current.blur();
+    }
+  };
+
+  const canEdit = onChange !== null;
+
+  return (
+    <Group>
+      { editName && canEdit ? 
+        <FormControl 
+          ref={ inputRef }
+          value={ name } 
+          onBlur={ onNameInputBlur }
+          onChange={ onNameInputChange }
+          onKeyPress={ onKeyPress }
+        />
+      : <Label
+          className={ canEdit ? "editable" : null }
+          onClick={ onNameLabelClick }
+        >
+          { subgroup.name }
+        </Label> 
+      }
+    </Group>
+  );
+};           
