@@ -37,7 +37,7 @@ const changeColorMaps = [
   "blueorange"
 ];
 
-export const HierarchyVis = ({ data, tree, hasGroups }) => {
+export const HierarchyVis = ({ hierarchy, tree, hasGroups }) => {
   const [loading, setLoading] = useState(true);
   const [depth, setDepth] = useState(1);
   const [value, setValue] = useState("score");
@@ -189,7 +189,7 @@ export const HierarchyVis = ({ data, tree, hasGroups }) => {
         { loading ? <LoadingSpinner /> : 
           <VegaWrapper
             spec={ vis.spec }
-            data={ vis.spec === voronoiTreemap ? tree.descendants() : data }
+            data={ vis.spec === voronoiTreemap ? tree.descendants() : hierarchy }
             signals={[
               { name: "depth", value: depth },
               { name: "value", value: value },

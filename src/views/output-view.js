@@ -1,6 +1,4 @@
 import React, { useContext } from "react";
-import { Tabs, Tab } from "react-bootstrap";
-import * as d3 from "d3";
 import { DataContext } from "../contexts";
 import { ModelSelection } from "../components/model-selection";
 import { CellfieOutput } from "../components/cellfie-output";
