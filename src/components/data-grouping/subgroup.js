@@ -3,6 +3,8 @@ import { Form, Button, Col } from "react-bootstrap";
 import { XCircle } from "react-bootstrap-icons";
 import { DataContext } from "../../contexts";
 import { LabelEdit } from "./label-edit";
+import { VegaWrapper } from "../vega-wrapper";
+import { phenotypeBarChart } from "../../vega-specs";
 
 const { Row, Group, Label, Control } = Form;
 
@@ -27,6 +29,22 @@ export const Subgroup = ({ subgroup, index, isNew }) => {
     const pheno = subgroup.phenotypes.find(({ name }) => name === phenotype.name);
     const value = pheno ? pheno.value : "Any";
 
+    console.log(phenotype);
+
+    return (
+      <Col key={ i } xs={ 2 } className="text-center">
+        <small>{ nameLabel(phenotype.name) }</small>
+        <VegaWrapper
+          options={{
+            actions: false,
+            renderer: "svg"
+          }}
+          spec={ phenotypeBarChart }
+          data={ phenotype.values }
+        />
+      </Col>
+    );
+/*    
     return (
       <Col key={ i }>
         <Group>
@@ -49,8 +67,9 @@ export const Subgroup = ({ subgroup, index, isNew }) => {
             ))}
           </Control>
         </Group>
-      </Col>
+      </Col>      
     );
+*/    
   });
 
   return (

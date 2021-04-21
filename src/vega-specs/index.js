@@ -5,3 +5,4 @@ export * from "./enclosure";
 export * from "./voronoi-treemap";
 export * from "./histogram";
 export * from "./density";
+export * from "./phenotype-bar-chart";

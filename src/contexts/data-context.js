@@ -95,6 +95,8 @@ const parseCSVOutput = data => {
 };
 
 const createPhenotypes = phenotypeData => {
+  const shortLabel = value => value.length > 10 ? value.substr(0, 10) + "..." : value;
+
   return phenotypeData.columns
     .filter(column => !excludedPhenotypes.includes(column))
     .map(column => {
@@ -103,7 +105,11 @@ const createPhenotypes = phenotypeData => {
         let value = values.find(({ value }) => value === v);
 
         if (!value) {
-          value = { value: v, count: 0 };
+          value = { 
+            value: v,  
+            count: 0 
+          };
+
           values.push(value);
         }
 
@@ -125,6 +131,11 @@ const createPhenotypes = phenotypeData => {
       else {
         values.sort((a, b) => a.value < b.value ? -1 : a.value > b.value ? 1 : 0);
       }
+
+      // Short label for graph
+      values.forEach(value => {
+        value.shortLabel = numeric ? value.value : shortLabel(value.value);
+      });
 
       return {
         name: column,
