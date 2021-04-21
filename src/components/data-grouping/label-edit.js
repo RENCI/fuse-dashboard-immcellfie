@@ -4,8 +4,8 @@ import "./label-edit.css";
 
 const { Label, Group } = Form;
 
-export const LabelEdit = ({ subgroup, onChange }) => {
-  const [editName, setEditName] = useState(false);
+export const LabelEdit = ({ subgroup, isNew, onChange }) => {
+  const [editName, setEditName] = useState(isNew);
   const [name, setName] = useState(subgroup.name);
   const inputRef = useRef(null);
 
@@ -13,7 +13,7 @@ export const LabelEdit = ({ subgroup, onChange }) => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
-  }, [editName, inputRef.current]);
+  }, [editName]);
 
   const onNameLabelClick = () => {
     setEditName(true);

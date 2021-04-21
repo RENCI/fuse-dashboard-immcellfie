@@ -1,4 +1,4 @@
-import React, { useContext, useReducer, useEffect} from "react";
+import React, { useContext, useState, useEffect} from "react";
 import { Card, Button, ListGroup, ListGroupItem } from "react-bootstrap";
 import { PlusCircle} from "react-bootstrap-icons";
 import { DataContext } from "../../contexts";
@@ -8,11 +8,24 @@ const { Title, Body, Footer } = Card;
 
 export const DataGrouping = () => {
   const [{ phenotypes, subgroups }, dataDispatch] = useContext(DataContext);
+  const [newAdded, setNewAdded] = useState(false);
 
-  console.log(phenotypes, subgroups);
+  useEffect(() => {
+    setNewAdded(false);
+  }, []);
 
   const onAddClick = () => {
-    dataDispatch({ type: "addSubgroup", name: "Subgroup " + subgroups.length });
+    let newName;
+
+    for (let i = subgroups.length; i < subgroups.length * 2; i++) {
+      newName = "Subgroup " + i;
+
+      if (!subgroups.find(({ name }) => name === newName)) break;
+    }
+
+    dataDispatch({ type: "addSubgroup", name: newName });
+
+    setNewAdded(true);
   };
 
   return (
@@ -21,9 +34,9 @@ export const DataGrouping = () => {
         <Title>Data Grouping</Title>
       </Body>
       <ListGroup className="list-group-flush">
-        { subgroups.map((subgroup, i) => (
+        { subgroups.map((subgroup, i, a) => (
           <ListGroupItem key={ subgroup.name }>
-            <Subgroup subgroup={ subgroup } index={ i }/>
+            <Subgroup subgroup={ subgroup } index={ i } isNew={ newAdded && i === a.length - 1 } />
           </ListGroupItem>
         ))}
       </ListGroup>
