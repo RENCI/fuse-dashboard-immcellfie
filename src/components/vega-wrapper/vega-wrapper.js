@@ -4,7 +4,7 @@ import vegaEmbed from "vega-embed";
 import { LoadingSpinner } from "../loading-spinner";
 import "./vega-wrapper.css";
 
-export const VegaWrapper = ({ options, spec, data, signals, tooltip }) => {
+export const VegaWrapper = ({ options, spec, data, signals, eventListeners, tooltip, spinner }) => {
   const view = useRef(null);
   const div = useRef(null);
   const [tooltipProps, setTooltipProps] = useState(null);
@@ -14,6 +14,12 @@ export const VegaWrapper = ({ options, spec, data, signals, tooltip }) => {
       view.signal(name, value);
     });
   };  
+
+  const setEventListeners = (view, eventListeners) => {
+    eventListeners.forEach(({ type, callback }) => {
+      view.addEventListener(type, callback);
+    });
+  };
 
   const tooltipCallback = (handler, event, item, value) => {
     setTooltipProps({
@@ -35,6 +41,7 @@ export const VegaWrapper = ({ options, spec, data, signals, tooltip }) => {
       view.current = result.view;
 
       setSignals(view.current, signals);
+      setEventListeners(view.current, eventListeners);
 
       if (tooltip) {
         view.current.tooltip(tooltipCallback);
@@ -66,7 +73,7 @@ export const VegaWrapper = ({ options, spec, data, signals, tooltip }) => {
         className="wrapperDiv"
         style={{ height: "auto" }}
       >
-        <LoadingSpinner />
+        { spinner && <LoadingSpinner /> }
       </div>
       { tooltip && React.cloneElement(tooltip, tooltipProps) }
     </>
@@ -85,7 +92,9 @@ VegaWrapper.defaultProps = {
   },
   data: [],
   signals: [],
-  tooltip: null
+  eventListeners: [],
+  tooltip: null,
+  spinner: true
 };
 
 VegaWrapper.propTypes = {
@@ -93,5 +102,7 @@ VegaWrapper.propTypes = {
   options: PropTypes.object,
   data: PropTypes.array,
   signals: PropTypes.array,
-  tooltip: PropTypes.element
+  eventListeners: PropTypes.array,
+  tooltip: PropTypes.element,
+  spinner: PropTypes.bool
 };

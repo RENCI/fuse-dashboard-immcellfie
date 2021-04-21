@@ -42,6 +42,7 @@ export const DataGrouping = () => {
       </ListGroup>
       <Footer>
         <Button
+          variant="outline-primary"
           onClick={ onAddClick }
         >
           <PlusCircle className="mb-1 mr-1" />

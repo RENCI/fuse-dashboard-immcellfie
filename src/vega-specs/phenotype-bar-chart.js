@@ -1,6 +1,5 @@
 export const phenotypeBarChart = {
   $schema: "https://vega.github.io/schema/vega-lite/v4.json",
-  title: { expr: "title" },
   width: 100,
   height: 100,
   autosize: {
@@ -8,27 +7,63 @@ export const phenotypeBarChart = {
   },
   params: [
     {
-      name: "title",
-      value: "Hello"
+      name: "value",
+      value: "none"
     }
   ],
+  selection: {
+    highlight: {
+      type: "single", 
+      on: "mouseover",
+      empty: "none", 
+      clear: "mouseout"
+    },
+    select: {
+      type: "single",
+      on: "click",
+      empty: "none"
+    }
+  },
   data: {
     name: "data"
   },
-  mark: "bar",
+  mark: {
+    type: "bar",
+    strokeWidth: 1,
+    cursor: "pointer",
+  },
   encoding: {
     x: {
       field: "shortLabel",     
       type: "nominal",
-      axis: { labelAngle: 30, title: null }
+      axis: { 
+        labelAngle: 30, 
+        title: null 
+      }
     },
     y: {
       field: "count",
-      type: "quantitative"
+      type: "quantitative",
+      axis: { title: null }
+    },
+    fill: {
+      value: { signal: "datum.value === value ? '#b2182b' : '#4C78A8'" }
+    },
+    stroke: {
+      condition: {
+        selection: "highlight",
+        value: "#333"
+      },
+      value: "none"
     },
     tooltip: [
       { field: "value" },
       { field: "count" }
     ]
-  }
+  },
+  config: {
+    scale: {
+      bandPaddingInner: 0.2
+    }
+  } 
 };

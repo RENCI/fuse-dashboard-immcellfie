@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Form, Button, Col } from "react-bootstrap";
 import { XCircle } from "react-bootstrap-icons";
 import { DataContext } from "../../contexts";
@@ -11,6 +11,8 @@ const { Row, Group, Label, Control } = Form;
 export const Subgroup = ({ subgroup, index, isNew }) => {
   const [{ phenotypes }, dataDispatch] = useContext(DataContext);
 
+  const [values, setValues] = useState({});
+
   const onNameChange = name => {
     dataDispatch({ type: "setSubgroupName", index: index, name: name });
   };
@@ -19,17 +21,21 @@ export const Subgroup = ({ subgroup, index, isNew }) => {
     dataDispatch({ type: "removeSubgroup", index: index });
   };
 
-  const onControlChange = (name, value) => {
-    console.log(name, value);
+  const onValueSelect = (phenotype, evt) => {
+    if (!evt.item) return;
+
+    const newValues = {...values};
+    newValues[phenotype] = evt.item && evt.item.datum ? evt.item.datum.value : "none";
+
+    setValues(newValues);
   };
 
   const nameLabel = name => (name[0].toUpperCase() + name.substring(1)).replace(/_/gi, " ");
 
-  const controls = phenotypes.map((phenotype, i) => {
+  const controls = phenotypes.map((phenotype, i) => {    
     const pheno = subgroup.phenotypes.find(({ name }) => name === phenotype.name);
-    const value = pheno ? pheno.value : "Any";
-
-    console.log(phenotype);
+    //const value = pheno ? pheno.value : "Any";
+    const value = values[phenotype.name];
 
     return (
       <Col key={ i } xs={ 2 } className="text-center">
@@ -41,35 +47,15 @@ export const Subgroup = ({ subgroup, index, isNew }) => {
           }}
           spec={ phenotypeBarChart }
           data={ phenotype.values }
+          signals={[{ name: "value", value: value }]}
+          eventListeners={[{ 
+            type: "click", 
+            callback: evt => onValueSelect(phenotype.name, evt) 
+          }]}
+          spinner={ false }
         />
       </Col>
-    );
-/*    
-    return (
-      <Col key={ i }>
-        <Group>
-          <Label>
-            <small className={ value === "Any" ? null : "font-weight-bold" }>
-              { nameLabel(phenotype.name) }
-            </small>
-          </Label>
-          <Control 
-            as="select"              
-            size="sm"
-            disabled={ index === 0 }
-            value={ value }
-            onChange={ evt => onControlChange(i, phenotype.name, evt.target.value )}
-          >
-            <option>Any</option>
-            <option disabled>──────────</option>
-            { phenotype.values.map((value, k) => (
-              <option key={ k }>{ value.value }</option>
-            ))}
-          </Control>
-        </Group>
-      </Col>      
-    );
-*/    
+    );    
   });
 
   return (
