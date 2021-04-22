@@ -28,7 +28,7 @@ export const VegaWrapper = ({ options, spec, data, signals, eventListeners, tool
       item: item,
       value: value
     });
-  };
+  }; 
 
   useEffect(() => {
     // Remove old visualization
@@ -57,14 +57,6 @@ export const VegaWrapper = ({ options, spec, data, signals, eventListeners, tool
       if (view.current) view.current.finalize();
     };
   }, [spec, data, options, signals, eventListeners, tooltip]);
-
-  useEffect(() => {
-    if (!view.current) return;
-
-    setSignals(view.current, signals);
-
-    view.current.runAsync();
-  }, [signals]);
 
   return (
     <>

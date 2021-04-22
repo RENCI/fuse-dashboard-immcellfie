@@ -15,15 +15,7 @@ export const DataGrouping = () => {
   }, []);
 
   const onAddClick = () => {
-    let newName;
-
-    for (let i = subgroups.length; i < subgroups.length * 2; i++) {
-      newName = "Subgroup " + i;
-
-      if (!subgroups.find(({ name }) => name === newName)) break;
-    }
-
-    dataDispatch({ type: "addSubgroup", name: newName });
+    dataDispatch({ type: "addSubgroup" });
 
     setNewAdded(true);
   };

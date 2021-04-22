@@ -264,9 +264,19 @@ const createTree = hierarchy => {
 };
 
 const getNewSubgroupKey = subgroups => {
-  return subgroups.reduce((key, subgroup) => {
-    return key === subgroup.key ? key++ : key;
-  }, 0);
+  return subgroups.reduce((max, subgroup) => {
+    return Math.max(max, subgroup.key);
+  }, 0) + 1;
+};
+
+const getNewSubgroupName = subgroups => {
+  for (let i = subgroups.length; i < subgroups.length * 2; i++) {
+    const newName = "Subgroup " + i;
+
+    if (!subgroups.find(({ name }) => name === newName)) return newName;
+  }
+
+  return "New subgroup";
 };
 
 const createSubgroup = (name, phenotypes, phenotypeData, subgroups) => {
@@ -324,7 +334,7 @@ const reducer = (state, action) => {
       };
 
     case "addSubgroup": {
-      const subgroup = createSubgroup(action.name, [], state.phenotypeData, state.subgroups);
+      const subgroup = createSubgroup(getNewSubgroupName(state.subgroups), [], state.phenotypeData, state.subgroups);
 
       return {
         ...state,
