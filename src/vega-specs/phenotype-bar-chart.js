@@ -67,6 +67,7 @@ export const phenotypeBarChart = {
   },
   config: {
     scale: {
+      bandPaddingOuter: 0.2,
       bandPaddingInner: 0.2
     }
   } 
