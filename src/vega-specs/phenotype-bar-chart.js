@@ -9,6 +9,10 @@ export const phenotypeBarChart = {
     {
       name: "value",
       value: "none"
+    },
+    {
+      name: "interactive",
+      value: true
     }
   ],
   selection: {
@@ -30,7 +34,7 @@ export const phenotypeBarChart = {
   mark: {
     type: "bar",
     strokeWidth: 1,
-    cursor: "pointer",
+    cursor: { signal: "interactive ? 'pointer' : 'default'" }
   },
   encoding: {
     x: {

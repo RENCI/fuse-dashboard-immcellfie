@@ -13,6 +13,8 @@ export const Subgroup = ({ subgroup, index, isNew }) => {
 
   const [values, setValues] = useState({});
 
+  const editable = index > 0;
+
   const onNameChange = name => {
     dataDispatch({ type: "setSubgroupName", index: index, name: name });
   };
@@ -34,7 +36,6 @@ export const Subgroup = ({ subgroup, index, isNew }) => {
 
   const controls = phenotypes.map((phenotype, i) => {    
     const pheno = subgroup.phenotypes.find(({ name }) => name === phenotype.name);
-    //const value = pheno ? pheno.value : "Any";
     const value = values[phenotype.name];
 
     return (
@@ -47,11 +48,14 @@ export const Subgroup = ({ subgroup, index, isNew }) => {
           }}
           spec={ phenotypeBarChart }
           data={ phenotype.values }
-          signals={[{ name: "value", value: value }]}
-          eventListeners={[{ 
-            type: "click", 
-            callback: evt => onValueSelect(phenotype.name, evt) 
-          }]}
+          signals={ editable ? 
+            [{ name: "value", value: value }] : 
+            [{ name: "interactive", value: false }] 
+          }
+          eventListeners={editable ? 
+            [{ type: "click", callback: evt => onValueSelect(phenotype.name, evt) }] : 
+            [] 
+          }
           spinner={ false }
         />
       </Col>
@@ -65,10 +69,10 @@ export const Subgroup = ({ subgroup, index, isNew }) => {
           <LabelEdit     
             subgroup={ subgroup } 
             isNew={ isNew }
-            onChange={ index > 0 ? onNameChange : null }
+            onChange={ editable ? onNameChange : null }
           />
         </Col>
-        { index > 0 &&
+        { editable &&
           <Col xs="auto">
             <Button 
               variant="outline-danger" 
