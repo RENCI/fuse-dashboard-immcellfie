@@ -38,7 +38,7 @@ export const LabelEdit = ({ subgroup, isNew, onChange }) => {
   const canEdit = onChange !== null;
 
   return (
-    <Group>
+    <>
       { editName && canEdit ? 
         <FormControl 
           ref={ inputRef }
@@ -54,6 +54,6 @@ export const LabelEdit = ({ subgroup, isNew, onChange }) => {
           { subgroup.name }
         </Label> 
       }
-    </Group>
+    </>
   );
 };           

@@ -65,7 +65,7 @@ export const Subgroup = ({ subgroup, isNew }) => {
 
   return (
     <Form>
-      <Row>
+      <Row className="align-items-center">
         <Col>
           <LabelEdit     
             subgroup={ subgroup } 
@@ -73,30 +73,30 @@ export const Subgroup = ({ subgroup, isNew }) => {
             onChange={ editable ? onNameChange : null }
           />
         </Col>
+        <Col>
           <div>
             Count: { subgroup.subjects.length }
           </div>
-        <Col>
         </Col>
-        { editable &&
-          <Col xs="auto">
-            <Button 
-              variant="outline-secondary" 
-              size="sm"
-              className="mr-2"
-              onClick={ onResetClick }
-            >
-              <ArrowCounterclockwise className="mb-1" />
-            </Button>
-            <Button 
-              variant="outline-danger" 
-              size="sm"
-              onClick={ onCloseClick }
-            >
-              <XCircle className="mb-1" />
-            </Button>
-          </Col>
-        }
+        <Col xs="auto">
+          <Button 
+            variant="outline-secondary" 
+            size="sm"
+            className="mr-2"
+            style={{ visibility: !editable ? "hidden" : null }}
+            onClick={ onResetClick }
+          >
+            <ArrowCounterclockwise className="mb-1" />
+          </Button>
+          <Button 
+            variant="outline-danger" 
+            size="sm"
+            style={{ visibility: !editable ? "hidden" : null }}
+            onClick={ onCloseClick }
+          >
+            <XCircle className="mb-1" />
+          </Button>
+        </Col>
       </Row>
       <Row>
         { controls }

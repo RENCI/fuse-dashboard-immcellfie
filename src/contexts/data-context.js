@@ -74,7 +74,24 @@ const parseTSVOutput = data => {
   };
 };
 
-const parsePhenotypes = data => d3.csvParse(data);
+const parsePhenotypeData = data => {
+  // XXX: Hack to match test phenotype data to test expression/output data
+  const n = 32;
+
+  const csv = d3.csvParse(data);
+
+  const random = d3.randomInt(csv.length);
+
+  const result = [];
+
+  for (let i = 0; i < n; i++) {
+    result.push(csv[random()]);
+  }
+
+  result.columns = csv.columns;
+
+  return result;
+}
 
 const parseCSVOutput = data => {
   return {
@@ -331,7 +348,7 @@ const reducer = (state, action) => {
       };
 
     case "setPhenotypes": {
-      const phenotypeData = parsePhenotypes(action.file);
+      const phenotypeData = parsePhenotypeData(action.file);
       const phenotypes = createPhenotypes(phenotypeData);
 
       // Create initial group with all subjects

@@ -42,7 +42,7 @@ export const phenotypeBarChart = {
       type: "nominal",
       axis: { 
         labelAngle: 30, 
-        title: null 
+        title: null
       }
     },
     y: {
