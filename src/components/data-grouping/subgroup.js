@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Form, Button, Col } from "react-bootstrap";
-import { XCircle } from "react-bootstrap-icons";
+import { ArrowCounterclockwise, XCircle } from "react-bootstrap-icons";
 import { DataContext } from "../../contexts";
 import { LabelEdit } from "./label-edit";
 import { VegaWrapper } from "../vega-wrapper";
@@ -17,10 +17,6 @@ export const Subgroup = ({ subgroup, isNew }) => {
     dataDispatch({ type: "setSubgroupName", key: subgroup.key, name: name });
   };
 
-  const onCloseClick = () => {
-    dataDispatch({ type: "removeSubgroup", key: subgroup.key });
-  };
-
   const onValueSelect = (phenotype, evt) => {
     if (!evt.item) return;
 
@@ -29,12 +25,17 @@ export const Subgroup = ({ subgroup, isNew }) => {
     dataDispatch({ type: "setSubgroupFilter", key: subgroup.key, phenotype: phenotype, value: value });
   };
 
+  const onResetClick = () => {
+    dataDispatch({ type: "resetSubgroup", key: subgroup.key });
+  };
+
+  const onCloseClick = () => {
+    dataDispatch({ type: "removeSubgroup", key: subgroup.key });
+  };
+
   const nameLabel = name => (name[0].toUpperCase() + name.substring(1)).replace(/_/gi, " ");
 
   const controls = subgroup.phenotypes.map((phenotype, i) => {    
-    //const pheno = subgroup.phenotypes.find(({ name }) => name === phenotype.name);
-    //const value = values[phenotype.name];
-
     const filter = subgroup.filters.find(filter => filter.phenotype === phenotype.name);
     const value = filter ? filter.value : "none";
 
@@ -79,6 +80,14 @@ export const Subgroup = ({ subgroup, isNew }) => {
         </Col>
         { editable &&
           <Col xs="auto">
+            <Button 
+              variant="outline-secondary" 
+              size="sm"
+              className="mr-2"
+              onClick={ onResetClick }
+            >
+              <ArrowCounterclockwise className="mb-1" />
+            </Button>
             <Button 
               variant="outline-danger" 
               size="sm"

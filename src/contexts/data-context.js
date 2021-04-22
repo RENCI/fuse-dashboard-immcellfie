@@ -1,5 +1,6 @@
 import React, { createContext, useReducer } from "react";
 import * as d3 from "d3";
+import { filter } from "d3";
 
 const excludedPhenotypes = [
   "participant_id",
@@ -373,6 +374,30 @@ const reducer = (state, action) => {
           ...state.subgroups,
           subgroup
         ]
+      };
+    }
+    
+    case "resetSubgroup": {
+      const index = keyIndex(action.key, state.subgroups);
+      
+      if (index === -1) return state;
+
+      const subgroups = state.subgroups.map((subgroup, i) => {
+        if (i !== index) return subgroup;
+
+        const reset = {
+          ...subgroup,
+          filters: []
+        };
+
+        filterSubgroup(reset, state.phenotypeData, state.phenotypes);
+
+        return reset;
+      });
+
+      return {
+        ...state,
+        subgroups: subgroups
       };
     }
 
