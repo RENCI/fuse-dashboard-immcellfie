@@ -263,8 +263,15 @@ const createTree = hierarchy => {
   return tree;
 };
 
-const createSubgroup = (name, phenotypes, phenotypeData) => {
+const getNewSubgroupKey = subgroups => {
+  return subgroups.reduce((key, subgroup) => {
+    return key === subgroup.key ? key++ : key;
+  }, 0);
+};
+
+const createSubgroup = (name, phenotypes, phenotypeData, subgroups) => {
   return {
+    key: getNewSubgroupKey(subgroups),
     name: name,
     phenotypes: phenotypes,
     subjects: phenotypeData.filter(subject => {
@@ -273,7 +280,7 @@ const createSubgroup = (name, phenotypes, phenotypeData) => {
       }, true);
     })
   }
-}
+};
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -288,7 +295,7 @@ const reducer = (state, action) => {
       const phenotypes = createPhenotypes(phenotypeData);
 
       // Create initial group with all subjects
-      const subgroups = [createSubgroup("All", [], phenotypeData)];
+      const subgroups = [createSubgroup("All", [], phenotypeData, [])];
 
       return {
         ...state,
@@ -317,7 +324,7 @@ const reducer = (state, action) => {
       };
 
     case "addSubgroup": {
-      const subgroup = createSubgroup(action.name, [], state.phenotypeData);
+      const subgroup = createSubgroup(action.name, [], state.phenotypeData, state.subgroups);
 
       return {
         ...state,
