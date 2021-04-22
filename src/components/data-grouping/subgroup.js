@@ -6,37 +6,37 @@ import { LabelEdit } from "./label-edit";
 import { VegaWrapper } from "../vega-wrapper";
 import { phenotypeBarChart } from "../../vega-specs";
 
-const { Row, Group, Label, Control } = Form;
+const { Row } = Form;
 
-export const Subgroup = ({ subgroup, index, isNew }) => {
-  const [{ phenotypes }, dataDispatch] = useContext(DataContext);
+export const Subgroup = ({ subgroup, isNew }) => {
+  const [, dataDispatch] = useContext(DataContext);
 
-  const [values, setValues] = useState({});
-
-  const editable = index > 0;
+  const editable = subgroup.key > 0;
 
   const onNameChange = name => {
-    dataDispatch({ type: "setSubgroupName", index: index, name: name });
+    dataDispatch({ type: "setSubgroupName", key: subgroup.key, name: name });
   };
 
   const onCloseClick = () => {
-    dataDispatch({ type: "removeSubgroup", index: index });
+    dataDispatch({ type: "removeSubgroup", key: subgroup.key });
   };
 
   const onValueSelect = (phenotype, evt) => {
     if (!evt.item) return;
 
-    const newValues = {...values};
-    newValues[phenotype] = evt.item && evt.item.datum ? evt.item.datum.value : "none";
+    const value = evt.item && evt.item.datum ? evt.item.datum.value : null;
 
-    setValues(newValues);
+    dataDispatch({ type: "setSubgroupFilter", key: subgroup.key, phenotype: phenotype, value: value });
   };
 
   const nameLabel = name => (name[0].toUpperCase() + name.substring(1)).replace(/_/gi, " ");
 
-  const controls = phenotypes.map((phenotype, i) => {    
-    const pheno = subgroup.phenotypes.find(({ name }) => name === phenotype.name);
-    const value = values[phenotype.name];
+  const controls = subgroup.phenotypes.map((phenotype, i) => {    
+    //const pheno = subgroup.phenotypes.find(({ name }) => name === phenotype.name);
+    //const value = values[phenotype.name];
+
+    const filter = subgroup.filters.find(filter => filter.phenotype === phenotype.name);
+    const value = filter ? filter.value : "none";
 
     return (
       <Col key={ i } xs={ 2 } className="text-center">
@@ -71,6 +71,11 @@ export const Subgroup = ({ subgroup, index, isNew }) => {
             isNew={ isNew }
             onChange={ editable ? onNameChange : null }
           />
+        </Col>
+          <div>
+            Count: { subgroup.subjects.length }
+          </div>
+        <Col>
         </Col>
         { editable &&
           <Col xs="auto">

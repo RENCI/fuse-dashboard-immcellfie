@@ -266,7 +266,7 @@ const createTree = hierarchy => {
 const getNewSubgroupKey = subgroups => {
   return subgroups.reduce((max, subgroup) => {
     return Math.max(max, subgroup.key);
-  }, 0) + 1;
+  }, -1) + 1;
 };
 
 const getNewSubgroupName = subgroups => {
@@ -279,17 +279,46 @@ const getNewSubgroupName = subgroups => {
   return "New subgroup";
 };
 
-const createSubgroup = (name, phenotypes, phenotypeData, subgroups) => {
-  return {
+const filterSubgroup = (subgroup, phenotypeData, phenotypes) => {
+  const subjects = phenotypeData.filter(subject => {
+    return subgroup.filters.reduce((include, filter) => {
+      return include && subject[filter.phenotype] == filter.value;
+    }, true);
+  });
+
+  const phenos = phenotypes.map(phenotype => {
+    return {
+      ...phenotype,
+      values: phenotype.values.map(value => {
+        return {
+          ...value,
+          count: subjects.reduce((count, subject) => {
+            if (subject[phenotype.name] == value.value) count++;
+            return count;
+          }, 0)
+        }
+      })
+    };
+  });
+
+  subgroup.subjects = subjects;
+  subgroup.phenotypes = phenos;
+};
+
+const createSubgroup = (name, phenotypeData, phenotypes, subgroups) => {
+  const subgroup = {
     key: getNewSubgroupKey(subgroups),
     name: name,
-    phenotypes: phenotypes,
-    subjects: phenotypeData.filter(subject => {
-      return phenotypes.reduce((present, phenotype) => {
-        return present && subject[phenotype.name] === phenotype.value;
-      }, true);
-    })
-  }
+    filters: []
+  };
+
+  filterSubgroup(subgroup, phenotypeData, phenotypes);
+
+  return subgroup;
+};
+
+const keyIndex = (key, subgroups) => {
+  return subgroups.findIndex(subgroup => subgroup.key === key);
 };
 
 const reducer = (state, action) => {
@@ -305,7 +334,7 @@ const reducer = (state, action) => {
       const phenotypes = createPhenotypes(phenotypeData);
 
       // Create initial group with all subjects
-      const subgroups = [createSubgroup("All", [], phenotypeData, [])];
+      const subgroups = [createSubgroup("All", phenotypeData, phenotypes, [])];
 
       return {
         ...state,
@@ -334,7 +363,9 @@ const reducer = (state, action) => {
       };
 
     case "addSubgroup": {
-      const subgroup = createSubgroup(getNewSubgroupName(state.subgroups), [], state.phenotypeData, state.subgroups);
+      const subgroup = createSubgroup(
+        getNewSubgroupName(state.subgroups), state.phenotypeData, state.phenotypes, state.subgroups
+      );
 
       return {
         ...state,
@@ -346,12 +377,12 @@ const reducer = (state, action) => {
     }
 
     case "removeSubgroup": {
-      if (action.index < 0 || action.index > state.subgroups.length - 1) {
-        return state;
-      }
+      const index = keyIndex(action.key, state.subgroups);
+      
+      if (index === -1) return state;
 
       const subgroups = [...state.subgroups];
-      subgroups.splice(action.index, 1);
+      subgroups.splice(index, 1);
 
       return {
         ...state,
@@ -360,16 +391,13 @@ const reducer = (state, action) => {
     }
 
     case "setSubgroupName": {
-      if (action.index < 0 || action.index > state.subgroups.length - 1) {
-        return state;
-      }
+      const index = keyIndex(action.key, state.subgroups);
 
-      const subgroups = [...state.subgroups];
+      if (index === -1) return state;
 
-      subgroups[action.index] = {
-        ...subgroups[action.index],
-        name: action.name
-      };
+      const subgroups = state.subgroups.map((subgroup, i) => {
+        return i === index ? {...subgroup, name: action.name} : subgroup;
+      });
 
       return {
         ...state,
@@ -377,11 +405,29 @@ const reducer = (state, action) => {
       };
     }
 
-    case "setSubgroups":
+    case "setSubgroupFilter": {
+      const index = keyIndex(action.key, state.subgroups);
+
+      if (index === -1) return state;
+
+      const subgroup = {...state.subgroups[index]};
+      const filterIndex = subgroup.filters.findIndex(({ phenotype }) => phenotype === action.phenotype);
+
+      if (filterIndex !== -1) subgroup.filters.splice(filterIndex, 1);
+
+      if (action.value !== null) subgroup.filters.push({ phenotype: action.phenotype, value: action.value });
+
+      filterSubgroup(subgroup, state.phenotypeData, state.phenotypes);
+
+      const subgroups = state.subgroups.map((sg, i) => {
+        return i === index ? subgroup : sg;
+      });
+
       return {
         ...state,
-        subgroups: action.subgroups
+        subgroups: subgroups
       };
+    }
 
     default: 
       throw new Error("Invalid data context action: " + action.type);
