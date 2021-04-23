@@ -106,18 +106,18 @@ export const DataSelection = ({ phenotypeName }) => {
               <Button 
                 variant="link" 
                 block
-                onClick={ () => history.push("/subgroups") }
+                onClick={ () => history.push("/cellfie") }
               >
-                <Diagram3 className="mr-2 mb-1"/>Create subgroups
+                <Columns className="mr-2 mb-1"/>Run CellFIE
               </Button>
             </Col>
             <Col>
               <Button 
                 variant="link" 
                 block
-                onClick={ () => history.push("/cellfie") }
+                onClick={ () => history.push("/subgroups") }
               >
-                <Columns className="mr-2 mb-1"/>Run CellFIE
+                <Diagram3 className="mr-2 mb-1"/>Create subgroups
               </Button>
             </Col>
             <Col>
