@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { DataContext } from "../contexts";
 import { ModelSelection } from "../components/model-selection";
-import { GroupSelection } from "../components/group-selection";
+import { SubgroupSelection } from "../components/subgroup-selection";
 import { CellfieOutput } from "../components/cellfie-output";
 import { DataMissing } from "../components/data-missing";
 
@@ -26,7 +26,7 @@ export const OutputView = () => {
       }            
       { output && 
         <>
-          <GroupSelection />
+          <SubgroupSelection />
           <CellfieOutput /> 
         </>
       }

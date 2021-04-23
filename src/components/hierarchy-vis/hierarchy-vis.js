@@ -121,7 +121,7 @@ export const HierarchyVis = ({ hierarchy, tree, hasGroups }) => {
 
   return (
     <>
-      <Form className="mb-4">
+      <div className="mb-4">
         <Row>
           <Group as={ Col }>
             <ToggleButtonGroup 
@@ -184,7 +184,7 @@ export const HierarchyVis = ({ hierarchy, tree, hasGroups }) => {
             </Control>
           </Group>
         </Row>
-      </Form>
+      </div>
       <div ref={vegaRef }>
         { loading ? <LoadingSpinner /> : 
           <VegaWrapper

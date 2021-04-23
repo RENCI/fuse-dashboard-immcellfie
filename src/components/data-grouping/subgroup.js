@@ -64,7 +64,7 @@ export const Subgroup = ({ subgroup, isNew }) => {
   });
 
   return (
-    <Form>
+    <div>
       <Row className="align-items-center">
         <Col>
           <LabelEdit     
@@ -101,6 +101,6 @@ export const Subgroup = ({ subgroup, isNew }) => {
       <Row>
         { controls }
       </Row>
-    </Form>
+    </div>
   );
 };           

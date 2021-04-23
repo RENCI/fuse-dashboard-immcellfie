@@ -24,6 +24,9 @@ const initialState = {
   // Subgroups
   subgroups: null,
 
+  // Subgroups selected for visualization
+  selectedSubgroups: null,
+
   // Expression data used as CellFIE input
   input: null,
 
@@ -354,11 +357,15 @@ const reducer = (state, action) => {
       // Create initial group with all subjects
       const subgroups = [createSubgroup("All", phenotypeData, phenotypes, [])];
 
+      // Select this subgroup
+      const selectedSubgroups = [subgroups[0], null];
+
       return {
         ...state,
         phenotypeData: phenotypeData,
         phenotypes: phenotypes,
-        subgroups: subgroups
+        subgroups: subgroups,
+        selectedSubgroups: selectedSubgroups
       };
     }
     
@@ -469,6 +476,51 @@ const reducer = (state, action) => {
         ...state,
         subgroups: subgroups
       };
+    }
+
+    case "selectSubgroup": {
+      if (action.key === null) {
+        // Don't allow turning off first subgroup
+        return action.which === 0 ? state :
+          {
+            ...state,
+            selectedSubgroups: [state.selectedSubgroups[0], null]
+          };
+      }
+      else {
+        // Don't allow comparing with same subgroup
+        const sg1 = state.selectedSubgroups[0];
+        const sg2 = state.selectedSubgroups[1];
+
+        console.log(sg1);
+        console.log(sg2);
+        console.log(action.which);
+        console.log(action.key);
+
+        if ((action.which === 0 && sg2 && sg2.key === action.key) ||
+            (action.which === 1 && sg1 && sg1.key === action.key)) {
+              console.log("HERE!?");
+          return state;
+        }
+
+        // Check for subgroup with this key
+        const subgroup = state.subgroups.find(({ key }) => key === action.key);
+
+        console.log(state.subgroups);
+        console.log(subgroup);
+
+        if (!subgroup) return state;
+
+        console.log("HERE");
+
+        // Switch out subgroup
+        return {
+          ...state,
+          selectedSubgroups: action.which === 0 ?
+            [subgroup, state.selectedSubgroups[1]] :
+            [state.selectedSubgroups[0], subgroup]
+        };
+      }
     }
 
     default: 
