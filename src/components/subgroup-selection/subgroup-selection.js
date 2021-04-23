@@ -36,6 +36,18 @@ export const SubgroupSelection = () => {
   
   const canCompare = subgroups.length > 1;
 
+  const overlap = selectedSubgroups[1] ? 
+    selectedSubgroups[1].subjects.reduce((count, subject) => {
+      if (selectedSubgroups[0].subjects.find(({ participant_id }) => {
+        return participant_id === subject.participant_id;
+      })) {
+        count++;
+      }
+      
+      return count;
+    }, 0) :
+    null;
+
   return (
     <Card className="mt-4">
       <Body>
@@ -72,6 +84,13 @@ export const SubgroupSelection = () => {
             }
           </Group>
         </Row>
+        { overlap !== null &&
+          <Row>
+            <Col>
+              Overlap: { overlap }
+            </Col>
+          </Row>
+        }
       </Body>
     </Card>
   );
