@@ -123,7 +123,7 @@ export const HierarchyVis = ({ hierarchy, tree, hasGroups }) => {
     <>
       <div className="mb-4">
         <Row>
-          <Group as={ Col }>
+          <Group as={ Col } controlId="visualizationButtons">
             <ToggleButtonGroup 
               type="radio"
               name="visButtons"
@@ -144,7 +144,7 @@ export const HierarchyVis = ({ hierarchy, tree, hasGroups }) => {
           </Group>
         </Row>
         <Row>
-          <Group as={ Col }>
+          <Group as={ Col } controlId="depthSlider">
             <Label size="sm">Depth: { depth }</Label>        
             <Control 
               size="sm"
@@ -156,7 +156,7 @@ export const HierarchyVis = ({ hierarchy, tree, hasGroups }) => {
               onChange={ evt => setDepth(+evt.target.value) } 
             />
           </Group>
-          <Group as={ Col }>
+          <Group as={ Col } controlId="valueSelect">
             <Label size="sm">Value</Label>
             <Control
               size="sm"
@@ -170,8 +170,8 @@ export const HierarchyVis = ({ hierarchy, tree, hasGroups }) => {
               <option disabled={ !hasGroups } value="activityFoldChange">activity fold change</option>
             </Control>
           </Group>
-          <Group as={ Col }>
-          <Label size="sm">Color scheme</Label>
+          <Group as={ Col } controlId="colorSchemeSelect">
+            <Label size="sm">Color scheme</Label>
             <Control
               size="sm"
               as="select"
