@@ -17,7 +17,7 @@ const practiceData = {
 
 export const InputView = ({ inputName }) => {
   const history = useHistory();
-  const [{ phenotypes, input, groups }, dataDispatch] = useContext(DataContext);
+  const [{ phenotypeData, input, groups }, dataDispatch] = useContext(DataContext);
 
   // Transform to work with vega-lite heatmap
   const heatmapData = !input ? [] : input.data.reduce((data, row) => {
@@ -44,7 +44,7 @@ export const InputView = ({ inputName }) => {
 
   return (
     <>
-      { !phenotypes ? 
+      { !phenotypeData ? 
           <>
             <DataMissing message="No data loaded" />
             <Button 

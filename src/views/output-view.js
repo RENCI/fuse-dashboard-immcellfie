@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { DataContext } from "../contexts";
 import { ModelSelection } from "../components/model-selection";
+import { GroupSelection } from "../components/group-selection";
 import { CellfieOutput } from "../components/cellfie-output";
 import { DataMissing } from "../components/data-missing";
 
@@ -13,17 +14,22 @@ const practiceData = {
 };
 
 export const OutputView = () => {
-  const [{ phenotypes, output }] = useContext(DataContext);
+  const [{ phenotypeData, output }] = useContext(DataContext);
   
   return (
     <>
-      { !phenotypes ? <DataMissing message="No data loaded" /> : 
+      { !phenotypeData ? <DataMissing message="No data loaded" /> : 
         <ModelSelection 
           outputName={ practiceData.output } 
           outputType={ practiceData.outputType }
-        /> 
+        />         
+      }            
+      { output && 
+        <>
+          <GroupSelection />
+          <CellfieOutput /> 
+        </>
       }
-      { output && <CellfieOutput /> }
     </>
   );  
 };

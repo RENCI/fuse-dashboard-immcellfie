@@ -11,7 +11,7 @@ const { Label, Group, Control, Text } = Form;
 
 export const DataSelection = ({ phenotypeName }) => {
   const history = useHistory();
-  const [{ phenotypes }, dataDispatch] = useContext(DataContext);
+  const [{ phenotypeData }, dataDispatch] = useContext(DataContext);
   const [id, setId] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -99,7 +99,7 @@ export const DataSelection = ({ phenotypeName }) => {
           </Group>  
         }
       </Body>
-      { phenotypes &&
+      { phenotypeData &&
         <Footer>
           <Row>
             <Col>

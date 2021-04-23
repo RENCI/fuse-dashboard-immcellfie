@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { Row, Col, Card, Form, Alert } from "react-bootstrap";
+import { Row, Col, Card, Form } from "react-bootstrap";
 import { SpinnerButton } from "../spinner-button";
 import { DataContext } from "../../contexts";
 import { api } from "../../api";
@@ -32,7 +32,7 @@ export const ModelSelection = ({ outputName, outputType }) => {
   const [currentModels, setCurrentModels] = useState(models.filter(({ organism }) => organism === "human"));
   const [model, setModel] = useState(models.find(({ organism }) => organism === "human"));
   const [running, setRunning] = useState(false);
-  const [message, setMessage] = useState();
+  //const [message, setMessage] = useState();
 
   const onOrganismChange = evt => {
     const value = evt.target.value;
@@ -56,7 +56,7 @@ export const ModelSelection = ({ outputName, outputType }) => {
       dataDispatch({ type: "setOutput", file: output, fileType: outputType });
 
       setRunning(false);
-      setMessage("CellFIE output data loaded");
+//      setMessage("CellFIE output data loaded");
     }, 1000);
   };
 
@@ -129,15 +129,18 @@ export const ModelSelection = ({ outputName, outputType }) => {
               >
                 Run CellFIE
               </SpinnerButton>
-            </Group>
-            { message && 
-              <Group>  
-                <Alert variant="info">{ message }</Alert>
-              </Group>  
-            }
+            </Group>                        
           </Col>
         </Row>
       </Body>
     </Card>
   );
 };           
+
+/*
+            { message && 
+              <Group>  
+               <Alert variant="info">{ message }</Alert>
+              </Group>  
+            }
+*/
