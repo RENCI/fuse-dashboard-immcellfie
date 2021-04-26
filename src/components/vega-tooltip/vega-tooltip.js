@@ -9,6 +9,18 @@ const { Subtitle, Body, Text, Footer } = Card;
 
 // Borrowed from vega-tooltip
 const calculatePosition = (event, tooltipBox, itemBox, offsetX, offsetY) => {
+  let x = event.clientX + offsetX;
+  if (x + tooltipBox.width > window.innerWidth) {
+    x = +event.clientX - offsetX - tooltipBox.width;
+  }
+
+  let y = event.clientY + offsetY;
+  if (y + tooltipBox.height > window.innerHeight) {
+    y = +event.clientY - offsetY - tooltipBox.height;
+  }
+
+  return {x, y};
+/*  
   let x = itemBox.x + (itemBox.width - tooltipBox.width) / 2 + offsetX;
 
   if (x + tooltipBox.width > window.innerWidth) {
@@ -25,6 +37,7 @@ const calculatePosition = (event, tooltipBox, itemBox, offsetX, offsetY) => {
   }
 
   return { x, y };
+*/  
 };
 
 const format = d3.format(".2f")

@@ -31,10 +31,7 @@ export const VegaWrapper = ({ options, spec, data, signals, eventListeners, tool
   }; 
 
   useEffect(() => {
-    // Remove old visualization
-    if (view.current) {
-      view.current.finalize();
-    }
+    if (view.current) return;
 
     // Create new visualization
     vegaEmbed(div.current, spec, options).then(result => {
@@ -49,7 +46,7 @@ export const VegaWrapper = ({ options, spec, data, signals, eventListeners, tool
 
       view.current
         .data("data", data)              
-        .run();
+        .runAsync();
     });
 
     return () => {
@@ -57,7 +54,23 @@ export const VegaWrapper = ({ options, spec, data, signals, eventListeners, tool
       if (view.current) view.current.finalize();
     };
   }, [spec, data, options, signals, eventListeners, tooltip]);
+  
+  useEffect(() => {
+    if (!view.current) return;
 
+    setSignals(view.current, signals);
+
+    view.current.runAsync();
+  }, [signals]);
+  
+  useEffect(() => {
+    if (!view.current) return;
+
+    view.current
+        .data("data", data)              
+        .runAsync();
+  }, [data]);
+  
   return (
     <>
       <div 

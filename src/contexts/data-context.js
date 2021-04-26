@@ -492,26 +492,15 @@ const reducer = (state, action) => {
         const sg1 = state.selectedSubgroups[0];
         const sg2 = state.selectedSubgroups[1];
 
-        console.log(sg1);
-        console.log(sg2);
-        console.log(action.which);
-        console.log(action.key);
-
         if ((action.which === 0 && sg2 && sg2.key === action.key) ||
             (action.which === 1 && sg1 && sg1.key === action.key)) {
-              console.log("HERE!?");
           return state;
         }
 
         // Check for subgroup with this key
         const subgroup = state.subgroups.find(({ key }) => key === action.key);
 
-        console.log(state.subgroups);
-        console.log(subgroup);
-
         if (!subgroup) return state;
-
-        console.log("HERE");
 
         // Switch out subgroup
         return {

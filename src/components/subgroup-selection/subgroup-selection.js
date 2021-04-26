@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
-import { Card, Row, Col, Form, Button } from "react-bootstrap";
+import { Card, Row, Col, Form, Button, Alert } from "react-bootstrap";
 import { Diagram3 } from "react-bootstrap-icons";
 import { DataContext } from "../../contexts";
 
@@ -87,7 +87,7 @@ export const SubgroupSelection = () => {
         { overlap !== null &&
           <Row>
             <Col>
-              Overlap: { overlap }
+              <Alert variant="danger">Overlap: { overlap }</Alert>
             </Col>
           </Row>
         }
