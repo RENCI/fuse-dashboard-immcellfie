@@ -42,7 +42,6 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
   const [depth, setDepth] = useState(1);
   const [subgroup, setSubgroup] = useState("subgroup1");
   const [value, setValue] = useState("score");
-//  const [scaleType, setScaleType] = useState("linearScale");
   const [colorMaps, setColorMaps] = useState(valueColorMaps);
   const [colorMap, setColorMap] = useState(colorMaps[0]);
   const [vis, setVis] = useState(visualizations[0]);
@@ -72,7 +71,6 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
     const colorMaps = isChange ? changeColorMaps : valueColorMaps;
 
     setValue(value);
-//    setScaleType(isChange ? "logScale" : "linearScale");
     setColorMaps(colorMaps);
 
     if (!colorMaps.includes(colorMap)) setColorMap(colorMaps[0]);
