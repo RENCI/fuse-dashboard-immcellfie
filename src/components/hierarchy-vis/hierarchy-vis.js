@@ -37,15 +37,18 @@ const changeColorMaps = [
   "blueorange"
 ];
 
-export const HierarchyVis = ({ hierarchy, tree, hasGroups }) => {
+export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
   const [loading, setLoading] = useState(true);
   const [depth, setDepth] = useState(1);
+  const [subgroup, setSubgroup] = useState("subgroup1");
   const [value, setValue] = useState("score");
-  const [scaleType, setScaleType] = useState("linearScale");
+//  const [scaleType, setScaleType] = useState("linearScale");
   const [colorMaps, setColorMaps] = useState(valueColorMaps);
   const [colorMap, setColorMap] = useState(colorMaps[0]);
   const [vis, setVis] = useState(visualizations[0]);
   const vegaRef = useRef();
+
+  const hasSubgroups = subgroups[1] !== null;
 
   const onVisChange = evt => {
     setLoading(true);
@@ -53,6 +56,12 @@ export const HierarchyVis = ({ hierarchy, tree, hasGroups }) => {
     const vis = visualizations.find(({ name }) => name === evt.target.value);
 
     setVis(vis);
+  };
+
+  const onSubgroupChange = evt => {
+    const value = evt.target.value;
+
+    setSubgroup(value);
   };
 
   const onValueChange = evt => {
@@ -63,7 +72,7 @@ export const HierarchyVis = ({ hierarchy, tree, hasGroups }) => {
     const colorMaps = isChange ? changeColorMaps : valueColorMaps;
 
     setValue(value);
-    setScaleType(isChange ? "logScale" : "linearScale");
+//    setScaleType(isChange ? "logScale" : "linearScale");
     setColorMaps(colorMaps);
 
     if (!colorMaps.includes(colorMap)) setColorMap(colorMaps[0]);
@@ -156,6 +165,19 @@ export const HierarchyVis = ({ hierarchy, tree, hasGroups }) => {
               onChange={ evt => setDepth(+evt.target.value) } 
             />
           </Group>
+          <Group as={ Col } controlId="subgroupSelect">
+            <Label size="sm">Subgroup</Label>
+            <Control
+              size="sm"
+              as="select"
+              value={ subgroup }
+              onChange={ onSubgroupChange }          
+            >
+              <option value="subgroup1">{ subgroups[0].name }</option>
+              { hasSubgroups && <option value="subgroup2">{ subgroups[1].name }</option> }
+              { hasSubgroups && <option value="comparison">comparison</option> }
+            </Control>
+          </Group>
           <Group as={ Col } controlId="valueSelect">
             <Label size="sm">Value</Label>
             <Control
@@ -166,8 +188,8 @@ export const HierarchyVis = ({ hierarchy, tree, hasGroups }) => {
             >
               <option value="score">score</option>
               <option value="activity">activity</option>
-              <option disabled={ !hasGroups } value="scoreFoldChange">score fold change</option>
-              <option disabled={ !hasGroups } value="activityFoldChange">activity fold change</option>
+              <option disabled={ !hasSubgroups } value="scoreFoldChange">score fold change</option>
+              <option disabled={ !hasSubgroups } value="activityFoldChange">activity fold change</option>
             </Control>
           </Group>
           <Group as={ Col } controlId="colorSchemeSelect">
@@ -193,7 +215,7 @@ export const HierarchyVis = ({ hierarchy, tree, hasGroups }) => {
             signals={[
               { name: "depth", value: depth },
               { name: "value", value: value },
-              { name: "scaleType", value: scaleType },
+//              { name: "scaleType", value: scaleType },
               { name: "colorScheme", value: colorMap },
               { name: "domain", value: domain }
             ]}

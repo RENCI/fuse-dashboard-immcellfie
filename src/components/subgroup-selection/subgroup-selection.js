@@ -65,14 +65,13 @@ export const SubgroupSelection = () => {
               value={ value2 }
               disabled={ !canCompare }
               onChange={ evt => onChange(1, evt.target.value) }
-            >
-              <option value="none">None</option>
-              { options(0) }
+            >              
+              { canCompare ? options(0) : <option value="none">None</option> }
             </Control>
             { !canCompare && <SubgroupsLink /> }
           </Group>
         </Row>
-        { overlap !== null &&
+        { overlap !== null && overlap > 0 &&
           <Row>
             <Col>
               <Alert variant="danger">Overlap: { overlap }</Alert>

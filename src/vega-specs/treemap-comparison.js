@@ -1,4 +1,4 @@
-export const treemap = {
+export const treemapComparison = {
   $schema: "https://vega.github.io/schema/vega/v5.json",
   width: { signal: "containerWidth" },
   height: { signal: "containerWidth" },
@@ -37,7 +37,7 @@ export const treemap = {
     },
     {
       name: "colorScheme",
-      value: "lightgreyred"
+      value: "blueorange"
     },
     {
       name: "domain",
@@ -106,7 +106,8 @@ export const treemap = {
   scales: [
     {
       name: "color",
-      type: "linear",
+      type: "log",
+      base: 2,
       domain: { signal: "domain" },
       range: { scheme: { signal: "colorScheme" } }
     },
@@ -139,7 +140,7 @@ export const treemap = {
           fill: [
             {
               test: "!isValid(datum[value])",
-              value: "#c6dbef"
+              value: "#fff"
             },
             {
               scale: "color",
