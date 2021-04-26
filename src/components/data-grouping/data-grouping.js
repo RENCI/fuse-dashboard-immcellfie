@@ -2,12 +2,12 @@ import React, { useContext, useState, useEffect} from "react";
 import { Card, Button, ListGroup, ListGroupItem } from "react-bootstrap";
 import { PlusCircle} from "react-bootstrap-icons";
 import { DataContext } from "../../contexts";
-import { Subgroup } from "./subgroup";
+import { Subgroup } from "../subgroup";
 
 const { Title, Body, Footer } = Card;
 
 export const DataGrouping = () => {
-  const [{ phenotypes, subgroups }, dataDispatch] = useContext(DataContext);
+  const [{ subgroups }, dataDispatch] = useContext(DataContext);
   const [newAdded, setNewAdded] = useState(false);
 
   useEffect(() => {

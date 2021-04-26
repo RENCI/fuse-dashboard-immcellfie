@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { Tab, Card, Nav } from "react-bootstrap";
 import { DataContext } from "../../contexts";
 import { VegaWrapper } from "../vega-wrapper";

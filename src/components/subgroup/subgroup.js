@@ -1,8 +1,8 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { Form, Button, Col } from "react-bootstrap";
 import { ArrowCounterclockwise, XCircle } from "react-bootstrap-icons";
 import { DataContext } from "../../contexts";
-import { LabelEdit } from "./label-edit";
+import { LabelEdit } from "../label-edit";
 import { VegaWrapper } from "../vega-wrapper";
 import { phenotypeBarChart } from "../../vega-specs";
 

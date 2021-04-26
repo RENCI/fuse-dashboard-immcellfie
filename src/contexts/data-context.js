@@ -1,6 +1,5 @@
 import React, { createContext, useReducer } from "react";
 import * as d3 from "d3";
-import { filter } from "d3";
 
 const excludedPhenotypes = [
   "participant_id",
@@ -303,7 +302,8 @@ const getNewSubgroupName = subgroups => {
 const filterSubgroup = (subgroup, phenotypeData, phenotypes) => {
   const subjects = phenotypeData.filter(subject => {
     return subgroup.filters.reduce((include, filter) => {
-      return include && subject[filter.phenotype] == filter.value;
+      const v = filter.value + "";
+      return include && subject[filter.phenotype] === v;
     }, true);
   });
 
@@ -314,7 +314,8 @@ const filterSubgroup = (subgroup, phenotypeData, phenotypes) => {
         return {
           ...value,
           count: subjects.reduce((count, subject) => {
-            if (subject[phenotype.name] == value.value) count++;
+            const v = value.value + "";
+            if (subject[phenotype.name] === v) count++;
             return count;
           }, 0)
         }

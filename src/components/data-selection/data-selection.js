@@ -1,16 +1,14 @@
 import React, { useState, useContext } from "react";
-import { useHistory } from "react-router-dom";
-import { Card, Form, InputGroup, Alert, Row, Col, Button } from "react-bootstrap";
-import { Diagram3, Columns, Table } from "react-bootstrap-icons";
+import { Card, Form, InputGroup, Alert, Row, Col } from "react-bootstrap";
 import { SpinnerButton } from "../spinner-button";
 import { DataContext } from "../../contexts";
+import { CellfieLink, SubgroupsLink, ExpressionLink } from "../page-links";
 import { api } from "../../api";
 
 const { Title, Body, Footer } = Card;
 const { Label, Group, Control, Text } = Form;
 
 export const DataSelection = ({ phenotypeName }) => {
-  const history = useHistory();
   const [{ phenotypeData }, dataDispatch] = useContext(DataContext);
   const [id, setId] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -102,32 +100,14 @@ export const DataSelection = ({ phenotypeName }) => {
       { phenotypeData &&
         <Footer>
           <Row>
-            <Col>
-              <Button 
-                variant="link" 
-                block
-                onClick={ () => history.push("/cellfie") }
-              >
-                <Columns className="mr-2 mb-1"/>Run CellFIE
-              </Button>
+            <Col className="text-center">
+              <CellfieLink />
             </Col>
-            <Col>
-              <Button 
-                variant="link" 
-                block
-                onClick={ () => history.push("/subgroups") }
-              >
-                <Diagram3 className="mr-2 mb-1"/>Create subgroups
-              </Button>
+            <Col className="text-center">
+              <SubgroupsLink />
             </Col>
-            <Col>
-              <Button 
-                variant="link" 
-                block
-                onClick={ () => history.push("/expression-data") }
-              >
-                <Table className="mr-2 mb-1"/>See expression data
-              </Button>
+            <Col className="text-center">
+              <ExpressionLink />
             </Col>
           </Row>
         </Footer>

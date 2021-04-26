@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Form, FormControl } from "react-bootstrap";
 import "./label-edit.css";
 
-const { Label, Group } = Form;
+const { Label } = Form;
 
 export const LabelEdit = ({ subgroup, isNew, onChange }) => {
   const [editName, setEditName] = useState(isNew);

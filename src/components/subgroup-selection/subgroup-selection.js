@@ -1,18 +1,13 @@
 import React, { useContext } from "react";
-import { useHistory } from "react-router-dom";
-import { Card, Row, Col, Form, Button, Alert } from "react-bootstrap";
-import { Diagram3 } from "react-bootstrap-icons";
+import { Card, Row, Col, Form,  Alert } from "react-bootstrap";
 import { DataContext } from "../../contexts";
+import { SubgroupsLink } from "../page-links";
 
 const { Title, Body } = Card;
 const { Group, Label, Control } = Form;
 
 export const SubgroupSelection = () => {
-  const history = useHistory();
   const [{ subgroups, selectedSubgroups }, dataDispatch] = useContext(DataContext);
-
-  console.log(subgroups);
-  console.log(selectedSubgroups);
 
   const onChange = (which, key) => {
     const subgroupKey = key === "none" ? null : +key;
@@ -74,14 +69,7 @@ export const SubgroupSelection = () => {
               <option value="none">None</option>
               { options(0) }
             </Control>
-            { !canCompare && 
-              <Button 
-                variant="link" 
-                onClick={ () => history.push("/subgroups") }
-              >
-                <Diagram3 className="mr-2 mb-1"/>Create subgroups
-              </Button>
-            }
+            { !canCompare && <SubgroupsLink /> }
           </Group>
         </Row>
         { overlap !== null &&
