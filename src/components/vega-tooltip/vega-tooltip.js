@@ -81,8 +81,9 @@ export const VegaTooltip = ({ handler, event, item, value }) => {
           <Text className="mt-1">
             {value &&
               <small>
-                <div>Mean score: {formatNumber(value.score)}</div>
-                <div>Mean activity: {formatNumber(value.activity)}</div>
+                Mean score: {formatNumber(value.score)}
+                <br />
+                Mean activity: {formatNumber(value.activity)}
               </small>
             }
           </Text>
@@ -110,7 +111,7 @@ export const VegaTooltip = ({ handler, event, item, value }) => {
           <Footer>
             <small>
               {value.phenotype.map((level, i) => (
-                <div style={{ marginLeft: i + "em" }}>
+                <div key={ i } style={{ marginLeft: i + "em" }}>
                   { level}
                 </div>
               ))}
