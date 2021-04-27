@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { Card, Row, Col, Form,  Alert } from "react-bootstrap";
+import { ExclamationCircle } from "react-bootstrap-icons";
 import { DataContext } from "../../contexts";
 import { SubgroupsLink } from "../page-links";
 
@@ -19,21 +20,26 @@ export const SubgroupSelection = () => {
       <option 
         key={ i } 
         value={ subgroup.key }
-        disabled={ selectedSubgroups[other] && selectedSubgroups[other].key === subgroup.key}
+        disabled={ selectedSubgroups[other] === subgroup.key}
       >
         { subgroup.name }
       </option>
     ));
   };
 
-  const value1 = selectedSubgroups[0] ? selectedSubgroups[0].key : "";
-  const value2 = selectedSubgroups[1] ? selectedSubgroups[1].key : "none";
+  const getSubgroup = key => key !== null ? subgroups.find(subgroup => subgroup.key === key) : null;
+
+  const subgroup1 = getSubgroup(selectedSubgroups[0]);
+  const subgroup2 = getSubgroup(selectedSubgroups[1]);
+
+  const value1 = subgroup1 ? subgroup1.key : "";
+  const value2 = subgroup2 ? subgroup2.key : "none";
   
   const canCompare = subgroups.length > 1;
 
-  const overlap = selectedSubgroups[1] ? 
-    selectedSubgroups[1].subjects.reduce((count, subject) => {
-      if (selectedSubgroups[0].subjects.find(({ participant_id }) => {
+  const overlap = subgroup1 && subgroup2 ? 
+    subgroup2.subjects.reduce((count, subject) => {
+      if (subgroup1.subjects.find(({ participant_id }) => {
         return participant_id === subject.participant_id;
       })) {
         count++;
@@ -74,7 +80,10 @@ export const SubgroupSelection = () => {
         { overlap !== null && overlap > 0 &&
           <Row>
             <Col>
-              <Alert variant="danger">Overlap: { overlap }</Alert>
+              <Alert variant="danger">
+                <ExclamationCircle className="mb-1 mr-2"/>
+                Overlap: { overlap }
+              </Alert>
             </Col>
           </Row>
         }

@@ -356,10 +356,10 @@ const reducer = (state, action) => {
       const phenotypes = createPhenotypes(phenotypeData);
 
       // Create initial group with all subjects
-      const subgroups = [createSubgroup("All", phenotypeData, phenotypes, [])];
+      const subgroups = [createSubgroup("All subjects", phenotypeData, phenotypes, [])];
 
       // Select this subgroup
-      const selectedSubgroups = [subgroups[0], null];
+      const selectedSubgroups = [subgroups[0].key, null];
 
       return {
         ...state,
@@ -393,12 +393,16 @@ const reducer = (state, action) => {
         getNewSubgroupName(state.subgroups), state.phenotypeData, state.phenotypes, state.subgroups
       );
 
+      const selectedSubgroups = state.selectedSubgroups[1] === null ?
+        [state.selectedSubgroups[0], subgroup.key] : state.selectedSubgroups;
+
       return {
         ...state,
         subgroups: [
           ...state.subgroups,
           subgroup
-        ]
+        ],
+        selectedSubgroups: selectedSubgroups
       };
     }
     
@@ -490,11 +494,11 @@ const reducer = (state, action) => {
       }
       else {
         // Don't allow comparing with same subgroup
-        const sg1 = state.selectedSubgroups[0];
-        const sg2 = state.selectedSubgroups[1];
+        const key1 = state.selectedSubgroups[0];
+        const key2 = state.selectedSubgroups[1];
 
-        if ((action.which === 0 && sg2 && sg2.key === action.key) ||
-            (action.which === 1 && sg1 && sg1.key === action.key)) {
+        if ((action.which === 0 && key1 === action.key) ||
+            (action.which === 1 && key2 === action.key)) {
           return state;
         }
 
@@ -507,8 +511,8 @@ const reducer = (state, action) => {
         return {
           ...state,
           selectedSubgroups: action.which === 0 ?
-            [subgroup, state.selectedSubgroups[1]] :
-            [state.selectedSubgroups[0], subgroup]
+            [subgroup.key, state.selectedSubgroups[1]] :
+            [state.selectedSubgroups[0], subgroup.key]
         };
       }
     }

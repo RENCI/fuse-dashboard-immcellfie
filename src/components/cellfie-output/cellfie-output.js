@@ -11,7 +11,7 @@ const { Item, Link } = Nav;
 const { Container, Content, Pane } = Tab;
 
 export const CellfieOutput = () => {
-  const [{ hierarchy, tree, selectedSubgroups }] = useContext(DataContext);
+  const [{ hierarchy, tree, subgroups, selectedSubgroups }] = useContext(DataContext);
 
   return (
     <>
@@ -45,7 +45,9 @@ export const CellfieOutput = () => {
                   <HierarchyVis
                     hierarchy={ hierarchy }
                     tree={ tree } 
-                    subgroups={ selectedSubgroups }
+                    subgroups={ selectedSubgroups.map(key => {
+                      return key !== null ? subgroups.find(subgroup => subgroup.key === key) : null;
+                    }) }
                   />
                 </Pane>
                 <Pane eventKey="heatmap">

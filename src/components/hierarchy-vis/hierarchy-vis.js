@@ -183,11 +183,9 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
               as="select"
               value={ value }
               onChange={ onValueChange }          
-            >
+            >                          
               <option value="score">score</option>
               <option value="activity">activity</option>
-              <option disabled={ !hasSubgroups } value="scoreFoldChange">score fold change</option>
-              <option disabled={ !hasSubgroups } value="activityFoldChange">activity fold change</option>
             </Control>
           </Group>
           <Group as={ Col } controlId="colorSchemeSelect">
@@ -213,7 +211,6 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
             signals={[
               { name: "depth", value: depth },
               { name: "value", value: value },
-//              { name: "scaleType", value: scaleType },
               { name: "colorScheme", value: colorMap },
               { name: "domain", value: domain }
             ]}
