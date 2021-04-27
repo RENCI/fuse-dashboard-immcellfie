@@ -70,8 +70,8 @@ export const VegaWrapper = ({ options, spec, data, signals, eventListeners, tool
     if (!view.current) return;
 
     view.current
-        .data("data", data)              
-        .runAsync();
+      .data("data", data)              
+      .runAsync();
   }, [data]);
 
   // Update spec
