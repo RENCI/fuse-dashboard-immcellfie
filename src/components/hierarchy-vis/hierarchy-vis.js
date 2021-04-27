@@ -50,6 +50,8 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
 
   const hasSubgroups = subgroups[1] !== null;
 
+  const isComparison = subgroup === "comparison";
+
   const onVisChange = evt => {
     setLoading(true);
 
@@ -62,19 +64,18 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
     const value = evt.target.value;
 
     setSubgroup(value);
+
+    const colorMaps = value === "comparison" ? changeColorMaps : valueColorMaps; 
+
+    setColorMaps(colorMaps);
+
+    if (!colorMaps.includes(colorMap)) setColorMap(colorMaps[0]);
   };
 
   const onValueChange = evt => {
     const value = evt.target.value;
 
-    const isChange = value.includes("Change");
-
-    const colorMaps = isChange ? changeColorMaps : valueColorMaps;
-
     setValue(value);
-    setColorMaps(colorMaps);
-
-    if (!colorMaps.includes(colorMap)) setColorMap(colorMaps[0]);
   };
 
   useEffect(() => {
@@ -207,7 +208,7 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
       <div ref={vegaRef }>
         { loading ? <LoadingSpinner /> : 
           <VegaWrapper
-            spec={ subgroup === "comparison" ? vis.comparisonSpec : vis.spec }
+            spec={ isComparison ? vis.comparisonSpec : vis.spec }
             data={ vis.name === "voronoi" ? tree.descendants() : hierarchy }
             signals={[
               { name: "depth", value: depth },
