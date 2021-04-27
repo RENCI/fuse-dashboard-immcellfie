@@ -49,7 +49,7 @@ export const SubgroupSelection = () => {
         <Title>Select Subgroups to Compare</Title>
         <Row>
           <Group as={ Col } controlId="subgroupSelect1">
-            <Label>Subgroup 1</Label>
+            <Label>Subgroup A</Label>
             <Control 
               as="select"
               value={ value1 }
@@ -59,7 +59,7 @@ export const SubgroupSelection = () => {
             </Control>
           </Group>
           <Group as={ Col } controlId="subgroupSelect2">
-            <Label>Subgroup 2</Label>
+            <Label>Subgroup B</Label>
             <Control 
               as="select"
               value={ value2 }
