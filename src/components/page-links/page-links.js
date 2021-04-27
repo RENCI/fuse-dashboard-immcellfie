@@ -17,6 +17,6 @@ const PageLink = ({ text, icon, page, block }) => {
   );
 };
 
-export const CellfieLink = () => <PageLink text="Run CellFIE" icon={ <Table /> } page="cellfie" />;
+export const CellfieLink = () => <PageLink text="CellFIE" icon={ <Table /> } page="cellfie" />;
 export const SubgroupsLink = () => <PageLink text="Create subgroups" icon={ <Diagram3 /> } page="subgroups" />;
 export const ExpressionLink = () => <PageLink text="View expression data" icon={ <Columns /> } page="expression-data" />;
