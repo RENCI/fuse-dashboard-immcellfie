@@ -127,7 +127,7 @@ export const treemapComparison = {
   legends: [
     {
       fill: "color",
-      title: { signal: "value" }
+      title: { signal: "value + ' fold change'" }
     }
   ],
   marks: [

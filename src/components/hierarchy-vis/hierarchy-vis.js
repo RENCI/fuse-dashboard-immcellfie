@@ -4,7 +4,7 @@ import * as d3 from "d3";
 import { voronoiTreemap as d3VoronoiTreemap } from "d3-voronoi-treemap";
 import { VegaWrapper } from "../vega-wrapper";
 import { VegaTooltip } from "../vega-tooltip";
-import { treemap, enclosure, voronoiTreemap } from "../../vega-specs";
+import { treemap, treemapComparison, enclosure, voronoiTreemap } from "../../vega-specs";
 import { LoadingSpinner } from "../loading-spinner";
 import "./hierarchy-vis.css";
 
@@ -14,7 +14,8 @@ const visualizations = [
   {
     name: "treemap",
     label: "Treemap",
-    spec: treemap
+    spec: treemap,
+    comparisonSpec: treemapComparison
   },
   {
     name: "enclosure",
@@ -206,8 +207,8 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
       <div ref={vegaRef }>
         { loading ? <LoadingSpinner /> : 
           <VegaWrapper
-            spec={ vis.spec }
-            data={ vis.spec === voronoiTreemap ? tree.descendants() : hierarchy }
+            spec={ subgroup === "comparison" ? vis.comparisonSpec : vis.spec }
+            data={ vis.name === "voronoi" ? tree.descendants() : hierarchy }
             signals={[
               { name: "depth", value: depth },
               { name: "value", value: value },
