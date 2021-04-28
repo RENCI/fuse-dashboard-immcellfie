@@ -91,12 +91,10 @@ const parsePhenotypeData = data => {
 
     subject.index = i;
 
-    result.push(subject);
+    result.push({...subject});
   }
 
   result.columns = csv.columns;
-
-  console.log(result);
 
   return result;
 }
@@ -283,12 +281,19 @@ const updateTree = (tree, subgroups, selectedSubgroups) => {
       if (!subgroup) return null;
 
       const scores = node.data.allScores.filter((scores, i) => {
-        return 1;
+
+        return subgroup.subjects.some(({ index }) => index === i);
       });
+
+      return scores;
     }
 
     node.data.subgroup1 = processSubgroup(subgroup1);
     node.data.subgroup2 = processSubgroup(subgroup2);
+
+    console.log(subgroup1);
+    console.log(subgroup2);
+    console.log(node.data);
 
 /*    
     // Compute fold change
