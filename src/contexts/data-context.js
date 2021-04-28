@@ -92,6 +92,8 @@ const parsePhenotypeData = data => {
 
   result.columns = csv.columns;
 
+  console.log(result);
+
   return result;
 }
 
@@ -245,7 +247,44 @@ const createTree = hierarchy => {
     node.data.score = d3.mean(d3.merge(node.data.allScores));
 
     node.data.activities = node.data.allActivities.map(d => d3.mean(d));
-    node.data.activity = d3.mean(d3.merge(node.data.allActivities));
+    node.data.activity = d3.mean(d3.merge(node.data.allActivities));  
+
+    node.data.subjects = d3.range(0, node.data.scores.length);
+  });
+
+  tree.eachBefore(node => {
+    if (node.depth === 0) {
+      node.data.phenotype = [];
+
+      return;
+    }
+
+    node.data.phenotype = node.parent.data.phenotype.concat(node.data.name);  
+  });
+
+  return tree;
+};
+
+const getSubgroup = (key, subgroups) => key !== null ? subgroups.find(subgroup => subgroup.key === key) : null;
+
+const updateTree = (tree, subgroups, selectedSubgroups) => {
+  tree.each(node => {
+    if (!node.data.allScores) return;
+
+    // Compute subgroup scores    
+    const subgroup1 = getSubgroup(selectedSubgroups[0], subgroups);
+    const subgroup2 = getSubgroup(selectedSubgroups[1], subgroups);
+
+    const processSubgroup = subgroup => {
+      if (!subgroup) return null;
+
+      const scores = node.data.allScores.filter((scores, i) => {
+        return 1;
+      });
+    }
+
+    node.data.subgroup1 = processSubgroup(subgroup1);
+    node.data.subgroup2 = processSubgroup(subgroup2);
 
 /*    
     // Compute fold change
@@ -265,22 +304,8 @@ const createTree = hierarchy => {
       node.data.scoreFoldChange = 1;
       node.data.activityFoldChange = 1;
     }
-*/    
-
-    node.data.subjects = d3.range(0, node.data.scores.length);
+*/  
   });
-
-  tree.eachBefore(node => {
-    if (node.depth === 0) {
-      node.data.phenotype = [];
-
-      return;
-    }
-
-    node.data.phenotype = node.parent.data.phenotype.concat(node.data.name);  
-  });
-
-  return tree;
 };
 
 const getNewSubgroupKey = subgroups => {
@@ -374,6 +399,7 @@ const reducer = (state, action) => {
       const output = action.fileType === "tsv" ? parseTSVOutput(action.file) : parseCSVOutput(action.file);
       const hierarchy = createHierarchy(output);
       const tree = createTree(hierarchy);
+      updateTree(tree, state.subgroups, state.selectedSubgroups);
 
       return {
         ...state,
@@ -396,12 +422,16 @@ const reducer = (state, action) => {
       const selectedSubgroups = state.selectedSubgroups[1] === null ?
         [state.selectedSubgroups[0], subgroup.key] : state.selectedSubgroups;
 
+      const subgroups = [
+        ...state.subgroups,
+        subgroup
+      ];
+
+      updateTree(state.tree, subgroups, selectedSubgroups);
+
       return {
         ...state,
-        subgroups: [
-          ...state.subgroups,
-          subgroup
-        ],
+        subgroups: subgroups,
         selectedSubgroups: selectedSubgroups
       };
     }
@@ -424,6 +454,8 @@ const reducer = (state, action) => {
         return reset;
       });
 
+      updateTree(state.tree, subgroups, state.selectedSubgroups);
+
       return {
         ...state,
         subgroups: subgroups
@@ -438,9 +470,22 @@ const reducer = (state, action) => {
       const subgroups = [...state.subgroups];
       subgroups.splice(index, 1);
 
+      const selectedSubgroups = [...state.selectedSubgroups];
+
+      if (selectedSubgroups[0] === action.key) {
+        selectedSubgroups[0] = subgroups[0].key;
+      }
+
+      if (selectedSubgroups[1] === action.key || selectedSubgroups[1] === selectedSubgroups[0]) {
+        selectedSubgroups[1] = null;
+      }
+
+      updateTree(state.tree, subgroups, selectedSubgroups);
+
       return {
         ...state,
-        subgroups: subgroups
+        subgroups: subgroups,
+        selectedSubgroups: selectedSubgroups
       };
     }
 
@@ -477,6 +522,8 @@ const reducer = (state, action) => {
         return i === index ? subgroup : sg;
       });
 
+      updateTree(state.tree, subgroups, state.selectedSubgroups);
+
       return {
         ...state,
         subgroups: subgroups
@@ -507,12 +554,15 @@ const reducer = (state, action) => {
 
         if (!subgroup) return state;
 
-        // Switch out subgroup
+        const selectedSubgroups = action.which === 0 ?
+          [subgroup.key, state.selectedSubgroups[1]] :
+          [state.selectedSubgroups[0], subgroup.key];
+
+        updateTree(state.tree, state.subgroups, selectedSubgroups);      
+
         return {
           ...state,
-          selectedSubgroups: action.which === 0 ?
-            [subgroup.key, state.selectedSubgroups[1]] :
-            [state.selectedSubgroups[0], subgroup.key]
+          selectedSubgroups: selectedSubgroups
         };
       }
     }

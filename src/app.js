@@ -47,14 +47,12 @@ export const App = () => {
             </Navbar.Collapse>
           </Navbar>
           <Switch>
-            <div style={{ marginTop: 80 }}>
             <Route exact path="/"><Home /></Route>
             <Route exact path="/cellfie"><OutputView /></Route>
             <Route exact path="/subgroups"><SubgroupView /></Route>
             <Route exact path="/expression-data"><InputView /></Route>
             <Route exact path="/admin"><AdminView /></Route>
             <Route exact path="/user"><UserView /></Route>
-            </div>
           </Switch>
         </Container>
       </Router>
