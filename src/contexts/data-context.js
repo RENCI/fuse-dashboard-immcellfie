@@ -87,7 +87,11 @@ const parsePhenotypeData = data => {
   const result = [];
 
   for (let i = 0; i < n; i++) {
-    result.push(csv[random()]);
+    const subject = csv[random()];
+
+    subject.index = i;
+
+    result.push(subject);
   }
 
   result.columns = csv.columns;
