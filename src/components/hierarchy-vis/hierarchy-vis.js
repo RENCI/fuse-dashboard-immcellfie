@@ -4,7 +4,9 @@ import * as d3 from "d3";
 import { voronoiTreemap as d3VoronoiTreemap } from "d3-voronoi-treemap";
 import { VegaWrapper } from "../vega-wrapper";
 import { VegaTooltip } from "../vega-tooltip";
-import { treemap, treemapComparison, enclosure, voronoiTreemap } from "../../vega-specs";
+import { 
+  treemap, treemapComparison, enclosure, enclosureComparison, voronoiTreemap, voronoiTreemapComparison 
+} from "../../vega-specs";
 import { LoadingSpinner } from "../loading-spinner";
 import "./hierarchy-vis.css";
 
@@ -20,24 +22,26 @@ const visualizations = [
   {
     name: "enclosure",
     label: "Enclosure diagram",
-    spec: enclosure
+    spec: enclosure,
+    comparisonSpec: enclosureComparison
   },
   {
     name: "voronoi",
     label: "Voronoi treemap",
-    spec: voronoiTreemap
+    spec: voronoiTreemap,
+    comparisonSpec: voronoiTreemapComparison
   }
 ];
 
 const valueColorMaps = [
-  "lightgreyred",
-  "yellowgreenblue"
+  { name: "light grey → red", scheme: "lightgreyred" },
+  { name: "yellow → green → blue", scheme: "yellowgreenblue" }
 ];
 
 const changeColorMaps = [
-  "blueorange",
-  "redblue",
-  "redgrey"
+  { name: "blue ↔ orange", scheme: "blueorange" },
+  { name: "blue ↔ red", scheme: "redblue", flip: true },
+  { name: "grey ↔ red", scheme: "redgrey", flip: true }
 ];
 
 export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
@@ -78,6 +82,10 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
     const value = evt.target.value;
 
     setValue(value);
+  };
+
+  const onColorMapChange = evt => {
+    setColorMap(colorMaps.find(({ scheme }) => scheme === evt.target.value));
   };
 
   useEffect(() => {
@@ -128,8 +136,8 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
 
   const valueField = isComparison ? value + "FoldChange" : value + subgroup;
 
-  const domain = value === "activity" ? [0, 1] :
-    valueField.includes("FoldChange") ? logRange(tree.descendants().filter(d => d.depth === depth).map(d => d.data[valueField])) :
+  const domain = isComparison ? logRange(tree.descendants().filter(d => d.depth === Math.min(depth, 3)).map(d => d.data[valueField])) :
+    value === "activity" ? [0, 1] :
     d3.extent(d3.merge(tree.descendants().filter(d => d.depth === depth).map(d => [d.data.score1, d.data.score2])));
 
   return (
@@ -194,16 +202,16 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
               <option value="activity">activity</option>
             </Control>
           </Group>
-          <Group as={ Col } controlId="colorSchemeSelect">
-            <Label size="sm">Color scheme</Label>
+          <Group as={ Col } controlId="colorMapSelect">
+            <Label size="sm">Color map</Label>
             <Control
               size="sm"
               as="select"
-              value={ colorMap }
-              onChange={ evt => setColorMap(evt.target.value) }          
+              value={ colorMap.scheme }
+              onChange={ onColorMapChange }          
             >
               { colorMaps.map((colorMap, i) => (
-                <option key={ i }>{ colorMap }</option>
+                <option key={ i } value={ colorMap.scheme }>{ colorMap.name }</option>
               ))}
             </Control>
           </Group>
@@ -217,7 +225,8 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
             signals={[
               { name: "depth", value: depth },
               { name: "value", value: valueField },
-              { name: "colorScheme", value: colorMap },
+              { name: "colorScheme", value: colorMap.scheme },
+              { name: "flipColor", value: colorMap.flip },
               { name: "domain", value: domain }
             ]}
             tooltip={ <VegaTooltip /> }

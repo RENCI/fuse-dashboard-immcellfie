@@ -272,32 +272,27 @@ const updateTree = (tree, subgroups, selectedSubgroups) => {
   tree.each(node => {
     // Check if it is a leaf node (single subject)
     if (!node.data.allScores) {
+
+      node.data.score1 = null;
+      node.data.score2 = null;
+
+      node.data.activity1 = null;
+      node.data.activity2 = null;
+
+      node.data.scoreFoldChange = null;
+      node.data.activityFoldChange = null;
+
       const subgroupContains = (subgroup, index) => subgroup && subgroup.subjects.some(subject => subject.index === index);
 
       if (subgroupContains(subgroup1, node.data.index)) {
         node.data.score1 = node.data.score;
-        node.data.score2 = null;
-
         node.data.activity1 = node.data.activity;
-        node.data.activity2 = null;
       }
-      else if (subgroupContains(subgroup2, node.data.index)) {
-        node.data.score1 = null;
-        node.data.score2 = node.data.score;
 
-        node.data.activity1 = null;
+      if (subgroupContains(subgroup2, node.data.index)) {
+        node.data.score2 = node.data.score;
         node.data.activity2 = node.data.activity;
       }
-      else {
-        node.data.score1 = null;
-        node.data.score2 = null;
-
-        node.data.activity1 = null;
-        node.data.activity2 = null;
-      }
-
-      node.data.scoreFoldChange = null;
-      node.data.activityFoldChange = null;
 
       return;
     }

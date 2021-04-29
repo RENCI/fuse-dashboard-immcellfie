@@ -33,11 +33,15 @@ export const treemapComparison = {
     },      
     {
       name: "value",
-      value: "score"
+      value: "scoreFoldChange"
     },
     {
       name: "colorScheme",
       value: "blueorange"
+    },
+    { 
+      name: "flipColor",
+      value: false
     },
     {
       name: "domain",
@@ -110,7 +114,7 @@ export const treemapComparison = {
       base: 2,
       domain: { signal: "domain" },
       range: { scheme: { signal: "colorScheme" } },
-      reverse: { signal: "colorScheme === 'redblue' || colorScheme === 'redgrey' ? true : false" }
+      reverse: { signal: "flipColor" }
     },
     {
       name: "stroke",

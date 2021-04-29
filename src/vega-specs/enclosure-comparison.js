@@ -1,4 +1,4 @@
-export const enclosure = {
+export const enclosureComparison = {
   $schema: "https://vega.github.io/schema/vega/v5.json",
   width: { signal: "containerWidth" },
   height: { signal: "containerWidth" },
@@ -33,11 +33,11 @@ export const enclosure = {
     },      
     {
       name: "value",
-      value: "score"
+      value: "scoreFoldChange"
     },
     {
       name: "colorScheme",
-      value: "lightgreyred"
+      value: "blueorange"
     },
     { 
       name: "flipColor",
@@ -106,7 +106,8 @@ export const enclosure = {
   scales: [
     {
       name: "color",
-      type: "linear",
+      type: "log",
+      base: 2,
       domain: { signal: "domain" },
       range: { scheme: { signal: "colorScheme" } },
       reverse: { signal: "flipColor" }
@@ -140,7 +141,7 @@ export const enclosure = {
           fill: [
             {
               test: "!isValid(datum[value])",
-              value: "#c6dbef"
+              value: "#fff"
             },
             {
               scale: "color",
@@ -180,7 +181,8 @@ export const enclosure = {
           tooltip: { signal: "datum" }
         },
         hover: {
-          stroke: { signal: "colorScheme === 'lightgreyred' ? '#2171b5' : '#a50f15'" }
+          stroke: { value: "#006d2c" }
+
         }
       }
     },

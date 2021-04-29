@@ -39,13 +39,17 @@ export const voronoiTreemap = {
       name: "colorScheme",
       value: "lightgreyred"
     },
+    { 
+      name: "flipColor",
+      value: false
+    },
     {
       name: "domain",
       value: [0, 1]
     },
     {
       name: "labelOpacity",
-      value: "0.75",
+      value: 0.75,
       bind: {
         name: "Label opacity: ",
         input: "range",
@@ -92,7 +96,8 @@ export const voronoiTreemap = {
       name: "color",
       type: "linear",
       domain: { signal: "domain" },
-      range: { scheme: { signal: "colorScheme" } }
+      range: { scheme: { signal: "colorScheme" } },
+      reverse: { signal: "flipColor" }
     },
     {
       name: "stroke",

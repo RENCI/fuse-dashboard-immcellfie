@@ -39,6 +39,10 @@ export const treemap = {
       name: "colorScheme",
       value: "lightgreyred"
     },
+    { 
+      name: "flipColor",
+      value: false
+    },
     {
       name: "domain",
       value: [0, 1]
@@ -108,7 +112,8 @@ export const treemap = {
       name: "color",
       type: "linear",
       domain: { signal: "domain" },
-      range: { scheme: { signal: "colorScheme" } }
+      range: { scheme: { signal: "colorScheme" } },
+      reverse: { signal: "flipColor" }
     },
     {
       name: "stroke",
