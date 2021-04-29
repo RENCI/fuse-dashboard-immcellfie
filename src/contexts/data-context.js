@@ -191,6 +191,7 @@ const createHierarchy = output => {
       const id = parent + "_" + i;
 
       data[id] = {
+        index: i,
         name: "subject " + i,
         parent: parent,
         score: score,
@@ -243,15 +244,9 @@ const createTree = hierarchy => {
         node.data.allScores.push([child.data.score]);
         node.data.allActivities.push([child.data.activity]);
       }
-    });
+    }); 
 
-    node.data.scores = node.data.allScores.map(d => d3.mean(d));
-    node.data.score = d3.mean(d3.merge(node.data.allScores));
-
-    node.data.activities = node.data.allActivities.map(d => d3.mean(d));
-    node.data.activity = d3.mean(d3.merge(node.data.allActivities));  
-
-    node.data.subjects = d3.range(0, node.data.scores.length);
+    node.data.subjects = d3.range(0, node.data.allScores.length);
   });
 
   tree.eachBefore(node => {
@@ -270,50 +265,77 @@ const createTree = hierarchy => {
 const getSubgroup = (key, subgroups) => key !== null ? subgroups.find(subgroup => subgroup.key === key) : null;
 
 const updateTree = (tree, subgroups, selectedSubgroups) => {
+  // Get subgroups
+  const subgroup1 = getSubgroup(selectedSubgroups[0], subgroups);
+  const subgroup2 = getSubgroup(selectedSubgroups[1], subgroups);
+
   tree.each(node => {
-    if (!node.data.allScores) return;
+    // Check if it is a leaf node (single subject)
+    if (!node.data.allScores) {
 
-    // Compute subgroup scores    
-    const subgroup1 = getSubgroup(selectedSubgroups[0], subgroups);
-    const subgroup2 = getSubgroup(selectedSubgroups[1], subgroups);
+      console.log(node.data);
+      console.log(subgroup1);
 
-    const processSubgroup = subgroup => {
-      if (!subgroup) return null;
+      const subgroupContains = (subgroup, index) => subgroup && subgroup.subjects.some(subject => subject.index === index);
 
-      const scores = node.data.allScores.filter((scores, i) => {
+      if (subgroupContains(subgroup1, node.data.index)) {
+        node.data.score1 = node.data.score;
+        node.data.score2 = null;
 
-        return subgroup.subjects.some(({ index }) => index === i);
-      });
+        node.data.activity1 = node.data.activity;
+        node.data.activity2 = null;
+      }
+      else if (subgroupContains(subgroup2, node.data.index)) {
+        node.data.score1 = null;
+        node.data.score2 = node.data.score;
 
-      return scores;
+        node.data.activity1 = null;
+        node.data.activity2 = node.data.activity;
+      }
+      else {
+        node.data.score1 = null;
+        node.data.score2 = null;
+
+        node.data.activity1 = null;
+        node.data.activity2 = null;
+      }
+
+      return;
     }
 
-    node.data.subgroup1 = processSubgroup(subgroup1);
-    node.data.subgroup2 = processSubgroup(subgroup2);
+    // Compute subgroup scores and activities
+    const processSubgroup = (subgroup, which) => {
+      if (!subgroup) {
+        node.data["scores" + which] = [];
+        node.data["score" + which] = null;
+        node.data["activities" + which] = [];
+        node.data["activity" + which] = null;
+      }
+      else {
+        const scores = d3.merge(subgroup.subjects.map(({ index }) => node.data.allScores[index]));
+        const activities = d3.merge(subgroup.subjects.map(({ index }) => node.data.allActivities[index]));
 
-    console.log(subgroup1);
-    console.log(subgroup2);
-    console.log(node.data);
+        node.data["scores" + which] = scores;
+        node.data["score" + which] = d3.mean(scores);
+        node.data["activities" + which] = activities;
+        node.data["activity" + which] = d3.mean(activities);
+      }
+    }
 
-/*    
+    processSubgroup(subgroup1, 1);
+    processSubgroup(subgroup2, 2);
+
     // Compute fold change
-    if (groups) {
-      const group0Score = d3.mean(d3.merge(node.data.allScores.filter((scores, i) => {
-        return groups[i].number === 0;
-      })));
+    if (node.data.score1 && node.data.score2) {
+      const foldChange = (a, b) => Math.pow(a / b, 2);
 
-      const group1Score = d3.mean(d3.merge(node.data.allScores.filter((scores, i) => {
-        return groups[i].number === 1;
-      })));
-
-      node.data.scoreFoldChange = Math.pow(group0Score / group1Score, 2);
-      node.data.activityFoldChange = 1;
+      node.data.scoreFoldChange = foldChange(node.data.score1, node.data.score2);
+      node.data.activityFoldChange = foldChange(node.data.activity1, node.data.activity2);
     }
     else {
-      node.data.scoreFoldChange = 1;
-      node.data.activityFoldChange = 1;
+      node.data.scoreFoldChange = null;
+      node.data.activityFoldChange = null;
     }
-*/  
   });
 };
 

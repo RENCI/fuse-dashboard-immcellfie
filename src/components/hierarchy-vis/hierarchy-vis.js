@@ -41,7 +41,7 @@ const changeColorMaps = [
 export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
   const [loading, setLoading] = useState(true);
   const [depth, setDepth] = useState(1);
-  const [subgroup, setSubgroup] = useState("subgroup1");
+  const [subgroup, setSubgroup] = useState("1");
   const [value, setValue] = useState("score");
   const [colorMaps, setColorMaps] = useState(valueColorMaps);
   const [colorMap, setColorMap] = useState(colorMaps[0]);
@@ -124,9 +124,11 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
     return [1 / max, max];
   };
 
+  const valueField = value + subgroup;
+
   const domain = value === "activity" ? [0, 1] :
-    value.includes("Change") ? logRange(tree.descendants().filter(d => d.depth === depth).map(d => d.data[value])) :
-    d3.extent(tree.descendants().filter(d => d.depth === depth), d => d.data[value]);
+    value.includes("Change") ? logRange(tree.descendants().filter(d => d.depth === depth).map(d => d.data[valueField])) :
+    d3.extent(d3.merge(tree.descendants().filter(d => d.depth === depth).map(d => [d.data.score1, d.data.score2])));
 
   return (
     <>
@@ -173,8 +175,8 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
               value={ subgroup }
               onChange={ onSubgroupChange }          
             >
-              <option value="subgroup1">{ subgroups[0].name }</option>
-              { hasSubgroups && <option value="subgroup2">{ subgroups[1].name }</option> }
+              <option value="1">{ subgroups[0].name }</option>
+              { hasSubgroups && <option value="2">{ subgroups[1].name }</option> }
               { hasSubgroups && <option value="comparison">comparison</option> }
             </Control>
           </Group>
@@ -212,11 +214,11 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
             data={ vis.name === "voronoi" ? tree.descendants() : hierarchy }
             signals={[
               { name: "depth", value: depth },
-              { name: "value", value: value },
+              { name: "value", value: valueField },
               { name: "colorScheme", value: colorMap },
               { name: "domain", value: domain }
             ]}
-            tooltip={ <VegaTooltip /> }
+            //tooltip={ <VegaTooltip /> }
           />
         }
       </div>
