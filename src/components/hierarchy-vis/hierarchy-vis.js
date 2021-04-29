@@ -129,6 +129,8 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
   const logRange = values => {
     const extent = d3.extent(values);
 
+    console.log(extent);
+
     const max = Math.max(1 / extent[0], extent[1]);
 
     return [1 / max, max];
@@ -139,6 +141,8 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
   const domain = isComparison ? logRange(tree.descendants().filter(d => d.depth === Math.min(depth, 3)).map(d => d.data[valueField])) :
     value === "activity" ? [0, 1] :
     d3.extent(d3.merge(tree.descendants().filter(d => d.depth === depth).map(d => [d.data.score1, d.data.score2])));
+
+    console.log(domain);
 
   return (
     <>

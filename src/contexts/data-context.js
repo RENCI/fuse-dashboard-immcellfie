@@ -321,7 +321,7 @@ const updateTree = (tree, subgroups, selectedSubgroups) => {
 
     // Compute fold change
     if (node.data.score1 && node.data.score2) {
-      const foldChange = (a, b) => Math.pow(a / b, 2);
+      const foldChange = (a, b) => b === 0 ? null : Math.pow(a / b, 2);
 
       node.data.scoreFoldChange = foldChange(node.data.score1, node.data.score2);
       node.data.activityFoldChange = foldChange(node.data.activity1, node.data.activity2);
