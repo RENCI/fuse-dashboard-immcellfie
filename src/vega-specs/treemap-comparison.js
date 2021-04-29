@@ -109,7 +109,8 @@ export const treemapComparison = {
       type: "log",
       base: 2,
       domain: { signal: "domain" },
-      range: { scheme: { signal: "colorScheme" } }
+      range: { scheme: { signal: "colorScheme" } },
+      reverse: { signal: "colorScheme === 'redblue' || colorScheme === 'redgrey' ? true : false" }
     },
     {
       name: "stroke",
@@ -127,7 +128,7 @@ export const treemapComparison = {
   legends: [
     {
       fill: "color",
-      title: { signal: "value + ' fold change'" }
+      title: { signal: "value" }
     }
   ],
   marks: [
@@ -182,7 +183,7 @@ export const treemapComparison = {
           tooltip: { signal: "datum" }
         },
         hover: {
-          stroke: { signal: "colorScheme === 'lightgreyred' ? '#2171b5' : '#a50f15'" }
+          stroke: { value: "#006d2c" }
         }
       }
     },

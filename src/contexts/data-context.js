@@ -272,10 +272,6 @@ const updateTree = (tree, subgroups, selectedSubgroups) => {
   tree.each(node => {
     // Check if it is a leaf node (single subject)
     if (!node.data.allScores) {
-
-      console.log(node.data);
-      console.log(subgroup1);
-
       const subgroupContains = (subgroup, index) => subgroup && subgroup.subjects.some(subject => subject.index === index);
 
       if (subgroupContains(subgroup1, node.data.index)) {
@@ -299,6 +295,9 @@ const updateTree = (tree, subgroups, selectedSubgroups) => {
         node.data.activity1 = null;
         node.data.activity2 = null;
       }
+
+      node.data.scoreFoldChange = null;
+      node.data.activityFoldChange = null;
 
       return;
     }

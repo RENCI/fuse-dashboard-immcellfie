@@ -35,7 +35,9 @@ const valueColorMaps = [
 ];
 
 const changeColorMaps = [
-  "blueorange"
+  "blueorange",
+  "redblue",
+  "redgrey"
 ];
 
 export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
@@ -124,10 +126,10 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
     return [1 / max, max];
   };
 
-  const valueField = value + subgroup;
+  const valueField = isComparison ? value + "FoldChange" : value + subgroup;
 
   const domain = value === "activity" ? [0, 1] :
-    value.includes("Change") ? logRange(tree.descendants().filter(d => d.depth === depth).map(d => d.data[valueField])) :
+    valueField.includes("FoldChange") ? logRange(tree.descendants().filter(d => d.depth === depth).map(d => d.data[valueField])) :
     d3.extent(d3.merge(tree.descendants().filter(d => d.depth === depth).map(d => [d.data.score1, d.data.score2])));
 
   return (
@@ -218,7 +220,7 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
               { name: "colorScheme", value: colorMap },
               { name: "domain", value: domain }
             ]}
-            //tooltip={ <VegaTooltip /> }
+            tooltip={ <VegaTooltip /> }
           />
         }
       </div>
