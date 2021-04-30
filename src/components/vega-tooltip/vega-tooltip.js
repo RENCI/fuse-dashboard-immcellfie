@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useMemo, useRef } from "react";
 import { Card } from "react-bootstrap";
 import { VegaWrapper } from "../vega-wrapper";
 import * as d3 from "d3";
@@ -43,25 +43,22 @@ const calculatePosition = (event, tooltipBox, itemBox, offsetX, offsetY) => {
 const format = d3.format(".2f")
 const formatNumber = d => isNaN(d) ? "Inconclusive" : format(d);
 
-const collectValues = allValues => {
-  return d3.merge(allValues.map(values => values.filter(value => !isNaN(value)).map(value => ({ value: value }))));
+const collectValues = (value, key)  => {  
+  return value ? value[key].filter(value => !isNaN(value)).map(value => ({ value: value })) : [];
 };
 
-export const VegaTooltip = ({ handler, event, item, value }) => {
-  const [scores, setScores] = useState([]);
-  const [activities, setActivities] = useState([]);
+export const VegaTooltip = ({ handler, event, item, value, subgroup, subgroupName }) => {
   const div = useRef();
-
-  useEffect(() => {
-    if (value) {
-      setScores(collectValues(value.allScores));
-      setActivities(collectValues(value.allActivities));
-    }
-  }, [value]);
 
   const { x, y } = event && div.current ?
     calculatePosition(event, div.current.getBoundingClientRect(), handler.getItemBoundingClientRect(item), 0, 0) :
     { x: 0, y: 0 };
+
+  const score = value && value["score" + subgroup];
+  const activity = value && value["activity" + subgroup];
+
+  const scores = useMemo(() => collectValues(value, ["scores" + subgroup]), [value, subgroup]);
+  const activities = useMemo(() => collectValues(value, ["activities" + subgroup]), [value, subgroup]);
 
   const spec = value && value.allScores[0].length === 1 ? histogram : density;
 
@@ -78,12 +75,13 @@ export const VegaTooltip = ({ handler, event, item, value }) => {
       <Card>
         <Body>
           {value && <Subtitle>{value.name}</Subtitle>}
+          <Subtitle className="text-muted mt-1">{ subgroupName }</Subtitle>
           <Text className="mt-1">
             {value &&
               <small>
-                Mean score: {formatNumber(value.score)}
+                Mean score: { formatNumber(score) }
                 <br />
-                Mean activity: {formatNumber(value.activity)}
+                Mean activity: { formatNumber(activity) }
               </small>
             }
           </Text>
