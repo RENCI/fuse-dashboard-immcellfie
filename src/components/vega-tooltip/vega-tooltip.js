@@ -5,7 +5,7 @@ import * as d3 from "d3";
 import { histogram, density, line } from "../../vega-specs";
 import "./vega-tooltip.css";
 
-const { Subtitle, Body, Text, Footer } = Card;
+const { Subtitle, Body, Footer } = Card;
 
 // Borrowed from vega-tooltip
 const calculatePosition = (event, tooltipBox, itemBox, offsetX, offsetY) => {
@@ -67,15 +67,15 @@ export const VegaTooltip = ({ handler, event, item, value, subgroup, subgroupNam
 
   const scores = useMemo(() => {
     return isComparison ? compareValues(value, "scores", subgroupName) : subgroupValues(value, "scores" + subgroup);
-  }, [value, subgroup, isComparison]);
+  }, [value, subgroup, subgroupName, isComparison]);
 
   const activities = useMemo(() => {
     return isComparison ? compareValues(value, "activities", subgroupName) : subgroupValues(value, "activities" + subgroup);
-  }, [value, subgroup, isComparison]);
+  }, [value, subgroup, subgroupName, isComparison]);
 
   const spec = isComparison ? line : (value && value.allScores[0].length === 1) ? histogram : density;
 
-  console.log(scores);
+  const subtitle = isComparison ? subgroupName[0] + " vs. " + subgroupName[1] : subgroupName;
 
   return (
     <div
@@ -89,15 +89,14 @@ export const VegaTooltip = ({ handler, event, item, value, subgroup, subgroupNam
     >
       <Card>
         <Body>
-          {value && <Subtitle>{ value.name }</Subtitle>}
-          <Subtitle className="text-muted mt-1">{ subgroupName }</Subtitle>
-          <Text className="mt-1">
-            <small>
-              { (isComparison ? "Score fold change: " : "Mean score: ") + formatNumber(score) }
-              <br />
-              { (isComparison ? "Activity fold change: " : "Mean activity: ") + formatNumber(activity) }
-            </small>
-          </Text>
+          { value && <Subtitle>{ value.name }</Subtitle> }
+          <div>{ subtitle }</div>
+          <div className="small">
+            { (isComparison ? "Score fold change: " : "Mean score: ") + formatNumber(score) }
+          </div>
+          <div className="small">
+            { (isComparison ? "Activity fold change: " : "Mean activity: ") + formatNumber(activity) }
+          </div>
           <div className="text-center">
             <small>Distributions</small>
             <VegaWrapper
