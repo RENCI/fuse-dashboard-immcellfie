@@ -169,8 +169,6 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
     value === "activity" ? [0, 1] :
     d3.extent(d3.merge(tree.descendants().filter(d => d.depth === depth).map(d => [d.data.score1, d.data.score2])));
 
-    console.log(domain);
-
   return (
     <>
       <div className="mb-4">

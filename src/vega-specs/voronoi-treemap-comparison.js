@@ -33,15 +33,23 @@ export const voronoiTreemapComparison = {
     },      
     {
       name: "value",
-      value: "score"
+      value: "scoreFoldChange"
     },
     {
       name: "colorScheme",
       value: "blueorange"
     },
     { 
-      name: "flipColor",
+      name: "reverseColors",
       value: false
+    },
+    {
+      name: "highlightColor",
+      value: "#2171b5",
+    },
+    {
+      name: "inconclusiveColor",
+      value: "#c6dbef",
     },
     {
       name: "domain",
@@ -98,7 +106,13 @@ export const voronoiTreemapComparison = {
       base: 2,
       domain: { signal: "domain" },
       range: { scheme: { signal: "colorScheme" } },
-      reverse: { signal: "flipColor" }
+      reverse: { signal: "reverseColors" }
+    },
+    {
+      name: "specialValues",
+      type: "ordinal",
+      domain: ["inconclusive"],
+      range: { signal: "[inconclusiveColor]" }
     },
     {
       name: "stroke",
@@ -117,6 +131,10 @@ export const voronoiTreemapComparison = {
     {
       fill: "color",
       title: { signal: "value" }
+    },
+    { 
+      fill: "specialValues",
+      symbolStrokeColor: "#ddd"
     }
   ],
   marks: [
@@ -129,12 +147,21 @@ export const voronoiTreemapComparison = {
           fill: [
             {
               test: "!isValid(datum.value)",
-              value: "#fff"
+              signal: "scale('specialValues', 'inconclusive')"
             },
             {
               scale: "color",
               field: "value"
             }            
+          ],
+          fillOpacity: [
+            {
+              test: "datum.value === 'na'",
+              value: 0,
+            },
+            {
+              value: 1
+            }
           ],
           stroke: { 
             scale: "stroke",
@@ -186,7 +213,7 @@ export const voronoiTreemapComparison = {
           tooltip: { signal: "datum.data" }
         },
         hover: {
-          stroke: { value: "#006d2c" }
+          stroke: { signal: "highlightColor" }
         }
       }
     },
