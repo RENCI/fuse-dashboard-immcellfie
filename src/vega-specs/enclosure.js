@@ -2,7 +2,10 @@ export const enclosure = {
   $schema: "https://vega.github.io/schema/vega/v5.json",
   width: { signal: "containerWidth" },
   height: { signal: "containerWidth" },
-  title: { text: "Metabolic task enclosure diagram" },
+  title: { 
+    text: "Metabolic task enclosure diagram",
+    subtitle: { signal: "subtitle" }
+  },
   autosize: {
     type: "fit",
     resize: true
@@ -26,6 +29,10 @@ export const enclosure = {
           update: "containerSize()[0]"
         }
       ]
+    },
+    {
+      name: "subtitle",
+      value: ""
     },
     {
       name: "depth",
@@ -141,7 +148,7 @@ export const enclosure = {
   legends: [
     {
       fill: "color",
-      title: { signal: "value" }
+      title: { signal: "slice(value, 0, -1)" }
     },
     { 
       fill: "specialValues",

@@ -2,7 +2,10 @@ export const treemapComparison = {
   $schema: "https://vega.github.io/schema/vega/v5.json",
   width: { signal: "containerWidth" },
   height: { signal: "containerWidth" },
-  title: { text: "Metabolic task treemap" },
+  title: { 
+    text: "Metabolic task treemap",
+    subtitle: { signal: "subtitle" }
+  },
   autosize: {
     type: "fit",
     resize: true
@@ -26,6 +29,10 @@ export const treemapComparison = {
           update: "containerSize()[0]"
         }
       ]
+    },
+    {
+      name: "subtitle",
+      value: ""
     },
     {
       name: "depth",
@@ -146,7 +153,7 @@ export const treemapComparison = {
   legends: [
     {
       fill: "color",
-      title: { signal: "value" }
+      title: { signal: "value === 'scoreFoldChange' ? ['score', 'fold change'] : ['activity', 'fold change']" }
     },
     { 
       fill: "specialValues",

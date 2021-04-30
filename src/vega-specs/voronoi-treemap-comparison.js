@@ -2,7 +2,10 @@ export const voronoiTreemapComparison = {
   $schema: "https://vega.github.io/schema/vega/v5.json",
   width: { signal: "containerWidth" },
   height: { signal: "containerWidth" },
-  title: { text: "Metabolic task Voronoi treemap" },
+  title: { 
+    text: "Metabolic task Voronoi treemap",
+    subtitle: { signal: "subtitle" }
+  },
   autosize: {
     type: "fit",
     resize: true
@@ -26,6 +29,10 @@ export const voronoiTreemapComparison = {
           update: "containerSize()[0]"
         }
       ]
+    },
+    {
+      name: "subtitle",
+      value: ""
     },
     {
       name: "depth",
@@ -130,7 +137,7 @@ export const voronoiTreemapComparison = {
   legends: [
     {
       fill: "color",
-      title: { signal: "value" }
+      title: { signal: "value === 'scoreFoldChange' ? ['score', 'fold change'] : ['activity', 'fold change']" }
     },
     { 
       fill: "specialValues",

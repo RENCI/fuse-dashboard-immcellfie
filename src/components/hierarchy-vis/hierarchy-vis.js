@@ -156,8 +156,6 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
   const logRange = values => {
     const extent = d3.extent(values);
 
-    console.log(extent);
-
     const max = Math.max(1 / extent[0], extent[1]);
 
     return [1 / max, max];
@@ -252,6 +250,12 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
             spec={ isComparison ? vis.comparisonSpec : vis.spec }
             data={ vis.name === "voronoi" ? tree.descendants() : hierarchy }
             signals={[
+              { name: "subtitle", 
+                value: isComparison ? 
+                  (subgroups[0].name + " vs. " + subgroups[1].name) : 
+                  subgroup === "1" ? subgroups[0].name : 
+                  subgroups[1].name 
+              },
               { name: "depth", value: depth },
               { name: "value", value: valueField },
               { name: "colorScheme", value: color.scheme },

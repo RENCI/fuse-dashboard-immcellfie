@@ -2,7 +2,10 @@ export const treemap = {
   $schema: "https://vega.github.io/schema/vega/v5.json",
   width: { signal: "containerWidth" },
   height: { signal: "containerWidth" },
-  title: { text: "Metabolic task treemap" },
+  title: { 
+    text: "Metabolic task treemap",
+    subtitle: { signal: "subtitle" }
+  },
   autosize: {
     type: "fit",
     resize: true
@@ -26,6 +29,10 @@ export const treemap = {
           update: "containerSize()[0]"
         }
       ]
+    },
+    {
+      name: "subtitle",
+      value: ""
     },
     {
       name: "depth",
@@ -145,7 +152,7 @@ export const treemap = {
   legends: [
     {
       fill: "color",
-      title: { signal: "value" }
+      title: { signal: "slice(value, 0, -1)" }
     },
     { 
       fill: "specialValues",
