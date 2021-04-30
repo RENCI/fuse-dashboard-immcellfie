@@ -320,8 +320,8 @@ const updateTree = (tree, subgroups, selectedSubgroups) => {
     processSubgroup(subgroup2, 2);
 
     // Compute fold change
-    if (node.data.score1 && node.data.score2) {
-      const foldChange = (a, b) => b === 0 ? null : Math.pow(a / b, 2);
+    if (node.data.score1 !== null && node.data.score2 !== null) {
+      const foldChange = (a, b) => a === 0 ? 0 : b / a;
 
       node.data.scoreFoldChange = foldChange(node.data.score1, node.data.score2);
       node.data.activityFoldChange = foldChange(node.data.activity1, node.data.activity2);
