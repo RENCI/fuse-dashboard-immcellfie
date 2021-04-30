@@ -40,8 +40,16 @@ export const enclosure = {
       value: "lightgreyred"
     },
     { 
-      name: "flipColor",
+      name: "reverseColors",
       value: false
+    },
+    {
+      name: "highlightColor",
+      value: "#2171b5",
+    },
+    {
+      name: "inconclusiveColor",
+      value: "#c6dbef",
     },
     {
       name: "domain",
@@ -109,7 +117,13 @@ export const enclosure = {
       type: "linear",
       domain: { signal: "domain" },
       range: { scheme: { signal: "colorScheme" } },
-      reverse: { signal: "flipColor" }
+      reverse: { signal: "reverseColors" }
+    },
+    {
+      name: "specialValues",
+      type: "ordinal",
+      domain: ["inconclusive"],
+      range: { signal: "[inconclusiveColor]" }
     },
     {
       name: "stroke",
@@ -128,6 +142,10 @@ export const enclosure = {
     {
       fill: "color",
       title: { signal: "value" }
+    },
+    { 
+      fill: "specialValues",
+      symbolStrokeColor: "#ddd"
     }
   ],
   marks: [
@@ -140,12 +158,21 @@ export const enclosure = {
           fill: [
             {
               test: "!isValid(datum[value])",
-              value: "#c6dbef"
+              signal: "scale('specialValues', 'inconclusive')"
             },
             {
               scale: "color",
               field: { signal: "value" }
             }            
+          ],
+          fillOpacity: [
+            {
+              test: "datum[value] === 'na'",
+              value: 0,
+            },
+            {
+              value: 1
+            }
           ],
           stroke: { 
             scale: "stroke",
@@ -180,7 +207,7 @@ export const enclosure = {
           tooltip: { signal: "datum" }
         },
         hover: {
-          stroke: { signal: "colorScheme === 'lightgreyred' ? '#2171b5' : '#a50f15'" }
+          stroke: { signal: "highlightColor" }
         }
       }
     },

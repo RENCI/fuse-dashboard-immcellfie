@@ -39,13 +39,17 @@ export const treemap = {
       name: "colorScheme",
       value: "lightgreyred"
     },
+    { 
+      name: "reverseColors",
+      value: false
+    },
+    {
+      name: "highlightColor",
+      value: "#2171b5",
+    },
     {
       name: "inconclusiveColor",
       value: "#c6dbef",
-    },
-    { 
-      name: "flipColor",
-      value: false
     },
     {
       name: "domain",
@@ -117,7 +121,7 @@ export const treemap = {
       type: "linear",
       domain: { signal: "domain" },
       range: { scheme: { signal: "colorScheme" } },
-      reverse: { signal: "flipColor" }
+      reverse: { signal: "reverseColors" }
     },
     {
       name: "specialValues",
@@ -209,7 +213,7 @@ export const treemap = {
           tooltip: { signal: "datum" }
         },
         hover: {
-          stroke: { signal: "colorScheme === 'lightgreyred' ? '#2171b5' : '#a50f15'" }
+          stroke: { signal: "highlightColor" }
         }
       }
     },

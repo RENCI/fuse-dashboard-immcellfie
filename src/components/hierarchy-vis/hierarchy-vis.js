@@ -33,15 +33,24 @@ const visualizations = [
   }
 ];
 
-const valueColorMaps = [
-  { name: "light grey → red", scheme: "lightgreyred" },
-  { name: "yellow → green → blue", scheme: "yellowgreenblue" }
+const subgroupColors = [
+  { 
+    name: "light grey → red",
+    scheme: "lightgreyred" ,
+    highlight: "#2171b5",
+    inconclusive: "#c6dbef"
+  },
+  { 
+    name: "yellow → green → blue", 
+    scheme: "yellowgreenblue",
+    highlight: "#a50f15",
+    inconclusive: "#c6dbef" }
 ];
 
-const changeColorMaps = [
+const comparisonColors = [
   { name: "blue ↔ orange", scheme: "blueorange" },
-  { name: "blue ↔ red", scheme: "redblue", flip: true },
-  { name: "grey ↔ red", scheme: "redgrey", flip: true }
+  { name: "blue ↔ red", scheme: "redblue", reverse: true },
+  { name: "grey ↔ red", scheme: "redgrey", reverse: true }
 ];
 
 export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
@@ -49,8 +58,8 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
   const [depth, setDepth] = useState(1);
   const [subgroup, setSubgroup] = useState("1");
   const [value, setValue] = useState("score");
-  const [colorMaps, setColorMaps] = useState(valueColorMaps);
-  const [colorMap, setColorMap] = useState(colorMaps[0]);
+  const [colors, setColors] = useState(subgroupColors);
+  const [color, setColor] = useState(subgroupColors[0]);
   const [vis, setVis] = useState(visualizations[0]);
   const vegaRef = useRef();
 
@@ -71,11 +80,11 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
 
     setSubgroup(value);
 
-    const colorMaps = value === "comparison" ? changeColorMaps : valueColorMaps; 
+    const colors = value === "comparison" ? comparisonColors : subgroupColors; 
 
-    setColorMaps(colorMaps);
+    setColors(colors);
 
-    if (!colorMaps.includes(colorMap)) setColorMap(colorMaps[0]);
+    if (!colors.includes(color)) setColor(colors[0]);
   };
 
   const onValueChange = evt => {
@@ -85,7 +94,7 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
   };
 
   const onColorMapChange = evt => {
-    setColorMap(colorMaps.find(({ scheme }) => scheme === evt.target.value));
+    setColor(colors.find(({ scheme }) => scheme === evt.target.value));
   };
 
   useEffect(() => {
@@ -211,11 +220,11 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
             <Control
               size="sm"
               as="select"
-              value={ colorMap.scheme }
+              value={ color.scheme }
               onChange={ onColorMapChange }          
             >
-              { colorMaps.map((colorMap, i) => (
-                <option key={ i } value={ colorMap.scheme }>{ colorMap.name }</option>
+              { colors.map(({ scheme, name }, i) => (
+                <option key={ i } value={ scheme }>{ name }</option>
               ))}
             </Control>
           </Group>
@@ -229,8 +238,10 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
             signals={[
               { name: "depth", value: depth },
               { name: "value", value: valueField },
-              { name: "colorScheme", value: colorMap.scheme },
-              { name: "flipColor", value: colorMap.flip },
+              { name: "colorScheme", value: color.scheme },
+              { name: "reverseColors", value: color.reverse },
+              { name: "highlightColor", value: color.highlight },
+              { name: "inconclusiveColor", value: color.inconclusive },
               { name: "domain", value: domain }
             ]}
             tooltip={ <VegaTooltip /> }
