@@ -39,6 +39,10 @@ export const treemap = {
       name: "colorScheme",
       value: "lightgreyred"
     },
+    {
+      name: "inconclusiveColor",
+      value: "#c6dbef",
+    },
     { 
       name: "flipColor",
       value: false
@@ -116,6 +120,12 @@ export const treemap = {
       reverse: { signal: "flipColor" }
     },
     {
+      name: "specialValues",
+      type: "ordinal",
+      domain: ["inconclusive"],
+      range: { signal: "[inconclusiveColor]" }
+    },
+    {
       name: "stroke",
       type: "ordinal",
       domain: [1, 2, 3, 4],
@@ -132,6 +142,10 @@ export const treemap = {
     {
       fill: "color",
       title: { signal: "value" }
+    },
+    { 
+      fill: "specialValues",
+      symbolStrokeColor: "#ddd"
     }
   ],
   marks: [
@@ -144,12 +158,21 @@ export const treemap = {
           fill: [
             {
               test: "!isValid(datum[value])",
-              value: "#c6dbef"
+              signal: "scale('specialValues', 'inconclusive')"
             },
             {
               scale: "color",
               field: { signal: "value" }
-            }            
+            }                        
+          ],
+          fillOpacity: [
+            {
+              test: "datum[value] === 'na'",
+              value: 0,
+            },
+            {
+              value: 1
+            }
           ],
           stroke: { 
             scale: "stroke",
