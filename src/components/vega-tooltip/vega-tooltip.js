@@ -2,7 +2,7 @@ import React, { useMemo, useRef } from "react";
 import { Card } from "react-bootstrap";
 import { VegaWrapper } from "../vega-wrapper";
 import * as d3 from "d3";
-import { histogram, density } from "../../vega-specs";
+import { histogram, density, line } from "../../vega-specs";
 import "./vega-tooltip.css";
 
 const { Subtitle, Body, Text, Footer } = Card;
@@ -19,7 +19,7 @@ const calculatePosition = (event, tooltipBox, itemBox, offsetX, offsetY) => {
     y = +event.clientY - offsetY - tooltipBox.height;
   }
 
-  return {x, y};
+  return { x, y };
 /*  
   let x = itemBox.x + (itemBox.width - tooltipBox.width) / 2 + offsetX;
 
@@ -43,9 +43,15 @@ const calculatePosition = (event, tooltipBox, itemBox, offsetX, offsetY) => {
 const format = d3.format(".2f")
 const formatNumber = d => isNaN(d) ? "Inconclusive" : format(d);
 
-const collectValues = (value, key)  => {  
+const subgroupValues = (value, key) => {  
   return value ? value[key].filter(value => !isNaN(value)).map(value => ({ value: value })) : [];
 };
+
+const compareValues = (value, key, names) => {
+  return value ? d3.merge(
+    names.map((subgroup, i) => value[key + (i + 1)].filter(value => !isNaN(value)).map(value => ({ value: value, subgroup: subgroup })))
+  ) : [];
+}
 
 export const VegaTooltip = ({ handler, event, item, value, subgroup, subgroupName }) => {
   const div = useRef();
@@ -54,13 +60,22 @@ export const VegaTooltip = ({ handler, event, item, value, subgroup, subgroupNam
     calculatePosition(event, div.current.getBoundingClientRect(), handler.getItemBoundingClientRect(item), 0, 0) :
     { x: 0, y: 0 };
 
-  const score = value && value["score" + subgroup];
-  const activity = value && value["activity" + subgroup];
+  const isComparison = subgroup === "comparison";
 
-  const scores = useMemo(() => collectValues(value, ["scores" + subgroup]), [value, subgroup]);
-  const activities = useMemo(() => collectValues(value, ["activities" + subgroup]), [value, subgroup]);
+  const score = value && (isComparison ? value.scoreFoldChange : value["score" + subgroup]);
+  const activity = value && (isComparison ? value.activityFoldChange : value["activity" + subgroup]);
 
-  const spec = value && value.allScores[0].length === 1 ? histogram : density;
+  const scores = useMemo(() => {
+    return isComparison ? compareValues(value, "scores", subgroupName) : subgroupValues(value, "scores" + subgroup);
+  }, [value, subgroup, isComparison]);
+
+  const activities = useMemo(() => {
+    return isComparison ? compareValues(value, "activities", subgroupName) : subgroupValues(value, "activities" + subgroup);
+  }, [value, subgroup, isComparison]);
+
+  const spec = isComparison ? line : (value && value.allScores[0].length === 1) ? histogram : density;
+
+  console.log(scores);
 
   return (
     <div
@@ -74,16 +89,14 @@ export const VegaTooltip = ({ handler, event, item, value, subgroup, subgroupNam
     >
       <Card>
         <Body>
-          {value && <Subtitle>{value.name}</Subtitle>}
+          {value && <Subtitle>{ value.name }</Subtitle>}
           <Subtitle className="text-muted mt-1">{ subgroupName }</Subtitle>
           <Text className="mt-1">
-            {value &&
-              <small>
-                Mean score: { formatNumber(score) }
-                <br />
-                Mean activity: { formatNumber(activity) }
-              </small>
-            }
+            <small>
+              { (isComparison ? "Score fold change: " : "Mean score: ") + formatNumber(score) }
+              <br />
+              { (isComparison ? "Activity fold change: " : "Mean activity: ") + formatNumber(activity) }
+            </small>
           </Text>
           <div className="text-center">
             <small>Distributions</small>

@@ -167,7 +167,7 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
     value === "activity" ? [0, 1] :
     d3.extent(d3.merge(tree.descendants().filter(d => d.depth === depth).map(d => [d.data.score1, d.data.score2])));
 
-  const subgroupName = isComparison ? 
+  const subtitle = isComparison ? 
     (subgroups[0].name + " vs. " + subgroups[1].name) : 
     subgroup === "1" ? subgroups[0].name : 
     subgroups[1].name;
@@ -255,7 +255,7 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
             spec={ isComparison ? vis.comparisonSpec : vis.spec }
             data={ vis.name === "voronoi" ? tree.descendants() : hierarchy }
             signals={[
-              { name: "subtitle", value: subgroupName },
+              { name: "subtitle", value: subtitle },
               { name: "depth", value: depth },
               { name: "value", value: valueField },
               { name: "colorScheme", value: color.scheme },
@@ -264,7 +264,16 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
               { name: "inconclusiveColor", value: color.inconclusive },
               { name: "domain", value: domain }
             ]}
-            tooltip={ <VegaTooltip subgroup={ subgroup } subgroupName={ subgroupName } /> }
+            tooltip={ 
+              <VegaTooltip 
+                subgroup={ subgroup } 
+                subgroupName={ isComparison ? 
+                  [subgroups[0].name, subgroups[1].name] : 
+                  subgroup === "1" ? subgroups[0].name : 
+                  subgroups[1].name
+                } 
+              /> 
+            }
           />
         }
       </div>
