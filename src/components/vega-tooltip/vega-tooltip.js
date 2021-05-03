@@ -2,7 +2,7 @@ import React, { useMemo, useRef } from "react";
 import { Card } from "react-bootstrap";
 import { VegaWrapper } from "../vega-wrapper";
 import * as d3 from "d3";
-import { histogram, density, line, bar } from "../../vega-specs";
+import { histogram, density, line, bar, barComparison } from "../../vega-specs";
 import "./vega-tooltip.css";
 
 const { Subtitle, Body, Footer } = Card;
@@ -75,7 +75,7 @@ export const VegaTooltip = ({ handler, event, item, value, subgroup, subgroupNam
 
   //const spec = isComparison ? line : (value && value.allScores[0].length === 1) ? histogram : density;
   const scoreSpec = isComparison ? line : histogram;
-  const activitySpec = isComparison ? line : bar;
+  const activitySpec = isComparison ? barComparison : bar;
 
   const subtitle = isComparison ? subgroupName[0] + " vs. " + subgroupName[1] : subgroupName;
 

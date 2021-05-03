@@ -10,4 +10,5 @@ export * from "./histogram";
 export * from "./density";
 export * from "./line";
 export * from "./bar";
+export * from "./bar-comparison";
 export * from "./phenotype-bar-chart";
