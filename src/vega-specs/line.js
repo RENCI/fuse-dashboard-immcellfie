@@ -15,32 +15,30 @@ export const line = {
   data: {
     name: "data"
   },
-  layer: [{
-    transform:[{
-      density: "value",
-      groupby: ["subgroup"],
-      bandwidth: 0.3
-    }],
-    mark: "line",
-    encoding: {
-      x: {
-        field: "value",
-        type: "quantitative",       
-        axis: {
-          title: { expr: "valueName" }
-        }
-      },
-      y: {
-        field: "density",
-        type: "quantitative",   
-        axis: {
-          title: null
-        }  
-      },
-      color: {
-        field: "subgroup",
-        type: "nominal"
+  transform:[{
+    density: "value",
+    groupby: ["subgroup"],
+    bandwidth: 0.3
+  }],
+  mark: "line",
+  encoding: {
+    x: {
+      field: "value",
+      type: "quantitative",       
+      axis: {
+        title: { expr: "valueName" }
       }
+    },
+    y: {
+      field: "density",
+      type: "quantitative",   
+      axis: {
+        title: null
+      }  
+    },
+    color: {
+      field: "subgroup",
+      type: "nominal"
     }
-  }]
+  }
 };

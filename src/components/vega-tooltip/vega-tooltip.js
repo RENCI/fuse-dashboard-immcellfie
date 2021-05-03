@@ -2,7 +2,7 @@ import React, { useMemo, useRef } from "react";
 import { Card } from "react-bootstrap";
 import { VegaWrapper } from "../vega-wrapper";
 import * as d3 from "d3";
-import { histogram, density, line } from "../../vega-specs";
+import { histogram, density, line, bar } from "../../vega-specs";
 import "./vega-tooltip.css";
 
 const { Subtitle, Body, Footer } = Card;
@@ -51,7 +51,7 @@ const compareValues = (value, key, names) => {
   return value ? d3.merge(
     names.map((subgroup, i) => value[key + (i + 1)].filter(value => !isNaN(value)).map(value => ({ value: value, subgroup: subgroup })))
   ) : [];
-}
+};
 
 export const VegaTooltip = ({ handler, event, item, value, subgroup, subgroupName }) => {
   const div = useRef();
@@ -65,6 +65,8 @@ export const VegaTooltip = ({ handler, event, item, value, subgroup, subgroupNam
   const score = value && (isComparison ? value.scoreFoldChange : value["score" + subgroup]);
   const activity = value && (isComparison ? value.activityFoldChange : value["activity" + subgroup]);
 
+  console.log(score, activity);
+
   const scores = useMemo(() => {
     return isComparison ? compareValues(value, "scores", subgroupName) : subgroupValues(value, "scores" + subgroup);
   }, [value, subgroup, subgroupName, isComparison]);
@@ -73,7 +75,9 @@ export const VegaTooltip = ({ handler, event, item, value, subgroup, subgroupNam
     return isComparison ? compareValues(value, "activities", subgroupName) : subgroupValues(value, "activities" + subgroup);
   }, [value, subgroup, subgroupName, isComparison]);
 
-  const spec = isComparison ? line : (value && value.allScores[0].length === 1) ? histogram : density;
+  //const spec = isComparison ? line : (value && value.allScores[0].length === 1) ? histogram : density;
+  const scoreSpec = isComparison ? line : histogram;
+  const activitySpec = isComparison ? line : bar;
 
   const subtitle = isComparison ? subgroupName[0] + " vs. " + subgroupName[1] : subgroupName;
 
@@ -97,32 +101,34 @@ export const VegaTooltip = ({ handler, event, item, value, subgroup, subgroupNam
           <div className="small">
             { (isComparison ? "Activity fold change: " : "Mean activity: ") + formatNumber(activity) }
           </div>
-          <div className="text-center">
-            <small>Distributions</small>
-            <VegaWrapper
-              spec={spec}
-              data={scores}
-              options={{ actions: false }}
-              signals={[
-                { name: "valueName", value: "score" }
-              ]}
-            />
-            <VegaWrapper
-              spec={spec}
-              data={activities}
-              options={{ actions: false }}
-              signals={[
-                { name: "valueName", value: "activity" }
-              ]}
-            />
-          </div>
+          { (score || activity) ? 
+            <div className="text-center">            
+              <small>Distributions</small>
+              <VegaWrapper
+                spec={ scoreSpec }
+                data={ scores }
+                options={{ actions: false }}
+                signals={[
+                  { name: "valueName", value: "score" }
+                ]}
+              />
+              <VegaWrapper
+                spec={ activitySpec }
+                data={ activities }
+                options={{ actions: false }}
+                signals={[
+                  { name: "valueName", value: "activity" }
+                ]}
+              />
+            </div>
+          : null }
         </Body>
         {value && value.phenotype.length > 1 &&
           <Footer>
             <small>
               {value.phenotype.map((level, i) => (
                 <div key={ i } style={{ marginLeft: i + "em" }}>
-                  { level}
+                  { level }
                 </div>
               ))}
             </small>
