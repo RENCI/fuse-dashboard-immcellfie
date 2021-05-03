@@ -65,8 +65,6 @@ export const VegaTooltip = ({ handler, event, item, value, subgroup, subgroupNam
   const score = value && (isComparison ? value.scoreFoldChange : value["score" + subgroup]);
   const activity = value && (isComparison ? value.activityFoldChange : value["activity" + subgroup]);
 
-  console.log(score, activity);
-
   const scores = useMemo(() => {
     return isComparison ? compareValues(value, "scores", subgroupName) : subgroupValues(value, "scores" + subgroup);
   }, [value, subgroup, subgroupName, isComparison]);
@@ -101,7 +99,7 @@ export const VegaTooltip = ({ handler, event, item, value, subgroup, subgroupNam
           <div className="small">
             { (isComparison ? "Activity fold change: " : "Mean activity: ") + formatNumber(activity) }
           </div>
-          { (score || activity) ? 
+          { score || activity ? 
             <div className="text-center">            
               <small>Distributions</small>
               <VegaWrapper
