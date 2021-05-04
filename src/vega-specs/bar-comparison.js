@@ -15,22 +15,15 @@ export const barComparison = {
   data: {
     name: "data"
   },
-  mark: "bar",
+  mark: "bar", 
   encoding: {
     column: {
-      field: "value", 
-      type: "ordinal",
-      domain: [0, 1],
-      spacing: 5,
-      axis: { 
-        title: "activity",
-        orient: "bottom" 
-      }
+      field: "subgroup",
+      title: null
     },
     x: {
-      field: "subgroup",
-      type: "ordinal",
-      axis: null
+      field: "value",
+      type: "ordinal"
     },
     y: {
       aggregate: "count",
@@ -41,5 +34,9 @@ export const barComparison = {
       field: "subgroup",
       type: "nominal"
     }
+  },
+  resolve: { 
+    axis: { y: "independent" },
+    scale: { y: "independent" }
   }
 };
