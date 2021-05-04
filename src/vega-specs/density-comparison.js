@@ -15,34 +15,63 @@ export const densityComparison = {
   data: {
     name: "data"
   },
-  transform:[{
-    density: "value",
-    groupby: ["subgroup"]
-  }],
-  mark: { 
-    type: "area", 
-    line: true,
-    interpolate: "linear" 
-  },
-  encoding: {
-    x: {
-      field: "value",
-      type: "quantitative",       
-      axis: {
-        title: { expr: "valueName" }
+  layer: [ 
+    {
+      transform:[{
+        density: "value",
+        groupby: ["subgroup"],
+        cumulative: true
+      }],
+      mark: "line",
+      encoding: {
+        x: {
+          field: "value",
+          type: "quantitative"
+        },
+        y: {
+          field: "density",
+          type: "quantitative"
+        },
+        color: {
+          field: "subgroup",
+          type: "nominal"
+        },
+        strokeOpacity: { value: 0.25 }, 
+        strokeDash: { value: [5, 5] }
       }
-    },
-    y: {
-      field: "density",
-      type: "quantitative",   
-      axis: {
-        title: null
-      }  
-    },
-    color: {
-      field: "subgroup",
-      type: "nominal"
-    },
-    fillOpacity: { value: 0.5 }
-  }
+    },    
+    {
+      transform:[{
+        density: "value",
+        groupby: ["subgroup"],
+        counts: false
+      }],
+      mark: { 
+        type: "area", 
+        line: true,
+        interpolate: "linear" 
+      },
+      encoding: {
+        x: {
+          field: "value",
+          type: "quantitative",       
+          axis: {
+            title: { expr: "valueName" }
+          }
+        },
+        y: {
+          field: "density",
+          type: "quantitative",   
+          axis: {
+            title: null
+          }  
+        },
+        color: {
+          field: "subgroup",
+          type: "nominal"
+        },
+        fillOpacity: { value: 0.5 }
+      }
+    }
+  ]
 };

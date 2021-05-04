@@ -1,9 +1,8 @@
 export const barComparison = {
   $schema: "https://vega.github.io/schema/vega-lite/v4.json",
-  width: { step: 30 },
+  width: { step: 24 },
   height: 100,
   autosize: {
-    type: "fit",
     resize: true
   },
   params: [
@@ -31,7 +30,12 @@ export const barComparison = {
   mark: "bar",
   encoding: {
     column: {
-      field: "value"
+      field: "value",
+      header: {
+        titleOrient: "bottom",
+        labelOrient: "bottom",
+        labelPadding: 110
+      }
     },
     x: {
       field: "subgroup",
@@ -41,7 +45,6 @@ export const barComparison = {
     y: {
       aggregate: "sum",
       field: "fraction",
-      title: null,
       scale: { domain: [0, 1] }
     },
     color: {
@@ -50,46 +53,3 @@ export const barComparison = {
     }
   }
 };
-
-/*
-export const barComparison = {
-  $schema: "https://vega.github.io/schema/vega-lite/v4.json",
-  width: "container",
-  height: 100,
-  autosize: {
-    type: "fit",
-    resize: true
-  },
-  params: [
-    {
-      name: "valueName",
-      value: "value"
-    }
-  ],
-  data: {
-    name: "data"
-  },
-  mark: "bar",
-  encoding: {
-    x: {
-      field: "subgroup",
-      type: "ordinal",
-      axis: { 
-        title: null,
-        labelAngle: 20 
-      }
-    },
-    y: {
-      aggregate: "count",
-      field: "value",
-      stack: "normalize",
-      title: null,
-
-    },
-    color: {
-      field: "value",
-      type: "nominal"
-    }
-  }
-};
-*/
