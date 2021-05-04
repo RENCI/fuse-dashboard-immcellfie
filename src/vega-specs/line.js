@@ -17,8 +17,7 @@ export const line = {
   },
   transform:[{
     density: "value",
-    groupby: ["subgroup"],
-    bandwidth: 0.3
+    groupby: ["subgroup"]
   }],
   mark: "line",
   encoding: {
