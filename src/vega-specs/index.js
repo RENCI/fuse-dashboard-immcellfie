@@ -8,7 +8,7 @@ export * from "./voronoi-treemap";
 export * from "./voronoi-treemap-comparison";
 export * from "./histogram";
 export * from "./density";
-export * from "./line";
+export * from "./density-comparison";
 export * from "./bar";
 export * from "./bar-comparison";
 export * from "./phenotype-bar-chart";

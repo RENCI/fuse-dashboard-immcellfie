@@ -1,4 +1,4 @@
-export const line = {
+export const densityComparison = {
   $schema: "https://vega.github.io/schema/vega-lite/v4.json",
   width: "container",
   height: 100,
@@ -19,7 +19,11 @@ export const line = {
     density: "value",
     groupby: ["subgroup"]
   }],
-  mark: "line",
+  mark: { 
+    type: "area", 
+    line: true,
+    interpolate: "linear" 
+  },
   encoding: {
     x: {
       field: "value",
@@ -38,6 +42,7 @@ export const line = {
     color: {
       field: "subgroup",
       type: "nominal"
-    }
+    },
+    fillOpacity: { value: 0.5 }
   }
 };
