@@ -264,15 +264,20 @@ const createTree = hierarchy => {
 
 const getSubgroup = (key, subgroups) => key !== null ? subgroups.find(subgroup => subgroup.key === key) : null;
 
+const subgroupContains = (subgroup, index) => subgroup && subgroup.subjects.some(subject => subject.index === index);
+
 const updateTree = (tree, subgroups, selectedSubgroups) => {
   // Get subgroups
   const subgroup1 = getSubgroup(selectedSubgroups[0], subgroups);
   const subgroup2 = getSubgroup(selectedSubgroups[1], subgroups);
 
+  console.log(subgroup1);
+  console.log(subgroup2);
+
   tree.each(node => {
     // Check if it is a leaf node (single subject)
     if (!node.data.allScores) {
-
+      // Set default (not in a subgroup)
       node.data.score1 = "na";
       node.data.score2 = "na";
 
@@ -297,12 +302,6 @@ const updateTree = (tree, subgroups, selectedSubgroups) => {
       return;
     }
 
-    // XXX: 
-
-    // Store as single scores array with objects containing value, subject id, subgroup
-    // Will duplicate scores for different subgroups if necessary
-    // Should be similar to what ends up happening for tooltips anyway?
-
     // Compute subgroup scores and activities
     const processSubgroup = (subgroup, which) => {
       if (!subgroup) {
@@ -312,13 +311,24 @@ const updateTree = (tree, subgroups, selectedSubgroups) => {
         node.data["activity" + which] = null;
       }
       else {
-        const scores = d3.merge(subgroup.subjects.map(({ index }) => node.data.allScores[index]));
-        const activities = d3.merge(subgroup.subjects.map(({ index }) => node.data.allActivities[index]));
+        const getValues = (subgroup, which, arrayName) => {
+          return d3.merge(subgroup.subjects.map(({ index }) => {
+            return node.data[arrayName][index].map(value => {
+              return {
+                value: value,
+                index: index
+              }
+            });
+          }));
+        };
+
+        const scores = getValues(subgroup, which, "allScores");
+        const activities = getValues(subgroup, which, "allActivities");
 
         node.data["scores" + which] = scores;
-        node.data["score" + which] = d3.mean(scores);
+        node.data["score" + which] = d3.mean(scores, score => score.value);
         node.data["activities" + which] = activities;
-        node.data["activity" + which] = d3.mean(activities);
+        node.data["activity" + which] = d3.mean(activities, activity => activity.value);
       }
     }
 

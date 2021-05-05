@@ -51,19 +51,6 @@ export const taskHeatmap = {
   data: {
     name: "data"
   },
-  transform: [
-    {
-      filter: "datum.depth === depth",
-    },
-    {
-      flatten: ["data.subjects", "data.scores1", "data.activities1"],
-      as: ["subject", "score", "activity"]
-    },
-    {
-      calculate: "datum[value]",
-      as: ["value"]
-    }
-  ],
   layer: [
     {
       mark: { 
@@ -71,7 +58,7 @@ export const taskHeatmap = {
       },
       encoding: {
         y: {
-          field: "data.name", 
+          field: "name", 
           type: "ordinal",
           sort: {
             op: { signal: "sortBy" },
@@ -81,7 +68,7 @@ export const taskHeatmap = {
           title: "task phenotype"
         },
         x: {
-          field: "subject", 
+          field: "index", 
           type: "ordinal",
           axis: {
             orient: "top"

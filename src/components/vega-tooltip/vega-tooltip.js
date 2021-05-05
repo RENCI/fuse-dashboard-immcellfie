@@ -44,13 +44,11 @@ const format = d3.format(".2f")
 const formatNumber = d => isNaN(d) ? "Inconclusive" : format(d);
 
 const subgroupValues = (value, key) => {  
-  return value ? value[key].filter(value => !isNaN(value)).map(value => ({ value: value })) : [];
+  return value ? value[key].filter(({ value }) => !isNaN(value)) : [];
 };
 
-const compareValues = (value, key, names) => {
-  return value ? d3.merge(
-    names.map((subgroup, i) => value[key + (i + 1)].filter(value => !isNaN(value)).map(value => ({ value: value, subgroup: subgroup })))
-  ) : [];
+const compareValues = (value, key) => {
+  return value ? value[key + "1"].concat(value[key + "2"]).filter(({ value }) => !isNaN(value)) : [];
 };
 
 export const VegaTooltip = ({ handler, event, item, value, subgroup, subgroupName }) => {
@@ -63,8 +61,8 @@ export const VegaTooltip = ({ handler, event, item, value, subgroup, subgroupNam
   const isComparison = subgroup === "comparison";
 
   const score = value && (isComparison ? value.scoreFoldChange : value["score" + subgroup]);
-  const activity = value && (isComparison ? value.activityFoldChange : value["activity" + subgroup]);
-
+  const activity = value && (isComparison ? value.activityFoldChange : value["activity" + subgroup]);  
+  
   const scores = useMemo(() => {
     return isComparison ? compareValues(value, "scores", subgroupName) : subgroupValues(value, "scores" + subgroup);
   }, [value, subgroup, subgroupName, isComparison]);
@@ -73,7 +71,6 @@ export const VegaTooltip = ({ handler, event, item, value, subgroup, subgroupNam
     return isComparison ? compareValues(value, "activities", subgroupName) : subgroupValues(value, "activities" + subgroup);
   }, [value, subgroup, subgroupName, isComparison]);
 
-  //const spec = isComparison ? line : (value && value.allScores[0].length === 1) ? histogram : density;
   const scoreSpec = isComparison ? densityComparison : histogram;
   const activitySpec = isComparison ? barComparison : bar;
 

@@ -9,9 +9,6 @@ export const VegaWrapper = ({ options, spec, data, signals, eventListeners, tool
   const view = useRef(null);
   const [tooltipProps, setTooltipProps] = useState(null);
 
-console.log(spec);
-console.log(data);
-
   const setSignals = (view, signals) => {
     signals.forEach(({ name, value }) => {
       view.signal(name, value);

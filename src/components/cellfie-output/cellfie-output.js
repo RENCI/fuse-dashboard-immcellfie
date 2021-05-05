@@ -4,6 +4,7 @@ import { DataContext } from "../../contexts";
 import { VegaWrapper } from "../vega-wrapper";
 import { taskHeatmap } from "../../vega-specs";
 import { HierarchyVis } from "../hierarchy-vis";
+import { HeatmapVis } from "../heatmap-vis";
 import { PathwayVis } from "../pathway-vis";
 
 const { Header, Body } = Card;
@@ -12,6 +13,10 @@ const { Container, Content, Pane } = Tab;
 
 export const CellfieOutput = () => {
   const [{ hierarchy, tree, subgroups, selectedSubgroups }] = useContext(DataContext);
+
+  const currentSubgroups = selectedSubgroups.map(key => {
+    return key !== null ? subgroups.find(subgroup => subgroup.key === key) : null;
+  });
 
   return (
     <>
@@ -45,15 +50,13 @@ export const CellfieOutput = () => {
                   <HierarchyVis
                     hierarchy={ hierarchy }
                     tree={ tree } 
-                    subgroups={ selectedSubgroups.map(key => {
-                      return key !== null ? subgroups.find(subgroup => subgroup.key === key) : null;
-                    }) }
+                    subgroups={ currentSubgroups }
                   />
                 </Pane>
                 <Pane eventKey="heatmap">
-                  <VegaWrapper 
-                    spec={ taskHeatmap } 
-                    data={ tree.descendants() } 
+                  <HeatmapVis
+                    data={ tree.descendants() }
+                    subgroups={ currentSubgroups }
                   />
                 </Pane>
                 <Pane eventKey="escher">
