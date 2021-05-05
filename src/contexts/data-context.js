@@ -297,6 +297,12 @@ const updateTree = (tree, subgroups, selectedSubgroups) => {
       return;
     }
 
+    // XXX: 
+
+    // Store as single scores array with objects containing value, subject id, subgroup
+    // Will duplicate scores for different subgroups if necessary
+    // Should be similar to what ends up happening for tooltips anyway?
+
     // Compute subgroup scores and activities
     const processSubgroup = (subgroup, which) => {
       if (!subgroup) {

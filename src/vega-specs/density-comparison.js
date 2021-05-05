@@ -16,6 +16,7 @@ export const densityComparison = {
     name: "data"
   },
   layer: [ 
+/*    
     {
       transform:[{
         density: "value",
@@ -40,6 +41,7 @@ export const densityComparison = {
         strokeDash: { value: [5, 5] }
       }
     },    
+*/    
     {
       transform:[{
         density: "value",

@@ -2,7 +2,7 @@ import React, { useMemo, useRef } from "react";
 import { Card } from "react-bootstrap";
 import { VegaWrapper } from "../vega-wrapper";
 import * as d3 from "d3";
-import { histogram, density, densityComparison, bar, barComparison } from "../../vega-specs";
+import { histogram, densityComparison, bar, barComparison } from "../../vega-specs";
 import "./vega-tooltip.css";
 
 const { Subtitle, Body, Footer } = Card;
@@ -92,24 +92,28 @@ export const VegaTooltip = ({ handler, event, item, value, subgroup, subgroupNam
       <Card>
         <Body>
           { value && <Subtitle>{ value.name }</Subtitle> }
-          <div>{ subtitle }</div>
-          <div className="small">
-            { (isComparison ? "Score fold change: " : "Mean score: ") + formatNumber(score) }
-          </div>
-          <div className="small">
-            { (isComparison ? "Activity fold change: " : "Mean activity: ") + formatNumber(activity) }
+          <div className="mt-1">{ subtitle }</div>
+          <div className="mt-1 mb-2 small">
+            <div>
+              { (isComparison ? "Score fold change: " : "Mean score: ") + formatNumber(score) }
+            </div>
+            <div>
+              { (isComparison ? "Activity fold change: " : "Mean activity: ") + formatNumber(activity) }
+            </div>
           </div>
           { score || activity ? 
             <div className="text-center">            
               <small>Distributions</small>
-              <VegaWrapper
-                spec={ scoreSpec }
-                data={ scores }
-                options={{ actions: false }}
-                signals={[
-                  { name: "valueName", value: "score" }
-                ]}
-              />
+              <div className="mb-2">
+                <VegaWrapper
+                  spec={ scoreSpec }
+                  data={ scores }
+                  options={{ actions: false }}
+                  signals={[
+                    { name: "valueName", value: "score" }
+                  ]}
+                />
+              </div>
               <VegaWrapper
                 spec={ activitySpec }
                 data={ activities }
@@ -119,7 +123,7 @@ export const VegaTooltip = ({ handler, event, item, value, subgroup, subgroupNam
                 ]}
               />
             </div>
-          : null }
+          : <div>No valid data</div> }
         </Body>
         {value && value.phenotype.length > 1 &&
           <Footer>

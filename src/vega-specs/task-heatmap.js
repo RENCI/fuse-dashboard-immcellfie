@@ -56,7 +56,7 @@ export const taskHeatmap = {
       filter: "datum.depth === depth",
     },
     {
-      flatten: ["data.subjects", "data.scores", "data.activities"],
+      flatten: ["data.subjects", "data.scores1", "data.activities1"],
       as: ["subject", "score", "activity"]
     },
     {

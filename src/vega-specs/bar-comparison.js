@@ -45,7 +45,8 @@ export const barComparison = {
     y: {
       aggregate: "sum",
       field: "fraction",
-      scale: { domain: [0, 1] }
+      scale: { domain: [0, 1] },
+      title: null
     },
     color: {
       field: "subgroup",
