@@ -104,16 +104,15 @@ export const VegaTooltip = ({ handler, event, item, value, subgroup, subgroupNam
           { score || activity ? 
             <div className="text-center">            
               <small>Distributions</small>
-              <div className="mb-2">
-                <VegaWrapper
-                  spec={ scoreSpec }
-                  data={ scores }
-                  options={{ actions: false }}
-                  signals={[
-                    { name: "valueName", value: "score" }
-                  ]}
-                />
-              </div>
+              <div className="mb-2"></div>
+              <VegaWrapper
+                spec={ scoreSpec }
+                data={ scores }
+                options={{ actions: false }}
+                signals={[
+                  { name: "valueName", value: "score" }
+                ]}
+              />
               <VegaWrapper
                 spec={ activitySpec }
                 data={ activities }
