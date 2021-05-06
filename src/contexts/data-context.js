@@ -316,8 +316,9 @@ const updateTree = (tree, subgroups, selectedSubgroups) => {
             return node.data[arrayName][index].map(value => {
               return {
                 value: value,
-                index: index
-              }
+                index: index,
+                subgroup: which
+              };
             });
           }));
         };

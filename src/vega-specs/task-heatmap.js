@@ -98,11 +98,10 @@ export const taskHeatmap = {
       },
       {    
         selection: {
-          highlight: {
+          highlightRow: {
             type: "single",
             on: "mouseover",
-            empty: "none",
-            clear: "mouseout"
+            empty: "none"
           }
         },
         mark: { 
@@ -111,14 +110,33 @@ export const taskHeatmap = {
         encoding: {
           y: {
             field: "name", 
-            type: "ordinal",
             sort: {
               op: { signal: "sortBy" },
               field: "value",
               order: "descending"
-            },
-            title: "task phenotype"
+            }
           },
+          fill: { value: "none" },  
+          stroke: { 
+            condition: {
+              selection: "highlightRow",
+              value: { signal: "colorScheme === 'lightgreyred' ? '#2171b5' : '#a50f15'" }
+            }
+          }          
+        } 
+      },
+      {    
+        selection: {
+          highlightColumn: {
+            type: "single",
+            on: "mouseover",
+            empty: "none"
+          }
+        },
+        mark: { 
+          type: "rect"
+        },
+        encoding: {
           x: {
             field: "index", 
             type: "ordinal",
@@ -133,7 +151,7 @@ export const taskHeatmap = {
           fill: { value: "none" },  
           stroke: { 
             condition: {
-              selection: "highlight",
+              selection: "highlightColumn",
               value: { signal: "colorScheme === 'lightgreyred' ? '#2171b5' : '#a50f15'" }
             },
             

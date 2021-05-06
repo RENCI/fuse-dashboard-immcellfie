@@ -8,10 +8,8 @@ import "./heatmap-vis.css";
 const { Group, Label, Control, Row } = Form; 
 
 export const HeatmapVis = ({ data, subgroups }) => {
-  const [depth, setDepth] = useState(3);
+  const [depth, setDepth] = useState(2);
   const [value, setValue] = useState("score");
-
-  console.log(data);
 
   const onValueChange = evt => {
     const value = evt.target.value;
@@ -38,8 +36,6 @@ export const HeatmapVis = ({ data, subgroups }) => {
 
     return getValues(0).concat(getValues(1));
   }, [data, depth, value]);
-
-console.log(heatmapData);
 
   return (
     <>
