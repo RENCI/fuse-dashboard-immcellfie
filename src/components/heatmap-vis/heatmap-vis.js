@@ -8,21 +8,10 @@ import "./heatmap-vis.css";
 const { Group, Label, Control, Row } = Form; 
 
 export const HeatmapVis = ({ data, subgroups }) => {
-  const [depth, setDepth] = useState(1);
-  const [subgroup, setSubgroup] = useState("1");
+  const [depth, setDepth] = useState(3);
   const [value, setValue] = useState("score");
 
-  const hasSubgroups = subgroups[1] !== null;
-
-  const isComparison = subgroup === "comparison";
-
   console.log(data);
-
-  const onSubgroupChange = evt => {
-    const value = evt.target.value;
-
-    setSubgroup(value);
-  };
 
   const onValueChange = evt => {
     const value = evt.target.value;
@@ -31,18 +20,24 @@ export const HeatmapVis = ({ data, subgroups }) => {
   };
 
   const heatmapData = useMemo(() => {
-    return d3.merge(data.filter(node => node.depth === depth).map(node => {
-      const subjects = d3.group(node.data.scores1, ({ index }) => index);
+    const getValues = subgroup => {
+      return d3.merge(data.filter(node => node.depth === depth).map(node => {
+        const key = value === "score" ? "scores" + (subgroup + 1) : "activities" + (subgroup + 1);
+        const subjects = d3.group(node.data[key], ({ index }) => index);
+  
+        return Array.from(subjects).map(subject => {
+          return {
+            name: node.data.name,
+            subgroup: subgroups[subgroup].name,
+            index: subject[0],
+            value: d3.mean(subject[1], value => value.value)
+          };
+        });
+      }));
+    };
 
-      return Array.from(subjects).map(subject => {
-        return {
-          name: node.data.name,
-          index: subject[0],
-          value: d3.mean(subject[1], value => value.value)
-        };
-      });
-    }));
-  }, [data, depth]);
+    return getValues(0).concat(getValues(1));
+  }, [data, depth, value]);
 
 console.log(heatmapData);
 
@@ -62,19 +57,6 @@ console.log(heatmapData);
               onChange={ evt => setDepth(+evt.target.value) } 
             />
           </Group>
-          <Group as={ Col } controlId="subgroupSelect">
-            <Label size="sm">Subgroup</Label>
-            <Control
-              size="sm"
-              as="select"
-              value={ subgroup }
-              onChange={ onSubgroupChange }          
-            >
-              <option value="1">{ subgroups[0].name }</option>
-              { hasSubgroups && <option value="2">{ subgroups[1].name }</option> }
-              { hasSubgroups && <option value="comparison">comparison</option> }
-            </Control>
-          </Group>
           <Group as={ Col } controlId="valueSelect">
             <Label size="sm">Value</Label>
             <Control
@@ -89,10 +71,12 @@ console.log(heatmapData);
           </Group>
         </Row>
       </div>
-      <VegaWrapper 
-        spec={ taskHeatmap } 
-        data={ heatmapData } 
-      />
+      <div style={{ overflowX: "scroll" }}>
+        <VegaWrapper 
+          spec={ taskHeatmap } 
+          data={ heatmapData } 
+        />
+      </div>
     </>
   );
 };           

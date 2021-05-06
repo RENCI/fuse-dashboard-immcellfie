@@ -1,33 +1,21 @@
 export const taskHeatmap = {
   $schema: "https://vega.github.io/schema/vega-lite/v4.json",
-  width: "container",
-  height: { 
-    step: 10 
-  },
   title: "Metabolic task heatmap",
   autosize: {
     resize: true
   },
   params: [
     {
+      name: "subtitle",
+      value: ""
+    },
+    {
       name: "depth",
-      value: 3,
-      bind: {
-        name: "Depth: ",
-        input: "range",
-        min: 1,
-        max: 3, 
-        step: 1
-      }
+      value: 3
     },
     {
       name: "value",
-      value: "score",
-      bind: {
-        name: "Value: ",
-        input: "select",
-        options: ["score", "activity"]
-      }
+      value: "score"
     },
     {
       name: "sortBy",
@@ -51,91 +39,110 @@ export const taskHeatmap = {
   data: {
     name: "data"
   },
-  layer: [
-    {
-      mark: { 
-        type: "rect"
-      },
-      encoding: {
-        y: {
-          field: "name", 
-          type: "ordinal",
-          sort: {
-            op: { signal: "sortBy" },
-            field: "value",
-            order: "descending"
-          },
-          title: "task phenotype"
-        },
-        x: {
-          field: "index", 
-          type: "ordinal",
-          axis: {
-            orient: "top"
-          },
-          scale: {
-            round: true
-          }
-        },
-        fill: {   
-          field: "value",
-          type: "quantitative",
-          scale: {
-            scheme: { signal: "colorScheme" },
-          },
-          legend: {
-            title: { signal: "value" }
-          }
-        },
-        tooltip: [ 
-          { field: "id", title: "name" },
-          { field: "subject", title: "subject" },
-          { field: "score" }, 
-          { field: "activity" } 
-        ]
-      } 
+  facet: {
+    column: { 
+      field: "subgroup",
+      title: null 
     }
-/*    ,
-    {
-      transform: [
-        {
-          aggregate: [{
-            op: "mean",
-            field: "value",
-            as: "mean_value"
-          }],
-          groupby: ["data.name"]
+  },
+  spec: {  
+    width: { step: 20 },
+    height: { 
+      step: 10 
+    },
+    layer: [
+      {
+        mark: { 
+          type: "rect"
         },
-      ],
-      selection: {
-        highlight: {
-          type: "single",
-          on: "mouseover",
-          empty: "none",
-          clear: "mouseout"
-        }
-      },
-      mark: { 
-        type: "rect"
-      },
-      encoding: {
-        y: { 
-          field: "data.name",
-          type: "ordinal",
-          sort: {
-            field: "mean_value",
-            order: "descending"
+        encoding: {
+          y: {
+            field: "name", 
+            type: "ordinal",
+            sort: {
+              op: { signal: "sortBy" },
+              field: "value",
+              order: "descending"
+            },
+            title: "task phenotype"
           },
-        },
-        fill: { value: "none" },
-        stroke: { 
-          condition: {
-            selection: "highlight",
-            value: { signal: "colorScheme === 'lightgreyred' ? '#2171b5' : '#a50f15'" }
+          x: {
+            field: "index", 
+            type: "ordinal",
+            axis: {
+              title: null,
+              orient: "top"
+            },
+            scale: {
+              round: true
+            }
+          },
+          color: {   
+            field: "value",
+            type: "quantitative",
+            scale: {
+              scheme: { signal: "colorScheme" },
+            },
+            legend: {
+              title: { signal: "value" }
+            }
+          },
+          stroke: { value: true },
+          tooltip: [ 
+            { field: "name", title: "name" },
+            { field: "index", title: "subject" },
+            { field: "subgroup" },
+            { field: "value" }
+          ]
+        } 
+      },
+      {    
+        selection: {
+          highlight: {
+            type: "single",
+            on: "mouseover",
+            empty: "none",
+            clear: "mouseout"
           }
-        }
-      } 
-    }
-*/    
-  ]
+        },
+        mark: { 
+          type: "rect"
+        },
+        encoding: {
+          y: {
+            field: "name", 
+            type: "ordinal",
+            sort: {
+              op: { signal: "sortBy" },
+              field: "value",
+              order: "descending"
+            },
+            title: "task phenotype"
+          },
+          x: {
+            field: "index", 
+            type: "ordinal",
+            axis: {
+              title: null,
+              orient: "top"
+            },
+            scale: {
+              round: true
+            }
+          },
+          fill: { value: "none" },  
+          stroke: { 
+            condition: {
+              selection: "highlight",
+              value: { signal: "colorScheme === 'lightgreyred' ? '#2171b5' : '#a50f15'" }
+            },
+            
+          }          
+        } 
+      }
+    ]
+  },
+  resolve: {
+    scale: { x: "independent" }
+  }  
 };
