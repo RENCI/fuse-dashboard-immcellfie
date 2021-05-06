@@ -5,8 +5,11 @@ import { voronoiTreemap as d3VoronoiTreemap } from "d3-voronoi-treemap";
 import { VegaWrapper } from "../vega-wrapper";
 import { VegaTooltip } from "../vega-tooltip";
 import { 
-  treemap, treemapComparison, enclosure, enclosureComparison, voronoiTreemap, voronoiTreemapComparison 
+  treemap, treemapComparison, 
+  enclosure, enclosureComparison, 
+  voronoiTreemap, voronoiTreemapComparison 
 } from "../../vega-specs";
+import { sequential, diverging } from "../../colors";
 import { LoadingSpinner } from "../loading-spinner";
 import "./hierarchy-vis.css";
 
@@ -33,51 +36,13 @@ const visualizations = [
   }
 ];
 
-const subgroupColors = [
-  { 
-    name: "light grey → red",
-    scheme: "lightgreyred" ,
-    highlight: "#2171b5",
-    inconclusive: "#c6dbef"
-  },
-  { 
-    name: "yellow → green → blue", 
-    scheme: "yellowgreenblue",
-    highlight: "#a50f15",
-    inconclusive: "#c6dbef" 
-  }
-];
-
-const comparisonColors = [
-  { 
-    name: "blue ↔ orange", 
-    scheme: "blueorange", 
-    highlight: "#a50f15",
-    inconclusive: "#ccc"
-  },
-  { 
-    name: "blue ↔ red", 
-    scheme: "redblue", 
-    reverse: true, 
-    highlight: "#006d2c",
-    inconclusive: "#ccc"
-  },
-  { 
-    name: "grey ↔ red", 
-    scheme: "redgrey", 
-    reverse: true, 
-    highlight: "#006d2c",
-    inconclusive: "#c6dbef"
-  }
-];
-
 export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
   const [loading, setLoading] = useState(true);
   const [depth, setDepth] = useState(1);
   const [subgroup, setSubgroup] = useState("1");
   const [value, setValue] = useState("score");
-  const [colors, setColors] = useState(subgroupColors);
-  const [color, setColor] = useState(subgroupColors[0]);
+  const [colors, setColors] = useState(sequential);
+  const [color, setColor] = useState(sequential[0]);
   const [vis, setVis] = useState(visualizations[0]);
   const vegaRef = useRef();
 
@@ -98,7 +63,7 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
 
     setSubgroup(value);
 
-    const colors = value === "comparison" ? comparisonColors : subgroupColors; 
+    const colors = value === "comparison" ? diverging : sequential; 
 
     setColors(colors);
 

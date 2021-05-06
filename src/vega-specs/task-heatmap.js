@@ -6,34 +6,28 @@ export const taskHeatmap = {
   },
   params: [
     {
-      name: "subtitle",
-      value: ""
-    },
-    {
-      name: "depth",
-      value: 3
-    },
-    {
       name: "value",
       value: "score"
     },
     {
-      name: "sortBy",
-      value: "mean",
-      bind: {
-        name: "Sort by: ",
-        input: "select",
-        options: ["mean", "median", "max"]
-      }
+      name: "colorScheme",
+      value: "lightgreyred"
+    },
+    { 
+      name: "reverseColors",
+      value: false
     },
     {
-      name: "colorScheme",
-      value: "lightgreyred",
-      bind: {
-        name: "Color scheme: ",
-        input: "select",
-        options: ["lightgreyred", "yellowgreenblue"]
-      }
+      name: "highlightColor",
+      value: "#2171b5",
+    },
+    {
+      name: "inconclusiveColor",
+      value: "#c6dbef",
+    },
+    {
+      name: "sortBy",
+      value: "mean"
     }
   ],
   data: {
@@ -77,11 +71,12 @@ export const taskHeatmap = {
               round: true
             }
           },
-          color: {   
+          color: { 
             field: "value",
             type: "quantitative",
             scale: {
               scheme: { signal: "colorScheme" },
+              reverse: { signal: "reverseColors" }
             },
             legend: {
               title: { signal: "value" }
@@ -120,7 +115,7 @@ export const taskHeatmap = {
           stroke: { 
             condition: {
               selection: "highlightRow",
-              value: { signal: "colorScheme === 'lightgreyred' ? '#2171b5' : '#a50f15'" }
+              value: { signal: "highlightColor" }
             }
           }          
         } 
@@ -152,7 +147,7 @@ export const taskHeatmap = {
           stroke: { 
             condition: {
               selection: "highlightColumn",
-              value: { signal: "colorScheme === 'lightgreyred' ? '#2171b5' : '#a50f15'" }
+              value: { signal: "highlightColor" }
             },
             
           }          

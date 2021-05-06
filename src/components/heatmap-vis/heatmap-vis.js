@@ -3,6 +3,7 @@ import { Form, Col } from "react-bootstrap";
 import * as d3 from "d3";
 import { VegaWrapper } from "../vega-wrapper";
 import { taskHeatmap } from "../../vega-specs";
+import { sequential } from "../../colors";
 import "./heatmap-vis.css";
 
 const { Group, Label, Control, Row } = Form; 
@@ -10,11 +11,19 @@ const { Group, Label, Control, Row } = Form;
 export const HeatmapVis = ({ data, subgroups }) => {
   const [depth, setDepth] = useState(2);
   const [value, setValue] = useState("score");
+  const [sortBy, setSortBy] = useState("mean");
+  const [color, setColor] = useState(sequential[0]);
 
   const onValueChange = evt => {
-    const value = evt.target.value;
+    setValue(evt.target.value);
+  };
 
-    setValue(value);
+  const onSortByChange = evt => {
+    setSortBy(evt.target.value);
+  };
+
+  const onColorMapChange = evt => {
+    setColor(sequential.find(({ scheme }) => scheme === evt.target.value));
   };
 
   const heatmapData = useMemo(() => {
@@ -65,12 +74,46 @@ export const HeatmapVis = ({ data, subgroups }) => {
               <option value="activity">activity</option>
             </Control>
           </Group>
+          <Group as={ Col } controlId="sortBySelect">
+            <Label size="sm">Sort by</Label>
+            <Control
+              size="sm"
+              as="select"
+              value={ sortBy }
+              onChange={ onSortByChange }          
+            >                          
+              <option value="mean">mean</option>
+              <option value="median">median</option>
+              <option value="max">max</option>
+            </Control>
+          </Group>
+          <Group as={ Col } controlId="colorMapSelect">
+            <Label size="sm">Color map</Label>
+            <Control
+              size="sm"
+              as="select"
+              value={ color.scheme }
+              onChange={ onColorMapChange }          
+            >
+              { sequential.map(({ scheme, name }, i) => (
+                <option key={ i } value={ scheme }>{ name }</option>
+              ))}
+            </Control>
+          </Group>
         </Row>
       </div>
       <div style={{ overflowX: "scroll" }}>
         <VegaWrapper 
           spec={ taskHeatmap } 
-          data={ heatmapData } 
+          data={ heatmapData }             
+          signals={[
+            { name: "value", value: value },
+            { name: "sortBy", value: sortBy },
+            { name: "colorScheme", value: color.scheme },
+            { name: "reverseColors", value: color.reverse },
+            { name: "highlightColor", value: color.highlight },
+            { name: "inconclusiveColor", value: color.inconclusive }
+          ]}
         />
       </div>
     </>
