@@ -8,7 +8,7 @@ import { phenotypeBarChart } from "../../vega-specs";
 
 const { Row } = Form;
 
-export const Subgroup = ({ subgroup, isNew }) => {
+export const Subgroup = ({ all, subgroup, isNew }) => {
   const [, dataDispatch] = useContext(DataContext);
 
   const editable = subgroup.key > 0;
@@ -36,8 +36,15 @@ export const Subgroup = ({ subgroup, isNew }) => {
   const nameLabel = name => (name[0].toUpperCase() + name.substring(1)).replace(/_/gi, " ");
 
   const controls = subgroup.phenotypes.map((phenotype, i) => {    
+    const allPhenotype = all.phenotypes[i];
+
     const filter = subgroup.filters.find(filter => filter.phenotype === phenotype.name);
     const value = filter ? filter.value : "none";
+
+    const data = allPhenotype.values.map(value => ({...value, subgroup: "all" }))
+      .concat(phenotype.values.map(value => ({...value, subgroup: "subgroup" })));
+
+      console.log(data);
 
     return (
       <Col key={ i } xs={ 2 } className="text-center">
@@ -48,12 +55,12 @@ export const Subgroup = ({ subgroup, isNew }) => {
             renderer: "svg"
           }}
           spec={ phenotypeBarChart }
-          data={ phenotype.values }
+          data={ data }            
           signals={ editable ? 
             [{ name: "value", value: value }] : 
             [{ name: "interactive", value: false }] 
           }
-          eventListeners={editable ? 
+          eventListeners={ editable ? 
             [{ type: "click", callback: evt => onValueSelect(phenotype.name, evt) }] : 
             [] 
           }

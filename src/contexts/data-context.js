@@ -267,12 +267,11 @@ const getSubgroup = (key, subgroups) => key !== null ? subgroups.find(subgroup =
 const subgroupContains = (subgroup, index) => subgroup && subgroup.subjects.some(subject => subject.index === index);
 
 const updateTree = (tree, subgroups, selectedSubgroups) => {
+  if (!tree) return;
+
   // Get subgroups
   const subgroup1 = getSubgroup(selectedSubgroups[0], subgroups);
   const subgroup2 = getSubgroup(selectedSubgroups[1], subgroups);
-
-  console.log(subgroup1);
-  console.log(subgroup2);
 
   tree.each(node => {
     // Check if it is a leaf node (single subject)

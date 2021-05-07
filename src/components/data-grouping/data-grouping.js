@@ -29,7 +29,11 @@ export const DataGrouping = () => {
       <ListGroup className="list-group-flush">
         { subgroups.map((subgroup, i, a) => (
           <ListGroupItem key={ subgroup.key }>
-            <Subgroup subgroup={ subgroup } isNew={ newAdded && i === a.length - 1 } />
+            <Subgroup 
+              all={ subgroups[0] }
+              subgroup={ subgroup } 
+              isNew={ newAdded && i === a.length - 1 } 
+            />
           </ListGroupItem>
         ))}
       </ListGroup>
