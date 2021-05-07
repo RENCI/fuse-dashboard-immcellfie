@@ -37,7 +37,10 @@ const initialState = {
 
   // CellFIE output in tree format, used for aggregating info and for the Voronoi treemap,
   // since we have to calculate the layout external to the Vega spec
-  tree: null
+  tree: null,
+
+  // Method for handling subgroup overlap
+  overlapMethod: "both"
 };
 
 const parseInput = data => {
@@ -266,12 +269,27 @@ const getSubgroup = (key, subgroups) => key !== null ? subgroups.find(subgroup =
 
 const subgroupContains = (subgroup, index) => subgroup && subgroup.subjects.some(subject => subject.index === index);
 
-const updateTree = (tree, subgroups, selectedSubgroups) => {
+const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod) => {
   if (!tree) return;
 
   // Get subgroups
   const subgroup1 = getSubgroup(selectedSubgroups[0], subgroups);
   const subgroup2 = getSubgroup(selectedSubgroups[1], subgroups);
+
+  const getSubjects = (subgroup, other, which) => {
+    return !subgroup ? [] : subgroup.subjects.filter(({ index }) => { 
+      const conflict = () => other && other.subjects.find(subject => subject.index === index);
+
+      return overlapMethod === "both" ? true : 
+        overlapMethod === "neither" && conflict() ? false :
+        overlapMethod === which ? true :
+        conflict() ? false :
+        true;
+    });
+  };
+
+  const subjects1 = getSubjects(subgroup1, subgroup2, "subgroup1");
+  const subjects2 = getSubjects(subgroup2, subgroup1, "subgroup2");
 
   tree.each(node => {
     // Check if it is a leaf node (single subject)
@@ -285,8 +303,6 @@ const updateTree = (tree, subgroups, selectedSubgroups) => {
 
       node.data.scoreFoldChange = "na";
       node.data.activityFoldChange = "na";
-
-      const subgroupContains = (subgroup, index) => subgroup && subgroup.subjects.some(subject => subject.index === index);
 
       if (subgroupContains(subgroup1, node.data.index)) {
         node.data.score1 = node.data.score;
@@ -302,16 +318,16 @@ const updateTree = (tree, subgroups, selectedSubgroups) => {
     }
 
     // Compute subgroup scores and activities
-    const processSubgroup = (subgroup, which) => {
-      if (!subgroup) {
+    const processSubgroup = (subjects, which) => {
+      if (subjects.length === 0) {
         node.data["scores" + which] = [];
         node.data["score" + which] = null;
         node.data["activities" + which] = [];
         node.data["activity" + which] = null;
       }
       else {
-        const getValues = (subgroup, which, arrayName) => {
-          return d3.merge(subgroup.subjects.map(({ index }) => {
+        const getValues = arrayName => {
+          return d3.merge(subjects.map(({ index }) => {
             return node.data[arrayName][index].map(value => {
               return {
                 value: value,
@@ -322,8 +338,8 @@ const updateTree = (tree, subgroups, selectedSubgroups) => {
           }));
         };
 
-        const scores = getValues(subgroup, which, "allScores");
-        const activities = getValues(subgroup, which, "allActivities");
+        const scores = getValues("allScores");
+        const activities = getValues("allActivities");
 
         node.data["scores" + which] = scores;
         node.data["score" + which] = d3.mean(scores, score => score.value);
@@ -332,8 +348,8 @@ const updateTree = (tree, subgroups, selectedSubgroups) => {
       }
     }
 
-    processSubgroup(subgroup1, 1);
-    processSubgroup(subgroup2, 2);
+    processSubgroup(subjects1, 1);
+    processSubgroup(subjects2, 2);
 
     // Compute fold change
     if (node.data.score1 !== null && node.data.score2 !== null) {
@@ -444,7 +460,7 @@ const reducer = (state, action) => {
       const output = action.fileType === "tsv" ? parseTSVOutput(action.file) : parseCSVOutput(action.file);
       const hierarchy = createHierarchy(output);
       const tree = createTree(hierarchy);
-      updateTree(tree, state.subgroups, state.selectedSubgroups);
+      updateTree(tree, state.subgroups, state.selectedSubgroups, state.overlapMethod);
 
       return {
         ...state,
@@ -472,7 +488,7 @@ const reducer = (state, action) => {
         subgroup
       ];
 
-      updateTree(state.tree, subgroups, selectedSubgroups);
+      updateTree(state.tree, subgroups, selectedSubgroups, state.overlapMethod);
 
       return {
         ...state,
@@ -499,7 +515,7 @@ const reducer = (state, action) => {
         return reset;
       });
 
-      updateTree(state.tree, subgroups, state.selectedSubgroups);
+      updateTree(state.tree, subgroups, state.selectedSubgroups, state.overlapMethod);
 
       return {
         ...state,
@@ -525,7 +541,7 @@ const reducer = (state, action) => {
         selectedSubgroups[1] = null;
       }
 
-      updateTree(state.tree, subgroups, selectedSubgroups);
+      updateTree(state.tree, subgroups, selectedSubgroups, state.overlapMethod);
 
       return {
         ...state,
@@ -574,7 +590,7 @@ const reducer = (state, action) => {
         return i === index ? subgroup : sg;
       });
 
-      updateTree(state.tree, subgroups, state.selectedSubgroups);
+      updateTree(state.tree, subgroups, state.selectedSubgroups, state.overlapMethod);
 
       return {
         ...state,
@@ -597,7 +613,7 @@ const reducer = (state, action) => {
         return i === index ? subgroup : sg;
       });
 
-      updateTree(state.tree, subgroups, state.selectedSubgroups);
+      updateTree(state.tree, subgroups, state.selectedSubgroups, state.overlapMethod);
 
       return {
         ...state,
@@ -633,7 +649,7 @@ const reducer = (state, action) => {
           [subgroup.key, state.selectedSubgroups[1]] :
           [state.selectedSubgroups[0], subgroup.key];
 
-        updateTree(state.tree, state.subgroups, selectedSubgroups);      
+        updateTree(state.tree, state.subgroups, selectedSubgroups, state.overlapMethod);      
 
         return {
           ...state,
@@ -641,6 +657,14 @@ const reducer = (state, action) => {
         };
       }
     }
+
+    case "setOverlapMethod":       
+      updateTree(state.tree, state.subgroups, state.selectedSubgroups, action.method);
+
+      return {
+        ...state,
+        overlapMethod: action.method
+      };
 
     default: 
       throw new Error("Invalid data context action: " + action.type);

@@ -8,12 +8,16 @@ const { Title, Body } = Card;
 const { Group, Label, Control } = Form;
 
 export const SubgroupSelection = () => {
-  const [{ subgroups, selectedSubgroups }, dataDispatch] = useContext(DataContext);
+  const [{ subgroups, selectedSubgroups, overlapMethod }, dataDispatch] = useContext(DataContext);
 
   const onChange = (which, key) => {
     const subgroupKey = key === "none" ? null : +key;
     dataDispatch({ type: "selectSubgroup", which: which, key: subgroupKey });
   };
+
+  const onOverlapMethodChange = evt => {
+    dataDispatch({ type: "setOverlapMethod", method: evt.target.value });
+  }
 
   const options = other => {
     return subgroups.map((subgroup, i) => (
@@ -55,7 +59,6 @@ export const SubgroupSelection = () => {
         <Title>Select Subgroups to Compare</Title>
         <Row>
           <Group as={ Col } controlId="subgroupSelect1">
-            <Label>Subgroup A</Label>
             <Control 
               as="select"
               value={ value1 }
@@ -64,8 +67,10 @@ export const SubgroupSelection = () => {
               { options(1) }
             </Control>
           </Group>
+          <Group as={ Col } xs="auto" className="mt-1">
+            vs.
+          </Group>
           <Group as={ Col } controlId="subgroupSelect2">
-            <Label>Subgroup B</Label>
             <Control 
               as="select"
               value={ value2 }
@@ -80,9 +85,23 @@ export const SubgroupSelection = () => {
         { overlap !== null && overlap > 0 &&
           <Row>
             <Col>
-              <Alert variant="danger">
-                <ExclamationCircle className="mb-1 mr-2"/>
-                Overlap: { overlap }
+              <Alert variant="danger">                
+                <Group controlId="overlapMethodSelect">
+                  <Label>
+                    <ExclamationCircle className="mb-1 mr-2"/>
+                    Overlap: { overlap }
+                  </Label>
+                  <Control 
+                    as="select"
+                    value={ overlapMethod }
+                    onChange={ onOverlapMethodChange }
+                  >              
+                    <option value="both">Assign to both subgroups</option>
+                    <option value="neither">Assign to neither subgroup</option>
+                    <option value="subgroup1">Assign to { subgroup1.name }</option>
+                    <option value="subgroup2">Assign to { subgroup2.name }</option>
+                  </Control>
+                </Group>
               </Alert>
             </Col>
           </Row>
@@ -90,12 +109,4 @@ export const SubgroupSelection = () => {
       </Body>
     </Card>
   );
-};           
-
-/*
-            { message && 
-              <Group>  
-               <Alert variant="info">{ message }</Alert>
-              </Group>  
-            }
-*/
+};
