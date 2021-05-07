@@ -28,7 +28,7 @@ export const phenotypeBarChart = {
           clear: "mouseout"
         },
         select: {
-          type: "multi",
+          type: "single",
           on: "click",
           empty: "none"
         }

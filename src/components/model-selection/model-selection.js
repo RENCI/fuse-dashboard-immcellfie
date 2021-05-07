@@ -182,9 +182,6 @@ export const ModelSelection = ({ outputName, outputType }) => {
     }, 1000);
   };
 
-  console.log(parameters);
-  console.log(thresholdType);
-
   const currentParameters = parameters.filter(({ type, name }) => {
     const pv = name.includes("percent") ? "percent" : name.includes("value") ? "value" : null;
 

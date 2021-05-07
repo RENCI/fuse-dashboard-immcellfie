@@ -366,10 +366,14 @@ const getNewSubgroupName = subgroups => {
 };
 
 const filterSubgroup = (subgroup, phenotypeData, phenotypes) => {
+  const filters = Array.from(d3.group(subgroup.filters, d => d.phenotype));
+
   const subjects = phenotypeData.filter(subject => {
-    return subgroup.filters.reduce((include, filter) => {
-      const v = filter.value + "";
-      return include && subject[filter.phenotype] === v;
+    return filters.reduce((include, filter) => {
+      return include && filter[1].reduce((include, value) => {
+        const v = value.value + "";
+        return include || subject[value.phenotype] === v;
+      }, false);    
     }, true);
   });
 
@@ -545,15 +549,18 @@ const reducer = (state, action) => {
       };
     }
 
-    case "setSubgroupFilter": {
+    case "addSubgroupFilter": {
       const index = keyIndex(action.key, state.subgroups);
 
       if (index === -1) return state;
 
       const subgroup = {...state.subgroups[index]};
-      const filterIndex = subgroup.filters.findIndex(({ phenotype }) => phenotype === action.phenotype);
+      
+      if (subgroup.filters.find(({ phenotype, value }) => {
+        return phenotype === action.phenotype && value === action.value;
+      })) return state;
 
-      if (filterIndex !== -1) subgroup.filters.splice(filterIndex, 1);
+      console.log(subgroup);
 
       if (action.value !== null) subgroup.filters.push({ phenotype: action.phenotype, value: action.value });
 

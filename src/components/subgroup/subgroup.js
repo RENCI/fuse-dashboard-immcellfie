@@ -20,9 +20,11 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
   const onValueSelect = (phenotype, evt) => {
     if (!evt.item) return;
 
+    console.log(phenotype, evt);
+
     const value = evt.item && evt.item.datum ? evt.item.datum.value : null;
 
-    dataDispatch({ type: "setSubgroupFilter", key: subgroup.key, phenotype: phenotype, value: value });
+    dataDispatch({ type: "addSubgroupFilter", key: subgroup.key, phenotype: phenotype, value: value });
   };
 
   const onResetClick = () => {
@@ -43,8 +45,6 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
 
     const data = allPhenotype.values.map(value => ({...value, subgroup: "all" }))
       .concat(phenotype.values.map(value => ({...value, subgroup: "subgroup" })));
-
-      console.log(data);
 
     return (
       <Col key={ i } xs={ 2 } className="text-center">
