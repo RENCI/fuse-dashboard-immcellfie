@@ -549,23 +549,50 @@ const reducer = (state, action) => {
       };
     }
 
-    case "addSubgroupFilter": {
+    case "toggleSubgroupFilter": {
+      const index = keyIndex(action.key, state.subgroups);
+
+      if (index === -1 || action.value === null) return state;
+
+      const subgroup = {...state.subgroups[index]};
+      subgroup.filters = [...subgroup.filters];
+
+      const filterIndex = subgroup.filters.findIndex(({ phenotype, value }) => {
+        return phenotype === action.phenotype && value === action.value;
+      });
+      
+      if (filterIndex === -1) {
+        subgroup.filters.push({ phenotype: action.phenotype, value: action.value });
+      }
+      else {
+        subgroup.filters.splice(filterIndex, 1);
+      }     
+
+      filterSubgroup(subgroup, state.phenotypeData, state.phenotypes);
+
+      const subgroups = state.subgroups.map((sg, i) => {
+        return i === index ? subgroup : sg;
+      });
+
+      updateTree(state.tree, subgroups, state.selectedSubgroups);
+
+      return {
+        ...state,
+        subgroups: subgroups
+      };
+    }
+
+    case "clearSubgroupFilters": {
       const index = keyIndex(action.key, state.subgroups);
 
       if (index === -1) return state;
 
       const subgroup = {...state.subgroups[index]};
-      
-      if (subgroup.filters.find(({ phenotype, value }) => {
-        return phenotype === action.phenotype && value === action.value;
-      })) return state;
 
-      console.log(subgroup);
-
-      if (action.value !== null) subgroup.filters.push({ phenotype: action.phenotype, value: action.value });
+      subgroup.filters = subgroup.filters.filter(({ phenotype }) => phenotype !== action.phenotype);
 
       filterSubgroup(subgroup, state.phenotypeData, state.phenotypes);
-
+      
       const subgroups = state.subgroups.map((sg, i) => {
         return i === index ? subgroup : sg;
       });

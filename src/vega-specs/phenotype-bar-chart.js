@@ -75,7 +75,7 @@ export const phenotypeBarChart = {
       }],
       mark: {
         type: "bar",
-        strokeWidth: 3,
+        strokeWidth: 2,
         cursor: { signal: "interactive ? 'pointer' : 'default'" }
       },
       encoding: {
@@ -93,7 +93,7 @@ export const phenotypeBarChart = {
           axis: { title: null }
         },
         stroke: {
-          value: { signal: "datum.value === value ? '#b2182b' : 'none'" }
+          value: { signal: "datum.selected ? '#b2182b' : 'none'" }
         },
         tooltip: [
           { field: "value" },

@@ -20,11 +20,14 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
   const onValueSelect = (phenotype, evt) => {
     if (!evt.item) return;
 
-    console.log(phenotype, evt);
-
     const value = evt.item && evt.item.datum ? evt.item.datum.value : null;
 
-    dataDispatch({ type: "addSubgroupFilter", key: subgroup.key, phenotype: phenotype, value: value });
+    if (value === null) {
+      dataDispatch({ type: "clearSubgroupFilters", key: subgroup.key, phenotype: phenotype });
+    }   
+    else {
+      dataDispatch({ type: "toggleSubgroupFilter", key: subgroup.key, phenotype: phenotype, value: value });
+    }
   };
 
   const onResetClick = () => {
@@ -40,11 +43,17 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
   const controls = subgroup.phenotypes.map((phenotype, i) => {    
     const allPhenotype = all.phenotypes[i];
 
-    const filter = subgroup.filters.find(filter => filter.phenotype === phenotype.name);
-    const value = filter ? filter.value : "none";
+    const filters = subgroup.filters.filter(filter => filter.phenotype === phenotype.name);    
+    const values = filters.map(({ value }) => value);
 
     const data = allPhenotype.values.map(value => ({...value, subgroup: "all" }))
-      .concat(phenotype.values.map(value => ({...value, subgroup: "subgroup" })));
+      .concat(phenotype.values.map(value => {
+        return {
+          ...value, 
+          subgroup: "subgroup",
+          selected: values.includes(value.value)
+        };
+      }));
 
     return (
       <Col key={ i } xs={ 2 } className="text-center">
@@ -56,14 +65,8 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
           }}
           spec={ phenotypeBarChart }
           data={ data }            
-          signals={ editable ? 
-            [{ name: "value", value: value }] : 
-            [{ name: "interactive", value: false }] 
-          }
-          eventListeners={ editable ? 
-            [{ type: "click", callback: evt => onValueSelect(phenotype.name, evt) }] : 
-            [] 
-          }
+          signals={ [{ name: "interactive", value: editable }] }
+          eventListeners={ editable ? [{ type: "click", callback: evt => onValueSelect(phenotype.name, evt) }] : [] }
           spinner={ false }
         />
       </Col>
