@@ -1,11 +1,13 @@
 import React, { useState, useReducer, useContext } from "react";
-import { Row, Col, Card, Form } from "react-bootstrap";
+import { Row, Col, Card, Form, Button, InputGroup } from "react-bootstrap";
+import { ArrowCounterclockwise } from "react-bootstrap-icons";
 import { SpinnerButton } from "../spinner-button";
 import { DataContext } from "../../contexts";
 import { api } from "../../api";
 
 const { Title, Body } = Card;
-const { Label, Group, Control, Switch } = Form;
+const { Label, Group, Control } = Form;
+const { Append } = InputGroup;
 
 const models = [
   { organism: "human", name: "iHSA", value: "MT_iHsa.mat" },
@@ -120,6 +122,16 @@ export const ModelSelection = ({ outputName, outputType }) => {
         return newState;
       }
 
+      case "resetValue":  {
+        const newState = [...state];
+
+        const parameter = newState.find(({ name }) => name === action.name);
+
+        parameter.value = parameter.default;
+
+        return newState;
+      }
+
       default:
         throw new Error("Invalid parameters action: " + action.type);
     }
@@ -153,6 +165,10 @@ export const ModelSelection = ({ outputName, outputType }) => {
     dispatch({ type: "setValue", name: name, value: value });
   };
 
+  const onParameterReset = name => {
+    dispatch({ type: "resetValue", name: name });
+  };
+
   const onRunCellfieClick = () => {
     setRunning(true);
 
@@ -180,28 +196,47 @@ export const ModelSelection = ({ outputName, outputType }) => {
         parameter.options ?
           <Group key={ i } controlId={ parameter.name + "_select" }>
             <Label><small>{ parameter.label }</small></Label>
-            <Control 
-              as="select"
-              value={ parameter.value }
-              onChange={ evt => onParameterChange(parameter.name, evt.target.value) }
-            >
-              { parameter.options.map(({ name, value }, i) => (
-                <option key={ i } value={ value }>{ name }</option>
-              ))}
-            </Control>
+            <InputGroup size="sm">
+              <Control 
+                as="select"
+                value={ parameter.value }
+                onChange={ evt => onParameterChange(parameter.name, evt.target.value) }
+              >
+                { parameter.options.map(({ name, value }, i) => (
+                  <option key={ i } value={ value }>{ name }</option>
+                ))}
+              </Control>
+              <Append>
+                <Button 
+                  variant="outline-secondary"
+                  onClick={ () => onParameterReset(parameter.name) }
+                >
+                  <ArrowCounterclockwise className="mb-1" />
+                </Button>
+              </Append>
+            </InputGroup>
           </Group>
         : parameter.range ?
           <Group key={ i } controlId={ parameter.name + "_number" }>
             <Label><small>{ parameter.label }</small></Label>
-            <Control 
-              as="input"
-              type="number"
-              size="sm"
-              min={ parameter.range[0] }
-              max={ parameter.range[1] }
-              value={ parameter.value }
-              onChange={ evt => onParameterChange(parameter.name, +evt.target.value) }
-            />
+            <InputGroup size="sm">
+              <Control 
+                as="input"
+                type="number"
+                min={ parameter.range[0] }
+                max={ parameter.range[1] }
+                value={ parameter.value }
+                onChange={ evt => onParameterChange(parameter.name, +evt.target.value) }
+              />
+              <Append>
+                <Button 
+                  variant="outline-secondary"
+                  onClick={ () => onParameterReset(parameter.name) }
+                >
+                  <ArrowCounterclockwise className="mb-1" />
+                </Button>
+              </Append>
+            </InputGroup>
           </Group>
         : null 
       );
@@ -237,6 +272,8 @@ export const ModelSelection = ({ outputName, outputType }) => {
                 ))}
               </Control>
             </Group>
+          </Col>
+          <Col>
             <Group controlId="threshold_type_select">
             <Label><h6>Threshold type</h6></Label>
               <Control 
@@ -249,8 +286,6 @@ export const ModelSelection = ({ outputName, outputType }) => {
                 ))}
               </Control>
             </Group>
-          </Col>
-          <Col>
             <Label>
               <h6>
                 <span className="text-capitalize">{ thresholdType.name }</span> 
