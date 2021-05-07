@@ -168,7 +168,7 @@ export const expressionHeatmap = {
             scale: "y",
             band: 1
           },
-          tooltip: { signal: "{ title: 'Value: ' + datum.value, 'Subject': datum.id, 'Group': datum.group.name, 'Gene': datum.gene }" }
+          tooltip: { signal: "{ title: 'Value: ' + datum.value, 'Subject': datum.id, 'Gene': datum.gene }" }
         }
       }
     }

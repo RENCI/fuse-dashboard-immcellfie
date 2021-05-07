@@ -9,7 +9,7 @@ export const SubgroupView = () => {
   return (
     <>
       { phenotypeData ? <DataGrouping />
-        : <DataMissing message="No data loaded" />
+        : <DataMissing message="No data loaded" showHome={ true } />
       }
     </>
   ); 

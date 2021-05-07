@@ -46,13 +46,7 @@ export const InputView = ({ inputName }) => {
     <>
       { !phenotypeData ? 
           <>
-            <DataMissing message="No data loaded" />
-            <Button 
-              variant="link"               
-              onClick={ () => history.push("/") }              
-            >
-              <HouseDoor className="mb-1 mr-2" />Load data
-            </Button>
+            <DataMissing message="No data loaded" showHome={ true } />
           </> :
         !input ? 
           <>

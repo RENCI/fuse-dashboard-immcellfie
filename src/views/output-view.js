@@ -18,7 +18,7 @@ export const OutputView = () => {
   
   return (
     <>
-      { !phenotypeData ? <DataMissing message="No data loaded" /> : 
+      { !phenotypeData ? <DataMissing message="No data loaded" showHome={ true } /> : 
         <ModelSelection 
           outputName={ practiceData.output } 
           outputType={ practiceData.outputType }
