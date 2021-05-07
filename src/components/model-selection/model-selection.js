@@ -26,23 +26,77 @@ const thresholdTypes = [
 
 const initialParameters = [
   {
-    name: "Percentile or value",
-    default: "percentile",
-    value: "percentile",
-    options: ["value", "percentile"]
+    label: "Percentile or value",
+    name: "percentile_or_value",    
+    default: "--percent",
+    value: "--percent",
+    options: [,
+      { name: "percentile", value: "--percent" },
+      { name: "value", value: "--value" }
+    ]
   },
   {
-    name: "Percentile",
+    label: "Percentile",
+    name: "percentile",
     type: "global",
     default: 50,
     value: 50,
     range: [0, 100]
   },
   {
-    name: "Value",
+    label: "Value",
+    name: "value",
     type: "global",
     default: 5,
     value: 5,
+    range: [0, Number.MAX_SAFE_INTEGER]
+  },
+  {
+    label: "Local threshold type",
+    name: "local_threshold_type",
+    type: "local",
+    flag: "-t",
+    default: "minmaxmean",
+    value: "minmaxmean",
+    options: [
+      { name: "min-max mean", value: "minmaxmean" }, 
+      { name: "mean", value: "mean" }
+    ]
+  },
+  {
+    label: "Low percentile",
+    name: "low_percentile",
+    type: "local",
+    flag: "--low",
+    default: 25,
+    value: 25,
+    range: [0, 100]
+  },
+  {
+    label: "High percentile",
+    name: "high_percentile",
+    type: "local",
+    flag: "--high",
+    default: 75,
+    value: 75,
+    range: [0, 100]
+  },
+  {
+    label: "Low value",
+    name: "low_value",
+    type: "local",
+    flag: "--low",
+    default: 5,
+    value: 5,
+    range: [0, Number.MAX_SAFE_INTEGER]
+  },
+  {
+    label: "High percentile",
+    name: "high_value",
+    type: "local",
+    flag: "--high",
+    default: 10,
+    value: 10,
     range: [0, Number.MAX_SAFE_INTEGER]
   }
 ];
@@ -116,29 +170,29 @@ export const ModelSelection = ({ outputName, outputType }) => {
   console.log(thresholdType);
 
   const currentParameters = parameters.filter(({ type, name }) => {
-    const lowName = name.toLowerCase();
-    const pv = lowName === "percentile" || lowName === "value";
+    const pv = name.includes("percent") ? "percent" : name.includes("value") ? "value" : null;
 
-    return (!type || type === thresholdType.name) && 
-      (!pv || lowName === parameters.find(({ name }) => name === "Percentile or value").value);
+    return !type || 
+      (type === thresholdType.name && 
+      (!pv || parameters.find(({ name }) => name === "percentile_or_value").value.includes(pv)));
   }).map((parameter, i) => {
       return (
         parameter.options ?
           <Group key={ i } controlId={ parameter.name + "_select" }>
-            <Label><small>{ parameter.name }</small></Label>
+            <Label><small>{ parameter.label }</small></Label>
             <Control 
               as="select"
               value={ parameter.value }
               onChange={ evt => onParameterChange(parameter.name, evt.target.value) }
             >
-              { parameter.options.map((value, i) => (
-                <option key={ i }>{ value }</option>
+              { parameter.options.map(({ name, value }, i) => (
+                <option key={ i } value={ value }>{ name }</option>
               ))}
             </Control>
           </Group>
         : parameter.range ?
           <Group key={ i } controlId={ parameter.name + "_number" }>
-            <Label><small>{ parameter.name }</small></Label>
+            <Label><small>{ parameter.label }</small></Label>
             <Control 
               as="input"
               type="number"
@@ -197,7 +251,12 @@ export const ModelSelection = ({ outputName, outputType }) => {
             </Group>
           </Col>
           <Col>
-            <Label><h6><span className="text-capitalize">{ thresholdType.name }</span> parameters</h6></Label>
+            <Label>
+              <h6>
+                <span className="text-capitalize">{ thresholdType.name }</span> 
+                <> thresholding parameters</>
+              </h6>
+            </Label>
             { currentParameters }
           </Col>
         </Row>
