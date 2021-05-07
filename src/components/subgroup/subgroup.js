@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { Form, Button, Col } from "react-bootstrap";
 import { ArrowCounterclockwise, XCircle } from "react-bootstrap-icons";
+import * as d3 from "d3";
 import { DataContext } from "../../contexts";
 import { LabelEdit } from "../label-edit";
 import { VegaWrapper } from "../vega-wrapper";
@@ -40,7 +41,17 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
 
   const nameLabel = name => (name[0].toUpperCase() + name.substring(1)).replace(/_/gi, " ");
 
-  const controls = subgroup.phenotypes.map((phenotype, i) => {    
+  const filterText = filters => {
+    return Array.from(d3.group(filters, filter => filter.phenotype)).reduce((text, phenotype, i) => {
+      return text + (i > 0 ? " and " : "") + 
+        "(" + nameLabel(phenotype[0]) + ": " + 
+        phenotype[1].sort((a, b) => d3.ascending(a.value, b.value)).map(({ value }, i) => {
+          return (i > 0 ? " or " : "") + value;
+        }).join("") + ")";
+    }, "");
+  };
+
+  const charts = subgroup.phenotypes.map((phenotype, i) => {    
     const allPhenotype = all.phenotypes[i];
 
     const filters = subgroup.filters.filter(filter => filter.phenotype === phenotype.name);    
@@ -109,7 +120,14 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
         </Col>
       </Row>
       <Row>
-        { controls }
+        { charts }
+      </Row>
+      <Row>
+        <Col>
+          <small className="text-muted">
+            { filterText(subgroup.filters) }
+          </small>
+        </Col>
       </Row>
     </div>
   );
