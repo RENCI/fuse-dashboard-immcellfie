@@ -3,6 +3,8 @@ import { Card, Row, Col, Form,  Alert } from "react-bootstrap";
 import { ExclamationCircle } from "react-bootstrap-icons";
 import { DataContext } from "../../contexts";
 import { SubgroupsLink } from "../page-links";
+import { VegaWrapper } from "../vega-wrapper";
+import { barOverlap } from "../../vega-specs";
 
 const { Title, Body } = Card;
 const { Group, Label, Control } = Form;
@@ -82,6 +84,25 @@ export const SubgroupSelection = () => {
             { !canCompare && <SubgroupsLink /> }
           </Group>
         </Row>
+        { subgroup2 &&
+          <Row>
+            <Col>
+              <VegaWrapper
+                options={{
+                  actions: false,
+                  renderer: "svg"
+                }}
+                spec={ barOverlap }
+                data={[
+                  { order: 0, name: "subgroup1", count: subgroup1.subjects.length },
+                  { order: 1, name: "overlap", count: overlap },
+                  { order: 2, name: "subgroup2", count: subgroup2.subjects.length }
+                ]}
+                spinner={ false }              
+              />
+            </Col>
+          </Row>
+        }
         { overlap !== null && overlap > 0 &&
           <Row>
             <Col>
