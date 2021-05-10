@@ -2,7 +2,7 @@ export const barOverlap = {
   $schema: "https://vega.github.io/schema/vega-lite/v4.json",
   width: "container",
   height: 30,
-  padding: 5,
+  padding: 0,
   autosize: {
     resize: true,
     contains: "padding"
@@ -17,7 +17,8 @@ export const barOverlap = {
       }],
       mark: {
         type: "bar",
-        opacity: 0.5
+        opacity: 0.5,
+        height: { expr: "height - 8" }
       },
       encoding: {
         x: {
@@ -30,8 +31,6 @@ export const barOverlap = {
           field: "end",
           type: "quantitative"
         },
-        y: { value: 7 },
-        y2: { value: { expr: "height - 7" } },
         color: { 
           field: "section",
           scale: { range: ["#1f77b4", "#ff7f0e", "url(#diagonalHatch)"] },
@@ -59,8 +58,8 @@ export const barOverlap = {
           field: "end",
           type: "quantitative"
         },
-        y: { value: { expr: "datum.section === 1 ? 0 : 4" } },
-        y2: { value: { expr: "datum.section === 1 ? height : height - 4" } },
+        y: { value: { expr: "datum.yOffset" } },
+        y2: { value: { expr: "height - datum.yOffset" } },
         //y: { value: { expr: "datum.section === 1 ? height / 2 : height / 2 + 2" } },
         //y2: { value: { expr: "datum.section === 1 ? height / 2 : height / 2 + 2" } },
         stroke: { 

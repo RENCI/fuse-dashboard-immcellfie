@@ -32,7 +32,7 @@ const initialParameters = [
     name: "percentile_or_value",    
     default: "--percent",
     value: "--percent",
-    options: [,
+    options: [
       { name: "percentile", value: "--percent" },
       { name: "value", value: "--value" }
     ]
