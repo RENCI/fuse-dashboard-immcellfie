@@ -4,6 +4,7 @@ import { ExclamationCircle } from "react-bootstrap-icons";
 import { DataContext } from "../../contexts";
 import { SubgroupsLink } from "../page-links";
 import { OverlapVis } from "../overlap-vis";
+import "./subgroup-selection.css";
 
 const { Title, Body } = Card;
 const { Group, Label, Control } = Form;
@@ -67,12 +68,13 @@ export const SubgroupSelection = () => {
             >
               { options(1) }
             </Control>
+            <div className="subgroupIndicator subgroupBorder1"></div>
           </Group>
           <Group as={ Col } xs="auto" className="mt-1">
             vs.
           </Group>
           <Group as={ Col } controlId="subgroupSelect2">
-            <Control 
+            <Control
               as="select"
               value={ value2 }
               disabled={ !canCompare }
@@ -80,6 +82,7 @@ export const SubgroupSelection = () => {
             >              
               { canCompare ? options(0) : <option value="none">None</option> }
             </Control>
+            <div className="subgroupIndicator subgroupBorder2"></div>
             { !canCompare && <SubgroupsLink /> }
           </Group>
         </Row>

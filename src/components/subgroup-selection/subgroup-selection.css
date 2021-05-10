@@ -1,0 +1,16 @@
+.subgroupIndicator {
+  width: calc(100% - 2px);
+  margin-left: 1px;
+  height: 0;
+  border-width: 1px;
+  border-style: solid;
+  margin-top: -3px
+}
+
+.subgroupBorder1 {
+  border-color: #1f77b4;
+}
+
+.subgroupBorder2 {
+  border-color: #ff7f0e;
+}
