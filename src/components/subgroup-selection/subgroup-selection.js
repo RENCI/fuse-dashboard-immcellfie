@@ -3,8 +3,7 @@ import { Card, Row, Col, Form,  Alert } from "react-bootstrap";
 import { ExclamationCircle } from "react-bootstrap-icons";
 import { DataContext } from "../../contexts";
 import { SubgroupsLink } from "../page-links";
-import { VegaWrapper } from "../vega-wrapper";
-import { barOverlap } from "../../vega-specs";
+import { OverlapVis } from "../overlap-vis";
 
 const { Title, Body } = Card;
 const { Group, Label, Control } = Form;
@@ -87,43 +86,33 @@ export const SubgroupSelection = () => {
         { subgroup2 &&
           <Row>
             <Col>
-              <VegaWrapper
-                options={{
-                  actions: false,
-                  renderer: "svg"
-                }}
-                spec={ barOverlap }
-                data={[
-                  { order: 0, name: "subgroup1", count: subgroup1.subjects.length },
-                  { order: 1, name: "overlap", count: overlap },
-                  { order: 2, name: "subgroup2", count: subgroup2.subjects.length }
-                ]}
-                spinner={ false }              
-              />
+              <OverlapVis 
+                subgroup1={ subgroup1 } 
+                subgroup2={ subgroup2 } 
+                overlap={ overlap }
+                overlapMethod={ overlapMethod } />
             </Col>
           </Row>
         }
         { overlap !== null && overlap > 0 &&
           <Row>
-            <Col>
-              <Alert variant="danger">                
-                <Group controlId="overlapMethodSelect">
-                  <Label>
-                    <ExclamationCircle className="mb-1 mr-2"/>
-                    Overlap: { overlap }
-                  </Label>
-                  <Control 
-                    as="select"
-                    value={ overlapMethod }
-                    onChange={ onOverlapMethodChange }
-                  >              
-                    <option value="both">Assign to both subgroups</option>
-                    <option value="neither">Assign to neither subgroup</option>
-                    <option value="subgroup1">Assign to { subgroup1.name }</option>
-                    <option value="subgroup2">Assign to { subgroup2.name }</option>
-                  </Control>
-                </Group>
-              </Alert>
+            <Col>                
+              <Group controlId="overlapMethodSelect" className="mt-2">
+                <Label>
+                  <ExclamationCircle className="mb-1 mr-2 text-danger" />
+                  Overlap: { overlap }
+                </Label>
+                <Control 
+                  as="select"
+                  value={ overlapMethod }
+                  onChange={ onOverlapMethodChange }
+                >              
+                  <option value="both">Assign to both subgroups</option>
+                  <option value="neither">Assign to neither subgroup</option>
+                  <option value="subgroup1">Assign to { subgroup1.name }</option>
+                  <option value="subgroup2">Assign to { subgroup2.name }</option>
+                </Control>
+              </Group>
             </Col>
           </Row>
         }
