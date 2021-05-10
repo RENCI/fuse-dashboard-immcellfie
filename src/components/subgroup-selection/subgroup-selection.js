@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Card, Row, Col, Form,  Alert } from "react-bootstrap";
-import { ExclamationCircle } from "react-bootstrap-icons";
+import { ExclamationTriangleFill } from "react-bootstrap-icons";
 import { DataContext } from "../../contexts";
 import { SubgroupsLink } from "../page-links";
 import { OverlapVis } from "../overlap-vis";
@@ -55,8 +55,8 @@ export const SubgroupSelection = () => {
     }, 0) :
     null;
 
-  const subgroup1Contained = subgroup1.subjects.length === overlap;
-  const subgroup2Contained = subgroup2.subjects.length === overlap;
+  const subgroup1Contained = subgroup1 && subgroup1.subjects.length === overlap;
+  const subgroup2Contained = subgroup2 && subgroup2.subjects.length === overlap;
 
   return (
     <Card className="mt-4">
@@ -105,7 +105,7 @@ export const SubgroupSelection = () => {
             <Col>                
               <Group controlId="overlapMethodSelect" className="mt-2">
                 <Label>
-                  <ExclamationCircle className="mb-1 mr-2 text-danger" />
+                  <ExclamationTriangleFill className="mb-1 mr-2 text-warning" />
                   Overlap: { overlap }
                 </Label>
                 <Control 
