@@ -55,6 +55,9 @@ export const SubgroupSelection = () => {
     }, 0) :
     null;
 
+  const subgroup1Contained = subgroup1.subjects.length === overlap;
+  const subgroup2Contained = subgroup2.subjects.length === overlap;
+
   return (
     <Card className="mt-4">
       <Body>
@@ -111,9 +114,9 @@ export const SubgroupSelection = () => {
                   onChange={ onOverlapMethodChange }
                 >              
                   <option value="both">Assign to both subgroups</option>
-                  <option value="neither">Assign to neither subgroup</option>
-                  <option value="subgroup1">Assign to { subgroup1.name }</option>
-                  <option value="subgroup2">Assign to { subgroup2.name }</option>
+                  <option disabled={ subgroup1Contained || subgroup2Contained } value="neither">Assign to neither subgroup</option>
+                  <option disabled={ subgroup2Contained } value="subgroup1">Assign to { subgroup1.name }</option>
+                  <option disabled={ subgroup1Contained } value="subgroup2">Assign to { subgroup2.name }</option>
                 </Control>
               </Group>
             </Col>
