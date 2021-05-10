@@ -6,11 +6,33 @@ export const OverlapVis = ({ subgroup1, subgroup2, overlap, overlapMethod }) => 
   const n1 = subgroup1.subjects.length;
   const n2 = subgroup2.subjects.length;
 
-  const end2 = n1 + n2 - overlap;
-  const start2 = end2 - n2;
+  const x1 = 0;
+  const x2 = n1 - overlap;
+  const x3 = n1;
+  const x4 = x2 + n2;
 
-  const incEnd1 = overlapMethod === "both" || overlapMethod === "subgroup1" ? n1 : n1 - overlap;
-  const incStart2 = overlapMethod === "both" || overlapMethod === "subgroup2" ? start2 : start2 + overlap;
+  const incEnd1 = overlapMethod === "both" || overlapMethod === "subgroup1" ? x3 : x2;
+  const incStart2 = overlapMethod === "both" || overlapMethod === "subgroup2" ? x2 : x3;
+
+  const data = [
+    { type: "all", section: 1, start: x1, end: x2 },
+    { type: "all", section: 2, start: x3, end: x4 },
+    { type: "all", section: 3, start: x2, end: x3 },
+    { type: "included", section: 1, start: x1, end: incEnd1 },
+    { type: "included", section: 2, start: incStart2, end: x4 }
+  ];
+
+  if (x2 - x1 > 0 || overlapMethod === "neither" || overlapMethod === "subgroup2") {
+    data.push({ type: "label", position: x1 + (x2 - x1) / 2, value: n1 - overlap });
+  }
+
+  if (overlap > 0) {
+    data.push({ type: "label", position: x2 + (x3 - x2) / 2, value: overlap });
+  }
+
+  if (x4 - x3 > 0 || overlapMethod === "neither" || overlapMethod === "subgroup1") {
+    data.push({ type: "label", position: x3 + (x4 - x3) / 2, value: n2 - overlap });
+  }
 
   return (
     <VegaWrapper
@@ -19,18 +41,7 @@ export const OverlapVis = ({ subgroup1, subgroup2, overlap, overlapMethod }) => 
         renderer: "svg"
       }}
       spec={ barOverlap }
-      data={[
-        { type: "all", subgroup: 1, start: 0, end: n1 },
-        { type: "all", subgroup: 2, start: start2, end: end2 },
-        { type: "included", subgroup: 1, start: 0, end: incEnd1 },
-        { type: "included", subgroup: 2, start: incStart2, end: end2 },
-        { type: "label", position: (n1 - overlap) / 2, value: n1 - overlap },
-        { type: "label", position: n1 - overlap / 2, value: overlap },
-        { type: "label", position: n1 + (end2 - n1) / 2, value: n2 - overlap }
-      ]}
-      signals={[
-        { name: "ticks", value: [0, start2, n1, end2] }
-      ]}
+      data={ data }
       spinner={ false }              
     />
   );

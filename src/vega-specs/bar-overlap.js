@@ -7,10 +7,6 @@ export const barOverlap = {
     resize: true,
     contains: "padding"
   },
-  params: [{
-    name: "ticks",
-    value: []
-  }],
   data: {
     name: "data"
   },
@@ -21,8 +17,7 @@ export const barOverlap = {
       }],
       mark: {
         type: "bar",
-        cornerRadius: 3,
-        opacity: 0.25
+        opacity: 0.5
       },
       encoding: {
         x: {
@@ -38,9 +33,8 @@ export const barOverlap = {
         y: { value: 7 },
         y2: { value: { expr: "height - 7" } },
         color: { 
-          field: "subgroup",
-          type: "ordinal",
-          scale: { range: ["url(#diagonalHatch1)", "url(#diagonalHatch2)"] },
+          field: "section",
+          scale: { range: ["#1f77b4", "#ff7f0e", "url(#diagonalHatch)"] },
           legend: null
         },
         order: { field: "order" }
@@ -65,12 +59,12 @@ export const barOverlap = {
           field: "end",
           type: "quantitative"
         },
-        y: { value: { expr: "datum.subgroup === 1 ? 0 : 4" } },
-        y2: { value: { expr: "datum.subgroup === 1 ? height : height - 4" } },
-        //y: { value: { expr: "datum.subgroup === 1 ? height / 2 : height / 2 + 2" } },
-        //y2: { value: { expr: "datum.subgroup === 1 ? height / 2 : height / 2 + 2" } },
+        y: { value: { expr: "datum.section === 1 ? 0 : 4" } },
+        y2: { value: { expr: "datum.section === 1 ? height : height - 4" } },
+        //y: { value: { expr: "datum.section === 1 ? height / 2 : height / 2 + 2" } },
+        //y2: { value: { expr: "datum.section === 1 ? height / 2 : height / 2 + 2" } },
         stroke: { 
-          field: "subgroup",
+          field: "section",
           legend: null
         },
         order: { field: "order" }
