@@ -29,11 +29,7 @@ export const barOverlap = {
           field: "start",
           type: "quantitative",
           scale: { nice: false, padding: 0 },
-          axis: {  
-            values: { expr: "ticks"},
-            title: null,
-            domain: false
-          }
+          axis: null
         },
         x2: {
           field: "end",
@@ -78,6 +74,25 @@ export const barOverlap = {
           legend: null
         },
         order: { field: "order" }
+      }
+    },
+    {
+      transform: [{
+        filter: "datum.type === 'label'"
+      }],
+      mark: {
+        type: "text",
+        baseline: "middle"
+      },
+      encoding: {
+        x: {
+          field: "position",
+          type: "quantitative"
+        },
+        y: { value: { expr: "height / 2" } },
+        text: {
+          field: "value"
+        }
       }
     }
   ]

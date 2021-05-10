@@ -23,7 +23,10 @@ export const OverlapVis = ({ subgroup1, subgroup2, overlap, overlapMethod }) => 
         { type: "all", subgroup: 1, start: 0, end: n1 },
         { type: "all", subgroup: 2, start: start2, end: end2 },
         { type: "included", subgroup: 1, start: 0, end: incEnd1 },
-        { type: "included", subgroup: 2, start: incStart2, end: end2 }
+        { type: "included", subgroup: 2, start: incStart2, end: end2 },
+        { type: "label", position: (n1 - overlap) / 2, value: n1 - overlap },
+        { type: "label", position: n1 - overlap / 2, value: overlap },
+        { type: "label", position: n1 + (end2 - n1) / 2, value: n2 - overlap }
       ]}
       signals={[
         { name: "ticks", value: [0, start2, n1, end2] }
