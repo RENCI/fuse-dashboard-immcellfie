@@ -1,6 +1,9 @@
 import React from "react";
 import { VegaWrapper } from "../vega-wrapper";
 import { barOverlap } from "../../vega-specs";
+import { subgroupColors } from "../../colors";
+
+const { color1, color2 } = subgroupColors;
 
 export const OverlapVis = ({ subgroup1, subgroup2, overlap, overlapMethod }) => {
   const n1 = subgroup1.subjects.length;
@@ -36,15 +39,30 @@ export const OverlapVis = ({ subgroup1, subgroup2, overlap, overlapMethod }) => 
     data.push({ type: "label", position: x3 + (x4 - x3) / 2, value: n2 - overlap });
   }
 
+  const patternName = "overlapDiagonalHatch";
+ 
   return (
-    <VegaWrapper
-      options={{
-        actions: false,
-        renderer: "svg"
-      }}
-      spec={ barOverlap }
-      data={ data }
-      spinner={ false }              
-    />
+    <>    
+      <svg height="0" width="0" xmlns="http://www.w3.org/2000/svg" version="1.1"> 
+        <defs> 
+          <pattern id={ patternName } width={ 10 } height= { 10 } patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+            <line x1={ 2.5 } y1={ 0 } x2={ 2.5 } y2={ 20 } style={{ stroke: color1, strokeWidth: 5 }} />
+            <line x1={ 7.5 } y1={ 0 } x2={ 7.5 } y2={ 20 } style={{ stroke: color2, strokeWidth: 5 }} />
+          </pattern>
+        </defs> 
+      </svg>
+      <VegaWrapper
+        options={{
+          actions: false,
+          renderer: "svg"
+        }}
+        spec={ barOverlap }
+        data={ data }
+        signals={[
+          { name: "colors", value: [color1, color2, "url(#" + patternName + ")"] }
+        ]}
+        spinner={ false }              
+      />
+    </>
   );
 };

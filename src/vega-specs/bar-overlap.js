@@ -7,6 +7,12 @@ export const barOverlap = {
     resize: true,
     contains: "padding"
   },
+  params: [
+    {
+      name: "colors",
+      value: ["red", "blue", "green"]
+    }
+  ],
   data: {
     name: "data"
   },
@@ -33,7 +39,13 @@ export const barOverlap = {
         },
         color: { 
           field: "section",
-          scale: { range: ["#1f77b4", "#ff7f0e", "url(#diagonalHatch)"] },
+          scale: { 
+            range: [ 
+              { expr: 'colors[0]' },
+              { expr: 'colors[1]' },
+              { expr: 'colors[2]' }
+            ] 
+          },
           legend: null
         },
         order: { field: "order" }
@@ -60,8 +72,6 @@ export const barOverlap = {
         },
         y: { value: { expr: "datum.yOffset" } },
         y2: { value: { expr: "height - datum.yOffset" } },
-        //y: { value: { expr: "datum.section === 1 ? height / 2 : height / 2 + 2" } },
-        //y2: { value: { expr: "datum.section === 1 ? height / 2 : height / 2 + 2" } },
         stroke: { 
           field: "section",
           legend: null

@@ -35,3 +35,8 @@ export const diverging = [
     inconclusive: "#c6dbef"
   }
 ];
+
+export const subgroupColors = {
+  color1: "#1f77b4",
+  color2: "#ff7f0e"
+};

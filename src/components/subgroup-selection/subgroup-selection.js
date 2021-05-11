@@ -4,10 +4,12 @@ import { ExclamationTriangleFill } from "react-bootstrap-icons";
 import { DataContext } from "../../contexts";
 import { SubgroupsLink } from "../page-links";
 import { OverlapVis } from "../overlap-vis";
+import { subgroupColors } from "../../colors";
 import "./subgroup-selection.css";
 
 const { Title, Body } = Card;
 const { Group, Label, Control } = Form;
+const { color1, color2 } = subgroupColors;
 
 export const SubgroupSelection = () => {
   const [{ subgroups, selectedSubgroups, overlapMethod }, dataDispatch] = useContext(DataContext);
@@ -71,7 +73,7 @@ export const SubgroupSelection = () => {
             >
               { options(1) }
             </Control>
-            <div className="subgroupIndicator subgroupBorder1"></div>
+            <div className="subgroupIndicator" style={{ borderColor: color1 }}></div>
           </Group>
           <Group as={ Col } xs="auto" className="mt-1">
             vs.
@@ -85,7 +87,7 @@ export const SubgroupSelection = () => {
             >              
               { canCompare ? options(0) : <option value="none">None</option> }
             </Control>
-            <div className="subgroupIndicator subgroupBorder2"></div>
+            <div className="subgroupIndicator" style={{ borderColor: color2 }}></div>
             { !canCompare && <SubgroupsLink /> }
           </Group>
         </Row>
