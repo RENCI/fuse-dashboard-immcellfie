@@ -106,7 +106,7 @@ export const HeatmapVis = ({ data, subgroups }) => {
           </Group>
         </Row>
       </div>
-      <div style={{ overflowX: "scroll" }}>
+      <div style={{ overflowX: "auto" }}>
         <VegaWrapper 
           spec={ taskHeatmap } 
           data={ heatmapData }             
