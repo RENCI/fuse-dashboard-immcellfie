@@ -32,6 +32,7 @@ export const barComparison = {
     column: {
       field: "value",
       header: {
+        title: { expr: "valueName" },
         titleOrient: "bottom",
         labelOrient: "bottom",
         labelPadding: 110
