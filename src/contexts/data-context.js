@@ -122,8 +122,6 @@ const parseCSVOutput = data => {
 };
 
 const createPhenotypes = phenotypeData => {
-  const shortLabel = value => value.length > 10 ? value.substr(0, 10) + "..." : value;
-
   return phenotypeData.columns
     .filter(column => !excludedPhenotypes.includes(column))
     .map(column => {
@@ -159,14 +157,10 @@ const createPhenotypes = phenotypeData => {
         values.sort((a, b) => a.value < b.value ? -1 : a.value > b.value ? 1 : 0);
       }
 
-      // Short label for graph
-      values.forEach(value => {
-        value.shortLabel = numeric ? value.value : shortLabel(value.value);
-      });
-
       return {
         name: column,
-        values: values
+        values: values,
+        numeric: numeric
       };
     });
 };

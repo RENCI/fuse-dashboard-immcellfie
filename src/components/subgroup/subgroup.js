@@ -76,7 +76,10 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
           }}
           spec={ phenotypeBarChart }
           data={ data }            
-          signals={ [{ name: "interactive", value: editable }] }
+          signals={[
+            { name: "interactive", value: editable },
+            { name: "numeric", value: phenotype.numeric }
+          ]}
           eventListeners={ editable ? [{ type: "click", callback: evt => onValueSelect(phenotype.name, evt) }] : [] }
           spinner={ false }
         />

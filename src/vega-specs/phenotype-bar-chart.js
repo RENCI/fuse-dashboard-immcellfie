@@ -1,18 +1,18 @@
 export const phenotypeBarChart = {
   $schema: "https://vega.github.io/schema/vega-lite/v4.json",
-  width: 100,
+  width: { step: 20 },
   height: 100,
   autosize: {
     resize: true
   },
   params: [
     {
-      name: "value",
-      value: "none"
-    },
-    {
       name: "interactive",
       value: true
+    },
+    {
+      name: "numeric",
+      value: false
     }
   ],
   data: {
@@ -43,11 +43,13 @@ export const phenotypeBarChart = {
       },
       encoding: {
         x: {
-          field: "shortLabel",     
-          type: "nominal",
+          field: "value",     
+          type: "ordinal",
           axis: { 
-            labelAngle: 30, 
-            title: null
+            labelAngle: { expr: "numeric ? 0 : 30" }, 
+            labelAlign: { expr: "numeric ? 'center' : 'left'" },
+            title: null,
+            labelLimit: 50
           }
         },
         y: {
@@ -80,17 +82,12 @@ export const phenotypeBarChart = {
       },
       encoding: {
         x: {
-          field: "shortLabel",     
-          type: "nominal",
-          axis: { 
-            labelAngle: 30, 
-            title: null
-          }
+          field: "value",     
+          type: "ordinal",
         },
         y: {
           field: "count",
-          type: "quantitative",
-          axis: { title: null }
+          type: "quantitative"
         },
         stroke: {
           value: { signal: "datum.selected ? '#b2182b' : 'none'" }

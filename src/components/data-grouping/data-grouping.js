@@ -11,6 +11,10 @@ export const DataGrouping = () => {
   const [{ subgroups }, dataDispatch] = useContext(DataContext);
   const [newAdded, setNewAdded] = useState(false);
 
+
+  console.log(subgroups);
+  
+
   useEffect(() => {
     setNewAdded(false);
   }, []);
