@@ -90,7 +90,8 @@ export const VegaTooltip = ({ handler, event, item, value, subgroup, subgroupNam
         <Body>
           { value && <Subtitle>{ value.name }</Subtitle> }
           <div className="mt-1">{ subtitle }</div>
-          <div className="mt-1 mb-2 small">
+          <hr className="my-1"/>
+          <div className="small">
             <div>
               { (isComparison ? "Score fold change: " : "Mean score: ") + formatNumber(score) }
             </div>
@@ -98,6 +99,7 @@ export const VegaTooltip = ({ handler, event, item, value, subgroup, subgroupNam
               { (isComparison ? "Activity fold change: " : "Mean activity: ") + formatNumber(activity) }
             </div>
           </div>
+          <hr className="my-1"/>
           { score || activity ? 
             <div className="text-center">            
               <small>Distributions</small>
