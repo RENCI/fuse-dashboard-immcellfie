@@ -9,11 +9,7 @@ const { Title, Body, Footer } = Card;
 
 export const DataGrouping = () => {
   const [{ subgroups }, dataDispatch] = useContext(DataContext);
-  const [newAdded, setNewAdded] = useState(false);
-
-
-  console.log(subgroups);
-  
+  const [newAdded, setNewAdded] = useState(false);  
 
   useEffect(() => {
     setNewAdded(false);
