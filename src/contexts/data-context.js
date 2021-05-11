@@ -1,5 +1,6 @@
 import React, { createContext, useReducer } from "react";
 import * as d3 from "d3";
+import Statistics from "statistics.js";
 
 const excludedPhenotypes = [
   "participant_id",
@@ -298,6 +299,8 @@ const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod) => {
       node.data.scoreFoldChange = "na";
       node.data.activityFoldChange = "na";
 
+      node.data.scorePValue = "na";
+
       if (subgroupContains(subgroup1, node.data.index)) {
         node.data.score1 = node.data.score;
         node.data.activity1 = node.data.activity;
@@ -317,7 +320,7 @@ const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod) => {
         node.data["scores" + which] = [];
         node.data["score" + which] = null;
         node.data["activities" + which] = [];
-        node.data["activity" + which] = null;
+        node.data["activity" + which] = null;        
       }
       else {
         const getValues = arrayName => {
@@ -346,16 +349,30 @@ const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod) => {
     processSubgroup(subjects1, 1);
     processSubgroup(subjects2, 2);
 
-    // Compute fold change
+    // Compute fold change and p value
     if (node.data.score1 !== null && node.data.score2 !== null) {
       const foldChange = (a, b) => a === 0 ? 0 : b / a;
 
       node.data.scoreFoldChange = foldChange(node.data.score1, node.data.score2);
       node.data.activityFoldChange = foldChange(node.data.activity1, node.data.activity2);
+
+      const ttestData = d3.range(Math.max(node.data.scores1.length, node.data.scores2.length)).map(index => {
+        const item = {};
+        if (index < node.data.scores1.length) item.subgroup1 = node.data.scores1[index].value;
+        if (index < node.data.scores2.length) item.subgroup2 = node.data.scores2[index].value;
+
+        return item;
+      });
+
+      const stats = new Statistics(ttestData, { subgroup1: "metric", subgroup2: "metric" });
+      const ttest = stats.studentsTTestTwoSamples("subgroup1", "subgroup2", { dependent: true });
+
+      node.data.scorePValue = ttest.pTwoSided;
     }
     else {
       node.data.scoreFoldChange = null;
       node.data.activityFoldChange = null;
+      node.data.scorePValue = null;
     }
   });
 };

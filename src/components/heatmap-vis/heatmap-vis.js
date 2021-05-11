@@ -14,6 +14,10 @@ export const HeatmapVis = ({ data, subgroups }) => {
   const [sortBy, setSortBy] = useState("mean");
   const [color, setColor] = useState(sequential[0]);
 
+  const onDepthChange = evt => {
+    setDepth(+evt.target.value)
+  };
+
   const onValueChange = evt => {
     setValue(evt.target.value);
   };
@@ -59,7 +63,7 @@ export const HeatmapVis = ({ data, subgroups }) => {
               min={ 1 }
               max={ 3 }         
               value={ depth }
-              onChange={ evt => setDepth(+evt.target.value) } 
+              onChange={ onDepthChange } 
             />
           </Group>
           <Group as={ Col } controlId="valueSelect">

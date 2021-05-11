@@ -1,10 +1,9 @@
 import React, { useContext } from "react";
 import { Tab, Card, Nav } from "react-bootstrap";
 import { DataContext } from "../../contexts";
-import { VegaWrapper } from "../vega-wrapper";
-import { taskHeatmap } from "../../vega-specs";
 import { HierarchyVis } from "../hierarchy-vis";
 import { HeatmapVis } from "../heatmap-vis";
+import { VolcanoVis } from "../volcano-vis";
 import { PathwayVis } from "../pathway-vis";
 
 const { Header, Body } = Card;
@@ -40,6 +39,9 @@ export const CellfieOutput = () => {
                   <Link eventKey="heatmap">Heatmap</Link>
                 </Item>
                 <Item>
+                  <Link eventKey="volcano">Volcano plot</Link>
+                </Item>
+                <Item>
                   <Link eventKey="escher">Pathway map</Link>
                 </Item>
               </Nav>
@@ -57,6 +59,11 @@ export const CellfieOutput = () => {
                   <HeatmapVis
                     data={ tree.descendants() }
                     subgroups={ currentSubgroups }
+                  />
+                </Pane>
+                <Pane eventKey="volcano">
+                  <VolcanoVis
+                    data={ tree.descendants() }
                   />
                 </Pane>
                 <Pane eventKey="escher">

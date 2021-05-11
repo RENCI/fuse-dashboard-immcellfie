@@ -6,6 +6,7 @@ export * from "./enclosure";
 export * from "./enclosure-comparison";
 export * from "./voronoi-treemap";
 export * from "./voronoi-treemap-comparison";
+export * from "./volcano-plot";
 export * from "./histogram";
 export * from "./density";
 export * from "./density-comparison";
