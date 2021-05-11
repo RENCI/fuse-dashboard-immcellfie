@@ -20,7 +20,7 @@ export const barComparison = {
         op: "count",
         as: "total"
       }],
-      groupby: ["subgroup"]
+      groupby: ["subgroupName"]
     },
     {
       calculate: "1 / datum.total",
@@ -39,7 +39,7 @@ export const barComparison = {
       }
     },
     x: {
-      field: "subgroup",
+      field: "subgroupName",
       type: "ordinal",
       axis: null
     },
@@ -50,8 +50,9 @@ export const barComparison = {
       title: null
     },
     color: {
-      field: "subgroup",
-      type: "nominal"
+      field: "subgroupName",
+      type: "nominal",
+      legend: { title: "subgroup" }
     }
   }
 };

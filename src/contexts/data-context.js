@@ -326,7 +326,8 @@ const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod) => {
               return {
                 value: value,
                 index: index,
-                subgroup: which
+                subgroup: which, 
+                subgroupName: which === 1 ? subgroup1.name : subgroup2.name
               };
             });
           }));

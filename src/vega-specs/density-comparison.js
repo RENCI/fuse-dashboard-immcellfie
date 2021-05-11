@@ -45,7 +45,7 @@ export const densityComparison = {
     {
       transform:[{
         density: "value",
-        groupby: ["subgroup"],
+        groupby: ["subgroupName"],
         counts: false
       }],
       mark: { 
@@ -69,8 +69,9 @@ export const densityComparison = {
           }  
         },
         color: {
-          field: "subgroup",
-          type: "nominal"
+          field: "subgroupName",
+          type: "nominal",
+          legend: { title: "subgroup" }
         },
         fillOpacity: { value: 0.5 }
       }
