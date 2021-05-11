@@ -63,7 +63,14 @@ export const SubgroupSelection = () => {
   return (
     <Card className="mt-4">
       <Body>
-        <Title>Select Subgroups to Compare</Title>
+        <Row>
+          <Col>
+            <Title>Select Subgroups to Compare</Title>
+          </Col>
+          <Col xs="auto">
+            <SubgroupsLink />
+          </Col>
+        </Row>
         <Row>
           <Group as={ Col } controlId="subgroupSelect1">
             <Control 
@@ -88,7 +95,6 @@ export const SubgroupSelection = () => {
               { canCompare ? options(0) : <option value="none">None</option> }
             </Control>
             <div className="subgroupIndicator" style={{ borderColor: color2 }}></div>
-            { !canCompare && <SubgroupsLink /> }
           </Group>
         </Row>
         { subgroup2 &&
