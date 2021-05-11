@@ -31,7 +31,7 @@ export const VolcanoVis = ({ data }) => {
         pValue: pValue,
         logPValue: -Math.log10(pValue),
         depth: node.depth,
-        significance: pValue > significanceLevel ? 0 : foldChange < 1 ? 1 : 2
+        category: pValue > significanceLevel ? "not significant" : foldChange < 1 ? "down" : "up"
       };
     });
   }, [data, significanceLevel]);

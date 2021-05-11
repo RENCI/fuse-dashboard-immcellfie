@@ -46,69 +46,131 @@ export const volcanoPlot = {
       }
     },
     {
-      selection: {
-        highlight: {
-          type: "single", 
-          on: "mouseover",
-          empty: "none", 
-          clear: "mouseout"
-        }
-      },
-      mark: "point",
-      encoding: {
-        x: {
-          field: "logFoldChange",
-          type: "quantitative",
-          scale: {
-            domainMin: { expr: "-foldChangeExtent" },
-            domainMax: { expr: "foldChangeExtent" }
+      layer: [
+        {
+          selection: {
+            highlight: {
+              type: "single", 
+              on: "mouseover",
+              empty: "none", 
+              clear: "mouseout"
+            },            
+            select: {
+              type: "multi", 
+              on: "click",
+              empty: "none"
+            }
           },
-          axis: {
-            title: "log10(fold change)",
-            gridWidth: {
-              condition: {
-                test: "datum.value === 0", 
-                value: 3
+          mark: "point",
+          encoding: {
+            x: {
+              field: "logFoldChange",
+              type: "quantitative",
+              scale: {
+                domainMin: { expr: "-foldChangeExtent" },
+                domainMax: { expr: "foldChangeExtent" }
               },
-              value: 1
+              axis: {
+                title: "log10(fold change)",
+                gridWidth: {
+                  condition: {
+                    test: "datum.value === 0", 
+                    value: 3
+                  },
+                  value: 1
+                }
+              }
+            },
+            y: {
+              field: "logPValue",
+              type: "quantitative",
+              axis: {
+                title: "-log10(p value)"
+              }
+            },
+            size: {
+              field: "depth",
+              sort: "descending",
+              scale: {
+                domain: [3, 2, 1]
+              }
+            },
+            stroke: {
+              field: "category",
+              type: "nominal",
+              title: "change",
+              scale: {
+                domain: ["not significant", "down", "up"],
+                range: ["#666", "#2166ac", "#b2182b"]
+              }
+            },
+            strokeWidth: {
+              condition: [{
+                selection: "highlight",
+                value: 4
+              },              
+              {
+                selection: "select",
+                value: 4
+              }],
+              value: 2
+            },
+            fill: {             
+              field: "category",
+              type: "nominal",
+              title: "change",
+              scale: {
+                domain: ["not significant", "down", "up"],
+                range: ["#666", "#2166ac", "#b2182b"]
+              }
+            },
+            fillOpacity: {             
+              condition: {
+                selection: "select",
+                value: 0.8
+              },
+              value: 0
+            },
+            tooltip: [ 
+              { field: "name", title: "name" },
+              { field: "foldChange", title: "fold change" },
+              { field: "pValue", title: "p value" }
+            ]
+          }
+        },
+        {
+          mark: {
+            type: "text",
+            align: "center",
+            baseline: "bottom",
+            dy: -10
+          },
+          encoding: {
+            x: {
+              field: "logFoldChange",
+              type: "quantitative",
+            },
+            y: {
+              field: "logPValue",
+              type: "quantitative",
+            },
+            text: {
+              field: "name",
+            },
+            opacity: {
+              condition: [{
+                selection: "highlight",
+                value: 1
+              },              
+              {
+                selection: "select",
+                value: 1
+              }],
+              value: 0
             }
           }
-        },
-        y: {
-          field: "logPValue",
-          type: "quantitative",
-          axis: {
-            title: "-log10(p value)"
-          }
-        },
-        size: {
-          field: "depth",
-          sort: "descending",
-          scale: {
-            domain: [3, 2, 1]
-          }
-        },
-        stroke: {
-          field: "significance",
-          type: "nominal",
-          scale: {
-            domain: [0, 1, 2],
-            range: ["#666", "#2166ac", "#b2182b"]
-          }
-        },
-        strokeWidth: {
-          condition: {
-            selection: "highlight",
-            value: 4
-          },
-          value: 2
-        },
-        tooltip: [ 
-          { field: "name", title: "name" },
-          { field: "foldChange", title: "fold change" },
-          { field: "pValue", title: "p value" }
-        ]
-      }
+        }
+      ]
     }
   ]
 };
