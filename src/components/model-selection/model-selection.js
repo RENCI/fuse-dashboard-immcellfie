@@ -1,6 +1,6 @@
 import React, { useState, useReducer, useContext } from "react";
 import { Row, Col, Card, Collapse, Form, Button, InputGroup } from "react-bootstrap";
-import { ArrowCounterclockwise } from "react-bootstrap-icons";
+import { ArrowCounterclockwise, CaretRight, CaretDown } from "react-bootstrap-icons";
 import { SpinnerButton } from "../spinner-button";
 import { DataContext } from "../../contexts";
 import { api } from "../../api";
@@ -255,7 +255,10 @@ export const ModelSelection = ({ outputName, outputType }) => {
         style={{ cursor: canCollapse ? "pointer" : "default" }}
         onClick={ canCollapse ? onHeaderClick : null }
       >
-        CellFIE Parameters
+        { !canCollapse ? null : 
+          collapse ? <CaretRight className="mb-1 text-muted" /> : 
+          <CaretDown className="mb-1 text-muted" /> 
+        } CellFIE Parameters
       </Header>
       <Collapse in={!collapse}>
         <div>

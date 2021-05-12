@@ -11,6 +11,7 @@ const { Group, Label, Control, Row } = Form;
 export const VolcanoVis = ({ data, subgroups }) => {
   const [depth, setDepth] = useState(3);
   const [significanceLevel, setSignificanceLevel] = useState(0.05);
+  const [foldChangeThreshold, setFoldChangeThreshold] = useState(1.5);
 
   const onDepthChange = evt => {
     setDepth(+evt.target.value);
@@ -18,6 +19,10 @@ export const VolcanoVis = ({ data, subgroups }) => {
 
   const onSignificanceLevelChange = evt => {
     setSignificanceLevel(+evt.target.value);
+  };
+
+  const onFoldChangeThresholdChange = evt => {
+    setFoldChangeThreshold(+evt.target.value);
   };
 
   const volcanoData = useMemo(() => {
@@ -32,15 +37,18 @@ export const VolcanoVis = ({ data, subgroups }) => {
         pValue: pValue,
         logPValue: -Math.log10(pValue),
         depth: node.depth,
-        category: pValue > significanceLevel ? "not significant" : foldChange < 1 ? "down" : "up"
+        category: pValue > significanceLevel ? "not significant" :
+          foldChange >= foldChangeThreshold ? "up" :  
+          foldChange <= 1 / foldChangeThreshold ? "down" :
+          "not significant"
       };
     });
-  }, [data, significanceLevel]);
+  }, [data, significanceLevel, foldChangeThreshold]);
 
   const foldChangeExtent = useMemo(() => {
-    const extent = d3.extent(volcanoData, data => data.logFoldChange);
+    const extent = d3.extent(volcanoData, data => data.foldChange);
 
-    return Math.max(Math.abs(extent[0]), Math.abs(extent[1]));
+    return Math.max(1 / Math.abs(extent[0]), Math.abs(extent[1]));
   }, [volcanoData]);
 
   const visibleData = volcanoData.filter(node => node.depth > 0 && node.depth <= depth);
@@ -60,7 +68,7 @@ export const VolcanoVis = ({ data, subgroups }) => {
                 <Label size="sm">Depth: { depth }</Label>        
                 <Control 
                   size="sm"
-                  className="my-1"
+                  className="mt-2"
                   type="range"
                   min={ 1 }
                   max={ 3 }         
@@ -69,16 +77,27 @@ export const VolcanoVis = ({ data, subgroups }) => {
                 />
               </Group>
               <Group as={ Col } controlId="significanceLevelSlider">
-                <Label size="sm">Significance level: { significanceLevel }</Label>        
+                <Label size="sm">Significance level</Label>        
                 <Control 
                   size="sm"
-                  className="my-1"
-                  type="range"
+                  type="number"
                   min={ 0.005 }
-                  max={ 0.1 }   
+                  max={ 1 }  
                   step={ 0.005 }      
                   value={ significanceLevel }
                   onChange={ onSignificanceLevelChange } 
+                />
+              </Group>
+              <Group as={ Col } controlId="foldChangeThresholdSlider">
+                <Label size="sm">Fold change threshold</Label>        
+                <Control 
+                  size="sm"
+                  type="number"
+                  min={ 1 }
+                  max={ Number.MAX_VALUE }   
+                  step={ 0.01 }      
+                  value={ foldChangeThreshold }
+                  onChange={ onFoldChangeThresholdChange } 
                 />
               </Group>
             </Row>
@@ -87,8 +106,9 @@ export const VolcanoVis = ({ data, subgroups }) => {
             spec={ volcanoPlot } 
             data={ visibleData }
             signals={[
-              { name: "foldChangeExtent", value: foldChangeExtent },
-              { name: "logSignificanceLevel", value: -Math.log10(significanceLevel) }
+              { name: "logFoldChangeExtent", value: Math.log10(foldChangeExtent) },
+              { name: "logSignificanceLevel", value: -Math.log10(significanceLevel) },
+              { name: "logFoldChangeThreshold", value: Math.log10(foldChangeThreshold) }
             ]}
           />
         </>

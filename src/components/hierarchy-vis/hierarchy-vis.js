@@ -166,7 +166,7 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
             <Label size="sm">Depth: { depth }</Label>        
             <Control 
               size="sm"
-              className="my-1"
+              className="mt-2"
               type="range"
               min={ 1 }
               max={ 4 }         

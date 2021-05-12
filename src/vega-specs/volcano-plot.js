@@ -8,12 +8,16 @@ export const volcanoPlot = {
   },
   params: [
     {
-      name: "foldChangeExtent",
+      name: "logFoldChangeExtent",
       value: 1
     },
     {
       name: "logSignificanceLevel",
-      value: 2
+      value: 1
+    },
+    {
+      name: "logFoldChangeThreshold",
+      value: 0.2
     }
   ],
   data: {
@@ -46,6 +50,56 @@ export const volcanoPlot = {
       }
     },
     {
+      transform: [
+        {
+          aggregate: [{ 
+            op: "count",
+            as: "count"
+          }]
+        },
+        {
+          calculate: "logFoldChangeThreshold",
+          as: "logFoldChange"
+        },
+      ],
+      mark: {
+        type: "rule",
+        stroke: "#ddd",
+        strokeWidth: 3
+      },
+      encoding: {
+        x: { 
+          field: "logFoldChange",
+          type: "quantitative"
+        }
+      }
+    },
+    {
+      transform: [
+        {
+          aggregate: [{ 
+            op: "count",
+            as: "count"
+          }]
+        },
+        {
+          calculate: "-logFoldChangeThreshold",
+          as: "logFoldChange"
+        },
+      ],
+      mark: {
+        type: "rule",
+        stroke: "#ddd",
+        strokeWidth: 3
+      },
+      encoding: {
+        x: { 
+          field: "logFoldChange",
+          type: "quantitative"
+        }
+      }
+    },
+    {
       layer: [
         {
           selection: {
@@ -67,18 +121,11 @@ export const volcanoPlot = {
               field: "logFoldChange",
               type: "quantitative",
               scale: {
-                domainMin: { expr: "-foldChangeExtent" },
-                domainMax: { expr: "foldChangeExtent" }
+                domainMin: { expr: "-logFoldChangeExtent" },
+                domainMax: { expr: "logFoldChangeExtent" }
               },
               axis: {
-                title: "log10(fold change)",
-                gridWidth: {
-                  condition: {
-                    test: "datum.value === 0", 
-                    value: 3
-                  },
-                  value: 1
-                }
+                title: "log10(fold change)"
               }
             },
             y: {
@@ -101,7 +148,7 @@ export const volcanoPlot = {
               title: "change",
               scale: {
                 domain: ["not significant", "down", "up"],
-                range: ["#666", "#2166ac", "#b2182b"]
+                range: ["#999", "#2166ac", "#b2182b"]
               }
             },
             strokeWidth: {
@@ -121,7 +168,7 @@ export const volcanoPlot = {
               title: "change",
               scale: {
                 domain: ["not significant", "down", "up"],
-                range: ["#666", "#2166ac", "#b2182b"]
+                range: ["#999", "#2166ac", "#b2182b"]
               }
             },
             fillOpacity: {             
