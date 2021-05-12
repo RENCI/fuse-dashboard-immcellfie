@@ -17,14 +17,15 @@ export const OverlapVis = ({ subgroup1, subgroup2, overlap, overlapMethod }) => 
   const incEnd1 = overlapMethod === "both" || overlapMethod === "subgroup1" ? x3 : x2;
   const incStart2 = overlapMethod === "both" || overlapMethod === "subgroup2" ? x2 : x3;
 
-  const yOffset = overlap && overlapMethod === "both" ? 4 : 0;
+  const offsetAmount = 6;
+  const offset1 = overlap && overlapMethod === "both" ? 2 : offsetAmount;
 
   const data = [
-    { type: "all", section: 1, start: x1, end: x2 },
-    { type: "all", section: 2, start: x3, end: x4 },
-    { type: "all", section: 3, start: x2, end: x3 },
-    { type: "included", section: 1, start: x1, end: incEnd1, yOffset: 0 },
-    { type: "included", section: 2, start: incStart2, end: x4, yOffset: yOffset },
+    { type: "all", section: 1, start: x1, end: x2, yOffset: offsetAmount },
+    { type: "all", section: 2, start: x3, end: x4, yOffset: offsetAmount },
+    { type: "all", section: 3, start: x2, end: x3, yOffset: offsetAmount },
+    { type: "included", section: 1, start: x1, end: incEnd1, yOffset: offset1 },
+    { type: "included", section: 2, start: incStart2, end: x4, yOffset: offsetAmount },
   ];
 
   if (x2 - x1 > 0 || overlapMethod === "neither" || overlapMethod === "subgroup2") {

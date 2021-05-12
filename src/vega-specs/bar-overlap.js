@@ -1,11 +1,14 @@
 export const barOverlap = {
   $schema: "https://vega.github.io/schema/vega-lite/v4.json",
   width: "container",
-  height: 30,
+  height: 35,
   padding: 0,
   autosize: {
     resize: true,
     contains: "padding"
+  },
+  view: {
+    stroke: "none"
   },
   params: [
     {
@@ -37,6 +40,8 @@ export const barOverlap = {
           field: "end",
           type: "quantitative"
         },
+        y: { value: { expr: "datum.yOffset" } },
+        y2: { value: { expr: "height - datum.yOffset" } },
         color: { 
           field: "section",
           scale: { 
