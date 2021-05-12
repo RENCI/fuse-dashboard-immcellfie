@@ -1,130 +1,58 @@
-import React, { useContext, useReducer, useEffect} from "react";
-import { Card, Form, Row, Col } from "react-bootstrap";
-import { CheckCircle } from "react-bootstrap-icons";
+import React, { useContext, useState, useEffect} from "react";
+import { Row, Col, Card, Button, ListGroup, ListGroupItem } from "react-bootstrap";
+import { PlusCircle} from "react-bootstrap-icons";
 import { DataContext } from "../../contexts";
+import { Subgroup } from "../subgroup";
+import { CellfieLink } from "../page-links";
 
-const { Title, Body } = Card;
-const { Label, Group, Control } = Form;
-
-const excludedPhenotypes = [
-  "participant_id",
-  "biosample_accession"
-];
-
-const timeSort = {
-  Hours: 0,
-  Days: 1,
-  Months: 2,
-  Years: 3
-};
+const { Header, Body, Footer } = Card;
 
 export const DataGrouping = () => {
-  const [{ output, phenotypes }, dataDispatch] = useContext(DataContext);
-  const [ state, dispatch ] = useReducer((state, action) => {
-    switch (action.type) {
-      case "initialize":
-        const initializeGroup = phenotypeValues => (
-          phenotypeValues.map(({ name, values }) => ({
-            name: name,
-            values: [...values],
-            value: "Any"
-          }))
-        );
-
-        return [
-          initializeGroup(action.phenotypeValues),
-          initializeGroup(action.phenotypeValues)
-        ];
-
-      case "setValue":               
-        const newState = [...state];
-
-        const phenotype = newState[action.group].find(({ name }) => name === action.phenotype);
-        
-        if (!phenotype) return state;
-
-        phenotype.value = action.value;
-
-        return newState;
-  
-      default:
-        console.log("Invalid group action");
-    }
-  }, []);
+  const [{ subgroups }, dataDispatch] = useContext(DataContext);
+  const [newAdded, setNewAdded] = useState(false);  
 
   useEffect(() => {
-    const phenotypeValues = !phenotypes ? [] :
-      phenotypes.columns
-        .filter(column => !excludedPhenotypes.includes(column))
-        .map(column => {
-          const values = Array.from(phenotypes.reduce((values, row) => {
-            values.add(row[column]);
-            return values;
-          }, new Set()));
+    setNewAdded(false);
+  }, []);
 
-          const numeric = values.reduce((numeric, value) => numeric && !isNaN(value), true);
+  const onAddClick = () => {
+    dataDispatch({ type: "addSubgroup" });
 
-          if (numeric) {
-            values.forEach((value, i, values) => values[i] = +values[i]);
-            values.sort((a, b) => a - b);
-          }
-          else if (column === "study_time_collected_unit") {
-            values.sort((a, b) => timeSort[a] - timeSort[b]);
-          }
-          else {
-            values.sort();
-          }
-
-          return {
-            name: column,
-            values: values
-          };
-        });
-
-    dispatch({ type: "initialize", phenotypeValues: phenotypeValues });
-  }, [phenotypes])
-
-  const onGroupControlChange = (group, phenotype, value) => {
-    dispatch({ type: "setValue", group: group, phenotype: phenotype, value: value })
+    setNewAdded(true);
   };
-
-  const nameLabel = name => (name[0].toUpperCase() + name.substring(1)).replace(/_/gi, " ");
-
-  const groupControls = (group, i) => (
-    <Col key={ i }>
-      <h6>Group { i + 1 }</h6>
-      { group.map((phenotype, j) => (
-        <Group key={ j } controlId={ phenotype.name + "_" + i + "_select" }>
-          <Label>
-            <small className={ phenotype.value === "Any" ? null : "font-weight-bold" }>
-              { nameLabel(phenotype.name) }
-            </small>
-          </Label>
-          <Control 
-            as="select"              
-            size="sm"
-            value={ phenotype.value }
-            onChange={ evt => onGroupControlChange(i, phenotype.name, evt.target.value )}
-          >
-            <option>Any</option>
-            <option disabled>──────────</option>
-            { phenotype.values.map((value, k) => (
-              <option key={ k }>{ value }</option>
-            ))}
-          </Control>
-        </Group>      
-      )) }
-    </Col>
-  );
 
   return (
     <Card>
-      <Body>
-        <Title>Data Grouping</Title>
+      <Header as="h5">
+        Data Grouping
+      </Header>
+      <ListGroup className="list-group-flush">
+        { subgroups.map((subgroup, i, a) => (
+          <ListGroupItem key={ subgroup.key }>
+            <Subgroup 
+              all={ subgroups[0] }
+              subgroup={ subgroup } 
+              isNew={ newAdded && i === a.length - 1 } 
+            />
+          </ListGroupItem>
+        ))}
+      </ListGroup>
+      <Footer>
         <Row>
-          { state.map(groupControls) }
+          <Col>
+            <Button
+              variant="outline-primary"
+              onClick={ onAddClick }
+            >
+              <PlusCircle className="mb-1 mr-1" />
+              Add subgroup
+            </Button>
+          </Col>
+          <Col className="text-right">
+            <CellfieLink />
+          </Col>
         </Row>
-      </Body>
+      </Footer>
     </Card>
   );
-};           
+};

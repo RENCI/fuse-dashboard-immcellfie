@@ -1,14 +1,15 @@
 import React, { useState, useContext } from "react";
-import { Card, Form, InputGroup, Alert } from "react-bootstrap";
+import { Card, Form, InputGroup, Alert, Row, Col } from "react-bootstrap";
 import { SpinnerButton } from "../spinner-button";
 import { DataContext } from "../../contexts";
+import { CellfieLink, SubgroupsLink, ExpressionLink } from "../page-links";
 import { api } from "../../api";
 
-const { Title, Body } = Card;
+const { Header, Body, Footer } = Card;
 const { Label, Group, Control, Text } = Form;
 
-export const DataSelection = ({ inputName, phenotypeName }) => {
-  const [, dataDispatch] = useContext(DataContext);
+export const DataSelection = ({ phenotypeName }) => {
+  const [{ phenotypeData }, dataDispatch] = useContext(DataContext);
   const [id, setId] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -37,25 +38,26 @@ export const DataSelection = ({ inputName, phenotypeName }) => {
 
   const onLoadPracticeClick = async () => {
     setLoading(true);
+    setMessage();
 
     dataDispatch({ type: "clearData" });
 
-    const input = await api.loadPracticeData(inputName);
-    const phenotypes = await api.loadPracticeData(phenotypeName);
+    const data = await api.loadPracticeData(phenotypeName);
 
-    dataDispatch({ type: "setInput", file: input });
-    dataDispatch({ type: "setPhenotypes", file: phenotypes });
+    dataDispatch({ type: "setPhenotypes", file: data });
 
     setLoading(false);
-    setMessage("Practice input data loaded");
+    setMessage("Practice data loaded");
   };
 
   const disabled = loading || submitting;
 
   return (
     <Card>
+      <Header as="h5">
+        Data Selection
+      </Header>
       <Body>
-        <Title>Data Selection</Title>
         <Group>        
           <Label>
             Load ImmuneSpace dataset ID
@@ -97,6 +99,21 @@ export const DataSelection = ({ inputName, phenotypeName }) => {
           </Group>  
         }
       </Body>
+      { phenotypeData &&
+        <Footer>
+          <Row>
+            <Col className="text-center">
+              <CellfieLink />
+            </Col>
+            <Col className="text-center">
+              <SubgroupsLink />
+            </Col>
+            <Col className="text-center">
+              <ExpressionLink />
+            </Col>
+          </Row>
+        </Footer>
+      }
     </Card>
   );
 };           

@@ -4,7 +4,12 @@ import * as d3 from "d3";
 import { voronoiTreemap as d3VoronoiTreemap } from "d3-voronoi-treemap";
 import { VegaWrapper } from "../vega-wrapper";
 import { VegaTooltip } from "../vega-tooltip";
-import { treemap, enclosure, voronoiTreemap } from "../../vega-specs";
+import { 
+  treemap, treemapComparison, 
+  enclosure, enclosureComparison, 
+  voronoiTreemap, voronoiTreemapComparison 
+} from "../../vega-specs";
+import { sequential, diverging } from "../../colors";
 import { LoadingSpinner } from "../loading-spinner";
 import "./hierarchy-vis.css";
 
@@ -14,38 +19,36 @@ const visualizations = [
   {
     name: "treemap",
     label: "Treemap",
-    spec: treemap
+    spec: treemap,
+    comparisonSpec: treemapComparison
   },
   {
     name: "enclosure",
     label: "Enclosure diagram",
-    spec: enclosure
+    spec: enclosure,
+    comparisonSpec: enclosureComparison
   },
   {
     name: "voronoi",
     label: "Voronoi treemap",
-    spec: voronoiTreemap
+    spec: voronoiTreemap,
+    comparisonSpec: voronoiTreemapComparison
   }
 ];
 
-const valueColorMaps = [
-  "lightgreyred",
-  "yellowgreenblue"
-];
-
-const changeColorMaps = [
-  "blueorange"
-];
-
-export const HierarchyVis = ({ data, tree, hasGroups }) => {
+export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
   const [loading, setLoading] = useState(true);
   const [depth, setDepth] = useState(1);
+  const [subgroup, setSubgroup] = useState("1");
   const [value, setValue] = useState("score");
-  const [scaleType, setScaleType] = useState("linearScale");
-  const [colorMaps, setColorMaps] = useState(valueColorMaps);
-  const [colorMap, setColorMap] = useState(colorMaps[0]);
+  const [colors, setColors] = useState(sequential);
+  const [color, setColor] = useState(sequential[0]);
   const [vis, setVis] = useState(visualizations[0]);
   const vegaRef = useRef();
+
+  const hasSubgroups = subgroups[1] !== null;
+
+  const isComparison = subgroup === "comparison";
 
   const onVisChange = evt => {
     setLoading(true);
@@ -55,18 +58,26 @@ export const HierarchyVis = ({ data, tree, hasGroups }) => {
     setVis(vis);
   };
 
+  const onSubgroupChange = evt => {
+    const value = evt.target.value;
+
+    setSubgroup(value);
+
+    const colors = value === "comparison" ? diverging : sequential; 
+
+    setColors(colors);
+
+    if (!colors.includes(color)) setColor(colors[0]);
+  };
+
   const onValueChange = evt => {
     const value = evt.target.value;
 
-    const isChange = value.includes("Change");
-
-    const colorMaps = isChange ? changeColorMaps : valueColorMaps;
-
     setValue(value);
-    setScaleType(isChange ? "logScale" : "linearScale");
-    setColorMaps(colorMaps);
+  };
 
-    if (!colorMaps.includes(colorMap)) setColorMap(colorMaps[0]);
+  const onColorMapChange = evt => {
+    setColor(colors.find(({ scheme }) => scheme === evt.target.value));
   };
 
   useEffect(() => {
@@ -110,20 +121,27 @@ export const HierarchyVis = ({ data, tree, hasGroups }) => {
   const logRange = values => {
     const extent = d3.extent(values);
 
-    const max = Math.max(1 / extent[0], extent[1]);
+    const max = extent[0] > 0 ? Math.max(1 / extent[0], extent[1]) : extent[1];
 
     return [1 / max, max];
   };
 
-  const domain = value === "activity" ? [0, 1] :
-    value.includes("Change") ? logRange(tree.descendants().filter(d => d.depth === depth).map(d => d.data[value])) :
-    d3.extent(tree.descendants().filter(d => d.depth === depth), d => d.data[value]);
+  const valueField = isComparison ? value + "FoldChange" : value + subgroup;
+
+  const domain = isComparison ? logRange(tree.descendants().filter(d => d.depth === Math.min(depth, 3)).map(d => d.data[valueField])) :
+    value === "activity" ? [0, 1] :
+    d3.extent(d3.merge(tree.descendants().filter(d => d.depth === depth).map(d => [d.data.score1, d.data.score2])));
+
+  const subtitle = isComparison ? 
+    (subgroups[0].name + " vs. " + subgroups[1].name) : 
+    subgroup === "1" ? subgroups[0].name : 
+    subgroups[1].name;
 
   return (
     <>
-      <Form className="mb-4">
+      <div className="mb-4">
         <Row>
-          <Group as={ Col }>
+          <Group as={ Col } controlId="visualizationButtons">
             <ToggleButtonGroup 
               type="radio"
               name="visButtons"
@@ -144,7 +162,7 @@ export const HierarchyVis = ({ data, tree, hasGroups }) => {
           </Group>
         </Row>
         <Row>
-          <Group as={ Col }>
+          <Group as={ Col } controlId="depthSlider">
             <Label size="sm">Depth: { depth }</Label>        
             <Control 
               size="sm"
@@ -156,48 +174,71 @@ export const HierarchyVis = ({ data, tree, hasGroups }) => {
               onChange={ evt => setDepth(+evt.target.value) } 
             />
           </Group>
-          <Group as={ Col }>
+          <Group as={ Col } controlId="subgroupSelect">
+            <Label size="sm">Subgroup</Label>
+            <Control
+              size="sm"
+              as="select"
+              value={ subgroup }
+              onChange={ onSubgroupChange }          
+            >
+              <option value="1">{ subgroups[0].name }</option>
+              { hasSubgroups && <option value="2">{ subgroups[1].name }</option> }
+              { hasSubgroups && <option value="comparison">comparison</option> }
+            </Control>
+          </Group>
+          <Group as={ Col } controlId="valueSelect">
             <Label size="sm">Value</Label>
             <Control
               size="sm"
               as="select"
               value={ value }
               onChange={ onValueChange }          
-            >
+            >                          
               <option value="score">score</option>
               <option value="activity">activity</option>
-              <option disabled={ !hasGroups } value="scoreFoldChange">score fold change</option>
-              <option disabled={ !hasGroups } value="activityFoldChange">activity fold change</option>
             </Control>
           </Group>
-          <Group as={ Col }>
-          <Label size="sm">Color scheme</Label>
+          <Group as={ Col } controlId="colorMapSelect">
+            <Label size="sm">Color map</Label>
             <Control
               size="sm"
               as="select"
-              value={ colorMap }
-              onChange={ evt => setColorMap(evt.target.value) }          
+              value={ color.scheme }
+              onChange={ onColorMapChange }          
             >
-              { colorMaps.map((colorMap, i) => (
-                <option key={ i }>{ colorMap }</option>
+              { colors.map(({ scheme, name }, i) => (
+                <option key={ i } value={ scheme }>{ name }</option>
               ))}
             </Control>
           </Group>
         </Row>
-      </Form>
+      </div>
       <div ref={vegaRef }>
         { loading ? <LoadingSpinner /> : 
           <VegaWrapper
-            spec={ vis.spec }
-            data={ vis.spec === voronoiTreemap ? tree.descendants() : data }
+            spec={ isComparison ? vis.comparisonSpec : vis.spec }
+            data={ vis.name === "voronoi" ? tree.descendants() : hierarchy }
             signals={[
+              { name: "subtitle", value: subtitle },
               { name: "depth", value: depth },
-              { name: "value", value: value },
-              { name: "scaleType", value: scaleType },
-              { name: "colorScheme", value: colorMap },
+              { name: "value", value: valueField },
+              { name: "colorScheme", value: color.scheme },
+              { name: "reverseColors", value: color.reverse },
+              { name: "highlightColor", value: color.highlight },
+              { name: "inconclusiveColor", value: color.inconclusive },
               { name: "domain", value: domain }
             ]}
-            tooltip={ <VegaTooltip /> }
+            tooltip={ 
+              <VegaTooltip 
+                subgroup={ subgroup } 
+                subgroupName={ isComparison ? 
+                  [subgroups[0].name, subgroups[1].name] : 
+                  subgroup === "1" ? subgroups[0].name : 
+                  subgroups[1].name
+                } 
+              /> 
+            }
           />
         }
       </div>

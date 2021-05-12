@@ -2,7 +2,10 @@ export const enclosure = {
   $schema: "https://vega.github.io/schema/vega/v5.json",
   width: { signal: "containerWidth" },
   height: { signal: "containerWidth" },
-  title: { text: "Metabolic task enclosure diagram" },
+  title: { 
+    text: "Metabolic task enclosure diagram",
+    subtitle: { signal: "subtitle" }
+  },
   autosize: {
     type: "fit",
     resize: true
@@ -28,6 +31,10 @@ export const enclosure = {
       ]
     },
     {
+      name: "subtitle",
+      value: ""
+    },
+    {
       name: "depth",
       value: 1
     },      
@@ -38,6 +45,18 @@ export const enclosure = {
     {
       name: "colorScheme",
       value: "lightgreyred"
+    },
+    { 
+      name: "reverseColors",
+      value: false
+    },
+    {
+      name: "highlightColor",
+      value: "#2171b5",
+    },
+    {
+      name: "inconclusiveColor",
+      value: "#c6dbef",
     },
     {
       name: "domain",
@@ -104,7 +123,14 @@ export const enclosure = {
       name: "color",
       type: "linear",
       domain: { signal: "domain" },
-      range: { scheme: { signal: "colorScheme" } }
+      range: { scheme: { signal: "colorScheme" } },
+      reverse: { signal: "reverseColors" }
+    },
+    {
+      name: "specialValues",
+      type: "ordinal",
+      domain: ["inconclusive"],
+      range: { signal: "[inconclusiveColor]" }
     },
     {
       name: "stroke",
@@ -122,7 +148,11 @@ export const enclosure = {
   legends: [
     {
       fill: "color",
-      title: { signal: "value" }
+      title: { signal: "slice(value, 0, -1)" }
+    },
+    { 
+      fill: "specialValues",
+      symbolStrokeColor: "#ddd"
     }
   ],
   marks: [
@@ -135,12 +165,21 @@ export const enclosure = {
           fill: [
             {
               test: "!isValid(datum[value])",
-              value: "#c6dbef"
+              signal: "scale('specialValues', 'inconclusive')"
             },
             {
               scale: "color",
               field: { signal: "value" }
             }            
+          ],
+          fillOpacity: [
+            {
+              test: "datum[value] === 'na'",
+              value: 0,
+            },
+            {
+              value: 1
+            }
           ],
           stroke: { 
             scale: "stroke",
@@ -175,7 +214,7 @@ export const enclosure = {
           tooltip: { signal: "datum" }
         },
         hover: {
-          stroke: { signal: "colorScheme === 'lightgreyred' ? '#2171b5' : '#a50f15'" }
+          stroke: { signal: "highlightColor" }
         }
       }
     },

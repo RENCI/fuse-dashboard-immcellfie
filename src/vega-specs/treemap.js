@@ -2,7 +2,10 @@ export const treemap = {
   $schema: "https://vega.github.io/schema/vega/v5.json",
   width: { signal: "containerWidth" },
   height: { signal: "containerWidth" },
-  title: { text: "Metabolic task treemap" },
+  title: { 
+    text: "Metabolic task treemap",
+    subtitle: { signal: "subtitle" }
+  },
   autosize: {
     type: "fit",
     resize: true
@@ -28,6 +31,10 @@ export const treemap = {
       ]
     },
     {
+      name: "subtitle",
+      value: ""
+    },
+    {
       name: "depth",
       value: 1
     },      
@@ -36,12 +43,20 @@ export const treemap = {
       value: "score"
     },
     {
-      name: "scaleType",
-      value: "linear"
-    },
-    {
       name: "colorScheme",
       value: "lightgreyred"
+    },
+    { 
+      name: "reverseColors",
+      value: false
+    },
+    {
+      name: "highlightColor",
+      value: "#2171b5",
+    },
+    {
+      name: "inconclusiveColor",
+      value: "#c6dbef",
     },
     {
       name: "domain",
@@ -109,17 +124,17 @@ export const treemap = {
   ],
   scales: [
     {
-      name: "linearScale",
+      name: "color",
       type: "linear",
       domain: { signal: "domain" },
-      range: { scheme: { signal: "colorScheme" } }
+      range: { scheme: { signal: "colorScheme" } },
+      reverse: { signal: "reverseColors" }
     },
     {
-      name: "logScale",
-      type: "log",
-      base: 2,
-      domain: { signal: "domain" },
-      range: { scheme: { signal: "colorScheme" } }
+      name: "specialValues",
+      type: "ordinal",
+      domain: ["inconclusive"],
+      range: { signal: "[inconclusiveColor]" }
     },
     {
       name: "stroke",
@@ -136,12 +151,12 @@ export const treemap = {
   ],
   legends: [
     {
-      fill: "linearScale",
-      title: { signal: "value" }
+      fill: "color",
+      title: { signal: "slice(value, 0, -1)" }
     },
-    {
-      fill: "logScale",
-      title: { signal: "value" }
+    { 
+      fill: "specialValues",
+      symbolStrokeColor: "#ddd"
     }
   ],
   marks: [
@@ -153,19 +168,22 @@ export const treemap = {
         update: {
           fill: [
             {
-              test: "!isValid(datum[value]) && colorScheme === 'blueorange'",
-              //value: "#ccc"
-              value: "#fff"
-            },
-            {
               test: "!isValid(datum[value])",
-              //value: "#c6dbef"
-              value: "#fff"
+              signal: "scale('specialValues', 'inconclusive')"
             },
             {
-              scale: { signal: "scaleType" },
+              scale: "color",
               field: { signal: "value" }
-            }            
+            }                        
+          ],
+          fillOpacity: [
+            {
+              test: "datum[value] === 'na'",
+              value: 0,
+            },
+            {
+              value: 1
+            }
           ],
           stroke: { 
             scale: "stroke",
@@ -202,7 +220,7 @@ export const treemap = {
           tooltip: { signal: "datum" }
         },
         hover: {
-          stroke: { signal: "colorScheme === 'lightgreyred' ? '#2171b5' : '#a50f15'" }
+          stroke: { signal: "highlightColor" }
         }
       }
     },

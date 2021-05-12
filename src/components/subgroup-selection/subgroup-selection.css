@@ -1,0 +1,8 @@
+.subgroupIndicator {
+  width: calc(100% - 2px);
+  margin-left: 1px;
+  height: 0;
+  border-width: 1px;
+  border-style: solid;
+  margin-top: -3px
+}

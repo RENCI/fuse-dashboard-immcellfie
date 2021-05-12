@@ -4,9 +4,9 @@ import vegaEmbed from "vega-embed";
 import { LoadingSpinner } from "../loading-spinner";
 import "./vega-wrapper.css";
 
-export const VegaWrapper = ({ options, spec, data, signals, tooltip }) => {
-  const view = useRef(null);
+export const VegaWrapper = ({ options, spec, data, signals, eventListeners, tooltip, spinner }) => {
   const div = useRef(null);
+  const view = useRef(null);
   const [tooltipProps, setTooltipProps] = useState(null);
 
   const setSignals = (view, signals) => {
@@ -15,6 +15,12 @@ export const VegaWrapper = ({ options, spec, data, signals, tooltip }) => {
     });
   };  
 
+  const setEventListeners = (view, eventListeners) => {
+    eventListeners.forEach(({ type, callback }) => {
+      view.addEventListener(type, callback);
+    });
+  };
+
   const tooltipCallback = (handler, event, item, value) => {
     setTooltipProps({
       handler: handler,
@@ -22,19 +28,65 @@ export const VegaWrapper = ({ options, spec, data, signals, tooltip }) => {
       item: item,
       value: value
     });
-  };
+  }; 
 
+  // Initial effect when mounting
   useEffect(() => {
-    // Remove old visualization
-    if (view.current) {
-      view.current.finalize();
-    }
+    if (view.current) return;
 
     // Create new visualization
     vegaEmbed(div.current, spec, options).then(result => {
       view.current = result.view;
 
       setSignals(view.current, signals);
+      setEventListeners(view.current, eventListeners);
+
+      if (tooltip) {
+        view.current.tooltip(tooltipCallback);
+      }
+
+      view.current
+        .data("data", data)              
+        .runAsync();
+    });
+
+    return () => {
+      // Clean up
+      if (view.current) view.current.finalize();
+    };
+  }, []);
+  
+  // Update signals
+  useEffect(() => {
+    if (!view.current) return;
+
+    setSignals(view.current, signals);
+
+    view.current.runAsync();
+  }, [signals]);
+  
+  // Update data
+  useEffect(() => {
+    if (!view.current) return;
+
+    view.current
+      .data("data", data)              
+      .runAsync();
+  }, [data]);
+
+  // Update spec
+  // XXX: Look into better way to update spec without creating new view
+  useEffect(() => {
+    if (!view.current) return;
+
+    const oldView = view.current;
+
+    // Create new visualization
+    vegaEmbed(div.current, spec, options).then(result => {
+      view.current = result.view;
+
+      setSignals(view.current, signals);
+      setEventListeners(view.current, eventListeners);
 
       if (tooltip) {
         view.current.tooltip(tooltipCallback);
@@ -43,21 +95,10 @@ export const VegaWrapper = ({ options, spec, data, signals, tooltip }) => {
       view.current
         .data("data", data)              
         .run();
+
+      if (oldView) oldView.finalize();
     });
-
-    return () => {
-      // Clean up
-      if (view.current) view.current.finalize();
-    };
-  }, [spec, data, options, signals, tooltip]);
-
-  useEffect(() => {
-    if (!view.current) return;
-
-    setSignals(view.current, signals);
-
-    view.current.runAsync();
-  }, [signals]);
+  }, [spec]);
 
   return (
     <>
@@ -66,7 +107,7 @@ export const VegaWrapper = ({ options, spec, data, signals, tooltip }) => {
         className="wrapperDiv"
         style={{ height: "auto" }}
       >
-        <LoadingSpinner />
+        { spinner && <LoadingSpinner /> }
       </div>
       { tooltip && React.cloneElement(tooltip, tooltipProps) }
     </>
@@ -85,7 +126,9 @@ VegaWrapper.defaultProps = {
   },
   data: [],
   signals: [],
-  tooltip: null
+  eventListeners: [],
+  tooltip: null,
+  spinner: true
 };
 
 VegaWrapper.propTypes = {
@@ -93,5 +136,7 @@ VegaWrapper.propTypes = {
   options: PropTypes.object,
   data: PropTypes.array,
   signals: PropTypes.array,
-  tooltip: PropTypes.element
+  eventListeners: PropTypes.array,
+  tooltip: PropTypes.element,
+  spinner: PropTypes.bool
 };
