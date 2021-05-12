@@ -65,6 +65,7 @@ export const CellfieOutput = () => {
                 <Pane eventKey="volcano">
                   <VolcanoVis
                     data={ tree.descendants() }
+                    subgroups={ currentSubgroups }
                   />
                 </Pane>
                 <Pane eventKey="escher">

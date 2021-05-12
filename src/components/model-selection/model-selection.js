@@ -93,7 +93,7 @@ const initialParameters = [
     range: [0, Number.MAX_SAFE_INTEGER]
   },
   {
-    label: "High percentile",
+    label: "High value",
     name: "high_value",
     type: "local",
     flag: "--high",
