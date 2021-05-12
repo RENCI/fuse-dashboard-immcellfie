@@ -5,7 +5,7 @@ import { DataContext } from "../../contexts";
 import { Subgroup } from "../subgroup";
 import { CellfieLink } from "../page-links";
 
-const { Title, Body, Footer } = Card;
+const { Header, Body, Footer } = Card;
 
 export const DataGrouping = () => {
   const [{ subgroups }, dataDispatch] = useContext(DataContext);
@@ -23,9 +23,9 @@ export const DataGrouping = () => {
 
   return (
     <Card>
-      <Body>
-        <Title>Data Grouping</Title>
-      </Body>
+      <Header as="h5">
+        Data Grouping
+      </Header>
       <ListGroup className="list-group-flush">
         { subgroups.map((subgroup, i, a) => (
           <ListGroupItem key={ subgroup.key }>

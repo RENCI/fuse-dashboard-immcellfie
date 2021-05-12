@@ -8,7 +8,8 @@ const PageLink = ({ text, icon, page }) => {
 
   return (
     <Button 
-      variant="link"       
+      variant="link"
+      className="py-0"
       onClick={ () => history.push("/" + page) }
     >
       { React.cloneElement(icon, { className: "mr-2 mb-1" }) }

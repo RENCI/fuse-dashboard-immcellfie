@@ -2,14 +2,13 @@ import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
 import * as d3 from "d3";
 import { Card, Button } from "react-bootstrap";
-import { HouseDoor } from "react-bootstrap-icons";
 import { DataContext } from "../contexts";
 import { VegaWrapper } from "../components/vega-wrapper";
 import { expressionHeatmap } from "../vega-specs";
 import { DataMissing } from "../components/data-missing";
 import { api } from "../api";
 
-const { Title, Body } = Card;
+const { Header, Body } = Card;
 
 const practiceData = {
   input: "HPA.tsv"
@@ -59,8 +58,10 @@ export const InputView = ({ inputName }) => {
             </Button>
           </>:
         <Card>
+          <Header as="h5">
+            Expression Data
+          </Header>
           <Body>
-            <Title>Expression Data</Title>
             <VegaWrapper 
               spec={ expressionHeatmap } 
               data={ heatmapData } 

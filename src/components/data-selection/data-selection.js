@@ -5,7 +5,7 @@ import { DataContext } from "../../contexts";
 import { CellfieLink, SubgroupsLink, ExpressionLink } from "../page-links";
 import { api } from "../../api";
 
-const { Title, Body, Footer } = Card;
+const { Header, Body, Footer } = Card;
 const { Label, Group, Control, Text } = Form;
 
 export const DataSelection = ({ phenotypeName }) => {
@@ -54,8 +54,10 @@ export const DataSelection = ({ phenotypeName }) => {
 
   return (
     <Card>
+      <Header as="h5">
+        Data Selection
+      </Header>
       <Body>
-        <Title>Data Selection</Title>
         <Group>        
           <Label>
             Load ImmuneSpace dataset ID

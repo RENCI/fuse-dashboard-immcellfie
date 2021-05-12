@@ -7,7 +7,7 @@ import { OverlapVis } from "../overlap-vis";
 import { subgroupColors } from "../../colors";
 import "./subgroup-selection.css";
 
-const { Title, Body } = Card;
+const { Header, Body } = Card;
 const { Group, Label, Control } = Form;
 const { color1, color2 } = subgroupColors;
 
@@ -62,15 +62,17 @@ export const SubgroupSelection = () => {
 
   return (
     <Card className="mt-4">
-      <Body>
+      <Header as="h5">
         <Row>
           <Col>
-            <Title>Select Subgroups to Compare</Title>
+            Select Subgroups to Compare
           </Col>
           <Col xs="auto">
             <SubgroupsLink />
           </Col>
         </Row>
+      </Header>
+      <Body>        
         <Row>
           <Group as={ Col } controlId="subgroupSelect1">
             <Control 

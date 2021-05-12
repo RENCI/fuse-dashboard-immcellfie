@@ -6,7 +6,7 @@ import { HeatmapVis } from "../heatmap-vis";
 import { VolcanoVis } from "../volcano-vis";
 import { PathwayVis } from "../pathway-vis";
 
-const { Header, Body } = Card;
+const { Header, Title, Body } = Card;
 const { Item, Link } = Nav;
 const { Container, Content, Pane } = Tab;
 
@@ -27,6 +27,7 @@ export const CellfieOutput = () => {
             unmountOnExit={ true }
           >
             <Header>
+              <Title>CellFIE Output Visualizations</Title>
               <Nav 
                 variant="tabs" 
                 defaultActiveKey="hierarchy"

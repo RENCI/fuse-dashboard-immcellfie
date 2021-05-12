@@ -5,7 +5,7 @@ import { SpinnerButton } from "../spinner-button";
 import { DataContext } from "../../contexts";
 import { api } from "../../api";
 
-const { Title, Body } = Card;
+const { Header, Body } = Card;
 const { Label, Group, Control } = Form;
 const { Append } = InputGroup;
 
@@ -241,8 +241,10 @@ export const ModelSelection = ({ outputName, outputType }) => {
 
   return (
     <Card>
+      <Header as="h5">
+        CellFIE Parameters
+      </Header>
       <Body>
-        <Title>CellFIE Parameters</Title>
         <Row>
           <Col>
             <Group controlId="organism_select">
