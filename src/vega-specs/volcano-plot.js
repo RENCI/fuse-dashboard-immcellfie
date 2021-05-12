@@ -132,6 +132,7 @@ export const volcanoPlot = {
               value: 0
             },
             tooltip: [ 
+              { field: "name", title: "name" },
               { field: "foldChange", title: "fold change" },
               { field: "pValue", title: "p value" }
             ]
@@ -142,7 +143,8 @@ export const volcanoPlot = {
             type: "text",
             align: "center",
             baseline: "bottom",
-            dy: -10
+            dy: -10,
+            limit: 200
           },
           encoding: {
             x: {
