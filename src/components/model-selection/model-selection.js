@@ -1,5 +1,5 @@
 import React, { useState, useReducer, useContext } from "react";
-import { Row, Col, Card, Form, Button, InputGroup } from "react-bootstrap";
+import { Row, Col, Card, Collapse, Form, Button, InputGroup } from "react-bootstrap";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
 import { SpinnerButton } from "../spinner-button";
 import { DataContext } from "../../contexts";
@@ -104,7 +104,8 @@ const initialParameters = [
 ];
 
 export const ModelSelection = ({ outputName, outputType }) => {
-  const [, dataDispatch] = useContext(DataContext);
+  const [{ output }, dataDispatch] = useContext(DataContext);
+  const [collapse, setCollapse] = useState(false);
   const [organism, setOrganism] = useState("human");
   const [currentModels, setCurrentModels] = useState(models.filter(({ organism }) => organism === "human"));
   const [model, setModel] = useState(models.find(({ organism }) => organism === "human"));
@@ -144,6 +145,12 @@ export const ModelSelection = ({ outputName, outputType }) => {
     return organisms;
   }, []);
 
+  const canCollapse = output !== null;
+
+  const onHeaderClick = () => {
+    setCollapse(!collapse);
+  };
+
   const onOrganismChange = evt => {
     const value = evt.target.value;
     const newModels = models.filter(({ organism }) => organism === value);
@@ -179,6 +186,8 @@ export const ModelSelection = ({ outputName, outputType }) => {
 
       setRunning(false);
 //      setMessage("CellFIE output data loaded");
+
+      setTimeout(async () => setCollapse(true), 1000);
     }, 1000);
   };
 
@@ -241,9 +250,15 @@ export const ModelSelection = ({ outputName, outputType }) => {
 
   return (
     <Card>
-      <Header as="h5">
+      <Header 
+        as="h5"
+        style={{ cursor: canCollapse ? "pointer" : "default" }}
+        onClick={ canCollapse ? onHeaderClick : null }
+      >
         CellFIE Parameters
       </Header>
+      <Collapse in={!collapse}>
+        <div>
       <Body>
         <Row>
           <Col>
@@ -308,7 +323,8 @@ export const ModelSelection = ({ outputName, outputType }) => {
             </Group>                        
           </Col>
         </Row>
-      </Body>
+      </Body></div>
+      </Collapse>
     </Card>
   );
 };           
