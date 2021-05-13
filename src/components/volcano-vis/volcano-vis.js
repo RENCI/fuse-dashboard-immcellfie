@@ -48,10 +48,12 @@ export const VolcanoVis = ({ data, subgroups }) => {
   const foldChangeExtent = useMemo(() => {
     const extent = d3.extent(volcanoData, data => data.foldChange);
 
-    return Math.max(1 / Math.abs(extent[0]), Math.abs(extent[1]));
-  }, [volcanoData]);
+    return Math.max(1 / Math.abs(extent[0]), Math.abs(extent[1]), foldChangeThreshold);
+  }, [volcanoData, foldChangeThreshold]);
 
-  const pValueExtent = useMemo(() => d3.min(volcanoData, data => data.pValue), [volcanoData]);
+  const pValueExtent = useMemo(() => {
+    return Math.min(d3.min(volcanoData, data => data.pValue), significanceLevel);
+  }, [volcanoData, significanceLevel]);
 
   const visibleData = volcanoData.filter(node => node.depth > 0 && node.depth <= depth);
 
