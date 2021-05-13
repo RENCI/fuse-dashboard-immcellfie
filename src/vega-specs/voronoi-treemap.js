@@ -1,4 +1,4 @@
-export const voronoiTreemap = {
+const voronoiTreemap = {
   $schema: "https://vega.github.io/schema/vega/v5.json",
   width: { signal: "containerWidth" },
   height: { signal: "containerWidth" },
@@ -40,6 +40,10 @@ export const voronoiTreemap = {
     },      
     {
       name: "value",
+      value: "score"
+    },
+    {
+      name: "legendTitle",
       value: "score"
     },
     {
@@ -136,7 +140,7 @@ export const voronoiTreemap = {
   legends: [
     {
       fill: "color",
-      title: { signal: "slice(value, 0, -1)" }
+      title: { signal: "legendTitle" }
     },
     { 
       fill: "specialValues",
@@ -246,3 +250,12 @@ export const voronoiTreemap = {
     } 
   ]
 };
+
+// Create a copy for version with log scale because you can't set the scale type using a signal/expression...
+const voronoiTreemapLogScale = JSON.parse(JSON.stringify(voronoiTreemap));
+
+const scale = voronoiTreemapLogScale.scales.find(({ name }) => name === "color")
+scale.type = "log";
+scale.base = 2;
+
+export { voronoiTreemap, voronoiTreemapLogScale };

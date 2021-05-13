@@ -243,8 +243,6 @@ const createTree = hierarchy => {
         node.data.allActivities.push([child.data.activity]);
       }
     }); 
-
-    node.data.subjects = d3.range(0, node.data.allScores.length);
   });
 
   tree.eachBefore(node => {
@@ -297,7 +295,7 @@ const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod) => {
       node.data.activity2 = "na";
 
       node.data.scoreFoldChange = "na";
-      node.data.activityFoldChange = "na";
+      node.data.activityChange = "na";
 
       node.data.scorePValue = "na";
 
@@ -354,24 +352,31 @@ const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod) => {
       const foldChange = (a, b) => a === 0 ? 0 : b / a;
 
       node.data.scoreFoldChange = foldChange(node.data.score1, node.data.score2);
-      node.data.activityFoldChange = foldChange(node.data.activity1, node.data.activity2);
+      node.data.activityChange = node.data.activity2 - node.data.activity1;
 
-      const ttestData = d3.range(Math.max(node.data.scores1.length, node.data.scores2.length)).map(index => {
-        const item = {};
-        if (index < node.data.scores1.length) item.subgroup1 = node.data.scores1[index].value;
-        if (index < node.data.scores2.length) item.subgroup2 = node.data.scores2[index].value;
+      if (subjects1.length === subjects2.length &&
+          subjects1.reduce((same, subject1) => subjects2.includes(subject1), true)) {
+        // Subgroups are the same
+        node.data.scorePValue = 1;
+      }
+      else {
+        const ttestData = d3.range(Math.max(node.data.scores1.length, node.data.scores2.length)).map(index => {
+          const item = {};
+          if (index < node.data.scores1.length) item.subgroup1 = node.data.scores1[index].value;
+          if (index < node.data.scores2.length) item.subgroup2 = node.data.scores2[index].value;
 
-        return item;
-      });
+          return item;
+        });
 
-      const stats = new Statistics(ttestData, { subgroup1: "metric", subgroup2: "metric" });
-      const ttest = stats.studentsTTestTwoSamples("subgroup1", "subgroup2", { dependent: true });
+        const stats = new Statistics(ttestData, { subgroup1: "metric", subgroup2: "metric" });
+        const ttest = stats.studentsTTestTwoSamples("subgroup1", "subgroup2", { dependent: true });
 
-      node.data.scorePValue = ttest.pTwoSided;
+        node.data.scorePValue = ttest.pTwoSided;
+      }
     }
     else {
       node.data.scoreFoldChange = null;
-      node.data.activityFoldChange = null;
+      node.data.activityChange = null;
       node.data.scorePValue = null;
     }
   });

@@ -5,9 +5,9 @@ import { voronoiTreemap as d3VoronoiTreemap } from "d3-voronoi-treemap";
 import { VegaWrapper } from "../vega-wrapper";
 import { VegaTooltip } from "../vega-tooltip";
 import { 
-  treemap, treemapComparison, 
-  enclosure, enclosureComparison, 
-  voronoiTreemap, voronoiTreemapComparison 
+  treemap, treemapLogScale, 
+  enclosure, enclosureLogScale, 
+  voronoiTreemap, voronoiTreemapLogScale 
 } from "../../vega-specs";
 import { sequential, diverging } from "../../colors";
 import { LoadingSpinner } from "../loading-spinner";
@@ -20,19 +20,19 @@ const visualizations = [
     name: "treemap",
     label: "Treemap",
     spec: treemap,
-    comparisonSpec: treemapComparison
+    foldChangeSpec: treemapLogScale
   },
   {
     name: "enclosure",
     label: "Enclosure diagram",
     spec: enclosure,
-    comparisonSpec: enclosureComparison
+    foldChangeSpec: enclosureLogScale
   },
   {
     name: "voronoi",
     label: "Voronoi treemap",
     spec: voronoiTreemap,
-    comparisonSpec: voronoiTreemapComparison
+    foldChangeSpec: voronoiTreemapLogScale
   }
 ];
 
@@ -126,16 +126,22 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
     return [1 / max, max];
   };
 
-  const valueField = isComparison ? value + "FoldChange" : value + subgroup;
+  const valueField = !isComparison ? value + subgroup : value === "score" ? "scoreFoldChange" : "activityChange";
 
-  const domain = isComparison ? logRange(tree.descendants().filter(d => d.depth === Math.min(depth, 3)).map(d => d.data[valueField])) :
-    value === "activity" ? [0, 1] :
+  const domain = value === "activity" ? (isComparison ? [-1, 1] : [0, 1]) :
+    isComparison ? logRange(tree.descendants().filter(d => d.depth === Math.min(depth, 3)).map(d => d.data[valueField])) :
     d3.extent(d3.merge(tree.descendants().filter(d => d.depth === depth).map(d => [d.data.score1, d.data.score2])));
 
   const subtitle = isComparison ? 
     (subgroups[0].name + " vs. " + subgroups[1].name) : 
     subgroup === "1" ? subgroups[0].name : 
     subgroups[1].name;
+
+  const legendTitle = isComparison ?
+    (value === "score" ? ["score", "fold change"] : ["activity", "change"]) :
+    value;
+
+  const spec = isComparison && value === "score" ? vis.foldChangeSpec : vis.spec;
 
   return (
     <>
@@ -217,12 +223,13 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
       <div ref={vegaRef }>
         { loading ? <LoadingSpinner /> : 
           <VegaWrapper
-            spec={ isComparison ? vis.comparisonSpec : vis.spec }
+            spec={ spec }
             data={ vis.name === "voronoi" ? tree.descendants() : hierarchy }
             signals={[
               { name: "subtitle", value: subtitle },
               { name: "depth", value: depth },
               { name: "value", value: valueField },
+              { name: "legendTitle", value: legendTitle },
               { name: "colorScheme", value: color.scheme },
               { name: "reverseColors", value: color.reverse },
               { name: "highlightColor", value: color.highlight },

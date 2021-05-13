@@ -61,7 +61,7 @@ export const VegaTooltip = ({ handler, event, item, value, subgroup, subgroupNam
   const isComparison = subgroup === "comparison";
 
   const score = value && (isComparison ? value.scoreFoldChange : value["score" + subgroup]);
-  const activity = value && (isComparison ? value.activityFoldChange : value["activity" + subgroup]);  
+  const activity = value && (isComparison ? value.activityChange : value["activity" + subgroup]);  
   
   const scores = useMemo(() => {
     return isComparison ? compareValues(value, "scores", subgroupName) : subgroupValues(value, "scores" + subgroup);
@@ -96,7 +96,7 @@ export const VegaTooltip = ({ handler, event, item, value, subgroup, subgroupNam
               { (isComparison ? "Score fold change: " : "Mean score: ") + formatNumber(score) }
             </div>
             <div>
-              { (isComparison ? "Activity fold change: " : "Mean activity: ") + formatNumber(activity) }
+              { (isComparison ? "Activity change: " : "Mean activity: ") + formatNumber(activity) }
             </div>
           </div>
           <hr className="my-1"/>

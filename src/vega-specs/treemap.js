@@ -1,4 +1,4 @@
-export const treemap = {
+const treemap = {
   $schema: "https://vega.github.io/schema/vega/v5.json",
   width: { signal: "containerWidth" },
   height: { signal: "containerWidth" },
@@ -40,6 +40,10 @@ export const treemap = {
     },      
     {
       name: "value",
+      value: "score"
+    },
+    {
+      name: "legendTitle",
       value: "score"
     },
     {
@@ -152,7 +156,7 @@ export const treemap = {
   legends: [
     {
       fill: "color",
-      title: { signal: "slice(value, 0, -1)" }
+      title: { signal: "legendTitle" }
     },
     { 
       fill: "specialValues",
@@ -247,3 +251,12 @@ export const treemap = {
     }
   ]
 };
+
+// Create a copy for version with log scale because you can't set the scale type using a signal/expression...
+const treemapLogScale = JSON.parse(JSON.stringify(treemap));
+
+const scale = treemapLogScale.scales.find(({ name }) => name === "color")
+scale.type = "log";
+scale.base = 2;
+
+export { treemap, treemapLogScale };

@@ -5,7 +5,7 @@ import { DataContext } from "../../contexts";
 import { Subgroup } from "../subgroup";
 import { CellfieLink } from "../page-links";
 
-const { Header, Body, Footer } = Card;
+const { Header, Footer } = Card;
 
 export const DataGrouping = () => {
   const [{ subgroups }, dataDispatch] = useContext(DataContext);

@@ -1,4 +1,4 @@
-export const enclosure = {
+const enclosure = {
   $schema: "https://vega.github.io/schema/vega/v5.json",
   width: { signal: "containerWidth" },
   height: { signal: "containerWidth" },
@@ -40,6 +40,10 @@ export const enclosure = {
     },      
     {
       name: "value",
+      value: "score"
+    },
+    {
+      name: "legendTitle",
       value: "score"
     },
     {
@@ -148,7 +152,7 @@ export const enclosure = {
   legends: [
     {
       fill: "color",
-      title: { signal: "slice(value, 0, -1)" }
+      title: { signal: "legendTitle" }
     },
     { 
       fill: "specialValues",
@@ -240,4 +244,13 @@ export const enclosure = {
       }
     }
   ]
-}
+};
+
+// Create a copy for version with log scale because you can't set the scale type using a signal/expression...
+const enclosureLogScale = JSON.parse(JSON.stringify(enclosure));
+
+const scale = enclosureLogScale.scales.find(({ name }) => name === "color")
+scale.type = "log";
+scale.base = 2;
+
+export { enclosure, enclosureLogScale };

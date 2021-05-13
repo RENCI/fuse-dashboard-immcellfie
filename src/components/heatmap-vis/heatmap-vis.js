@@ -48,7 +48,7 @@ export const HeatmapVis = ({ data, subgroups }) => {
     };
 
     return getValues(0).concat(getValues(1));
-  }, [data, depth, value]);
+  }, [data, subgroups, depth, value]);
 
   return (
     <>

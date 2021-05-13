@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-import { useHistory } from "react-router-dom";
 import * as d3 from "d3";
 import { Card, Button } from "react-bootstrap";
 import { DataContext } from "../contexts";
@@ -14,8 +13,7 @@ const practiceData = {
   input: "HPA.tsv"
 };
 
-export const InputView = ({ inputName }) => {
-  const history = useHistory();
+export const InputView = () => {
   const [{ phenotypeData, input, groups }, dataDispatch] = useContext(DataContext);
 
   // Transform to work with vega-lite heatmap
