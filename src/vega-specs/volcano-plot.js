@@ -12,6 +12,10 @@ export const volcanoPlot = {
       value: 1
     },
     {
+      name: "logPValueExtent",
+      value: 1
+    },
+    {
       name: "logSignificanceLevel",
       value: 1
     },
@@ -131,6 +135,10 @@ export const volcanoPlot = {
             y: {
               field: "logPValue",
               type: "quantitative",
+              scale: {
+                domainMin: 0,
+                domainMax: { expr: "logPValueExtent" }                
+              },
               axis: {
                 title: "-log10(p value)"
               }
@@ -145,37 +153,45 @@ export const volcanoPlot = {
             stroke: {
               field: "category",
               type: "nominal",
-              title: "change",
+              title: "regulation",
               scale: {
                 domain: ["not significant", "down", "up"],
                 range: ["#999", "#2166ac", "#b2182b"]
               }
             },
             strokeWidth: {
-              condition: [{
-                selection: "highlight",
-                value: 4
-              },              
-              {
-                selection: "select",
-                value: 4
-              }],
+              condition: [
+                {
+                  selection: "highlight",
+                  value: 4
+                },              
+                {
+                  selection: "select",
+                  value: 4
+                }
+              ],
               value: 2
             },
             fill: {             
               field: "category",
               type: "nominal",
-              title: "change",
+              title: "regulation",
               scale: {
                 domain: ["not significant", "down", "up"],
                 range: ["#999", "#2166ac", "#b2182b"]
               }
             },
             fillOpacity: {             
-              condition: {
-                selection: "select",
-                value: 0.8
-              },
+              condition: [
+                {
+                  selection: "select",
+                  value: 0.8
+                },
+                {
+                  test: "datum.category !== 'not significant'",
+                  value: 0.8
+                }
+              ],
               value: 0
             },
             tooltip: [ 
@@ -206,14 +222,20 @@ export const volcanoPlot = {
               field: "name",
             },
             opacity: {
-              condition: [{
-                selection: "highlight",
-                value: 1
-              },              
-              {
-                selection: "select",
-                value: 1
-              }],
+              condition: [
+                {
+                  selection: "highlight",
+                  value: 1
+                },              
+                {
+                  selection: "select",
+                  value: 1
+                },
+                {
+                  test: "datum.category !== 'not significant'",
+                  value: 1
+                }
+              ],              
               value: 0
             }
           }

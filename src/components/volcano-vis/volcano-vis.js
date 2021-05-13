@@ -51,6 +51,8 @@ export const VolcanoVis = ({ data, subgroups }) => {
     return Math.max(1 / Math.abs(extent[0]), Math.abs(extent[1]));
   }, [volcanoData]);
 
+  const pValueExtent = useMemo(() => d3.min(volcanoData, data => data.pValue), [volcanoData]);
+
   const visibleData = volcanoData.filter(node => node.depth > 0 && node.depth <= depth);
 
   return (
@@ -107,6 +109,7 @@ export const VolcanoVis = ({ data, subgroups }) => {
             data={ visibleData }
             signals={[
               { name: "logFoldChangeExtent", value: Math.log10(foldChangeExtent) },
+              { name: "logPValueExtent", value: -Math.log10(pValueExtent) },
               { name: "logSignificanceLevel", value: -Math.log10(significanceLevel) },
               { name: "logFoldChangeThreshold", value: Math.log10(foldChangeThreshold) }
             ]}
