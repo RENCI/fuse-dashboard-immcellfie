@@ -141,7 +141,7 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
     (value === "score" ? ["score", "fold change"] : ["activity", "change"]) :
     value;
 
-  const spec = isComparison && value === "score" ? vis.foldChangeSpec : vis.spec;
+  const specType = isComparison && value === "score" ? "foldChange" : "normal";
 
   return (
     <>
@@ -220,10 +220,11 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
           </Group>
         </Row>
       </div>
-      <div ref={vegaRef }>
+      <div ref={ vegaRef }>
         { loading ? <LoadingSpinner /> : 
           <VegaWrapper
-            spec={ spec }
+            key={ specType }
+            spec={ specType === "foldChange" ? vis.foldChangeSpec : vis.spec }
             data={ vis.name === "voronoi" ? tree.descendants() : hierarchy }
             signals={[
               { name: "subtitle", value: subtitle },
