@@ -48,7 +48,7 @@ export const LabelEdit = ({ subgroup, isNew, onChange }) => {
           onKeyPress={ onKeyPress }
         />
       : <Label
-          className={ canEdit ? "editable" : null }
+          className={ "labelMode " + (canEdit ? "editable" : "") }
           onClick={ onNameLabelClick }
         >
           { subgroup.name }
