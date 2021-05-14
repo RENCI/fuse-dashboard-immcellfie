@@ -59,7 +59,7 @@ export const VolcanoVis = ({ data, subgroups }) => {
 
   const visibleData = volcanoData.filter(node => node.depth > 0 && node.depth <= depth);
 
-  const subtitle = subgroups[0].name + " vs. " + subgroups[1].name;
+  const subtitle = subgroups[1] && (subgroups[0].name + " vs. " + subgroups[1].name);
 
   return (
     <>
