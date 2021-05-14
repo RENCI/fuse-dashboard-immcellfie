@@ -42,10 +42,10 @@ const visualizations = [
 export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
   const [loading, setLoading] = useState(true);
   const [depth, setDepth] = useState(1);
-  const [subgroup, setSubgroup] = useState("1");
+  const [subgroup, setSubgroup] = useState(subgroups[1] ? "comparison" : "1");
   const [value, setValue] = useState("score");
-  const [colors, setColors] = useState(sequential);
-  const [color, setColor] = useState(sequential[0]);
+  const [colors, setColors] = useState(subgroups[1] ? diverging : sequential);
+  const [color, setColor] = useState(subgroups[1] ? diverging[0] : sequential[0]);
   const [vis, setVis] = useState(visualizations[0]);
   const vegaRef = useRef();
 
@@ -195,9 +195,9 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
               value={ subgroup }
               onChange={ onSubgroupChange }          
             >
+              { hasSubgroups && <option value="comparison">{ subgroups[0].name + " vs. " + subgroups[1].name}</option> }
               <option value="1">{ subgroups[0].name }</option>
               { hasSubgroups && <option value="2">{ subgroups[1].name }</option> }
-              { hasSubgroups && <option value="comparison">comparison</option> }
             </Control>
           </Group>
           <Group as={ Col } controlId="valueSelect">

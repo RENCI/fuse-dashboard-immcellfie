@@ -2,11 +2,19 @@ export const volcanoPlot = {
   $schema: "https://vega.github.io/schema/vega-lite/v4.json",
   width: "container",
   height: 500,
+  title: { 
+    text: "Volcano plot",
+    subtitle: { signal: "subtitle" }
+  },
   autosize: {
     type: "fit",
     resize: true
   },
   params: [
+    {
+      name: "subtitle",
+      value: ""
+    },
     {
       name: "logFoldChangeExtent",
       value: 1

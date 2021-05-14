@@ -25,6 +25,8 @@ export const VolcanoVis = ({ data, subgroups }) => {
     setFoldChangeThreshold(+evt.target.value);
   };
 
+  const log = x => Math.log10(x);
+
   const volcanoData = useMemo(() => {
     return data.filter(node => node.depth > 0).map(node => {
       const foldChange = node.data.scoreFoldChange;
@@ -33,9 +35,9 @@ export const VolcanoVis = ({ data, subgroups }) => {
       return {
         name: node.data.name,
         foldChange: foldChange,
-        logFoldChange: Math.log10(foldChange),
+        logFoldChange: log(foldChange),
         pValue: pValue,
-        logPValue: -Math.log10(pValue),
+        logPValue: -log(pValue),
         depth: node.depth,
         category: pValue > significanceLevel ? "not significant" :
           foldChange >= foldChangeThreshold ? "up" :  
@@ -56,6 +58,8 @@ export const VolcanoVis = ({ data, subgroups }) => {
   }, [volcanoData, significanceLevel]);
 
   const visibleData = volcanoData.filter(node => node.depth > 0 && node.depth <= depth);
+
+  const subtitle = subgroups[0].name + " vs. " + subgroups[1].name;
 
   return (
     <>
@@ -110,10 +114,11 @@ export const VolcanoVis = ({ data, subgroups }) => {
             spec={ volcanoPlot } 
             data={ visibleData }
             signals={[
-              { name: "logFoldChangeExtent", value: Math.log10(foldChangeExtent) },
-              { name: "logPValueExtent", value: -Math.log10(pValueExtent) },
-              { name: "logSignificanceLevel", value: -Math.log10(significanceLevel) },
-              { name: "logFoldChangeThreshold", value: Math.log10(foldChangeThreshold) }
+              { name: "subtitle", value: subtitle },
+              { name: "logFoldChangeExtent", value: log(foldChangeExtent) },
+              { name: "logPValueExtent", value: -log(pValueExtent) },
+              { name: "logSignificanceLevel", value: -log(significanceLevel) },
+              { name: "logFoldChangeThreshold", value: log(foldChangeThreshold) }
             ]}
           />
         </>
