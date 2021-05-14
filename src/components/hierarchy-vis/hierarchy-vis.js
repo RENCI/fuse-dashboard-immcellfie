@@ -5,7 +5,7 @@ import { voronoiTreemap as d3VoronoiTreemap } from "d3-voronoi-treemap";
 import { VegaWrapper } from "../vega-wrapper";
 import { VegaTooltip } from "../vega-tooltip";
 import { 
-  treemap, treemapLogScale, 
+  treemap, treemapLogScale, treemapPValue,
   enclosure, enclosureLogScale, 
   voronoiTreemap, voronoiTreemapLogScale 
 } from "../../vega-specs";
@@ -20,7 +20,8 @@ const visualizations = [
     name: "treemap",
     label: "Treemap",
     spec: treemap,
-    foldChangeSpec: treemapLogScale
+    foldChangeSpec: treemapLogScale,
+    pValueSpec: treemapPValue
   },
   {
     name: "enclosure",
@@ -141,7 +142,9 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
     (value === "score" ? ["score", "fold change"] : ["activity", "change"]) :
     value;
 
-  const specType = isComparison && value === "score" ? "foldChange" : "normal";
+  const specType = isComparison ? (value === "score" ? "foldChange" : "pValue") : "normal";
+
+  const strokeField = isComparison ? (value === "score" ? "scorePValue" : "activityPValue") : "depth";
 
   return (
     <>
@@ -224,12 +227,13 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
         { loading ? <LoadingSpinner /> : 
           <VegaWrapper
             key={ specType }
-            spec={ specType === "foldChange" ? vis.foldChangeSpec : vis.spec }
+            spec={ specType === "foldChange" ? vis.foldChangeSpec : specType === "pValue" ? vis.pValueSpec : vis.spec }
             data={ vis.name === "voronoi" ? tree.descendants() : hierarchy }
             signals={[
               { name: "subtitle", value: subtitle },
               { name: "depth", value: depth },
               { name: "value", value: valueField },
+              { name: "strokeField", value: strokeField },
               { name: "legendTitle", value: legendTitle },
               { name: "colorScheme", value: color.scheme },
               { name: "reverseColors", value: color.reverse },

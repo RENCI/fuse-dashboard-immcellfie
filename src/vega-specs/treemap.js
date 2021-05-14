@@ -43,6 +43,10 @@ const treemap = {
       value: "score"
     },
     {
+      name: "strokeField",
+      value: "depth"
+    },
+    {
       name: "legendTitle",
       value: "score"
     },
@@ -142,15 +146,9 @@ const treemap = {
     },
     {
       name: "stroke",
-      //type: "ordinal",
-      //domain: [1, 2, 3, 4],
-      //range: ["#000", "#666", "#bbb", null]
-      type: "log",
-      base: 2,
-      //domain: { data: "data", field: "scorePValue" },
-      domain: [0.05, 1],
-      range: { scheme: "greys" },
-      reverse: true
+      type: "ordinal",
+      domain: [1, 2, 3, 4],
+      range: ["#000", "#666", "#bbb", null]
     },
     {
       name: "strokeWidth",
@@ -163,10 +161,6 @@ const treemap = {
     {
       fill: "color",
       title: { signal: "legendTitle" }
-    },
-    {
-      fill: "stroke",
-      title: "p value"
     },
     { 
       fill: "specialValues",
@@ -201,8 +195,7 @@ const treemap = {
           ],
           stroke: { 
             scale: "stroke",
-            //field: "depth"
-            field: "scorePValue"
+            field: { signal: "strokeField" },
           },
           strokeWidth: {
             scale: "strokeWidth",
@@ -212,8 +205,7 @@ const treemap = {
           y: { field: "y0" },
           x2: { field: "x1" },
           y2: { field: "y1" },
-          //zindex: { field: "depth" }
-          zindex: { signal: "datum.depth - datum.scorePValue" }
+          zindex: { signal: "strokeField === depth ? datum.depth : datum.depth - datum[strokeField]" }
         }
       }
     },
@@ -264,11 +256,28 @@ const treemap = {
   ]
 };
 
-// Create a copy for version with log scale because you can't set the scale type using a signal/expression...
-const treemapLogScale = JSON.parse(JSON.stringify(treemap));
+// Create a copy to add p value for outline because you can't set the scale type using a signal/expression...
+const treemapPValue = JSON.parse(JSON.stringify(treemap));
 
-const scale = treemapLogScale.scales.find(({ name }) => name === "color")
+const strokeScale = treemapPValue.scales.find(({ name }) => name === "stroke");
+strokeScale.type = "log";
+strokeScale.base = 10;
+//strokeScale.domain = { data: "data", field: "scorePValue" };
+strokeScale.domain = [0.01, 1];
+strokeScale.range = { scheme: "greys" };
+strokeScale.reverse = true;
+
+treemapPValue.legends.push({
+  fill: "stroke",
+  title: "p value",
+  values: [0.01, 0.02, 0.05, 0.1, 1]
+});
+
+// Create a copy for version with fill log scale because you can't set the scale type using a signal/expression...
+const treemapLogScale = JSON.parse(JSON.stringify(treemapPValue));
+
+const scale = treemapLogScale.scales.find(({ name }) => name === "color");
 scale.type = "log";
 scale.base = 2;
 
-export { treemap, treemapLogScale };
+export { treemap, treemapPValue, treemapLogScale };

@@ -351,24 +351,30 @@ const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod) => {
     if (node.data.score1 !== null && node.data.score2 !== null) {
       const foldChange = (a, b) => a === 0 ? 0 : b / a;
 
+      const pValue = (a1, a2) => {
+        const v1 = a1.filter(({ value }) => !isNaN(value)).map(({ value }) => value);
+        const v2 = a2.filter(({ value }) => !isNaN(value)).map(({ value }) => value);
+
+        if (v1.length < 1 || v2.length < 1) {
+          return 1;
+        }
+        else {
+          const { pValue } = ttest2(v1, v2);
+          return Math.max(pValue, 0.0001);
+        }
+      };
+
       node.data.scoreFoldChange = foldChange(node.data.score1, node.data.score2);
       node.data.activityChange = node.data.activity2 - node.data.activity1;
 
-      const scores1 = node.data.scores1.filter(({ value }) => !isNaN(value)).map(({ value }) => value);
-      const scores2 = node.data.scores2.filter(({ value }) => !isNaN(value)).map(({ value }) => value);
-
-      if (scores1.length < 2 || scores2.length < 2) {
-        node.data.scorePValue = 1;
-      }
-      else {
-        const { pValue } = ttest2(scores1, scores2);
-        node.data.scorePValue = Math.max(pValue, 0.0001);
-      }
+      node.data.scorePValue = pValue(node.data.scores1, node.data.scores2);
+      node.data.activityPValue = pValue(node.data.activities1, node.data.activities2);
     }
     else {
       node.data.scoreFoldChange = null;
       node.data.activityChange = null;
       node.data.scorePValue = null;
+      node.data.activityPValue = null;
     }
   });
 };
