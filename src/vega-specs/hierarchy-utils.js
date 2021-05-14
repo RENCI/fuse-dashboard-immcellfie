@@ -10,7 +10,7 @@ export const createPValueVersion = spec => {
 
   newSpec.legends.push({
     fill: "stroke",
-    title: "p value",
+    title: "p-value",
     values: [0.01, 0.02, 0.05, 0.1, 1]
   });
 
