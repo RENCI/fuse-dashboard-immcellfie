@@ -7,7 +7,7 @@ import "./vega-wrapper.css";
 export const VegaWrapper = ({ options, spec, data, signals, eventListeners, tooltip, spinner }) => {
   const div = useRef(null);
   const view = useRef(null);
-  const [tooltipProps, setTooltipProps] = useState(null);
+  const [tooltipProps, setTooltipProps] = useState(null);  
 
   const setSignals = (view, signals) => {
     signals.forEach(({ name, value }) => {

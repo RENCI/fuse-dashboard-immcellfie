@@ -17,6 +17,15 @@ export const CellfieOutput = () => {
     return key !== null ? subgroups.find(subgroup => subgroup.key === key) : null;
   });
 
+  const onSelect = () => {
+    const y = window.scrollY;
+
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+      window.scroll({ left: 0, top: y, behavior: "smooth" });
+    }, 0);
+  };
+
   return (
     <>
       { hierarchy && 
@@ -24,7 +33,8 @@ export const CellfieOutput = () => {
           <Container 
             defaultActiveKey="hierarchy"
             mountOnEnter={ true }
-            unmountOnExit={ true }
+            unmountOnExit={ false }
+            onSelect={ onSelect }
           >
             <Header>
               <Title>CellFIE Output Visualizations</Title>
