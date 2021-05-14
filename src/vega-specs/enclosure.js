@@ -1,3 +1,5 @@
+import { createPValueVersion, createLogScaleVersion } from "./hierarchy-utils";
+
 const enclosure = {
   $schema: "https://vega.github.io/schema/vega/v5.json",
   width: { signal: "containerWidth" },
@@ -41,6 +43,10 @@ const enclosure = {
     {
       name: "value",
       value: "score"
+    },
+    {
+      name: "strokeField",
+      value: "depth"
     },
     {
       name: "legendTitle",
@@ -187,7 +193,7 @@ const enclosure = {
           ],
           stroke: { 
             scale: "stroke",
-            field: "depth"
+            field: { signal: "strokeField" },
           },
           strokeWidth: {
             scale: "strokeWidth",
@@ -196,7 +202,7 @@ const enclosure = {
           x: { field: "x" },
           y: { field: "y" },
           size: { signal: "4 * datum.r * datum.r" },
-          zindex: { field: "depth" }
+          zindex: { signal: "strokeField === depth ? datum.depth : datum.depth - datum[strokeField]" }        
         }
       }
     },
@@ -246,11 +252,10 @@ const enclosure = {
   ]
 };
 
-// Create a copy for version with log scale because you can't set the scale type using a signal/expression...
-const enclosureLogScale = JSON.parse(JSON.stringify(enclosure));
+// Create a copy to add p value for outline because you can't set the scale type using a signal/expression...
+const enclosurePValue = createPValueVersion(enclosure);
 
-const scale = enclosureLogScale.scales.find(({ name }) => name === "color")
-scale.type = "log";
-scale.base = 2;
+// Create a copy for version with fill log scale because you can't set the scale type using a signal/expression...
+const enclosureLogScale = createLogScaleVersion(enclosurePValue);
 
-export { enclosure, enclosureLogScale };
+export { enclosure, enclosurePValue, enclosureLogScale };

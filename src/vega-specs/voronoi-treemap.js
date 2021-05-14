@@ -1,3 +1,5 @@
+import { createPValueVersion, createLogScaleVersion } from "./hierarchy-utils";
+
 const voronoiTreemap = {
   $schema: "https://vega.github.io/schema/vega/v5.json",
   width: { signal: "containerWidth" },
@@ -41,6 +43,10 @@ const voronoiTreemap = {
     {
       name: "value",
       value: "score"
+    },
+    {
+      name: "strokeField",
+      value: "depth"
     },
     {
       name: "legendTitle",
@@ -90,6 +96,11 @@ const voronoiTreemap = {
           type: "formula",
           as: "value",
           expr: "datum.data[value]"
+        },
+        {
+          type: "formula",
+          as: "strokeValue",
+          expr: "datum.data[strokeField]"
         }
       ]
     },
@@ -173,15 +184,7 @@ const voronoiTreemap = {
               value: 1
             }
           ],
-          stroke: { 
-            scale: "stroke",
-            field: "depth"
-          },
-          strokeWidth: {
-            scale: "strokeWidth",
-            field: "depth"
-          },
-          path: { field: "path" }
+          path: { field: "path" }              
         }
       }
     },
@@ -190,7 +193,7 @@ const voronoiTreemap = {
       from: { data: "data" }, 
       interactive: false, 
       sort: { 
-        field: "datum.depth",
+        field: "datum.strokeValue",
         order: "descending"
       },   
       encode: {
@@ -198,7 +201,7 @@ const voronoiTreemap = {
           fill: "none",
           stroke: { 
             scale: "stroke",
-            field: "depth"
+            field: "strokeValue"
           },
           strokeWidth: {
             scale: "strokeWidth",
@@ -251,11 +254,10 @@ const voronoiTreemap = {
   ]
 };
 
-// Create a copy for version with log scale because you can't set the scale type using a signal/expression...
-const voronoiTreemapLogScale = JSON.parse(JSON.stringify(voronoiTreemap));
+// Create a copy to add p value for outline because you can't set the scale type using a signal/expression...
+const voronoiTreemapPValue = createPValueVersion(voronoiTreemap);
 
-const scale = voronoiTreemapLogScale.scales.find(({ name }) => name === "color")
-scale.type = "log";
-scale.base = 2;
+// Create a copy for version with fill log scale because you can't set the scale type using a signal/expression...
+const voronoiTreemapLogScale = createLogScaleVersion(voronoiTreemapPValue);
 
-export { voronoiTreemap, voronoiTreemapLogScale };
+export { voronoiTreemap, voronoiTreemapPValue, voronoiTreemapLogScale };

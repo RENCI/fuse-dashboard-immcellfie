@@ -6,8 +6,8 @@ import { VegaWrapper } from "../vega-wrapper";
 import { VegaTooltip } from "../vega-tooltip";
 import { 
   treemap, treemapLogScale, treemapPValue,
-  enclosure, enclosureLogScale, 
-  voronoiTreemap, voronoiTreemapLogScale 
+  enclosure, enclosureLogScale, enclosurePValue,
+  voronoiTreemap, voronoiTreemapLogScale, voronoiTreemapPValue
 } from "../../vega-specs";
 import { sequential, diverging } from "../../colors";
 import { LoadingSpinner } from "../loading-spinner";
@@ -27,13 +27,15 @@ const visualizations = [
     name: "enclosure",
     label: "Enclosure diagram",
     spec: enclosure,
-    foldChangeSpec: enclosureLogScale
+    foldChangeSpec: enclosureLogScale,
+    pValueSpec: enclosurePValue
   },
   {
     name: "voronoi",
     label: "Voronoi treemap",
     spec: voronoiTreemap,
-    foldChangeSpec: voronoiTreemapLogScale
+    foldChangeSpec: voronoiTreemapLogScale,
+    pValueSpec: voronoiTreemapPValue
   }
 ];
 
@@ -107,8 +109,10 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
 
         voronoi(tree);
 
+        const line = d3.line();
+
         tree.each(d => {
-          d.path = d3.line()(d.polygon) + "z";
+          d.path = line(d.polygon) + "z";
         });
 
         setLoading(false);

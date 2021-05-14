@@ -1,3 +1,5 @@
+import { createPValueVersion, createLogScaleVersion } from "./hierarchy-utils";
+
 const treemap = {
   $schema: "https://vega.github.io/schema/vega/v5.json",
   width: { signal: "containerWidth" },
@@ -257,27 +259,9 @@ const treemap = {
 };
 
 // Create a copy to add p value for outline because you can't set the scale type using a signal/expression...
-const treemapPValue = JSON.parse(JSON.stringify(treemap));
-
-const strokeScale = treemapPValue.scales.find(({ name }) => name === "stroke");
-strokeScale.type = "log";
-strokeScale.base = 10;
-//strokeScale.domain = { data: "data", field: "scorePValue" };
-strokeScale.domain = [0.01, 1];
-strokeScale.range = { scheme: "greys" };
-strokeScale.reverse = true;
-
-treemapPValue.legends.push({
-  fill: "stroke",
-  title: "p value",
-  values: [0.01, 0.02, 0.05, 0.1, 1]
-});
+const treemapPValue = createPValueVersion(treemap);
 
 // Create a copy for version with fill log scale because you can't set the scale type using a signal/expression...
-const treemapLogScale = JSON.parse(JSON.stringify(treemapPValue));
-
-const scale = treemapLogScale.scales.find(({ name }) => name === "color");
-scale.type = "log";
-scale.base = 2;
+const treemapLogScale = createLogScaleVersion(treemapPValue);
 
 export { treemap, treemapPValue, treemapLogScale };
