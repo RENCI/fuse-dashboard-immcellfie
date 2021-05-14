@@ -142,9 +142,15 @@ const treemap = {
     },
     {
       name: "stroke",
-      type: "ordinal",
-      domain: [1, 2, 3, 4],
-      range: ["#000", "#666", "#bbb", null]
+      //type: "ordinal",
+      //domain: [1, 2, 3, 4],
+      //range: ["#000", "#666", "#bbb", null]
+      type: "log",
+      base: 2,
+      //domain: { data: "data", field: "scorePValue" },
+      domain: [0.05, 1],
+      range: { scheme: "greys" },
+      reverse: true
     },
     {
       name: "strokeWidth",
@@ -157,6 +163,10 @@ const treemap = {
     {
       fill: "color",
       title: { signal: "legendTitle" }
+    },
+    {
+      fill: "stroke",
+      title: "p value"
     },
     { 
       fill: "specialValues",
@@ -191,7 +201,8 @@ const treemap = {
           ],
           stroke: { 
             scale: "stroke",
-            field: "depth"
+            //field: "depth"
+            field: "scorePValue"
           },
           strokeWidth: {
             scale: "strokeWidth",
@@ -201,7 +212,8 @@ const treemap = {
           y: { field: "y0" },
           x2: { field: "x1" },
           y2: { field: "y1" },
-          zindex: { field: "depth" }
+          //zindex: { field: "depth" }
+          zindex: { signal: "datum.depth - datum.scorePValue" }
         }
       }
     },
