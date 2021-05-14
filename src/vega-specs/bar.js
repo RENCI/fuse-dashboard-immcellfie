@@ -25,7 +25,8 @@ export const bar = {
       },
       axis: {
         title: "activity",
-        labelAngle: 0
+        labelAngle: 0,
+        labelExpr: "datum.value === 0 ? 'inactive' : 'active'"
       }    
     },
     y: {
