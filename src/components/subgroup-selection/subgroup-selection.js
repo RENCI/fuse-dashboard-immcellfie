@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Card, Row, Col, Form } from "react-bootstrap";
-import { ExclamationTriangleFill } from "react-bootstrap-icons";
+import { ExclamationCircleFill } from "react-bootstrap-icons";
 import { DataContext } from "../../contexts";
 import { SubgroupsLink } from "../page-links";
 import { OverlapVis } from "../overlap-vis";
@@ -115,7 +115,7 @@ export const SubgroupSelection = () => {
             <Col>                
               <Group controlId="overlapMethodSelect" className="mt-2">
                 <Label>
-                  <ExclamationTriangleFill className="mb-1 mr-2 text-warning" />
+                  <ExclamationCircleFill className="font-weight-bold mb-1 ml-1 mr-2 text-warning" />
                   Overlap: { overlap }
                 </Label>
                 <Control 

@@ -11,6 +11,7 @@ import {
 } from "../../vega-specs";
 import { sequential, diverging } from "../../colors";
 import { LoadingSpinner } from "../loading-spinner";
+import { useResize } from "../../hooks";
 import "./hierarchy-vis.css";
 
 const { Group, Label, Control, Row } = Form; 
@@ -48,6 +49,9 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
   const [color, setColor] = useState(subgroups[1] ? diverging[0] : sequential[0]);
   const [vis, setVis] = useState(visualizations[0]);
   const vegaRef = useRef();
+  const { width } = useResize(vegaRef, 100, 100);
+
+  const height = width / 1.5;
 
   const hasSubgroups = subgroups[1] !== null;
 
@@ -87,14 +91,16 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
     if (vis.name === "voronoi" && !tree.descendants()[0].polygon) {
       // Create Voronoi diagram, use setTimout so loading state can update
       setTimeout(() => {
-        const width = vegaRef.current.clientWidth * 0.8;
+        const r = Math.min(width, height) / 2 - 40;
+        const x = width / 2;
+
         const prng = d3.randomUniform.source(d3.randomLcg(0.2))();
 
         const n = 64;
         const clip = d3.range(0, n).map(d => {
           return [
-            Math.cos(d / n * Math.PI * 2) * width / 2 + width / 2, 
-            Math.sin(d / n * Math.PI * 2) * width / 2 + width / 2
+            Math.cos(d / n * Math.PI * 2) * r + x, 
+            Math.sin(d / n * Math.PI * 2) * r
           ];
         });
 
@@ -112,8 +118,13 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
         const line = d3.line();
 
         tree.each(d => {
+          //d.polygon.forEach(point => point[0] += x);
+          //if (d.polygon.site) d.polygon.site.x += x;
+
           d.path = line(d.polygon) + "z";
         });
+
+        console.log(tree);
 
         setLoading(false);
       }, 10);      
@@ -234,6 +245,8 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
             spec={ specType === "foldChange" ? vis.foldChangeSpec : specType === "pValue" ? vis.pValueSpec : vis.spec }
             data={ vis.name === "voronoi" ? tree.descendants() : hierarchy }
             signals={[
+              { name: "chartWidth", value: width },
+              { name: "chartHeight", value: height },
               { name: "subtitle", value: subtitle },
               { name: "depth", value: depth },
               { name: "value", value: valueField },

@@ -2,8 +2,8 @@ import { createPValueVersion, createLogScaleVersion } from "./hierarchy-utils";
 
 const voronoiTreemap = {
   $schema: "https://vega.github.io/schema/vega/v5.json",
-  width: { signal: "containerWidth" },
-  height: { signal: "containerWidth" },
+  width: { signal: "chartWidth" },
+  height: { signal: "chartHeight" },
   title: { 
     text: "Metabolic task Voronoi treemap",
     subtitle: { signal: "subtitle" }
@@ -12,25 +12,14 @@ const voronoiTreemap = {
     type: "fit",
     resize: true
   },
-  signals: [        
+  signals: [ 
     {
-      name: "containerWidth",
-      value: 1032,
-      on: [
-        {
-          events: [
-            {
-              source: "window",
-              type: "resize"
-            },
-            {
-              source: "window",
-              type: "load"
-            }
-          ],
-          update: "containerSize()[0]"
-        }
-      ]
+      name: "chartWidth",
+      value: 500
+    },
+    {
+      name: "chartHeight",
+      value: 500
     },
     {
       name: "subtitle",
@@ -119,6 +108,10 @@ const voronoiTreemap = {
         type: "filter",
         expr: "datum.depth < 4",
       }]
+    },
+    { 
+      name: "origin",
+      values: [{ x: 0, y: 0 }]
     }
   ],
   scales: [
@@ -159,6 +152,20 @@ const voronoiTreemap = {
     }
   ],
   marks: [
+    {
+      type: "rect", 
+      from: { data: "origin" },
+      interactive: false,    
+      encode: {
+        enter: {
+          x: { value: 0 },
+          y: { value: 0 },
+          width: { value: 1 },
+          height: { value: 1 },
+          fill: { value: "none" }             
+        }
+      }
+    },
     {
       type: "path",
       from: { data: "data" }, 
