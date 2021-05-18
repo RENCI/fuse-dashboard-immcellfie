@@ -192,7 +192,7 @@ export const volcanoPlot = {
             fillOpacity: {             
               condition: [
                 {
-                  selection: "select",
+                  test: "datum.selected",
                   value: 0.8
                 },
                 {
@@ -234,13 +234,9 @@ export const volcanoPlot = {
                 {
                   selection: "highlight",
                   value: 1
-                },              
-                {
-                  selection: "select",
-                  value: 1
                 },
                 {
-                  test: "datum.category !== 'not significant'",
+                  test: "datum.selected || datum.category !== 'not significant'",
                   value: 1
                 }
               ],              

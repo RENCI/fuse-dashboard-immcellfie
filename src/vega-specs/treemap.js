@@ -210,7 +210,7 @@ const treemap = {
           strokeWidth: { value: 4 }
         },
         update: {
-          stroke: { value: "none" },
+          stroke: { signal: "datum.selected ? highlightColor : 'none'" },  
           x: { field: "x0" },
           y: { field: "y0" },
           x2: { field: "x1" },

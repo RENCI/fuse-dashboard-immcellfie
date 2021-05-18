@@ -1,6 +1,7 @@
-import React, { useState, useRef, useMemo } from "react";
+import React, { useContext, useState, useRef, useMemo } from "react";
 import { Form, Col } from "react-bootstrap";
 import * as d3 from "d3";
+import { DataContext } from "../../contexts";
 import { VegaWrapper } from "../vega-wrapper";
 import { volcanoPlot } from "../../vega-specs";
 import { SubgroupsLink } from "../page-links";
@@ -10,6 +11,7 @@ import "./volcano-vis.css";
 const { Group, Label, Control, Row } = Form; 
 
 export const VolcanoVis = ({ data, subgroups }) => {
+  const [, dataDispatch] = useContext(DataContext);
   const [depth, setDepth] = useState(3);
   const [significanceLevel, setSignificanceLevel] = useState(0.05);
   const [foldChangeThreshold, setFoldChangeThreshold] = useState(1.5);
@@ -33,7 +35,7 @@ export const VolcanoVis = ({ data, subgroups }) => {
 
   const log = x => Math.log10(x);
 
-  const volcanoData = useMemo(() => {
+  const volcanoData = useMemo(() => { 
     return data.filter(node => node.depth > 0).map(node => {
       const foldChange = node.data.scoreFoldChange;
       const pValue = node.data.scorePValue;
@@ -48,10 +50,20 @@ export const VolcanoVis = ({ data, subgroups }) => {
         category: pValue > significanceLevel ? "not significant" :
           foldChange >= foldChangeThreshold ? "up" :  
           foldChange <= 1 / foldChangeThreshold ? "down" :
-          "not significant"
+          "not significant",
+        selected: node.data.selected
       };
     });
-  }, [data, significanceLevel, foldChangeThreshold]);
+  }, [data, significanceLevel, foldChangeThreshold]);  
+  
+  const onSelectNode = evt => {
+    if (!evt.item || !evt.item.datum) return;
+
+    const name = evt.item.datum.name;
+    const selected = evt.item.datum.selected;
+
+    dataDispatch({ type: "selectNode", name: name, selected: !selected });
+  };
 
   const foldChangeExtent = useMemo(() => {
     const extent = d3.extent(volcanoData, data => data.foldChange);
@@ -128,6 +140,9 @@ export const VolcanoVis = ({ data, subgroups }) => {
                 { name: "logPValueExtent", value: -log(pValueExtent) },
                 { name: "logSignificanceLevel", value: -log(significanceLevel) },
                 { name: "logFoldChangeThreshold", value: log(foldChangeThreshold) }
+              ]}
+              eventListeners={[
+                { type: "click", callback: onSelectNode }
               ]}
             />
           </div>

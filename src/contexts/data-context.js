@@ -680,6 +680,17 @@ const reducer = (state, action) => {
         overlapMethod: action.method
       };
 
+    case "selectNode":
+      const node = state.tree.descendants().find(({ data }) => data.name === action.name);
+
+      if (!node) return state;
+
+      node.data.selected = action.selected;
+
+      return {
+        ...state
+      };
+
     default: 
       throw new Error("Invalid data context action: " + action.type);
   }
