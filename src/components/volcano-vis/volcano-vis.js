@@ -117,7 +117,7 @@ export const VolcanoVis = ({ data, subgroups }) => {
             </Row>
           </div>
           <div ref={ vegaRef }>
-            <VegaWrapper 
+            <VegaWrapper
               width={ width }
               height={ height }
               spec={ volcanoPlot } 

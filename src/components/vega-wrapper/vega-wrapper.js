@@ -56,7 +56,7 @@ export const VegaWrapper = ({
       // Clean up
       if (view.current) view.current.finalize();
     };
-  }, []);
+  }, [data, eventListeners, options, signals, spec, tooltip]);
   
   // Update signals
   useEffect(() => {
@@ -76,6 +76,7 @@ export const VegaWrapper = ({
       .runAsync();
   }, [data]);
 
+/*
   // Update spec
   // XXX: Look into better way to update spec without creating new view
   useEffect(() => {
@@ -101,6 +102,7 @@ export const VegaWrapper = ({
       if (oldView) oldView.finalize();
     });
   }, [spec]);
+*/
 
   return (
     <>
@@ -136,8 +138,8 @@ VegaWrapper.defaultProps = {
 };
 
 VegaWrapper.propTypes = {
-  width: PropTypes.number,
-  height: PropTypes.number,
+  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   spec: PropTypes.object.isRequired,
   options: PropTypes.object,
   data: PropTypes.array,
