@@ -120,9 +120,9 @@ export const volcanoPlot = {
               on: "mouseover",
               empty: "none", 
               clear: "mouseout"
-            },            
+            },
             select: {
-              type: "multi", 
+              type: "single",
               on: "click",
               empty: "none"
             }
