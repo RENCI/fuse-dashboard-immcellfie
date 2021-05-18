@@ -57,6 +57,8 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
 
   const isComparison = subgroup === "comparison";
 
+  const hasVoronoi = tree.descendants()[0].polygon;
+
   const onVisChange = evt => {
     setLoading(true);
 
@@ -88,19 +90,16 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
   };
 
   useEffect(() => {
-    if (vis.name === "voronoi" && !tree.descendants()[0].polygon) {
+    if (vis.name === "voronoi" && !hasVoronoi) {
       // Create Voronoi diagram, use setTimout so loading state can update
       setTimeout(() => {
-        const r = Math.min(width, height) / 2 - 40;
-        const x = width / 2;
-
         const prng = d3.randomUniform.source(d3.randomLcg(0.2))();
 
         const n = 64;
         const clip = d3.range(0, n).map(d => {
           return [
-            Math.cos(d / n * Math.PI * 2) * r + x, 
-            Math.sin(d / n * Math.PI * 2) * r
+            Math.cos(d / n * Math.PI * 2) +  width / height, 
+            Math.sin(d / n * Math.PI * 2) + 1
           ];
         });
 
@@ -117,14 +116,9 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
 
         const line = d3.line();
 
-        tree.each(d => {
-          //d.polygon.forEach(point => point[0] += x);
-          //if (d.polygon.site) d.polygon.site.x += x;
-
-          d.path = line(d.polygon) + "z";
+        tree.each(node => {
+          node.path = line(node.polygon) + "z";
         });
-
-        console.log(tree);
 
         setLoading(false);
       }, 10);      

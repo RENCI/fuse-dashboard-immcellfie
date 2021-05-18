@@ -110,8 +110,8 @@ const voronoiTreemap = {
       }]
     },
     { 
-      name: "origin",
-      values: [{ x: 0, y: 0 }]
+      name: "dummy",
+      values: [{}]
     }
   ],
   scales: [
@@ -154,14 +154,14 @@ const voronoiTreemap = {
   marks: [
     {
       type: "rect", 
-      from: { data: "origin" },
+      from: { data: "dummy" },
       interactive: false,    
       encode: {
         enter: {
           x: { value: 0 },
           y: { value: 0 },
-          width: { value: 1 },
-          height: { value: 1 },
+          width: { signal: "width" },
+          height: { signal: "height" },
           fill: { value: "none" }             
         }
       }
@@ -191,7 +191,9 @@ const voronoiTreemap = {
               value: 1
             }
           ],
-          path: { field: "path" }              
+          path: { field: "path" },
+          scaleX: { signal: "height / 2" }, 
+          scaleY: { signal: "height / 2" }                        
         }
       }
     },
@@ -214,7 +216,9 @@ const voronoiTreemap = {
             scale: "strokeWidth",
             field: "depth"
           },
-          path: { field: "path" }
+          path: { field: "path" },
+          scaleX: { signal: "height / 2" }, 
+          scaleY: { signal: "height / 2" }
         }
       }
     },
@@ -230,6 +234,8 @@ const voronoiTreemap = {
         update: {
           stroke: { value: "none" },
           path: { field: "path" },
+          scaleX: { signal: "height / 2" }, 
+          scaleY: { signal: "height / 2" },
           tooltip: { signal: "datum.data" }
         },
         hover: {
@@ -252,8 +258,8 @@ const voronoiTreemap = {
           blend: { value: "difference" }
         },
         update: {
-          x: { field: "polygon.site.x" },
-          y: { field: "polygon.site.y" },
+          x: { signal: "datum.polygon.site.x * height / 2" },
+          y: { signal: "datum.polygon.site.y * height / 2" },
           opacity: { signal: "labelOpacity" }
         }
       }      
