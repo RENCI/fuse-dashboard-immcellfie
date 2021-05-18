@@ -51,7 +51,7 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
   const vegaRef = useRef();
   const { width } = useResize(vegaRef, 100, 100);
 
-  const aspectRatio = 1.5;
+  const aspectRatio = 1.4;
   const height = width / aspectRatio;
 
   const hasSubgroups = subgroups[1] !== null;
