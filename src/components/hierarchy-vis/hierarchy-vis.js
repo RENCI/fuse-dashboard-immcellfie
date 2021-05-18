@@ -51,7 +51,8 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
   const vegaRef = useRef();
   const { width } = useResize(vegaRef, 100, 100);
 
-  const height = width / 1.5;
+  const aspectRatio = 1.5;
+  const height = width / aspectRatio;
 
   const hasSubgroups = subgroups[1] !== null;
 
@@ -98,8 +99,8 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
         const n = 64;
         const clip = d3.range(0, n).map(d => {
           return [
-            Math.cos(d / n * Math.PI * 2) +  width / height, 
-            Math.sin(d / n * Math.PI * 2) + 1
+            Math.cos(d / n * Math.PI * 2),
+            Math.sin(d / n * Math.PI * 2)
           ];
         });
 

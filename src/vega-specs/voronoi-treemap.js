@@ -167,103 +167,114 @@ const voronoiTreemap = {
       }
     },
     {
-      type: "path",
-      from: { data: "data" }, 
-      interactive: false,    
+      type: "group",
       encode: {
         update: {
-          fill: [
-            {
-              test: "!isValid(datum.value)",
-              signal: "scale('specialValues', 'inconclusive')"
-            },
-            {
-              scale: "color",
-              field: "value"
-            }            
-          ],
-          fillOpacity: [
-            {
-              test: "datum[value] === 'na'",
-              value: 0,
-            },
-            {
-              value: 1
+          x: { signal: "width / 2" },
+          y: { signal: "min(width, height) / 2" },
+        }
+      },
+      marks: [    
+        {
+          type: "path",
+          from: { data: "data" }, 
+          interactive: false,    
+          encode: {
+            update: {
+              fill: [
+                {
+                  test: "!isValid(datum.value)",
+                  signal: "scale('specialValues', 'inconclusive')"
+                },
+                {
+                  scale: "color",
+                  field: "value"
+                }            
+              ],
+              fillOpacity: [
+                {
+                  test: "datum[value] === 'na'",
+                  value: 0,
+                },
+                {
+                  value: 1
+                }
+              ],
+              path: { field: "path" },
+              scaleX: { signal: "min(width, height) / 2" }, 
+              scaleY: { signal: "min(width, height) / 2" }                        
             }
-          ],
-          path: { field: "path" },
-          scaleX: { signal: "height / 2" }, 
-          scaleY: { signal: "height / 2" }                        
-        }
-      }
-    },
-    {
-      type: "path",
-      from: { data: "data" }, 
-      interactive: false, 
-      sort: { 
-        field: "datum.strokeValue",
-        order: "descending"
-      },   
-      encode: {
-        update: {
-          fill: "none",
-          stroke: { 
-            scale: "stroke",
-            field: "strokeValue"
-          },
-          strokeWidth: {
-            scale: "strokeWidth",
-            field: "depth"
-          },
-          path: { field: "path" },
-          scaleX: { signal: "height / 2" }, 
-          scaleY: { signal: "height / 2" }
-        }
-      }
-    },
-    {
-      type: "path",
-      from: { data: "nodes" },
-      encode: {
-        enter: {
-          fill: { value: "#000" },
-          fillOpacity: { value: 0 },
-          strokeWidth: { value: 4 }
+          }
         },
-        update: {
-          stroke: { value: "none" },
-          path: { field: "path" },
-          scaleX: { signal: "height / 2" }, 
-          scaleY: { signal: "height / 2" },
-          tooltip: { signal: "datum.data" }
+        {
+          type: "path",
+          from: { data: "data" }, 
+          interactive: false, 
+          sort: { 
+            field: "datum.strokeValue",
+            order: "descending"
+          },   
+          encode: {
+            update: {
+              fill: "none",
+              stroke: { 
+                scale: "stroke",
+                field: "strokeValue"
+              },
+              strokeWidth: {
+                scale: "strokeWidth",
+                field: "depth"
+              },
+              path: { field: "path" },
+              scaleX: { signal: "min(width, height) / 2" }, 
+              scaleY: { signal: "min(width, height) / 2" }
+            }
+          }
         },
-        hover: {
-          stroke: { signal: "highlightColor" }
-        }
-      }
-    },
-    {
-      type: "text",
-      from: { data: "top" },
-      interactive: false,
-      encode: {
-        enter: {
-          text: { field: "data.label" },
-          align: { value: "center" },
-          baseline: { value: "middle" },
-          fill: { value: "#000" },
-          fontSize: { value: 18 },
-          fontWeight: { value: "bold" },
-          blend: { value: "difference" }
+        {
+          type: "path",
+          from: { data: "nodes" },
+          encode: {
+            enter: {
+              fill: { value: "#000" },
+              fillOpacity: { value: 0 },
+              strokeWidth: { value: 4 }
+            },
+            update: {
+              stroke: { value: "none" },
+              path: { field: "path" },
+              scaleX: { signal: "min(width, height) / 2" }, 
+              scaleY: { signal: "min(width, height) / 2" },
+              tooltip: { signal: "datum.data" }
+            },
+            hover: {
+              stroke: { signal: "highlightColor" }
+            }
+          }
         },
-        update: {
-          x: { signal: "datum.polygon.site.x * height / 2" },
-          y: { signal: "datum.polygon.site.y * height / 2" },
-          opacity: { signal: "labelOpacity" }
-        }
-      }      
-    } 
+        {
+          type: "text",
+          from: { data: "top" },
+          interactive: false,
+          encode: {
+            enter: {
+              text: { field: "data.label" },
+              align: { value: "center" },
+              baseline: { value: "middle" },
+              fill: { value: "#000" },
+              fontSize: { value: 18 },
+              fontWeight: { value: "bold" },
+              blend: { value: "difference" }
+            },
+            update: {
+              x: { signal: "datum.polygon.site.x * min(width, height) / 2" },
+              y: { signal: "datum.polygon.site.y * min(width, height) / 2" },
+              opacity: { signal: "labelOpacity" }
+            }
+          }      
+        } 
+      ]
+    }
   ]
 };
 
