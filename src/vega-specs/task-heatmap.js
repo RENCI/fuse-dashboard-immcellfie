@@ -4,7 +4,7 @@ export const taskHeatmap = {
   autosize: {
     resize: true
   },
-  params: [
+  params: [    
     {
       name: "value",
       value: "score"
@@ -41,9 +41,7 @@ export const taskHeatmap = {
   },
   spec: {  
     width: { step: 20 },
-    height: { 
-      step: 10 
-    },
+    height: { step: 10 },
     layer: [
       {
         mark: { 

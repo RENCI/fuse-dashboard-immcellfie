@@ -1,7 +1,7 @@
 export const volcanoPlot = {
   $schema: "https://vega.github.io/schema/vega-lite/v4.json",
   width: "container",
-  height: 800,
+  height: "container",
   title: { 
     text: "Volcano plot",
     subtitle: { signal: "subtitle" }

@@ -127,7 +127,7 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
     else {
       setLoading(false);
     }
-  }, [vis, tree]);
+  }, [vis, tree, hasVoronoi]);
 
   const logRange = values => {
     const extent = d3.extent(values);

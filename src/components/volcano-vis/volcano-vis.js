@@ -1,9 +1,10 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import { Form, Col } from "react-bootstrap";
 import * as d3 from "d3";
 import { VegaWrapper } from "../vega-wrapper";
 import { volcanoPlot } from "../../vega-specs";
 import { SubgroupsLink } from "../page-links";
+import { useResize } from "../../hooks";
 import "./volcano-vis.css";
 
 const { Group, Label, Control, Row } = Form; 
@@ -12,6 +13,11 @@ export const VolcanoVis = ({ data, subgroups }) => {
   const [depth, setDepth] = useState(3);
   const [significanceLevel, setSignificanceLevel] = useState(0.05);
   const [foldChangeThreshold, setFoldChangeThreshold] = useState(1.5);
+  const vegaRef = useRef();
+  const { width } = useResize(vegaRef, 100, 100, true);
+
+  const aspectRatio = 1.6;
+  const height = width / aspectRatio;
 
   const onDepthChange = evt => {
     setDepth(+evt.target.value);
@@ -110,17 +116,21 @@ export const VolcanoVis = ({ data, subgroups }) => {
               </Group>
             </Row>
           </div>
-          <VegaWrapper 
-            spec={ volcanoPlot } 
-            data={ visibleData }
-            signals={[
-              { name: "subtitle", value: subtitle },
-              { name: "logFoldChangeExtent", value: log(foldChangeExtent) },
-              { name: "logPValueExtent", value: -log(pValueExtent) },
-              { name: "logSignificanceLevel", value: -log(significanceLevel) },
-              { name: "logFoldChangeThreshold", value: log(foldChangeThreshold) }
-            ]}
-          />
+          <div ref={ vegaRef }>
+            <VegaWrapper 
+              width={ width }
+              height={ height }
+              spec={ volcanoPlot } 
+              data={ visibleData }
+              signals={[
+                { name: "subtitle", value: subtitle },
+                { name: "logFoldChangeExtent", value: log(foldChangeExtent) },
+                { name: "logPValueExtent", value: -log(pValueExtent) },
+                { name: "logSignificanceLevel", value: -log(significanceLevel) },
+                { name: "logFoldChangeThreshold", value: log(foldChangeThreshold) }
+              ]}
+            />
+          </div>
         </>
       }
     </>
