@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Form, Button, Col, Table } from "react-bootstrap";
+import { Form, Button, Col } from "react-bootstrap";
 import { ArrowCounterclockwise, XCircle } from "react-bootstrap-icons";
 import * as d3 from "d3";
 import { DataContext } from "../../contexts";
@@ -51,10 +51,6 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
     }, "");
   };
 
-  const headers = subgroup.phenotypes.map(({ name }, i) => {
-    return <th key={ i }><small>{ nameLabel(name) }</small></th>;
-  });
-
   const charts = subgroup.phenotypes.map((phenotype, i) => {    
     const allPhenotype = all.phenotypes[i];
 
@@ -71,7 +67,12 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
       }));
 
     return (
-      <td key={ i }>
+      <Col 
+        key={ i } 
+        className="text-center"
+        xs={ 12 } sm={ 6 } md={ 4 } lg={ 4 } xl={ 2 }
+      >
+        <small>{ nameLabel(phenotype.name) }</small>
         <VegaWrapper
           options={{
             actions: false,
@@ -86,7 +87,7 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
           eventListeners={ editable ? [{ type: "click", callback: evt => onValueSelect(phenotype.name, evt) }] : [] }
           spinner={ false }
         />
-      </td>
+      </Col>
     );    
   });
 
@@ -125,18 +126,9 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
           </Button>
         </Col>
       </Row>
-      <Table borderless={ true } responsive={ true }>
-        <thead>
-          <tr>
-            { headers }
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            { charts }
-          </tr>
-        </tbody>
-      </Table>
+      <Row>
+        { charts }
+      </Row>
       <Row>
         <Col>
           <small className="text-muted">
