@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useContext, useState, useRef, useEffect } from "react";
 import { Form, Col, ToggleButtonGroup, ToggleButton } from "react-bootstrap";
 import * as d3 from "d3";
+import { DataContext } from "../../contexts";
 import { voronoiTreemap as d3VoronoiTreemap } from "d3-voronoi-treemap";
 import { VegaWrapper } from "../vega-wrapper";
 import { VegaTooltip } from "../vega-tooltip";
@@ -41,6 +42,7 @@ const visualizations = [
 ];
 
 export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
+  const [, dataDispatch] = useContext(DataContext);
   const [loading, setLoading] = useState(true);
   const [depth, setDepth] = useState(1);
   const [subgroup, setSubgroup] = useState(subgroups[1] ? "comparison" : "1");
@@ -88,6 +90,19 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
 
   const onColorMapChange = evt => {
     setColor(colors.find(({ scheme }) => scheme === evt.target.value));
+  };
+
+  const onSelectNode = (evt, item) => {
+
+    console.log(evt);
+    console.log(item);
+
+    if (!item || !item.datum) return;
+
+    const name = item.datum.name;
+    const selected = item.datum.selected;
+
+    dataDispatch({ type: "selectNode", name: name, selected: !selected });
   };
 
   useEffect(() => {
@@ -252,6 +267,9 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
               { name: "highlightColor", value: color.highlight },
               { name: "inconclusiveColor", value: color.inconclusive },
               { name: "domain", value: domain }
+            ]}
+            eventListeners={[
+              { type: "click", callback: onSelectNode }
             ]}
             tooltip={ 
               <VegaTooltip 

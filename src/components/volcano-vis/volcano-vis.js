@@ -57,11 +57,11 @@ export const VolcanoVis = ({ data, subgroups }) => {
     });
   }, [data, significanceLevel, foldChangeThreshold]);  
   
-  const onSelectNode = evt => {
-    if (!evt.item || !evt.item.datum) return;
+  const onSelectNode = (evt, item) => {
+    if (!item || !item.datum) return;
 
-    const name = evt.item.datum.name;
-    const selected = evt.item.datum.selected;
+    const name = item.datum.name;
+    const selected = item.datum.selected;
 
     dataDispatch({ type: "selectNode", name: name, selected: !selected });
   };
