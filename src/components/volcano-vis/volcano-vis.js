@@ -3,9 +3,10 @@ import { Form, Col } from "react-bootstrap";
 import * as d3 from "d3";
 import { DataContext } from "../../contexts";
 import { VegaWrapper } from "../vega-wrapper";
-import { volcanoPlot } from "../../vega-specs";
 import { SubgroupsLink } from "../page-links";
+import { WarningMessage } from "../warning-message";
 import { useResize } from "../../hooks";
+import { volcanoPlot } from "../../vega-specs";
 import "./volcano-vis.css";
 
 const { Group, Label, Control, Row } = Form; 
@@ -83,8 +84,8 @@ export const VolcanoVis = ({ data, subgroups }) => {
     <>
       { subgroups[1] === null ? 
         <>
-          <h5>Only one subgroup present</h5>
-          <SubgroupsLink />
+          <WarningMessage message="Only one subgroup present" />
+          <div className="ml-3"><SubgroupsLink /></div>
         </>
       :
         <>
