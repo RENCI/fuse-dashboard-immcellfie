@@ -194,10 +194,6 @@ export const volcanoPlot = {
                 {
                   test: "datum.selected",
                   value: 0.8
-                },
-                {
-                  test: "datum.category !== 'not significant'",
-                  value: 0.8
                 }
               ],
               value: 0
