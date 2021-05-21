@@ -241,7 +241,7 @@ const voronoiTreemap = {
               strokeWidth: { value: 4 }
             },
             update: {
-              stroke: { value: "none" },
+              stroke: { signal: "datum.data.selected ? highlightColor : 'none'" },
               path: { field: "path" },
               scaleX: { signal: "min(width, height) / 2" }, 
               scaleY: { signal: "min(width, height) / 2" },

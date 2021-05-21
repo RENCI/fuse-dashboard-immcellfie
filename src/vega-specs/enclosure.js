@@ -205,7 +205,7 @@ const enclosure = {
           strokeWidth: { value: 4 }
         },
         update: {
-          stroke: { value: "none" },
+          stroke: { signal: "datum.selected ? highlightColor : 'none'" },
           x: { field: "x" },
           y: { field: "y" },
           size: { signal: "4 * datum.r * datum.r" },
