@@ -12,6 +12,7 @@ import {
 } from "../../vega-specs";
 import { sequential, diverging } from "../../colors";
 import { LoadingSpinner } from "../loading-spinner";
+import { SelectedList } from "../selected-list";
 import { useResize } from "../../hooks";
 import "./hierarchy-vis.css";
 
@@ -93,10 +94,6 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
   };
 
   const onSelectNode = (evt, item) => {
-
-    console.log(evt);
-    console.log(item);
-
     if (!item || !item.datum) return;
 
     const name = item.datum.name;
@@ -246,6 +243,11 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
               ))}
             </Control>
           </Group>
+        </Row>
+        <Row>
+          <Col>
+            <SelectedList nodes={ tree.descendants() } />
+          </Col>
         </Row>
       </div>
       <div ref={ vegaRef }>
