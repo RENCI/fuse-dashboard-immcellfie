@@ -1,14 +1,43 @@
-import React, { useContext } from "react";
-import { Button } from "react-bootstrap";
+import React, { useContext, useState } from "react";
+import { Row, Col, Form, Button, InputGroup } from "react-bootstrap";
 import { X } from "react-bootstrap-icons";
 import { DataContext } from "../../contexts";
 
+const { Control } = Form;
+const { Prepend } = InputGroup;
+
 export const SelectedList = ({ nodes }) => {
   const [, dataDispatch] = useContext(DataContext);
+  const [text, setText] = useState("");
 
   const onCloseClick = name => {
     dataDispatch({ type: "selectNode", name: name, selected: false });
   };
+
+  const onTextChange = evt => {
+//    console.log(evt);
+    setText(evt.target.value);
+  };
+
+  const onTextInput = evt => {
+    //console.log(evt);
+  };
+
+  const onTextClick = evt => {
+    console.log(evt);
+  };
+
+  const onTextBlur = evt => {
+    dataDispatch({ type: "selectNode", name: text, selected: true });
+
+    setText("");
+  };
+
+  const options = nodes.filter(node => {
+    return node.depth > 0 && node.depth < 4 && !node.data.selected;
+  }).map(({ data }, i) => {
+    return <option key={ i } value={ data.name } />;
+  });
 
   const selected = nodes.filter(({ data }) => data.selected).map(({ data }, i, a) => {
     return (
@@ -32,9 +61,25 @@ export const SelectedList = ({ nodes }) => {
   });
 
   return (
-    <>
-      <small>Selected: </small>
-      { selected.length > 0 ? selected : <small className="text-muted">None</small> }
-    </>
+    <Row>
+      <Col xs="auto">
+        <Control  
+          size="sm"
+          list="selectOptions"
+          placeholder="Select"
+          value={ text }
+          onChange={ onTextChange }
+          onInput={ onTextInput }
+          onClick={ onTextClick }
+          onBlur={ onTextBlur }
+        />
+        <datalist id="selectOptions">
+          { options }
+        </datalist>
+      </Col>
+      <Col className="px-0">
+        { selected }
+      </Col>
+    </Row>
   );
 };
