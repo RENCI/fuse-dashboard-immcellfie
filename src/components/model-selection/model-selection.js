@@ -217,7 +217,7 @@ export const ModelSelection = ({ outputName, outputType }) => {
                   variant="outline-secondary"
                   onClick={ () => onParameterReset(parameter.name) }
                 >
-                  <ArrowCounterclockwise className="mb-1" />
+                  <ArrowCounterclockwise />
                 </Button>
               </Append>
             </InputGroup>
@@ -239,7 +239,7 @@ export const ModelSelection = ({ outputName, outputType }) => {
                   variant="outline-secondary"
                   onClick={ () => onParameterReset(parameter.name) }
                 >
-                  <ArrowCounterclockwise className="mb-1" />
+                  <ArrowCounterclockwise />
                 </Button>
               </Append>
             </InputGroup>

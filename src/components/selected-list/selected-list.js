@@ -104,9 +104,7 @@ export const SelectedList = ({ nodes }) => {
                 variant="outline-secondary"
                 onClick={ onExpandClick }
               >
-                { expand ? 
-                  <List className="mb-1" /> : 
-                  <GraphUp className="mb-1" /> }
+                { expand ? <List /> : <GraphUp /> }
               </Button>
             </Append>
           </InputGroup>
