@@ -3,6 +3,7 @@ import { Form, Col } from "react-bootstrap";
 import * as d3 from "d3";
 import { DataContext } from "../../contexts";
 import { VegaWrapper } from "../vega-wrapper";
+import { VegaTooltip } from "../vega-tooltip";
 import { SubgroupsLink } from "../page-links";
 import { WarningMessage } from "../warning-message";
 import { SelectedList } from "../selected-list";
@@ -53,7 +54,8 @@ export const VolcanoVis = ({ data, subgroups }) => {
           foldChange >= foldChangeThreshold ? "up" :  
           foldChange <= 1 / foldChangeThreshold ? "down" :
           "not significant",
-        selected: node.data.selected
+        selected: node.data.selected,
+        data: node.data
       };
     });
   }, [data, significanceLevel, foldChangeThreshold]);  
@@ -80,6 +82,8 @@ export const VolcanoVis = ({ data, subgroups }) => {
   const visibleData = volcanoData.filter(node => node.depth > 0 && node.depth <= depth);
 
   const subtitle = subgroups[1] && (subgroups[0].name + " vs. " + subgroups[1].name);
+
+  const subgroup = "comparison";
 
   return (
     <>
@@ -151,6 +155,12 @@ export const VolcanoVis = ({ data, subgroups }) => {
               eventListeners={[
                 { type: "click", callback: onSelectNode }
               ]}
+              tooltip={ 
+                <VegaTooltip 
+                  subgroup={ subgroup } 
+                  subgroupName={ [subgroups[0].name, subgroups[1].name] } 
+                /> 
+              }
             />
           </div>
         </>
