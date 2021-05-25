@@ -8,7 +8,7 @@ import { DetailVis } from "../detail-vis";
 const { Control } = Form;
 const { Append } = InputGroup;
 
-export const SelectedList = ({ nodes }) => {
+export const SelectedList = ({ nodes, subgroup, subgroupName }) => {
   const [, dataDispatch] = useContext(DataContext);
   const [text, setText] = useState("");
   const [expand, setExpand] = useState(false);
@@ -70,8 +70,8 @@ export const SelectedList = ({ nodes }) => {
       >
         <DetailVis 
           data={ data }
-          subgroup="comparison"
-          subgroupName="TEST"
+          subgroup={ subgroup }
+          subgroupName={ subgroupName }
         />
       </Col>
     );

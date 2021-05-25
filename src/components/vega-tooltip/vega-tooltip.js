@@ -1,8 +1,6 @@
-import React, { useMemo, useRef } from "react";
+import React, { useRef } from "react";
 import { Card } from "react-bootstrap";
-import { VegaWrapper } from "../vega-wrapper";
 import * as d3 from "d3";
-import { histogram, densityComparison, bar, barComparison } from "../../vega-specs";
 import "./vega-tooltip.css";
 
 const { Subtitle, Body, Footer } = Card;
@@ -38,17 +36,6 @@ const calculatePosition = (event, tooltipBox, itemBox, offsetX, offsetY) => {
 
   return { x, y };
 */  
-};
-
-const formatNumber = d => isNaN(d) ? "Inconclusive" : d3.format(".2f")(d);
-const formatPValue = d => d < 0.001 ? "0.001" : d3.format(".3f")(d);
-
-const subgroupValues = (value, key) => {  
-  return value ? value[key].filter(({ value }) => !isNaN(value)) : [];
-};
-
-const compareValues = (value, key) => {
-  return value ? value[key + "1"].concat(value[key + "2"]).filter(({ value }) => !isNaN(value)) : [];
 };
 
 export const VegaTooltip = ({ handler, event, item, value, children }) => {

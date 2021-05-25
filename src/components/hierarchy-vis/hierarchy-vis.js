@@ -169,6 +169,11 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
 
   const strokeField = isComparison ? (value === "score" ? "scorePValue" : "activityPValue") : "depth";
 
+  const subgroupName = isComparison ? 
+    [subgroups[0].name, subgroups[1].name] : 
+    subgroup === "1" ? subgroups[0].name : 
+    subgroups[1].name;
+
   return (
     <>
       <div className="mb-4">
@@ -247,7 +252,11 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
         </Row>
         <Row>
           <Col>
-            <SelectedList nodes={ tree.descendants() } />
+            <SelectedList 
+              nodes={ tree.descendants() }
+              subgroup={ subgroup }
+              subgroupName={ subgroupName }
+            />
           </Col>
         </Row>
       </div>
@@ -278,11 +287,7 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
               <VegaTooltip>
                 <DetailVis 
                   subgroup={ subgroup } 
-                  subgroupName={ isComparison ? 
-                    [subgroups[0].name, subgroups[1].name] : 
-                    subgroup === "1" ? subgroups[0].name : 
-                    subgroups[1].name
-                } />
+                  subgroupName={ subgroupName } />
               </VegaTooltip>
             }
           />

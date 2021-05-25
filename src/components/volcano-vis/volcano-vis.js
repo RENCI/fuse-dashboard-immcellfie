@@ -136,7 +136,10 @@ export const VolcanoVis = ({ data, subgroups }) => {
             </Row>
             <Row>
               <Col>
-                <SelectedList nodes={ data } />
+                <SelectedList 
+                  nodes={ data } 
+                  subgroup="comparison"
+                  subgroupName={ [subgroups[0].name, subgroups[1].name] }/>
               </Col>
             </Row>
           </div>
