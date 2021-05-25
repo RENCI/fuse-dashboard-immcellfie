@@ -59,8 +59,6 @@ export const SelectedList = ({ nodes }) => {
           placeholder="Select"
           value={ text }
           onChange={ onTextChange }
-          onInput={ onTextInput }
-          onClick={ onTextClick }
           onBlur={ onTextBlur }
         />
         <datalist id="selectOptions">
