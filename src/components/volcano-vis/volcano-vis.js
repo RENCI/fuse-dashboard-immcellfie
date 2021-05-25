@@ -4,6 +4,7 @@ import * as d3 from "d3";
 import { DataContext } from "../../contexts";
 import { VegaWrapper } from "../vega-wrapper";
 import { VegaTooltip } from "../vega-tooltip";
+import { DetailVis } from "../detail-vis";
 import { SubgroupsLink } from "../page-links";
 import { WarningMessage } from "../warning-message";
 import { SelectedList } from "../selected-list";
@@ -156,10 +157,12 @@ export const VolcanoVis = ({ data, subgroups }) => {
                 { type: "click", callback: onSelectNode }
               ]}
               tooltip={ 
-                <VegaTooltip 
-                  subgroup={ subgroup } 
-                  subgroupName={ [subgroups[0].name, subgroups[1].name] } 
-                /> 
+                <VegaTooltip>
+                  <DetailVis 
+                    subgroup={ subgroup } 
+                    subgroupName={ [subgroups[0].name, subgroups[1].name] } 
+                  />
+                </VegaTooltip>
               }
             />
           </div>

@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { Row, Col, Form, InputGroup, Button } from "react-bootstrap";
 import { X } from "react-bootstrap-icons";
 import { DataContext } from "../../contexts";
+import { VegaTooltip } from "../vega-tooltip";
 
 const { Control } = Form;
 const { Append } = InputGroup;
@@ -34,7 +35,9 @@ export const SelectedList = ({ nodes }) => {
     return <option key={ i } value={ data.name } />;
   });
 
-  const selected = nodes.filter(({ data }) => data.selected).map(({ data }, i, a) => {
+  const selected = nodes.filter(({ data }) => data.selected);
+
+  const tags = selected.map(({ data }, i, a) => {
     return (
       <span key={ i }>
         <small className="text-muted">
@@ -52,34 +55,50 @@ export const SelectedList = ({ nodes }) => {
     );
   });
 
+  const tooltips = selected.map(({ data }, i) => {
+    return (
+      <Col 
+        key={ i }
+        xs="auto"
+      >
+        { data.name }
+      </Col>
+    );
+  });
+
   return (
-    <Row>
-      <Col xs="auto">
-        <InputGroup size="sm">
-          <Control  
-            list="selectOptions"
-            placeholder="Select"
-            value={ text }
-            onChange={ onTextChange }
-            onBlur={ onTextBlur }
-          />
-          <datalist id="selectOptions">
-            { options }
-          </datalist>
-          <Append>
-            <Button 
-              variant="outline-secondary"
-              disabled={ selected.length === 0 }
-              onClick={ onClearClick }
-            >
-              Clear
-            </Button>
-          </Append>
-        </InputGroup>
-      </Col>
-      <Col className="px-0">
-        { selected }
-      </Col>
-    </Row>
+    <>
+      <Row>
+        <Col xs="auto">
+          <InputGroup size="sm">
+            <Control  
+              list="selectOptions"
+              placeholder="Select"
+              value={ text }
+              onChange={ onTextChange }
+              onBlur={ onTextBlur }
+            />
+            <datalist id="selectOptions">
+              { options }
+            </datalist>
+            <Append>
+              <Button 
+                variant="outline-secondary"
+                disabled={ selected.length === 0 }
+                onClick={ onClearClick }
+              >
+                Clear
+              </Button>
+            </Append>
+          </InputGroup>
+        </Col>
+        <Col className="px-0">
+          { tags }
+        </Col>
+      </Row>
+      <Row>
+        { tooltips }
+      </Row>
+    </>
   );
 };

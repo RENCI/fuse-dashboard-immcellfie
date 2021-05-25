@@ -5,6 +5,7 @@ import { DataContext } from "../../contexts";
 import { voronoiTreemap as d3VoronoiTreemap } from "d3-voronoi-treemap";
 import { VegaWrapper } from "../vega-wrapper";
 import { VegaTooltip } from "../vega-tooltip";
+import { DetailVis } from "../detail-vis";
 import { 
   treemap, treemapLogScale, treemapPValue,
   enclosure, enclosureLogScale, enclosurePValue,
@@ -274,14 +275,15 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
               { type: "click", callback: onSelectNode }
             ]}
             tooltip={ 
-              <VegaTooltip 
-                subgroup={ subgroup } 
-                subgroupName={ isComparison ? 
-                  [subgroups[0].name, subgroups[1].name] : 
-                  subgroup === "1" ? subgroups[0].name : 
-                  subgroups[1].name
-                } 
-              /> 
+              <VegaTooltip>
+                <DetailVis 
+                  subgroup={ subgroup } 
+                  subgroupName={ isComparison ? 
+                    [subgroups[0].name, subgroups[1].name] : 
+                    subgroup === "1" ? subgroups[0].name : 
+                    subgroups[1].name
+                } />
+              </VegaTooltip>
             }
           />
         }
