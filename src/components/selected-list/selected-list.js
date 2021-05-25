@@ -1,8 +1,9 @@
 import React, { useContext, useState } from "react";
 import { Row, Col, Form, InputGroup, Button } from "react-bootstrap";
+import { GraphUp, List } from "react-bootstrap-icons";
 import { X } from "react-bootstrap-icons";
 import { DataContext } from "../../contexts";
-import { VegaTooltip } from "../vega-tooltip";
+import { DetailVis } from "../detail-vis";
 
 const { Control } = Form;
 const { Append } = InputGroup;
@@ -10,6 +11,7 @@ const { Append } = InputGroup;
 export const SelectedList = ({ nodes }) => {
   const [, dataDispatch] = useContext(DataContext);
   const [text, setText] = useState("");
+  const [expand, setExpand] = useState(false);
 
   const onCloseClick = name => {
     dataDispatch({ type: "selectNode", name: name, selected: false });
@@ -27,6 +29,10 @@ export const SelectedList = ({ nodes }) => {
 
   const onClearClick = () => {
     dataDispatch({ type: "deselectAllNodes" });
+  };
+
+  const onExpandClick = () => {
+    setExpand(!expand);
   };
 
   const options = nodes.filter(node => {
@@ -60,8 +66,13 @@ export const SelectedList = ({ nodes }) => {
       <Col 
         key={ i }
         xs="auto"
+        className="mt-3"
       >
-        { data.name }
+        <DetailVis 
+          data={ data }
+          subgroup="comparison"
+          subgroupName="TEST"
+        />
       </Col>
     );
   });
@@ -89,16 +100,28 @@ export const SelectedList = ({ nodes }) => {
               >
                 Clear
               </Button>
+              <Button 
+                variant="outline-secondary"
+                onClick={ onExpandClick }
+              >
+                { expand ? 
+                  <List className="mb-1" /> : 
+                  <GraphUp className="mb-1" /> }
+              </Button>
             </Append>
           </InputGroup>
         </Col>
-        <Col className="px-0">
-          { tags }
-        </Col>
+        { !expand &&
+          <Col className="px-0">
+            { tags }
+          </Col>
+        }
       </Row>
-      <Row>
-        { tooltips }
-      </Row>
+      { expand && 
+        <Row>
+          { tooltips }
+        </Row>
+      }
     </>
   );
 };
