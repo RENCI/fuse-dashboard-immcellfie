@@ -1,10 +1,9 @@
 import React, { useContext, useState } from "react";
-import { Row, Col, Form, Button, InputGroup } from "react-bootstrap";
+import { Row, Col, Form, Button } from "react-bootstrap";
 import { X } from "react-bootstrap-icons";
 import { DataContext } from "../../contexts";
 
 const { Control } = Form;
-const { Prepend } = InputGroup;
 
 export const SelectedList = ({ nodes }) => {
   const [, dataDispatch] = useContext(DataContext);
@@ -15,19 +14,10 @@ export const SelectedList = ({ nodes }) => {
   };
 
   const onTextChange = evt => {
-//    console.log(evt);
     setText(evt.target.value);
   };
 
-  const onTextInput = evt => {
-    //console.log(evt);
-  };
-
-  const onTextClick = evt => {
-    console.log(evt);
-  };
-
-  const onTextBlur = evt => {
+  const onTextBlur = () => {
     dataDispatch({ type: "selectNode", name: text, selected: true });
 
     setText("");
