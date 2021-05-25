@@ -137,7 +137,7 @@ export const volcanoPlot = {
                 domainMax: { expr: "logFoldChangeExtent" }
               },
               axis: {
-                title: "-log(fold change)"
+                title: "log(fold change)"
               }
             },
             y: {
