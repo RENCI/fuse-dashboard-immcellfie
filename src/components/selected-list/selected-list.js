@@ -100,9 +100,10 @@ export const SelectedList = ({ nodes }) => {
               >
                 Clear
               </Button>
-              <Button 
+              <Button
                 variant="outline-secondary"
                 onClick={ onExpandClick }
+                className="d-flex align-items-center"
               >
                 { expand ? <List /> : <GraphUp /> }
               </Button>

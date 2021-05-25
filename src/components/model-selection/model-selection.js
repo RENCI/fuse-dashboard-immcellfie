@@ -217,7 +217,7 @@ export const ModelSelection = ({ outputName, outputType }) => {
                   variant="outline-secondary"
                   onClick={ () => onParameterReset(parameter.name) }
                 >
-                  <ArrowCounterclockwise />
+                  <ArrowCounterclockwise className="d-flex align-items-center"/>
                 </Button>
               </Append>
             </InputGroup>
@@ -239,7 +239,7 @@ export const ModelSelection = ({ outputName, outputType }) => {
                   variant="outline-secondary"
                   onClick={ () => onParameterReset(parameter.name) }
                 >
-                  <ArrowCounterclockwise />
+                  <ArrowCounterclockwise className="d-flex align-items-center"/>
                 </Button>
               </Append>
             </InputGroup>
@@ -253,12 +253,13 @@ export const ModelSelection = ({ outputName, outputType }) => {
       <Header 
         as="h5"
         style={{ cursor: canCollapse ? "pointer" : "default" }}
+        className="d-flex align-items-center"
         onClick={ canCollapse ? onHeaderClick : null }
       >
         { !canCollapse ? null : 
-          collapse ? <CaretRight className="mb-1 text-muted" /> : 
-          <CaretDown className="mb-1 text-muted" /> 
-        } CellFIE Parameters
+          collapse ? <CaretRight className="text-muted" /> : 
+          <CaretDown className="text-muted" /> 
+        } <span className="ml-1">CellFIE Parameters</span>
       </Header>
       <Collapse in={!collapse}>
         <div>
