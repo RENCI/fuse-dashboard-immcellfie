@@ -1,16 +1,27 @@
-import React, { useState, useMemo } from "react";
+import React, { useContext, useState, useRef, useMemo } from "react";
 import { Form, Col } from "react-bootstrap";
 import * as d3 from "d3";
+import { DataContext } from "../../contexts";
 import { VegaWrapper } from "../vega-wrapper";
-import { volcanoPlot } from "../../vega-specs";
 import { SubgroupsLink } from "../page-links";
+import { WarningMessage } from "../warning-message";
+import { SelectedList } from "../selected-list";
+import { useResize } from "../../hooks";
+import { volcanoPlot } from "../../vega-specs";
 import "./volcano-vis.css";
 
 const { Group, Label, Control, Row } = Form; 
 
 export const VolcanoVis = ({ data, subgroups }) => {
+  const [, dataDispatch] = useContext(DataContext);
   const [depth, setDepth] = useState(3);
   const [significanceLevel, setSignificanceLevel] = useState(0.05);
+  const [foldChangeThreshold, setFoldChangeThreshold] = useState(1.5);
+  const vegaRef = useRef();
+  const { width } = useResize(vegaRef, 100, 100, true);
+
+  const aspectRatio = 1.6;
+  const height = width / aspectRatio;
 
   const onDepthChange = evt => {
     setDepth(+evt.target.value);
@@ -20,7 +31,13 @@ export const VolcanoVis = ({ data, subgroups }) => {
     setSignificanceLevel(+evt.target.value);
   };
 
-  const volcanoData = useMemo(() => {
+  const onFoldChangeThresholdChange = evt => {
+    setFoldChangeThreshold(+evt.target.value);
+  };
+
+  const log = x => Math.log10(x);
+
+  const volcanoData = useMemo(() => { 
     return data.filter(node => node.depth > 0).map(node => {
       const foldChange = node.data.scoreFoldChange;
       const pValue = node.data.scorePValue;
@@ -28,29 +45,48 @@ export const VolcanoVis = ({ data, subgroups }) => {
       return {
         name: node.data.name,
         foldChange: foldChange,
-        logFoldChange: Math.log10(foldChange),
+        logFoldChange: log(foldChange),
         pValue: pValue,
-        logPValue: -Math.log10(pValue),
+        logPValue: -log(pValue),
         depth: node.depth,
-        category: pValue > significanceLevel ? "not significant" : foldChange < 1 ? "down" : "up"
+        category: pValue > significanceLevel ? "not significant" :
+          foldChange >= foldChangeThreshold ? "up" :  
+          foldChange <= 1 / foldChangeThreshold ? "down" :
+          "not significant",
+        selected: node.data.selected
       };
     });
-  }, [data, significanceLevel]);
+  }, [data, significanceLevel, foldChangeThreshold]);  
+  
+  const onSelectNode = (evt, item) => {
+    if (!item || !item.datum) return;
+
+    const name = item.datum.name;
+    const selected = item.datum.selected;
+
+    dataDispatch({ type: "selectNode", name: name, selected: !selected });
+  };
 
   const foldChangeExtent = useMemo(() => {
-    const extent = d3.extent(volcanoData, data => data.logFoldChange);
+    const extent = d3.extent(volcanoData, data => data.foldChange);
 
-    return Math.max(Math.abs(extent[0]), Math.abs(extent[1]));
-  }, [volcanoData]);
+    return Math.max(1 / Math.abs(extent[0]), Math.abs(extent[1]), foldChangeThreshold);
+  }, [volcanoData, foldChangeThreshold]);
+
+  const pValueExtent = useMemo(() => {
+    return Math.min(d3.min(volcanoData, data => data.pValue), significanceLevel);
+  }, [volcanoData, significanceLevel]);
 
   const visibleData = volcanoData.filter(node => node.depth > 0 && node.depth <= depth);
+
+  const subtitle = subgroups[1] && (subgroups[0].name + " vs. " + subgroups[1].name);
 
   return (
     <>
       { subgroups[1] === null ? 
         <>
-          <h5>Only one subgroup present</h5>
-          <SubgroupsLink />
+          <WarningMessage message="Only one subgroup present" />
+          <div className="ml-3"><SubgroupsLink /></div>
         </>
       :
         <>
@@ -60,7 +96,7 @@ export const VolcanoVis = ({ data, subgroups }) => {
                 <Label size="sm">Depth: { depth }</Label>        
                 <Control 
                   size="sm"
-                  className="my-1"
+                  className="mt-2"
                   type="range"
                   min={ 1 }
                   max={ 3 }         
@@ -69,28 +105,54 @@ export const VolcanoVis = ({ data, subgroups }) => {
                 />
               </Group>
               <Group as={ Col } controlId="significanceLevelSlider">
-                <Label size="sm">Significance level: { significanceLevel }</Label>        
+                <Label size="sm">Significance level</Label>        
                 <Control 
                   size="sm"
-                  className="my-1"
-                  type="range"
+                  type="number"
                   min={ 0.005 }
-                  max={ 0.1 }   
+                  max={ 1 }  
                   step={ 0.005 }      
                   value={ significanceLevel }
                   onChange={ onSignificanceLevelChange } 
                 />
               </Group>
+              <Group as={ Col } controlId="foldChangeThresholdSlider">
+                <Label size="sm">Fold change threshold</Label>        
+                <Control 
+                  size="sm"
+                  type="number"
+                  min={ 1 }
+                  max={ Number.MAX_VALUE }   
+                  step={ 0.01 }      
+                  value={ foldChangeThreshold }
+                  onChange={ onFoldChangeThresholdChange } 
+                />
+              </Group>
+            </Row>
+            <Row>
+              <Col>
+                <SelectedList nodes={ data } />
+              </Col>
             </Row>
           </div>
-          <VegaWrapper 
-            spec={ volcanoPlot } 
-            data={ visibleData }
-            signals={[
-              { name: "foldChangeExtent", value: foldChangeExtent },
-              { name: "logSignificanceLevel", value: -Math.log10(significanceLevel) }
-            ]}
-          />
+          <div ref={ vegaRef }>
+            <VegaWrapper
+              width={ width }
+              height={ height }
+              spec={ volcanoPlot } 
+              data={ visibleData }
+              signals={[
+                { name: "subtitle", value: subtitle },
+                { name: "logFoldChangeExtent", value: log(foldChangeExtent) },
+                { name: "logPValueExtent", value: -log(pValueExtent) },
+                { name: "logSignificanceLevel", value: -log(significanceLevel) },
+                { name: "logFoldChangeThreshold", value: log(foldChangeThreshold) }
+              ]}
+              eventListeners={[
+                { type: "click", callback: onSelectNode }
+              ]}
+            />
+          </div>
         </>
       }
     </>

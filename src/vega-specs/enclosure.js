@@ -1,7 +1,9 @@
-export const enclosure = {
+import { createPValueVersion, createLogScaleVersion } from "./hierarchy-utils";
+
+const enclosure = {
   $schema: "https://vega.github.io/schema/vega/v5.json",
-  width: { signal: "containerWidth" },
-  height: { signal: "containerWidth" },
+  width: { signal: "chartWidth" },
+  height: { signal: "chartHeight" },
   title: { 
     text: "Metabolic task enclosure diagram",
     subtitle: { signal: "subtitle" }
@@ -10,25 +12,14 @@ export const enclosure = {
     type: "fit",
     resize: true
   },
-  signals: [        
+  signals: [
     {
-      name: "containerWidth",
-      value: 1032,
-      on: [
-        {
-          events: [
-            {
-              source: "window",
-              type: "resize"
-            },
-            {
-              source: "window",
-              type: "load"
-            }
-          ],
-          update: "containerSize()[0]"
-        }
-      ]
+      name: "chartWidth",
+      value: 500
+    },
+    {
+      name: "chartHeight",
+      value: 500
     },
     {
       name: "subtitle",
@@ -40,6 +31,14 @@ export const enclosure = {
     },      
     {
       name: "value",
+      value: "score"
+    },
+    {
+      name: "strokeField",
+      value: "depth"
+    },
+    {
+      name: "legendTitle",
       value: "score"
     },
     {
@@ -88,11 +87,11 @@ export const enclosure = {
           padding: 1,    
           sort: {
             field: ["data.name"],
-            order: ["descending"]
+            order: ["ascending"]
           },
           size: [
             { signal: "width" }, 
-            { signal: "width" }
+            { signal: "height" }
           ]
         },
         {
@@ -148,7 +147,7 @@ export const enclosure = {
   legends: [
     {
       fill: "color",
-      title: { signal: "slice(value, 0, -1)" }
+      title: { signal: "legendTitle" }
     },
     { 
       fill: "specialValues",
@@ -183,7 +182,7 @@ export const enclosure = {
           ],
           stroke: { 
             scale: "stroke",
-            field: "depth"
+            field: { signal: "strokeField" },
           },
           strokeWidth: {
             scale: "strokeWidth",
@@ -192,7 +191,7 @@ export const enclosure = {
           x: { field: "x" },
           y: { field: "y" },
           size: { signal: "4 * datum.r * datum.r" },
-          zindex: { field: "depth" }
+          zindex: { signal: "strokeField === depth ? datum.depth : datum.depth - datum[strokeField]" }        
         }
       }
     },
@@ -206,7 +205,7 @@ export const enclosure = {
           strokeWidth: { value: 4 }
         },
         update: {
-          stroke: { value: "none" },
+          stroke: { signal: "datum.selected ? highlightColor : 'none'" },
           x: { field: "x" },
           y: { field: "y" },
           size: { signal: "4 * datum.r * datum.r" },
@@ -240,4 +239,12 @@ export const enclosure = {
       }
     }
   ]
-}
+};
+
+// Create a copy to add p value for outline because you can't set the scale type using a signal/expression...
+const enclosurePValue = createPValueVersion(enclosure);
+
+// Create a copy for version with fill log scale because you can't set the scale type using a signal/expression...
+const enclosureLogScale = createLogScaleVersion(enclosurePValue);
+
+export { enclosure, enclosurePValue, enclosureLogScale };

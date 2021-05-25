@@ -1,6 +1,6 @@
 import React, { createContext, useReducer } from "react";
 import * as d3 from "d3";
-import Statistics from "statistics.js";
+import ttest2 from "@stdlib/stats/ttest2";
 
 const excludedPhenotypes = [
   "participant_id",
@@ -243,8 +243,6 @@ const createTree = hierarchy => {
         node.data.allActivities.push([child.data.activity]);
       }
     }); 
-
-    node.data.subjects = d3.range(0, node.data.allScores.length);
   });
 
   tree.eachBefore(node => {
@@ -297,7 +295,7 @@ const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod) => {
       node.data.activity2 = "na";
 
       node.data.scoreFoldChange = "na";
-      node.data.activityFoldChange = "na";
+      node.data.activityChange = "na";
 
       node.data.scorePValue = "na";
 
@@ -353,26 +351,30 @@ const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod) => {
     if (node.data.score1 !== null && node.data.score2 !== null) {
       const foldChange = (a, b) => a === 0 ? 0 : b / a;
 
+      const pValue = (a1, a2) => {
+        const v1 = a1.filter(({ value }) => !isNaN(value)).map(({ value }) => value);
+        const v2 = a2.filter(({ value }) => !isNaN(value)).map(({ value }) => value);
+
+        if (v1.length < 1 || v2.length < 1) {
+          return 1;
+        }
+        else {
+          const { pValue } = ttest2(v1, v2);
+          return Math.max(pValue, 0.0001);
+        }
+      };
+
       node.data.scoreFoldChange = foldChange(node.data.score1, node.data.score2);
-      node.data.activityFoldChange = foldChange(node.data.activity1, node.data.activity2);
+      node.data.activityChange = node.data.activity2 - node.data.activity1;
 
-      const ttestData = d3.range(Math.max(node.data.scores1.length, node.data.scores2.length)).map(index => {
-        const item = {};
-        if (index < node.data.scores1.length) item.subgroup1 = node.data.scores1[index].value;
-        if (index < node.data.scores2.length) item.subgroup2 = node.data.scores2[index].value;
-
-        return item;
-      });
-
-      const stats = new Statistics(ttestData, { subgroup1: "metric", subgroup2: "metric" });
-      const ttest = stats.studentsTTestTwoSamples("subgroup1", "subgroup2", { dependent: true });
-
-      node.data.scorePValue = ttest.pTwoSided;
+      node.data.scorePValue = pValue(node.data.scores1, node.data.scores2);
+      node.data.activityPValue = pValue(node.data.activities1, node.data.activities2);
     }
     else {
       node.data.scoreFoldChange = null;
-      node.data.activityFoldChange = null;
+      node.data.activityChange = null;
       node.data.scorePValue = null;
+      node.data.activityPValue = null;
     }
   });
 };
@@ -677,6 +679,32 @@ const reducer = (state, action) => {
         ...state,
         overlapMethod: action.method
       };
+
+    case "selectNode": {
+      const hierarchy = [...state.hierarchy];
+
+      const item = hierarchy.find(({ name }) => name === action.name);
+
+      if (!item) return state;
+
+      item.selected = action.selected;
+
+      return {
+        ...state,
+        hierarchy: hierarchy
+      };
+    }
+
+    case "deselectAllNodes": {
+      const hierarchy = [...state.hierarchy];
+
+      hierarchy.forEach(item => item.selected = false);
+
+      return {
+        ...state,
+        hierarchy: hierarchy
+      };
+    }
 
     default: 
       throw new Error("Invalid data context action: " + action.type);

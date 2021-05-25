@@ -5,6 +5,7 @@ import { HierarchyVis } from "../hierarchy-vis";
 import { HeatmapVis } from "../heatmap-vis";
 import { VolcanoVis } from "../volcano-vis";
 import { PathwayVis } from "../pathway-vis";
+import { useLocalStorage } from "../../hooks";
 
 const { Header, Title, Body } = Card;
 const { Item, Link } = Nav;
@@ -12,35 +13,41 @@ const { Container, Content, Pane } = Tab;
 
 export const CellfieOutput = () => {
   const [{ hierarchy, tree, subgroups, selectedSubgroups }] = useContext(DataContext);
+  const [tab, setTab] = useLocalStorage("CellfieOutputTab", "hierarchy");
 
   const currentSubgroups = selectedSubgroups.map(key => {
     return key !== null ? subgroups.find(subgroup => subgroup.key === key) : null;
   });
+
+  const onSelect = tab => {
+    setTab(tab);
+  };
 
   return (
     <>
       { hierarchy && 
         <Card className="mt-4">
           <Container 
-            defaultActiveKey="hierarchy"
+            activeKey={ tab }
             mountOnEnter={ true }
-            unmountOnExit={ true }
+            unmountOnExit={ false }
+            onSelect={ onSelect }
           >
             <Header>
               <Title>CellFIE Output Visualizations</Title>
               <Nav 
+                activeKey={ tab }
                 variant="tabs" 
-                defaultActiveKey="hierarchy"
                 justify={ true }
               >
                 <Item>
                   <Link eventKey="hierarchy">Hierarchy</Link>
                 </Item>
                 <Item>
-                  <Link eventKey="heatmap">Heatmap</Link>
+                  <Link eventKey="volcano">Volcano plot</Link>
                 </Item>
                 <Item>
-                  <Link eventKey="volcano">Volcano plot</Link>
+                  <Link eventKey="heatmap">Heatmap</Link>
                 </Item>
                 <Item>
                   <Link eventKey="escher">Pathway map</Link>
@@ -56,14 +63,14 @@ export const CellfieOutput = () => {
                     subgroups={ currentSubgroups }
                   />
                 </Pane>
-                <Pane eventKey="heatmap">
-                  <HeatmapVis
+                <Pane eventKey="volcano">
+                  <VolcanoVis
                     data={ tree.descendants() }
                     subgroups={ currentSubgroups }
                   />
                 </Pane>
-                <Pane eventKey="volcano">
-                  <VolcanoVis
+                <Pane eventKey="heatmap">
+                  <HeatmapVis
                     data={ tree.descendants() }
                     subgroups={ currentSubgroups }
                   />

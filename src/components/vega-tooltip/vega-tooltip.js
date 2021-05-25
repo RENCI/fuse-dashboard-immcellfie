@@ -40,8 +40,8 @@ const calculatePosition = (event, tooltipBox, itemBox, offsetX, offsetY) => {
 */  
 };
 
-const format = d3.format(".2f")
-const formatNumber = d => isNaN(d) ? "Inconclusive" : format(d);
+const formatNumber = d => isNaN(d) ? "Inconclusive" : d3.format(".2f")(d);
+const formatPValue = d => d < 0.001 ? "0.001" : d3.format(".3f")(d);
 
 const subgroupValues = (value, key) => {  
   return value ? value[key].filter(({ value }) => !isNaN(value)) : [];
@@ -61,7 +61,7 @@ export const VegaTooltip = ({ handler, event, item, value, subgroup, subgroupNam
   const isComparison = subgroup === "comparison";
 
   const score = value && (isComparison ? value.scoreFoldChange : value["score" + subgroup]);
-  const activity = value && (isComparison ? value.activityFoldChange : value["activity" + subgroup]);  
+  const activity = value && (isComparison ? value.activityChange : value["activity" + subgroup]);  
   
   const scores = useMemo(() => {
     return isComparison ? compareValues(value, "scores", subgroupName) : subgroupValues(value, "scores" + subgroup);
@@ -86,55 +86,59 @@ export const VegaTooltip = ({ handler, event, item, value, subgroup, subgroupNam
         left: x + "px"
       }}
     >
-      <Card>
-        <Body>
-          { value && <Subtitle>{ value.name }</Subtitle> }
-          <div className="mt-1">{ subtitle }</div>
-          <hr className="my-1"/>
-          <div className="small">
-            <div>
-              { (isComparison ? "Score fold change: " : "Mean score: ") + formatNumber(score) }
+      { value &&
+        <Card>
+          <Body>
+            { <Subtitle>{ value.name }</Subtitle> }
+            <div className="mt-1">{ subtitle }</div>
+            <hr className="my-1"/>
+            <div className="small">
+              <div>
+                { (isComparison ? "Score fold change: " : "Mean score: ") + formatNumber(score) }
+                { isComparison && " (p-value: " + formatPValue(value.scorePValue) + ")"} 
+              </div>
+              <div>
+                { (isComparison ? "Activity change: " : "Mean activity: ") + formatNumber(activity) }
+                { isComparison && " (p-value: " + formatPValue(value.activityPValue) + ")" } 
+              </div>
             </div>
-            <div>
-              { (isComparison ? "Activity fold change: " : "Mean activity: ") + formatNumber(activity) }
-            </div>
-          </div>
-          <hr className="my-1"/>
-          { score || activity ? 
-            <div className="text-center">            
-              <small>Distributions</small>
-              <div className="mb-2"></div>
-              <VegaWrapper
-                spec={ scoreSpec }
-                data={ scores }
-                options={{ actions: false }}
-                signals={[
-                  { name: "valueName", value: "score" }
-                ]}
-              />
-              <VegaWrapper
-                spec={ activitySpec }
-                data={ activities }
-                options={{ actions: false }}
-                signals={[
-                  { name: "valueName", value: "activity" }
-                ]}
-              />
-            </div>
-          : <div>No valid data</div> }
-        </Body>
-        {value && value.phenotype.length > 1 &&
-          <Footer>
-            <small>
-              {value.phenotype.map((level, i) => (
-                <div key={ i } style={{ marginLeft: i + "em" }}>
-                  { level }
-                </div>
-              ))}
-            </small>
-          </Footer>
-        }
-      </Card>
+            <hr className="my-1"/>
+            { score || activity ? 
+              <div className="text-center">            
+                <small>Distributions</small>
+                <div className="mb-2"></div>
+                <VegaWrapper
+                  spec={ scoreSpec }
+                  data={ scores }
+                  options={{ actions: false }}
+                  signals={[
+                    { name: "valueName", value: "score" }
+                  ]}
+                />
+                <VegaWrapper
+                  spec={ activitySpec }
+                  data={ activities }
+                  options={{ actions: false }}
+                  signals={[
+                    { name: "valueName", value: "activity" }
+                  ]}
+                />
+              </div>
+            : <div>No valid data</div> }
+          </Body>
+          { value.phenotype.length > 1 &&
+            <Footer>
+              <small>
+                {value.phenotype.map((level, i) => (
+                  <div key={ i } style={{ marginLeft: i + "em" }}>
+                    { level }
+                  </div>
+                ))}
+              </small>
+            </Footer>
+          }
+        </Card>
+      }
     </div>
   );
 };

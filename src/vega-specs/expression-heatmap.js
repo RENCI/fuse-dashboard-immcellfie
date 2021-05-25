@@ -31,51 +31,20 @@ export const expressionHeatmap = {
     },
     {
       name: "sortBy",
-      value: "median",
-      bind: {
-        input: "select",
-        options: ["median", "mean", "max"]
-      }
+      value: "median"
     },
     {
       name: "colorScheme",
-      value: "lightgreyred",
-      bind: {
-        name: "Color scheme: ",
-        input: "select",
-        options: ["lightgreyred", "yellowgreenblue"]
-      }
+      value: "lightgreyred"
     },
     {
       name: "ticks",
       value: [0, 1]      
     }
   ],
-  data: [
-    {
-      name: "data",
-      transform: [{
-        type: "formula",
-        as: "group",
-        expr: "datum.group ? datum.group : { number: 0, name: '' }" 
-      }]
-    },
-    { 
-      name: "groups",
-      source: "data",
-      transform: [
-        {
-          type: "project",
-          fields: ["group.name"],
-          as: ["name"]
-        },        
-        {
-          type: "aggregate",
-          groupby: ["name"]
-        }
-      ]
-    }
-  ],
+  data: { 
+    name: "data" 
+  },
   scales: [
     {
       name: "x",
@@ -102,16 +71,10 @@ export const expressionHeatmap = {
       range: { "step": 4 }
     },    
     {
-      name: "color0",
+      name: "color",
       type: "symlog",
       domain: { data: "data", field: "value" },
-      range: { scheme: "browns" }
-    },
-    {
-      name: "color1",
-      type: "symlog",
-      domain: { data: "data", field: "value" },
-      range: { scheme: "teals" }
+      range: { scheme: { signal: "colorScheme" } }
     }
   ],
   axes: [
@@ -119,27 +82,20 @@ export const expressionHeatmap = {
       scale: "x",
       orient: "top",
       title: "Subjects"
+    },
+    {
+      scale: "y",
+      orient: "left",
+      title: "Genes",
+      values: []
     }
   ],
   legends: [
     {
       type: "gradient",
-      fill: "color0",
-      title: { signal: "data('groups').length > 1 ? 'Group ' + data('groups')[0].name : 'Values'" },
+      fill: "color",
+      title: 'Values',
       values: { signal: "ticks"}
-    },
-    {
-      type: "gradient",
-      fill: "color1",
-      title: { signal: "data('groups').length > 1 ? 'Group ' + data('groups')[1].name : ''" },
-      values: { signal: "data('groups').length > 1 ? ticks : []" },
-      encode: {
-        gradient: { 
-          update: {
-            opacity: { signal: "data('groups').length > 1 ? 1 : 0" }
-          }
-        }
-      }
     }
   ],
   marks: [
@@ -149,7 +105,7 @@ export const expressionHeatmap = {
       encode: {
         update: {
           fill: {
-            scale: { signal: "'color' + datum.group.number" },
+            scale: "color",
             field: "value"
           },
           x: {
@@ -172,86 +128,5 @@ export const expressionHeatmap = {
         }
       }
     }
-  ]
-/*
-  $schema: "https://vega.github.io/schema/vega-lite/v4.json",
-  width: 200,
-  title: "Gene expression heat map",
-  autosize: {
-    resize: true
-  },
-  params: [
-    {
-      name: "sortBy",
-      value: "median",
-      bind: {
-        input: "select",
-        options: ["median", "mean", "max"]
-      }
-    },
-    {
-      name: "colorScheme",
-      value: "lightgreyred",
-      bind: {
-        name: "Color scheme: ",
-        input: "select",
-        options: ["lightgreyred", "yellowgreenblue"]
-      }
-    },
-    {
-      name: "ticks",
-      value: [0, 1]      
-    }
-  ],
-  data: {
-    name: "data"
-  },
-  facet: { 
-    column: { field: "group" } 
-  },
-  spec: {
-    height: { step: 4 },
-    mark: { 
-      type: "rect",
-      tooltip: true
-    },
-    encoding: {
-      y: {
-        field: "gene", 
-        type: "ordinal",
-        axis: null,
-        sort: {
-          op: { signal: "sortBy" },
-          field: "value",
-          order: "descending"
-        }
-      },
-      x: {
-        field: "id", 
-        title: "subject",
-        type: "ordinal",
-        axis: {
-          orient: "top"
-        },
-        scale: {
-          round: true
-        }
-      },  
-      color: { 
-        field: "value",
-        type: "quantitative",
-        scale: {
-          scheme: { signal: "colorScheme" },
-          type: "symlog"
-        }
-      }
-    }
-  },
-  resolve: { 
-    scale: { 
-      x: "independent",
-      y: "shared"
-    } 
-  }
-*/  
+  ]  
 };

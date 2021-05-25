@@ -35,6 +35,7 @@ export const barComparison = {
         title: { expr: "valueName" },
         titleOrient: "bottom",
         labelOrient: "bottom",
+        labelExpr: "datum.value === 0 ? 'inactive' : 'active'",
         labelPadding: 110
       }
     },

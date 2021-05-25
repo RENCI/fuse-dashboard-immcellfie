@@ -1,16 +1,19 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useContext, useState, useRef, useEffect } from "react";
 import { Form, Col, ToggleButtonGroup, ToggleButton } from "react-bootstrap";
 import * as d3 from "d3";
+import { DataContext } from "../../contexts";
 import { voronoiTreemap as d3VoronoiTreemap } from "d3-voronoi-treemap";
 import { VegaWrapper } from "../vega-wrapper";
 import { VegaTooltip } from "../vega-tooltip";
 import { 
-  treemap, treemapComparison, 
-  enclosure, enclosureComparison, 
-  voronoiTreemap, voronoiTreemapComparison 
+  treemap, treemapLogScale, treemapPValue,
+  enclosure, enclosureLogScale, enclosurePValue,
+  voronoiTreemap, voronoiTreemapLogScale, voronoiTreemapPValue
 } from "../../vega-specs";
 import { sequential, diverging } from "../../colors";
 import { LoadingSpinner } from "../loading-spinner";
+import { SelectedList } from "../selected-list";
+import { useResize } from "../../hooks";
 import "./hierarchy-vis.css";
 
 const { Group, Label, Control, Row } = Form; 
@@ -20,35 +23,45 @@ const visualizations = [
     name: "treemap",
     label: "Treemap",
     spec: treemap,
-    comparisonSpec: treemapComparison
+    foldChangeSpec: treemapLogScale,
+    pValueSpec: treemapPValue
   },
   {
     name: "enclosure",
     label: "Enclosure diagram",
     spec: enclosure,
-    comparisonSpec: enclosureComparison
+    foldChangeSpec: enclosureLogScale,
+    pValueSpec: enclosurePValue
   },
   {
     name: "voronoi",
     label: "Voronoi treemap",
     spec: voronoiTreemap,
-    comparisonSpec: voronoiTreemapComparison
+    foldChangeSpec: voronoiTreemapLogScale,
+    pValueSpec: voronoiTreemapPValue
   }
 ];
 
 export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
+  const [, dataDispatch] = useContext(DataContext);
   const [loading, setLoading] = useState(true);
   const [depth, setDepth] = useState(1);
-  const [subgroup, setSubgroup] = useState("1");
+  const [subgroup, setSubgroup] = useState(subgroups[1] ? "comparison" : "1");
   const [value, setValue] = useState("score");
-  const [colors, setColors] = useState(sequential);
-  const [color, setColor] = useState(sequential[0]);
+  const [colors, setColors] = useState(subgroups[1] ? diverging : sequential);
+  const [color, setColor] = useState(subgroups[1] ? diverging[0] : sequential[0]);
   const [vis, setVis] = useState(visualizations[0]);
   const vegaRef = useRef();
+  const { width } = useResize(vegaRef, 100, 100);
+
+  const aspectRatio = 1.4;
+  const height = width / aspectRatio;
 
   const hasSubgroups = subgroups[1] !== null;
 
   const isComparison = subgroup === "comparison";
+
+  const hasVoronoi = tree.descendants()[0].polygon;
 
   const onVisChange = evt => {
     setLoading(true);
@@ -80,18 +93,26 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
     setColor(colors.find(({ scheme }) => scheme === evt.target.value));
   };
 
+  const onSelectNode = (evt, item) => {
+    if (!item || !item.datum) return;
+
+    const name = item.datum.name;
+    const selected = item.datum.selected;
+
+    dataDispatch({ type: "selectNode", name: name, selected: !selected });
+  };
+
   useEffect(() => {
-    if (vis.name === "voronoi" && !tree.descendants()[0].polygon) {
+    if (vis.name === "voronoi" && !hasVoronoi) {
       // Create Voronoi diagram, use setTimout so loading state can update
       setTimeout(() => {
-        const width = vegaRef.current.clientWidth * 0.8;
         const prng = d3.randomUniform.source(d3.randomLcg(0.2))();
 
         const n = 64;
         const clip = d3.range(0, n).map(d => {
           return [
-            Math.cos(d / n * Math.PI * 2) * width / 2 + width / 2, 
-            Math.sin(d / n * Math.PI * 2) * width / 2 + width / 2
+            Math.cos(d / n * Math.PI * 2),
+            Math.sin(d / n * Math.PI * 2)
           ];
         });
 
@@ -106,8 +127,10 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
 
         voronoi(tree);
 
-        tree.each(d => {
-          d.path = d3.line()(d.polygon) + "z";
+        const line = d3.line();
+
+        tree.each(node => {
+          node.path = line(node.polygon) + "z";
         });
 
         setLoading(false);
@@ -116,7 +139,7 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
     else {
       setLoading(false);
     }
-  }, [vis, tree]);
+  }, [vis, tree, hasVoronoi]);
 
   const logRange = values => {
     const extent = d3.extent(values);
@@ -126,16 +149,24 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
     return [1 / max, max];
   };
 
-  const valueField = isComparison ? value + "FoldChange" : value + subgroup;
+  const valueField = !isComparison ? value + subgroup : value === "score" ? "scoreFoldChange" : "activityChange";
 
-  const domain = isComparison ? logRange(tree.descendants().filter(d => d.depth === Math.min(depth, 3)).map(d => d.data[valueField])) :
-    value === "activity" ? [0, 1] :
+  const domain = value === "activity" ? (isComparison ? [-1, 1] : [0, 1]) :
+    isComparison ? logRange(tree.descendants().filter(d => d.depth === Math.min(depth, 3)).map(d => d.data[valueField])) :
     d3.extent(d3.merge(tree.descendants().filter(d => d.depth === depth).map(d => [d.data.score1, d.data.score2])));
 
   const subtitle = isComparison ? 
     (subgroups[0].name + " vs. " + subgroups[1].name) : 
     subgroup === "1" ? subgroups[0].name : 
     subgroups[1].name;
+
+  const legendTitle = isComparison ?
+    (value === "score" ? ["score", "fold change"] : ["activity", "change"]) :
+    value;
+
+  const specType = isComparison ? (value === "score" ? "foldChange" : "pValue") : "normal";
+
+  const strokeField = isComparison ? (value === "score" ? "scorePValue" : "activityPValue") : "depth";
 
   return (
     <>
@@ -166,7 +197,7 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
             <Label size="sm">Depth: { depth }</Label>        
             <Control 
               size="sm"
-              className="my-1"
+              className="mt-2"
               type="range"
               min={ 1 }
               max={ 4 }         
@@ -182,9 +213,9 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
               value={ subgroup }
               onChange={ onSubgroupChange }          
             >
+              { hasSubgroups && <option value="comparison">{ subgroups[0].name + " vs. " + subgroups[1].name}</option> }
               <option value="1">{ subgroups[0].name }</option>
               { hasSubgroups && <option value="2">{ subgroups[1].name }</option> }
-              { hasSubgroups && <option value="comparison">comparison</option> }
             </Control>
           </Group>
           <Group as={ Col } controlId="valueSelect">
@@ -213,21 +244,34 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
             </Control>
           </Group>
         </Row>
+        <Row>
+          <Col>
+            <SelectedList nodes={ tree.descendants() } />
+          </Col>
+        </Row>
       </div>
-      <div ref={vegaRef }>
+      <div ref={ vegaRef }>
         { loading ? <LoadingSpinner /> : 
           <VegaWrapper
-            spec={ isComparison ? vis.comparisonSpec : vis.spec }
+            key={ specType }
+            spec={ specType === "foldChange" ? vis.foldChangeSpec : specType === "pValue" ? vis.pValueSpec : vis.spec }
             data={ vis.name === "voronoi" ? tree.descendants() : hierarchy }
             signals={[
+              { name: "chartWidth", value: width },
+              { name: "chartHeight", value: height },
               { name: "subtitle", value: subtitle },
               { name: "depth", value: depth },
               { name: "value", value: valueField },
+              { name: "strokeField", value: strokeField },
+              { name: "legendTitle", value: legendTitle },
               { name: "colorScheme", value: color.scheme },
               { name: "reverseColors", value: color.reverse },
               { name: "highlightColor", value: color.highlight },
               { name: "inconclusiveColor", value: color.inconclusive },
               { name: "domain", value: domain }
+            ]}
+            eventListeners={[
+              { type: "click", callback: onSelectNode }
             ]}
             tooltip={ 
               <VegaTooltip 

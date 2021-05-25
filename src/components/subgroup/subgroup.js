@@ -67,7 +67,11 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
       }));
 
     return (
-      <Col key={ i } xs={ 2 } className="text-center">
+      <Col 
+        key={ i } 
+        className="text-center"
+        xs={ 12 } sm={ 6 } md={ 4 } lg={ 4 } xl={ 2 }
+      >
         <small>{ nameLabel(phenotype.name) }</small>
         <VegaWrapper
           options={{

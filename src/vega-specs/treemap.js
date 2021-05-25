@@ -1,7 +1,9 @@
-export const treemap = {
+import { createPValueVersion, createLogScaleVersion } from "./hierarchy-utils";
+
+const treemap = {
   $schema: "https://vega.github.io/schema/vega/v5.json",
-  width: { signal: "containerWidth" },
-  height: { signal: "containerWidth" },
+  width: { signal: "chartWidth" },
+  height: { signal: "chartHeight" },
   title: { 
     text: "Metabolic task treemap",
     subtitle: { signal: "subtitle" }
@@ -10,25 +12,14 @@ export const treemap = {
     type: "fit",
     resize: true
   },
-  signals: [        
+  signals: [
     {
-      name: "containerWidth",
-      value: 1032,
-      on: [
-        {
-          events: [
-            {
-              source: "window",
-              type: "resize"
-            },
-            {
-              source: "window",
-              type: "load"
-            }
-          ],
-          update: "containerSize()[0]"
-        }
-      ]
+      name: "chartWidth",
+      value: 500
+    },
+    {
+      name: "chartHeight",
+      value: 500
     },
     {
       name: "subtitle",
@@ -40,6 +31,14 @@ export const treemap = {
     },      
     {
       name: "value",
+      value: "score"
+    },
+    {
+      name: "strokeField",
+      value: "depth"
+    },
+    {
+      name: "legendTitle",
       value: "score"
     },
     {
@@ -96,7 +95,7 @@ export const treemap = {
           },
           size: [
             { signal: "width" }, 
-            { signal: "width" }
+            { signal: "height" }
           ]
         },
         {
@@ -152,7 +151,7 @@ export const treemap = {
   legends: [
     {
       fill: "color",
-      title: { signal: "slice(value, 0, -1)" }
+      title: { signal: "legendTitle" }
     },
     { 
       fill: "specialValues",
@@ -187,7 +186,7 @@ export const treemap = {
           ],
           stroke: { 
             scale: "stroke",
-            field: "depth"
+            field: { signal: "strokeField" },
           },
           strokeWidth: {
             scale: "strokeWidth",
@@ -197,7 +196,7 @@ export const treemap = {
           y: { field: "y0" },
           x2: { field: "x1" },
           y2: { field: "y1" },
-          zindex: { field: "depth" }
+          zindex: { signal: "strokeField === depth ? datum.depth : datum.depth - datum[strokeField]" }
         }
       }
     },
@@ -211,7 +210,7 @@ export const treemap = {
           strokeWidth: { value: 4 }
         },
         update: {
-          stroke: { value: "none" },
+          stroke: { signal: "datum.selected ? highlightColor : 'none'" },  
           x: { field: "x0" },
           y: { field: "y0" },
           x2: { field: "x1" },
@@ -247,3 +246,11 @@ export const treemap = {
     }
   ]
 };
+
+// Create a copy to add p value for outline because you can't set the scale type using a signal/expression...
+const treemapPValue = createPValueVersion(treemap);
+
+// Create a copy for version with fill log scale because you can't set the scale type using a signal/expression...
+const treemapLogScale = createLogScaleVersion(treemapPValue);
+
+export { treemap, treemapPValue, treemapLogScale };
