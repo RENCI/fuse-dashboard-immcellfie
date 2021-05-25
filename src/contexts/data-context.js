@@ -688,7 +688,8 @@ const reducer = (state, action) => {
       node.data.selected = action.selected;
 
       return {
-        ...state
+        ...state,
+        hierarchy: [...state.hierarchy]
       };
 
     default: 

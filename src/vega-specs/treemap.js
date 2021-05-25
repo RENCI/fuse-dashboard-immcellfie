@@ -217,6 +217,9 @@ const treemap = {
           y2: { field: "y1" },
           zindex: { field: "depth" },
           tooltip: { signal: "datum" }
+        },
+        hover: {
+          stroke: { signal: "highlightColor" }
         }
       }
     },

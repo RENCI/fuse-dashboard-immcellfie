@@ -71,6 +71,8 @@ export const VegaWrapper = ({
   useEffect(() => {
     if (!view.current) return;
 
+    // XXX: NEED TO TRIGGER THIS WHEN SELECTED CHANGES FOR INDIVIDUAL NODE
+
     view.current
       .data("data", data)              
       .runAsync();
