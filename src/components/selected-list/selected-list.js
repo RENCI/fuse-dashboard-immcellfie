@@ -31,11 +31,8 @@ export const SelectedList = ({ nodes }) => {
 
   const selected = nodes.filter(({ data }) => data.selected).map(({ data }, i, a) => {
     return (
-      <>
-        <small 
-          key={ i }
-          className="text-muted"
-        >
+      <span key={ i }>
+        <small className="text-muted">
           { data.name }
         </small>
         <Button 
@@ -46,7 +43,7 @@ export const SelectedList = ({ nodes }) => {
           <X />
         </Button>
         { i < a.length - 1 && <small>, </small> }
-      </>
+      </span>
     );
   });
 

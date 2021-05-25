@@ -5,6 +5,7 @@ import { DataContext } from "../../contexts";
 import { VegaWrapper } from "../vega-wrapper";
 import { SubgroupsLink } from "../page-links";
 import { WarningMessage } from "../warning-message";
+import { SelectedList } from "../selected-list";
 import { useResize } from "../../hooks";
 import { volcanoPlot } from "../../vega-specs";
 import "./volcano-vis.css";
@@ -127,6 +128,11 @@ export const VolcanoVis = ({ data, subgroups }) => {
                   onChange={ onFoldChangeThresholdChange } 
                 />
               </Group>
+            </Row>
+            <Row>
+              <Col>
+                <SelectedList nodes={ data } />
+              </Col>
             </Row>
           </div>
           <div ref={ vegaRef }>

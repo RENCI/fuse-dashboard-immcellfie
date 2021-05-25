@@ -44,10 +44,10 @@ export const CellfieOutput = () => {
                   <Link eventKey="hierarchy">Hierarchy</Link>
                 </Item>
                 <Item>
-                  <Link eventKey="heatmap">Heatmap</Link>
+                  <Link eventKey="volcano">Volcano plot</Link>
                 </Item>
                 <Item>
-                  <Link eventKey="volcano">Volcano plot</Link>
+                  <Link eventKey="heatmap">Heatmap</Link>
                 </Item>
                 <Item>
                   <Link eventKey="escher">Pathway map</Link>
@@ -63,14 +63,14 @@ export const CellfieOutput = () => {
                     subgroups={ currentSubgroups }
                   />
                 </Pane>
-                <Pane eventKey="heatmap">
-                  <HeatmapVis
+                <Pane eventKey="volcano">
+                  <VolcanoVis
                     data={ tree.descendants() }
                     subgroups={ currentSubgroups }
                   />
                 </Pane>
-                <Pane eventKey="volcano">
-                  <VolcanoVis
+                <Pane eventKey="heatmap">
+                  <HeatmapVis
                     data={ tree.descendants() }
                     subgroups={ currentSubgroups }
                   />
