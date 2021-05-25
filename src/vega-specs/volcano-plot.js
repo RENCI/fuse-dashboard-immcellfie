@@ -155,7 +155,8 @@ export const volcanoPlot = {
               field: "depth",
               sort: "descending",
               scale: {
-                domain: [3, 2, 1]
+                domain: [3, 2, 1],
+                range: [40, 400, 4000]
               }
             },
             stroke: {

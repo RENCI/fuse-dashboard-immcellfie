@@ -680,17 +680,31 @@ const reducer = (state, action) => {
         overlapMethod: action.method
       };
 
-    case "selectNode":
-      const node = state.tree.descendants().find(({ data }) => data.name === action.name);
+    case "selectNode": {
+      const hierarchy = [...state.hierarchy];
 
-      if (!node) return state;
+      const item = hierarchy.find(({ name }) => name === action.name);
 
-      node.data.selected = action.selected;
+      if (!item) return state;
+
+      item.selected = action.selected;
 
       return {
         ...state,
-        hierarchy: [...state.hierarchy]
+        hierarchy: hierarchy
       };
+    }
+
+    case "deselectAllNodes": {
+      const hierarchy = [...state.hierarchy];
+
+      hierarchy.forEach(item => item.selected = false);
+
+      return {
+        ...state,
+        hierarchy: hierarchy
+      };
+    }
 
     default: 
       throw new Error("Invalid data context action: " + action.type);

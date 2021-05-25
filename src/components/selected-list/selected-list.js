@@ -1,9 +1,10 @@
 import React, { useContext, useState } from "react";
-import { Row, Col, Form, Button } from "react-bootstrap";
+import { Row, Col, Form, InputGroup, Button } from "react-bootstrap";
 import { X } from "react-bootstrap-icons";
 import { DataContext } from "../../contexts";
 
 const { Control } = Form;
+const { Append } = InputGroup;
 
 export const SelectedList = ({ nodes }) => {
   const [, dataDispatch] = useContext(DataContext);
@@ -21,6 +22,10 @@ export const SelectedList = ({ nodes }) => {
     dataDispatch({ type: "selectNode", name: text, selected: true });
 
     setText("");
+  };
+
+  const onClearClick = () => {
+    dataDispatch({ type: "deselectAllNodes" });
   };
 
   const options = nodes.filter(node => {
@@ -50,17 +55,27 @@ export const SelectedList = ({ nodes }) => {
   return (
     <Row>
       <Col xs="auto">
-        <Control  
-          size="sm"
-          list="selectOptions"
-          placeholder="Select"
-          value={ text }
-          onChange={ onTextChange }
-          onBlur={ onTextBlur }
-        />
-        <datalist id="selectOptions">
-          { options }
-        </datalist>
+        <InputGroup size="sm">
+          <Control  
+            list="selectOptions"
+            placeholder="Select"
+            value={ text }
+            onChange={ onTextChange }
+            onBlur={ onTextBlur }
+          />
+          <datalist id="selectOptions">
+            { options }
+          </datalist>
+          <Append>
+            <Button 
+              variant="outline-secondary"
+              disabled={ selected.length === 0 }
+              onClick={ onClearClick }
+            >
+              Clear
+            </Button>
+          </Append>
+        </InputGroup>
       </Col>
       <Col className="px-0">
         { selected }
