@@ -71,12 +71,22 @@ export const VegaWrapper = ({
   useEffect(() => {
     if (!view.current) return;
 
-    // XXX: NEED TO TRIGGER THIS WHEN SELECTED CHANGES FOR INDIVIDUAL NODE
-
     view.current
       .data("data", data)              
       .runAsync();
   }, [data]);
+
+  // Resize
+  useEffect(() => {
+    if (!view.current) return;
+
+    console.log(width, height);
+
+    view.current
+      .width(width)
+      .height(height)       
+      .runAsync();
+  }, [width, height]);
 
 /*
   // Update spec
