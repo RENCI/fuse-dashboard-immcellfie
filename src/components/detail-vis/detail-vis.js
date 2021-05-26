@@ -52,8 +52,7 @@ export const DetailVis = ({ data, subgroup, subgroupName, onCloseClick }) => {
                   <Button                  
                     variant="link"
                     size="xs"
-                    className="text-muted p-0 align-middle"
-                    style={{ marginTop: "-1.5rem" }}
+                    className="text-muted p-0 align-middle detailCloseButton"
                     onClick={ () => onCloseClick(data.name) }
                   >
                     <X />
