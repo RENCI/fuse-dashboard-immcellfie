@@ -19,7 +19,7 @@ const compareValues = (value, key) => {
   return value ? value[key + "1"].concat(value[key + "2"]).filter(({ value }) => !isNaN(value)) : [];
 };
 
-export const DetailVis = ({ data, subgroup, subgroupName, scoreDomain, onCloseClick }) => {
+export const DetailVis = ({ data, subgroup, subgroupName, onCloseClick }) => {
   const isComparison = subgroup === "comparison";
 
   const score = data && (isComparison ? data.scoreFoldChange : data["score" + subgroup]);
@@ -82,8 +82,7 @@ export const DetailVis = ({ data, subgroup, subgroupName, scoreDomain, onCloseCl
                   data={ scores }
                   options={{ actions: false }}
                   signals={[
-                    { name: "valueName", value: "score" },
-                    { name: "valueDomain", value: scoreDomain }
+                    { name: "valueName", value: "score" }
                   ]}
                 />
                 <VegaWrapper
