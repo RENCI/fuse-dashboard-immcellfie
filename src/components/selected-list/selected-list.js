@@ -72,6 +72,7 @@ export const SelectedList = ({ nodes, subgroup, subgroupName }) => {
           data={ data }
           subgroup={ subgroup }
           subgroupName={ subgroupName }
+          onCloseClick={ onCloseClick }
         />
       </Col>
     );
