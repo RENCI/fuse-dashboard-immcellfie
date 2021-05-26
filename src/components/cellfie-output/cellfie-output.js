@@ -26,7 +26,7 @@ export const CellfieOutput = () => {
   return (
     <>
       { hierarchy && 
-        <Card className="mt-4">
+        <Card>
           <Container 
             activeKey={ tab }
             mountOnEnter={ true }

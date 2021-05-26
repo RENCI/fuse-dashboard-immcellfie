@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import { Row, Col } from "react-bootstrap";
 import { DataContext } from "../contexts";
 import { ModelSelection } from "../components/model-selection";
 import { SubgroupSelection } from "../components/subgroup-selection";
@@ -17,19 +18,21 @@ export const OutputView = () => {
   const [{ phenotypeData, output }] = useContext(DataContext);
   
   return (
-    <>
-      { !phenotypeData ? <DataMissing message="No data loaded" showHome={ true } /> : 
-        <ModelSelection 
-          outputName={ practiceData.output } 
-          outputType={ practiceData.outputType }
-        />         
-      }            
+    <Row>
+      <Col xs={ 12 } xl={ 4 }>
+        { !phenotypeData ? <DataMissing message="No data loaded" showHome={ true } /> : 
+          <ModelSelection 
+            outputName={ practiceData.output } 
+            outputType={ practiceData.outputType }
+          />         
+        }
+        { output && <SubgroupSelection /> }         
+      </Col>            
       { output && 
-        <>
-          <SubgroupSelection />
+        <Col xs={ 12 } xl={ 8 }>
           <CellfieOutput /> 
-        </>
+        </Col>
       }
-    </>
+    </Row>
   );  
 };

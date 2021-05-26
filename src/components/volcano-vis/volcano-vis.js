@@ -14,6 +14,25 @@ import "./volcano-vis.css";
 
 const { Group, Label, Control, Row } = Form; 
 
+
+
+const barTest = {
+  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+  width: "container",
+  height: 250,
+  autosize: {
+    type: "fit",
+    resize: true
+  },
+  data: { name: "data" },
+  mark: "bar",
+  encoding: {
+    x: {field: "Origin"},
+    y: {field: "count", title: "Number of Cars"}
+  }
+};
+
+
 export const VolcanoVis = ({ data, subgroups }) => {
   const [, dataDispatch] = useContext(DataContext);
   const [depth, setDepth] = useState(3);
@@ -167,6 +186,16 @@ export const VolcanoVis = ({ data, subgroups }) => {
                   />
                 </VegaTooltip>
               }
+            />
+            <VegaWrapper
+              width={ width }
+              height={ height }
+              spec={ barTest } 
+              data={ [
+                { Origin: "USA", count:	254 },
+                { Origin: "Europe", count:	73 },
+                { Origin: "Japan", count:	79 }
+              ] }
             />
           </div>
         </>
