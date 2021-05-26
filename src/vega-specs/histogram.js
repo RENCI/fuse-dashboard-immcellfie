@@ -10,6 +10,10 @@ export const histogram = {
     {
       name: "valueName",
       value: "value"
+    },
+    {
+      name: "valueDomain",
+      value: [0, 1]
     }
   ],
   data: {
@@ -23,7 +27,10 @@ export const histogram = {
           field: "value",
           bin: true,        
           axis: {
-            title: { expr: "valueName" }
+            title: { expr: "valueName" },
+          },          
+          scale: {
+            domain: {  expr: "valueDomain" } 
           }
         },
         y: {
@@ -43,7 +50,10 @@ export const histogram = {
       encoding: {
         x: {
           field: "value",
-          type: "quantitative"
+          type: "quantitative",
+          axis: {
+            title: { expr: "valueName" },
+          }
         },
         y: {
           field: "density",
@@ -57,7 +67,10 @@ export const histogram = {
       encoding: {
         x: {
           aggregate: "mean", 
-          field: "value"
+          field: "value",  
+          axis: {
+            title: { expr: "valueName" },
+          }
         },
         color: {
           value: "#b30000"

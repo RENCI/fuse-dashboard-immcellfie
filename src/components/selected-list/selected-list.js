@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { Row, Col, Form, InputGroup, ButtonGroup, Button, ToggleButton } from "react-bootstrap";
 import { GraphUp, List } from "react-bootstrap-icons";
 import { X } from "react-bootstrap-icons";
+import * as d3 from "d3";
 import { DataContext } from "../../contexts";
 import { DetailVis } from "../detail-vis";
 
@@ -57,6 +58,12 @@ export const SelectedList = ({ nodes, subgroup, subgroupName }) => {
     );
   });
 
+  const scoreDomain = d3.extent(d3.merge(selected.map(({ data }) => {
+    return subgroup === "1" ? data.scores1.map(score => score.value) : 
+      subgroup === "2" ? data.scores1.map(score => score.value) :
+      d3.merge([data.scores1, data.scores2]).map(score => score.value);
+  })));
+
   const tooltips = selected.map(({ data }, i) => {
     return (
       <Col 
@@ -68,6 +75,7 @@ export const SelectedList = ({ nodes, subgroup, subgroupName }) => {
           data={ data }
           subgroup={ subgroup }
           subgroupName={ subgroupName }
+          scoreDomain={ scoreDomain }
           onCloseClick={ onCloseClick }
         />
       </Col>
