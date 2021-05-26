@@ -1,17 +1,17 @@
 import React, { useContext, useState } from "react";
-import { Row, Col, Form, InputGroup, Button } from "react-bootstrap";
+import { Row, Col, Form, InputGroup, ButtonGroup, Button, ToggleButton } from "react-bootstrap";
 import { GraphUp, List } from "react-bootstrap-icons";
 import { X } from "react-bootstrap-icons";
 import { DataContext } from "../../contexts";
 import { DetailVis } from "../detail-vis";
 
 const { Control } = Form;
-const { Append } = InputGroup;
+const { Append, Radio } = InputGroup;
 
 export const SelectedList = ({ nodes, subgroup, subgroupName }) => {
   const [, dataDispatch] = useContext(DataContext);
   const [text, setText] = useState("");
-  const [expand, setExpand] = useState(false);
+  const [mode, setMode] = useState("list");
 
   const onCloseClick = name => {
     dataDispatch({ type: "selectNode", name: name, selected: false });
@@ -29,10 +29,6 @@ export const SelectedList = ({ nodes, subgroup, subgroupName }) => {
 
   const onClearClick = () => {
     dataDispatch({ type: "deselectAllNodes" });
-  };
-
-  const onExpandClick = () => {
-    setExpand(!expand);
   };
 
   const options = nodes.filter(node => {
@@ -80,8 +76,8 @@ export const SelectedList = ({ nodes, subgroup, subgroupName }) => {
 
   return (
     <>
-      <Row>
-        <Col xs="auto">
+      <Row noGutters={ true }>
+        <Col xs="auto" className="mr-1">
           <InputGroup size="sm">
             <Control  
               list="selectOptions"
@@ -100,24 +96,41 @@ export const SelectedList = ({ nodes, subgroup, subgroupName }) => {
                 onClick={ onClearClick }
               >
                 Clear
-              </Button>
-              <Button
-                variant="outline-secondary"
-                onClick={ onExpandClick }
-                className="d-flex align-items-center"
-              >
-                { expand ? <List /> : <GraphUp /> }
-              </Button>
+              </Button>              
             </Append>
           </InputGroup>
         </Col>
-        { !expand &&
+        <Col xs="auto" className="mr-2">
+          <ButtonGroup toggle>
+            <ToggleButton
+              type="radio"
+              variant="outline-secondary"
+              value="list"
+              checked={ mode === "list" }
+              className="d-flex align-items-center"
+              onClick={ () => setMode("list") }
+            >
+              { <List />  }
+            </ToggleButton>
+            <ToggleButton
+              type="radio"
+              variant="outline-secondary"
+              value="detail"
+              checked={ mode === "detail" }
+              className="d-flex align-items-center"
+              onClick={ () => setMode("detail") }
+            >
+              { <GraphUp /> }
+            </ToggleButton>
+          </ButtonGroup>
+        </Col>
+        { mode === "list" &&
           <Col className="px-0">
             { tags }
           </Col>
         }
       </Row>
-      { expand && 
+      { mode === "detail" && 
         <Row>
           { tooltips }
         </Row>
