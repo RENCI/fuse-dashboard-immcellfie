@@ -11,6 +11,11 @@ export const VegaWrapper = ({
   const view = useRef(null);
   const [tooltipProps, setTooltipProps] = useState(null);  
 
+  const setSize = (view, width, height) => {
+    if (!isNaN(width)) view.width(width);
+    if (!isNaN(height)) view.height(height);
+  };
+
   const setSignals = (view, signals) => {
     signals.forEach(({ name, value }) => {
       view.signal(name, value);
@@ -23,14 +28,23 @@ export const VegaWrapper = ({
     });
   };
 
-  const tooltipCallback = (handler, event, item, value) => {
+  const tooltipCallback = (handler, evt, item, value) => {
     setTooltipProps({
       handler: handler,
-      event: event,
+      event: evt,
       item: item,
       value: value
     });
   }; 
+
+  const clearTooltip = () => {
+    setTooltipProps({
+      handler: null,
+      event: null,
+      item: null,
+      value: null
+    });
+  };
 
   // Initial effect when mounting
   useEffect(() => {
@@ -40,6 +54,7 @@ export const VegaWrapper = ({
     vegaEmbed(div.current, spec, options).then(result => {
       view.current = result.view;
 
+      setSize(view.current, width, height);
       setSignals(view.current, signals);
       setEventListeners(view.current, eventListeners);
 
@@ -56,7 +71,7 @@ export const VegaWrapper = ({
       // Clean up
       if (view.current) view.current.finalize();
     };
-  }, [data, eventListeners, options, signals, spec, tooltip]);
+  }, [data, width, height, options, signals, spec, tooltip, eventListeners]);
   
   // Update signals
   useEffect(() => {
@@ -71,12 +86,19 @@ export const VegaWrapper = ({
   useEffect(() => {
     if (!view.current) return;
 
-    // XXX: NEED TO TRIGGER THIS WHEN SELECTED CHANGES FOR INDIVIDUAL NODE
-
     view.current
       .data("data", data)              
       .runAsync();
   }, [data]);
+
+  // Resize
+  useEffect(() => {
+    if (!view.current) return;
+
+    setSize(view.current, width, height);
+
+    view.current.runAsync();
+  }, [width, height]);
 
 /*
   // Update spec
@@ -112,6 +134,7 @@ export const VegaWrapper = ({
         ref={ div }
         className="wrapperDiv"
         style={{ width: width, height: height }}
+        onClick={ clearTooltip }
       >
         { spinner && <LoadingSpinner /> }
       </div>

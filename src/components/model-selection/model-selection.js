@@ -1,6 +1,6 @@
 import React, { useState, useReducer, useContext } from "react";
-import { Row, Col, Card, Collapse, Form, Button, InputGroup } from "react-bootstrap";
-import { ArrowCounterclockwise, CaretRight, CaretDown } from "react-bootstrap-icons";
+import { Row, Col, Card, Form, Button, InputGroup } from "react-bootstrap";
+import { ArrowCounterclockwise } from "react-bootstrap-icons";
 import { SpinnerButton } from "../spinner-button";
 import { DataContext } from "../../contexts";
 import { api } from "../../api";
@@ -104,8 +104,7 @@ const initialParameters = [
 ];
 
 export const ModelSelection = ({ outputName, outputType }) => {
-  const [{ output }, dataDispatch] = useContext(DataContext);
-  const [collapse, setCollapse] = useState(false);
+  const [, dataDispatch] = useContext(DataContext);
   const [organism, setOrganism] = useState("human");
   const [currentModels, setCurrentModels] = useState(models.filter(({ organism }) => organism === "human"));
   const [model, setModel] = useState(models.find(({ organism }) => organism === "human"));
@@ -145,12 +144,6 @@ export const ModelSelection = ({ outputName, outputType }) => {
     return organisms;
   }, []);
 
-  const canCollapse = output !== null;
-
-  const onHeaderClick = () => {
-    setCollapse(!collapse);
-  };
-
   const onOrganismChange = evt => {
     const value = evt.target.value;
     const newModels = models.filter(({ organism }) => organism === value);
@@ -186,8 +179,6 @@ export const ModelSelection = ({ outputName, outputType }) => {
 
       setRunning(false);
 //      setMessage("CellFIE output data loaded");
-
-      setTimeout(async () => setCollapse(true), 1000);
     }, 1000);
   };
 
@@ -217,7 +208,7 @@ export const ModelSelection = ({ outputName, outputType }) => {
                   variant="outline-secondary"
                   onClick={ () => onParameterReset(parameter.name) }
                 >
-                  <ArrowCounterclockwise className="mb-1" />
+                  <ArrowCounterclockwise className="d-flex align-items-center"/>
                 </Button>
               </Append>
             </InputGroup>
@@ -239,7 +230,7 @@ export const ModelSelection = ({ outputName, outputType }) => {
                   variant="outline-secondary"
                   onClick={ () => onParameterReset(parameter.name) }
                 >
-                  <ArrowCounterclockwise className="mb-1" />
+                  <ArrowCounterclockwise className="d-flex align-items-center"/>
                 </Button>
               </Append>
             </InputGroup>
@@ -250,18 +241,9 @@ export const ModelSelection = ({ outputName, outputType }) => {
 
   return (
     <Card>
-      <Header 
-        as="h5"
-        style={{ cursor: canCollapse ? "pointer" : "default" }}
-        onClick={ canCollapse ? onHeaderClick : null }
-      >
-        { !canCollapse ? null : 
-          collapse ? <CaretRight className="mb-1 text-muted" /> : 
-          <CaretDown className="mb-1 text-muted" /> 
-        } CellFIE Parameters
+      <Header as="h5">
+        CellFIE Parameters
       </Header>
-      <Collapse in={!collapse}>
-        <div>
       <Body>
         <Row>
           <Col>
@@ -326,8 +308,7 @@ export const ModelSelection = ({ outputName, outputType }) => {
             </Group>                        
           </Col>
         </Row>
-      </Body></div>
-      </Collapse>
+      </Body>
     </Card>
   );
 };           

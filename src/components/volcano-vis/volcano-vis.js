@@ -1,12 +1,14 @@
-import React, { useContext, useState, useRef, useMemo } from "react";
+import React, { useContext, useState, useMemo } from "react";
 import { Form, Col } from "react-bootstrap";
 import * as d3 from "d3";
 import { DataContext } from "../../contexts";
+import { ResizeWrapper } from "../resize-wrapper";
 import { VegaWrapper } from "../vega-wrapper";
+import { VegaTooltip } from "../vega-tooltip";
+import { DetailVis } from "../detail-vis";
 import { SubgroupsLink } from "../page-links";
 import { WarningMessage } from "../warning-message";
 import { SelectedList } from "../selected-list";
-import { useResize } from "../../hooks";
 import { volcanoPlot } from "../../vega-specs";
 import "./volcano-vis.css";
 
@@ -17,11 +19,6 @@ export const VolcanoVis = ({ data, subgroups }) => {
   const [depth, setDepth] = useState(3);
   const [significanceLevel, setSignificanceLevel] = useState(0.05);
   const [foldChangeThreshold, setFoldChangeThreshold] = useState(1.5);
-  const vegaRef = useRef();
-  const { width } = useResize(vegaRef, 100, 100, true);
-
-  const aspectRatio = 1.6;
-  const height = width / aspectRatio;
 
   const onDepthChange = evt => {
     setDepth(+evt.target.value);
@@ -53,7 +50,8 @@ export const VolcanoVis = ({ data, subgroups }) => {
           foldChange >= foldChangeThreshold ? "up" :  
           foldChange <= 1 / foldChangeThreshold ? "down" :
           "not significant",
-        selected: node.data.selected
+        selected: node.data.selected,
+        data: node.data
       };
     });
   }, [data, significanceLevel, foldChangeThreshold]);  
@@ -80,6 +78,8 @@ export const VolcanoVis = ({ data, subgroups }) => {
   const visibleData = volcanoData.filter(node => node.depth > 0 && node.depth <= depth);
 
   const subtitle = subgroups[1] && (subgroups[0].name + " vs. " + subgroups[1].name);
+
+  const subgroup = "comparison";
 
   return (
     <>
@@ -131,14 +131,19 @@ export const VolcanoVis = ({ data, subgroups }) => {
             </Row>
             <Row>
               <Col>
-                <SelectedList nodes={ data } />
+                <SelectedList 
+                  nodes={ data } 
+                  subgroup="comparison"
+                  subgroupName={ [subgroups[0].name, subgroups[1].name] }/>
               </Col>
             </Row>
           </div>
-          <div ref={ vegaRef }>
+          <ResizeWrapper 
+            useWidth={ true }
+            useHeight={ true }
+            aspectRatio={ 1.6 }
+          >
             <VegaWrapper
-              width={ width }
-              height={ height }
               spec={ volcanoPlot } 
               data={ visibleData }
               signals={[
@@ -151,8 +156,16 @@ export const VolcanoVis = ({ data, subgroups }) => {
               eventListeners={[
                 { type: "click", callback: onSelectNode }
               ]}
+              tooltip={ 
+                <VegaTooltip>
+                  <DetailVis 
+                    subgroup={ subgroup } 
+                    subgroupName={ [subgroups[0].name, subgroups[1].name] } 
+                  />
+                </VegaTooltip>
+              }
             />
-          </div>
+          </ResizeWrapper>
         </>
       }
     </>

@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import * as d3 from "d3";
 import { Card, Form, Col, Button } from "react-bootstrap";
 import { DataContext } from "../contexts";
+import { ViewWrapper } from "../components/view-wrapper";
 import { VegaWrapper } from "../components/vega-wrapper";
 import { expressionHeatmap } from "../vega-specs";
 import { DataMissing } from "../components/data-missing";
@@ -52,13 +53,13 @@ export const InputView = () => {
   };
 
   return (
-    <>
+    <ViewWrapper>
       { !phenotypeData ? 
           <>
             <DataMissing message="No data loaded" showHome={ true } />
           </> 
       : !input ? 
-          <>
+          <div className="text-center">
             <DataMissing message="No expression data loaded" /> 
             <Button
               variant="outline-secondary"
@@ -66,7 +67,7 @@ export const InputView = () => {
             >
               Load expression data for current dataset
             </Button>
-          </>
+          </div>
       : <Card>
           <Header as="h5">
             Expression Data
@@ -114,6 +115,6 @@ export const InputView = () => {
           </Body>
         </Card>
       }
-    </>
+    </ViewWrapper>
   ); 
 };

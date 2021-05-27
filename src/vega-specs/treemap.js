@@ -2,8 +2,8 @@ import { createPValueVersion, createLogScaleVersion } from "./hierarchy-utils";
 
 const treemap = {
   $schema: "https://vega.github.io/schema/vega/v5.json",
-  width: { signal: "chartWidth" },
-  height: { signal: "chartHeight" },
+  width: "container",
+  height: "container",
   title: { 
     text: "Metabolic task treemap",
     subtitle: { signal: "subtitle" }
@@ -13,14 +13,6 @@ const treemap = {
     resize: true
   },
   signals: [
-    {
-      name: "chartWidth",
-      value: 500
-    },
-    {
-      name: "chartHeight",
-      value: 500
-    },
     {
       name: "subtitle",
       value: ""

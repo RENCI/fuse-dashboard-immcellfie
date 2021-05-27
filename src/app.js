@@ -16,7 +16,7 @@ export const App = () => {
   return (
     <DataProvider>
       <Router>
-        <Container>
+        <Container fluid>
           <Navbar fixed="top" bg="dark" variant="dark" expand="md" className="mb-4">
             <Navbar.Brand>
               <img 

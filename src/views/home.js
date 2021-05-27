@@ -1,4 +1,5 @@
 import React from "react";
+import { ViewWrapper } from "../components/view-wrapper";
 import { DataSelection } from "../components/data-selection";
 
 const practiceData = {
@@ -6,10 +7,12 @@ const practiceData = {
 };
 
 export const Home = () => {
-  return (    
-    <DataSelection 
-      inputName={ practiceData.input } 
-      phenotypeName={ practiceData.phenotype }
-    />
+  return (   
+    <ViewWrapper>
+      <DataSelection 
+        inputName={ practiceData.input } 
+        phenotypeName={ practiceData.phenotype }
+      />
+    </ViewWrapper>
   ); 
 };
