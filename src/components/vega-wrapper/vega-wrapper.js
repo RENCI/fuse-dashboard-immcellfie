@@ -62,7 +62,7 @@ export const VegaWrapper = ({
       // Clean up
       if (view.current) view.current.finalize();
     };
-  }, [data, eventListeners, options, signals, spec, tooltip]);
+  }, [data, width, height, options, signals, spec, tooltip, eventListeners]);
   
   // Update signals
   useEffect(() => {

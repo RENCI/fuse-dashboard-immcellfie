@@ -92,10 +92,9 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
   const onSelectNode = (evt, item) => {
     if (!item || !item.datum) return;
 
-    const name = item.datum.name;
-    const selected = item.datum.selected;
+    const data = item.datum.data ? item.datum.data : item.datum;
 
-    dataDispatch({ type: "selectNode", name: name, selected: !selected });
+    dataDispatch({ type: "selectNode", name: data.name, selected: !data.selected });
   };
 
   useEffect(() => {
