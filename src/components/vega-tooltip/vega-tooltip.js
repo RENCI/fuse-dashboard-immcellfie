@@ -1,9 +1,5 @@
 import React, { useRef } from "react";
-import { Card } from "react-bootstrap";
-import * as d3 from "d3";
 import "./vega-tooltip.css";
-
-const { Subtitle, Body, Footer } = Card;
 
 // Borrowed from https://github.com/vega/vega-tooltip/
 const calculatePosition = (event, tooltipBox, itemBox, offsetX, offsetY) => {

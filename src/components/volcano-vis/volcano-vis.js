@@ -1,14 +1,14 @@
-import React, { useContext, useState, useRef, useMemo } from "react";
+import React, { useContext, useState, useMemo } from "react";
 import { Form, Col } from "react-bootstrap";
 import * as d3 from "d3";
 import { DataContext } from "../../contexts";
+import { ResizeWrapper } from "../resize-wrapper";
 import { VegaWrapper } from "../vega-wrapper";
 import { VegaTooltip } from "../vega-tooltip";
 import { DetailVis } from "../detail-vis";
 import { SubgroupsLink } from "../page-links";
 import { WarningMessage } from "../warning-message";
 import { SelectedList } from "../selected-list";
-import { useResize } from "../../hooks";
 import { volcanoPlot } from "../../vega-specs";
 import "./volcano-vis.css";
 
@@ -19,11 +19,6 @@ export const VolcanoVis = ({ data, subgroups }) => {
   const [depth, setDepth] = useState(3);
   const [significanceLevel, setSignificanceLevel] = useState(0.05);
   const [foldChangeThreshold, setFoldChangeThreshold] = useState(1.5);
-  const vegaRef = useRef();
-  const { width } = useResize(vegaRef, 100, 100, true);
-
-  const aspectRatio = 1.6;
-  const height = width / aspectRatio;
 
   const onDepthChange = evt => {
     setDepth(+evt.target.value);
@@ -143,10 +138,12 @@ export const VolcanoVis = ({ data, subgroups }) => {
               </Col>
             </Row>
           </div>
-          <div ref={ vegaRef }>
+          <ResizeWrapper 
+            useWidth={ true }
+            useHeight={ true }
+            aspectRatio={ 1.6 }
+          >
             <VegaWrapper
-              width={ width }
-              height={ height }
               spec={ volcanoPlot } 
               data={ visibleData }
               signals={[
@@ -168,7 +165,7 @@ export const VolcanoVis = ({ data, subgroups }) => {
                 </VegaTooltip>
               }
             />
-          </div>
+          </ResizeWrapper>
         </>
       }
     </>
