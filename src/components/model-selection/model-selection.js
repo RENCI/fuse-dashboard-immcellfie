@@ -1,6 +1,6 @@
 import React, { useState, useReducer, useContext } from "react";
 import { Row, Col, Card, Form, Button, InputGroup } from "react-bootstrap";
-import { ArrowCounterclockwise, CaretRight, CaretDown } from "react-bootstrap-icons";
+import { ArrowCounterclockwise } from "react-bootstrap-icons";
 import { SpinnerButton } from "../spinner-button";
 import { DataContext } from "../../contexts";
 import { api } from "../../api";
@@ -104,7 +104,7 @@ const initialParameters = [
 ];
 
 export const ModelSelection = ({ outputName, outputType }) => {
-  const [{ output }, dataDispatch] = useContext(DataContext);
+  const [, dataDispatch] = useContext(DataContext);
   const [organism, setOrganism] = useState("human");
   const [currentModels, setCurrentModels] = useState(models.filter(({ organism }) => organism === "human"));
   const [model, setModel] = useState(models.find(({ organism }) => organism === "human"));

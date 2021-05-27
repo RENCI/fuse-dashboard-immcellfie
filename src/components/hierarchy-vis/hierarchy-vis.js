@@ -1,8 +1,9 @@
-import React, { useContext, useState, useRef, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Form, Col, ToggleButtonGroup, ToggleButton } from "react-bootstrap";
 import * as d3 from "d3";
 import { DataContext } from "../../contexts";
 import { voronoiTreemap as d3VoronoiTreemap } from "d3-voronoi-treemap";
+import { ResizeWrapper } from "../resize-wrapper";
 import { VegaWrapper } from "../vega-wrapper";
 import { VegaTooltip } from "../vega-tooltip";
 import { DetailVis } from "../detail-vis";
@@ -14,7 +15,6 @@ import {
 import { sequential, diverging } from "../../colors";
 import { LoadingSpinner } from "../loading-spinner";
 import { SelectedList } from "../selected-list";
-import { useResize } from "../../hooks";
 import "./hierarchy-vis.css";
 
 const { Group, Label, Control, Row } = Form; 
@@ -52,11 +52,6 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
   const [colors, setColors] = useState(subgroups[1] ? diverging : sequential);
   const [color, setColor] = useState(subgroups[1] ? diverging[0] : sequential[0]);
   const [vis, setVis] = useState(visualizations[0]);
-  const vegaRef = useRef();
-  const { width } = useResize(vegaRef, 100, 100);
-
-  const aspectRatio = 1.4;
-  const height = width / aspectRatio;
 
   const hasSubgroups = subgroups[1] !== null;
 
@@ -260,39 +255,43 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
           </Col>
         </Row>
       </div>
-      <div ref={ vegaRef }>
-        { loading ? <LoadingSpinner /> : 
-          <VegaWrapper
-            key={ specType }
-            spec={ specType === "foldChange" ? vis.foldChangeSpec : specType === "pValue" ? vis.pValueSpec : vis.spec }
-            data={ vis.name === "voronoi" ? tree.descendants() : hierarchy }
-            signals={[
-              { name: "chartWidth", value: width },
-              { name: "chartHeight", value: height },
-              { name: "subtitle", value: subtitle },
-              { name: "depth", value: depth },
-              { name: "value", value: valueField },
-              { name: "strokeField", value: strokeField },
-              { name: "legendTitle", value: legendTitle },
-              { name: "colorScheme", value: color.scheme },
-              { name: "reverseColors", value: color.reverse },
-              { name: "highlightColor", value: color.highlight },
-              { name: "inconclusiveColor", value: color.inconclusive },
-              { name: "domain", value: domain }
-            ]}
-            eventListeners={[
-              { type: "click", callback: onSelectNode }
-            ]}
-            tooltip={ 
-              <VegaTooltip>
-                <DetailVis 
-                  subgroup={ subgroup } 
-                  subgroupName={ subgroupName } />
-              </VegaTooltip>
-            }
-          />
+      <>
+        { loading ? <LoadingSpinner /> :
+          <ResizeWrapper
+            useWidth={ true }
+            useHeight={ true }
+            aspectRatio={ 1.4 }
+          > 
+            <VegaWrapper
+              key={ specType }
+              spec={ specType === "foldChange" ? vis.foldChangeSpec : specType === "pValue" ? vis.pValueSpec : vis.spec }
+              data={ vis.name === "voronoi" ? tree.descendants() : hierarchy }
+              signals={[
+                { name: "subtitle", value: subtitle },
+                { name: "depth", value: depth },
+                { name: "value", value: valueField },
+                { name: "strokeField", value: strokeField },
+                { name: "legendTitle", value: legendTitle },
+                { name: "colorScheme", value: color.scheme },
+                { name: "reverseColors", value: color.reverse },
+                { name: "highlightColor", value: color.highlight },
+                { name: "inconclusiveColor", value: color.inconclusive },
+                { name: "domain", value: domain }
+              ]}
+              eventListeners={[
+                { type: "click", callback: onSelectNode }
+              ]}
+              tooltip={ 
+                <VegaTooltip>
+                  <DetailVis 
+                    subgroup={ subgroup } 
+                    subgroupName={ subgroupName } />
+                </VegaTooltip>
+              }
+            />
+          </ResizeWrapper>
         }
-      </div>
+      </>
     </>
   );
 };           

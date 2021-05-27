@@ -1,5 +1,6 @@
 import React from "react";
 import { VegaWrapper } from "../vega-wrapper";
+import { ResizeWrapper } from "../resize-wrapper";
 import { barOverlap } from "../../vega-specs";
 import { subgroupColors } from "../../colors";
 
@@ -52,18 +53,20 @@ export const OverlapVis = ({ subgroup1, subgroup2, overlap, overlapMethod }) => 
           </pattern>
         </defs> 
       </svg>
-      <VegaWrapper
-        options={{
-          actions: false,
-          renderer: "svg"
-        }}
-        spec={ barOverlap }
-        data={ data }
-        signals={[
-          { name: "colors", value: [color1, color2, "url(#" + patternName + ")"] }
-        ]}
-        spinner={ false }              
-      />
+      <ResizeWrapper>
+        <VegaWrapper
+          options={{
+            actions: false,
+            renderer: "svg"
+          }}
+          spec={ barOverlap }
+          data={ data }
+          signals={[
+            { name: "colors", value: [color1, color2, "url(#" + patternName + ")"] }
+          ]}
+          spinner={ false }              
+        />
+      </ResizeWrapper>
     </>
   );
 };

@@ -80,12 +80,10 @@ export const VegaWrapper = ({
   useEffect(() => {
     if (!view.current) return;
 
-    console.log(width, height);
+    if (!isNaN(width)) view.current.width(width);
+    if (!isNaN(height)) view.current.height(height);
 
-    view.current
-      .width(width)
-      .height(height)       
-      .runAsync();
+    view.current.runAsync();
   }, [width, height]);
 
 /*
