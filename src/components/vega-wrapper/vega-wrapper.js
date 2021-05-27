@@ -28,14 +28,23 @@ export const VegaWrapper = ({
     });
   };
 
-  const tooltipCallback = (handler, event, item, value) => {
+  const tooltipCallback = (handler, evt, item, value) => {
     setTooltipProps({
       handler: handler,
-      event: event,
+      event: evt,
       item: item,
       value: value
     });
   }; 
+
+  const clearTooltip = () => {
+    setTooltipProps({
+      handler: null,
+      event: null,
+      item: null,
+      value: null
+    });
+  };
 
   // Initial effect when mounting
   useEffect(() => {
@@ -125,6 +134,7 @@ export const VegaWrapper = ({
         ref={ div }
         className="wrapperDiv"
         style={{ width: width, height: height }}
+        onClick={ clearTooltip }
       >
         { spinner && <LoadingSpinner /> }
       </div>
