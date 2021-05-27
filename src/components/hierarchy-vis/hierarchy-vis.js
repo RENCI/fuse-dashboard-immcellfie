@@ -200,7 +200,7 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
               className="mt-2"
               type="range"
               min={ 1 }
-              max={ 4 }         
+              max={ subgroup === "comparison" ? 3 : 4 }         
               value={ depth }
               onChange={ evt => setDepth(+evt.target.value) } 
             />
