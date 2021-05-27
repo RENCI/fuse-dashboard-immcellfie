@@ -259,6 +259,7 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
           <ResizeWrapper
             useWidth={ true }
             useHeight={ true }
+            minWidth={ 600 }
             aspectRatio={ 1.4 }
           > 
             <VegaWrapper

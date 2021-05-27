@@ -141,6 +141,7 @@ export const VolcanoVis = ({ data, subgroups }) => {
           <ResizeWrapper 
             useWidth={ true }
             useHeight={ true }
+            minWidth={ 600 }
             aspectRatio={ 1.6 }
           >
             <VegaWrapper
@@ -164,7 +165,7 @@ export const VolcanoVis = ({ data, subgroups }) => {
                   />
                 </VegaTooltip>
               }
-            />
+            />           
           </ResizeWrapper>
         </>
       }
