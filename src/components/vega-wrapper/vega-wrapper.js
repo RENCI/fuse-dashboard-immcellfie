@@ -11,6 +11,11 @@ export const VegaWrapper = ({
   const view = useRef(null);
   const [tooltipProps, setTooltipProps] = useState(null);  
 
+  const setSize = (view, width, height) => {
+    if (!isNaN(width)) view.width(width);
+    if (!isNaN(height)) view.height(height);
+  };
+
   const setSignals = (view, signals) => {
     signals.forEach(({ name, value }) => {
       view.signal(name, value);
@@ -40,6 +45,7 @@ export const VegaWrapper = ({
     vegaEmbed(div.current, spec, options).then(result => {
       view.current = result.view;
 
+      setSize(view.current, width, height);
       setSignals(view.current, signals);
       setEventListeners(view.current, eventListeners);
 
@@ -80,8 +86,7 @@ export const VegaWrapper = ({
   useEffect(() => {
     if (!view.current) return;
 
-    if (!isNaN(width)) view.current.width(width);
-    if (!isNaN(height)) view.current.height(height);
+    setSize(view.current, width, height);
 
     view.current.runAsync();
   }, [width, height]);
