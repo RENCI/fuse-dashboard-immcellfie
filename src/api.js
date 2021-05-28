@@ -10,5 +10,15 @@ export const api = {
     catch (error) {
       console.log(error);
     }
+  },
+  loadFile: async file => {
+    try {
+      const response = await axios.get(window.URL.createObjectURL(file));
+
+      return response.data;
+    }
+    catch (error) {
+      console.log(error);
+    }
   }
 }

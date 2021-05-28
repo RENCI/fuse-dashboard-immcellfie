@@ -50,8 +50,20 @@ export const DataSelection = ({ phenotypeName }) => {
     setMessage("Practice data loaded");
   };
 
-  const onFileUpload = evt => {
-    console.log(evt.target.value);
+  const onFileUpload = async evt => {
+    if (evt.target.files.length === 1) {
+      setLoading(true);
+      setMessage();
+
+      dataDispatch({ type: "clearData" });
+
+      const data = await api.loadFile(evt.target.files[0]);
+
+      dataDispatch({ type: "setPhenotypes", file: data });
+
+      setLoading(false);
+      setMessage("Data uploaded");
+    }
   };
 
   const disabled = loading || submitting;
@@ -102,7 +114,7 @@ export const DataSelection = ({ phenotypeName }) => {
         </Group>
         <Group>   
           <File
-            label="Upload expression data"
+            label="Upload phenotype data"
             custom        
             onChange={ onFileUpload }
           />
