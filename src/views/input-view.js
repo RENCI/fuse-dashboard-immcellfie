@@ -3,6 +3,7 @@ import * as d3 from "d3";
 import { Card, Form, Col, Button } from "react-bootstrap";
 import { DataContext } from "../contexts";
 import { ViewWrapper } from "../components/view-wrapper";
+import { ResizeWrapper } from "../components/resize-wrapper";
 import { VegaWrapper } from "../components/vega-wrapper";
 import { expressionHeatmap } from "../vega-specs";
 import { DataMissing } from "../components/data-missing";
@@ -29,7 +30,7 @@ export const InputView = () => {
     setColor(sequential.find(({ scheme }) => scheme === evt.target.value));
   };
 
-  // Transform to work with vega-lite heatmap
+  // Transform to work with vega heatmap
   const heatmapData = !input ? [] : input.data.reduce((data, row) => {
     return data.concat(row.values.map((value, i) => {
       return {
@@ -41,9 +42,12 @@ export const InputView = () => {
     }));
   }, []);
 
+  const numColumns = input && input.data.length > 0 ? input.data[0].values.length : 0;
+
   const maxValue = d3.max(heatmapData, d => d.value);
 
   const ticks = [0, ...d3.range(1, 10).map(d => Math.pow(10, d))].filter(d => d < maxValue);
+  ticks.pop();
   ticks.push(maxValue);
 
   const onLoadDataClick = async () => {
@@ -101,17 +105,18 @@ export const InputView = () => {
                 </Control>
               </Group>
             </Row>
-            <div style={{ overflowX: "auto" }}>
+            <ResizeWrapper>
               <VegaWrapper 
                 spec={ expressionHeatmap } 
                 data={ heatmapData } 
                 signals={[
                   { name: "sortBy", value: sortBy },
                   { name: "colorScheme", value: color.scheme },
-                  { name: "ticks", value: ticks }
+                  { name: "ticks", value: ticks },
+                  { name: "numColumns", value: numColumns }
                 ]}
               />
-            </div>
+            </ResizeWrapper>
           </Body>
         </Card>
       }
