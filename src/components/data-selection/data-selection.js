@@ -6,7 +6,7 @@ import { CellfieLink, SubgroupsLink, ExpressionLink } from "../page-links";
 import { api } from "../../api";
 
 const { Header, Body, Footer } = Card;
-const { Label, Group, Control, Text } = Form;
+const { Label, Group, Control, Text, File } = Form;
 
 export const DataSelection = ({ phenotypeName }) => {
   const [{ phenotypeData }, dataDispatch] = useContext(DataContext);
@@ -48,6 +48,10 @@ export const DataSelection = ({ phenotypeName }) => {
 
     setLoading(false);
     setMessage("Practice data loaded");
+  };
+
+  const onFileUpload = evt => {
+    console.log(evt.target.value);
   };
 
   const disabled = loading || submitting;
@@ -92,6 +96,16 @@ export const DataSelection = ({ phenotypeName }) => {
           >
             Load practice data
           </SpinnerButton>
+        </Group>
+        <Group>
+          <Text>OR</Text>
+        </Group>
+        <Group>   
+          <File
+            label="Upload expression data"
+            custom        
+            onChange={ onFileUpload }
+          />
         </Group>
         { message && 
           <Group>  
