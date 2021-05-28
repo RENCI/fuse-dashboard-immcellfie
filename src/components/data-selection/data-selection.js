@@ -2,6 +2,8 @@ import React, { useState, useContext } from "react";
 import { Card, Form, InputGroup, Alert, Row, Col } from "react-bootstrap";
 import { SpinnerButton } from "../spinner-button";
 import { DataContext } from "../../contexts";
+import { PhenotypeInfo } from "../phenotype-info";
+import { ExpressionInfo } from "../expression-info";
 import { CellfieLink, SubgroupsLink, ExpressionLink } from "../page-links";
 import { api } from "../../api";
 
@@ -115,12 +117,12 @@ export const DataSelection = ({ phenotypeName }) => {
             Load practice data
           </SpinnerButton>
         </Group>
-        <Row>
+        <Row className="row-eq-height">
           <Col>
-            { phenotypeData && <>Phenotype info</> }
+            { phenotypeData && <PhenotypeInfo data={ phenotypeData } /> }
           </Col>
           <Col>
-            { input && <>Expression info</> }
+            { input && <ExpressionInfo data={ input } /> }
           </Col>
         </Row>
         { message && <Alert variant="info">{ message }</Alert> }

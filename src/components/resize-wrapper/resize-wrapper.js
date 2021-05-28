@@ -14,7 +14,7 @@ export const ResizeWrapper = ({ useWidth, useHeight, minWidth, aspectRatio, chil
   if (useHeight) props.height = aspectRatio ? w / aspectRatio : height;
 
   return (
-    <div ref={ ref } style={{ overflowX: "auto", overflowY: "hidden" }}>
+    <div ref={ ref } className="resizeWrapper">
       { React.cloneElement(children, props) }
     </div>
   );
