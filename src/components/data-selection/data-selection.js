@@ -9,7 +9,7 @@ const { Header, Body, Footer } = Card;
 const { Label, Group, Control, Text, File } = Form;
 
 export const DataSelection = ({ phenotypeName }) => {
-  const [{ phenotypeData }, dataDispatch] = useContext(DataContext);
+  const [{ phenotypeData, input }, dataDispatch] = useContext(DataContext);
   const [id, setId] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -38,7 +38,6 @@ export const DataSelection = ({ phenotypeName }) => {
 
   const onLoadPracticeClick = async () => {
     setLoading(true);
-    setMessage();
 
     dataDispatch({ type: "clearData" });
 
@@ -47,13 +46,11 @@ export const DataSelection = ({ phenotypeName }) => {
     dataDispatch({ type: "setPhenotypes", file: data });
 
     setLoading(false);
-    setMessage("Practice data loaded");
   };
 
   const onFileUpload = async evt => {
     if (evt.target.files.length === 1) {
       setLoading(true);
-      setMessage();
 
       dataDispatch({ type: "clearData" });
 
@@ -62,7 +59,6 @@ export const DataSelection = ({ phenotypeName }) => {
       dataDispatch({ type: "setPhenotypes", file: data });
 
       setLoading(false);
-      setMessage("Data uploaded");
     }
   };
 
@@ -100,6 +96,16 @@ export const DataSelection = ({ phenotypeName }) => {
           <Text>OR</Text>
         </Group>
         <Group>   
+          <File
+            label="Upload phenotype data"
+            custom        
+            onChange={ onFileUpload }
+          />
+        </Group>
+        <Group>
+          <Text>OR</Text>
+        </Group>
+        <Group>   
           <SpinnerButton 
             variant="outline-secondary"
             disabled={ disabled }
@@ -109,21 +115,15 @@ export const DataSelection = ({ phenotypeName }) => {
             Load practice data
           </SpinnerButton>
         </Group>
-        <Group>
-          <Text>OR</Text>
-        </Group>
-        <Group>   
-          <File
-            label="Upload phenotype data"
-            custom        
-            onChange={ onFileUpload }
-          />
-        </Group>
-        { message && 
-          <Group>  
-            <Alert variant="info">{ message }</Alert>
-          </Group>  
-        }
+        <Row>
+          <Col>
+            { phenotypeData && <>Phenotype info</> }
+          </Col>
+          <Col>
+            { input && <>Expression info</> }
+          </Col>
+        </Row>
+        { message && <Alert variant="info">{ message }</Alert> }
       </Body>
       { phenotypeData &&
         <Footer>
