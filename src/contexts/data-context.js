@@ -1,5 +1,8 @@
 import React, { createContext, useReducer } from "react";
-import * as d3 from "d3";
+import { tsvParseRows, csvParseRows, csvParse } from "d3-dsv";
+import { randomInt } from "d3-random";
+import { stratify } from "d3-hierarchy";
+import { merge, mean, group } from "d3-array";
 import ttest2 from "@stdlib/stats/ttest2";
 
 const excludedPhenotypes = [
@@ -46,7 +49,7 @@ const initialState = {
 
 const parseInput = data => {
   return {
-    data: d3.tsvParseRows(data, row => {
+    data: tsvParseRows(data, row => {
       return {
         gene: row[0],
         values: row.slice(1).map(d => +d)
@@ -59,22 +62,22 @@ const parseNumber = d => d < 0 ? NaN : +d;
 
 const parseTSVOutput = data => {
   return {
-    tasks: d3.tsvParseRows(data, row => {
+    tasks: tsvParseRows(data, row => {
       if (row.length !== 3) return null;
 
-      const info = d3.csvParseRows(row[0])[0];
+      const info = csvParseRows(row[0])[0];
 
       // Reorder phenotype info to go from task to system
       const phenotype = [info[1], info[3], info[2]];
 
-      const scores = d3.csvParseRows(row[1])[0].map(parseNumber);
+      const scores = csvParseRows(row[1])[0].map(parseNumber);
 
       return {
         id: info[0],
         name: info[1],        
         phenotype: phenotype,
         scores: scores,
-        activities: d3.csvParseRows(row[2])[0].map(parseNumber)
+        activities: csvParseRows(row[2])[0].map(parseNumber)
       };
     })
   };
@@ -84,9 +87,9 @@ const parsePhenotypeData = data => {
   // XXX: Hack to match test phenotype data to test expression/output data
   const n = 32;
 
-  const csv = d3.csvParse(data);
+  const csv = csvParse(data);
 
-  const random = d3.randomInt(csv.length);
+  const random = randomInt(csv.length);
 
   const result = [];
 
@@ -105,7 +108,7 @@ const parsePhenotypeData = data => {
 
 const parseCSVOutput = data => {
   return {
-    tasks: d3.csvParseRows(data, (row, i) => {
+    tasks: csvParseRows(data, (row, i) => {
       if (i === 0) return;
 
       const offset = 4;
@@ -209,7 +212,7 @@ const createHierarchy = output => {
 }
 
 const createTree = hierarchy => {
-  const tree = d3.stratify()
+  const tree = stratify()
       .id(d => d.name)
       .parentId(d => d.parent)
       (hierarchy);
@@ -322,7 +325,7 @@ const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod) => {
       }
       else {
         const getValues = arrayName => {
-          return d3.merge(subjects.map(({ index }) => {
+          return merge(subjects.map(({ index }) => {
             return node.data[arrayName][index].map(value => {
               return {
                 value: value,
@@ -338,9 +341,9 @@ const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod) => {
         const activities = getValues("allActivities");
 
         node.data["scores" + which] = scores;
-        node.data["score" + which] = d3.mean(scores, score => score.value);
+        node.data["score" + which] = mean(scores, score => score.value);
         node.data["activities" + which] = activities;
-        node.data["activity" + which] = d3.mean(activities, activity => activity.value);
+        node.data["activity" + which] = mean(activities, activity => activity.value);
       }
     }
 
@@ -396,7 +399,7 @@ const getNewSubgroupName = subgroups => {
 };
 
 const filterSubgroup = (subgroup, phenotypeData, phenotypes) => {
-  const filters = Array.from(d3.group(subgroup.filters, d => d.phenotype));
+  const filters = Array.from(group(subgroup.filters, d => d.phenotype));
 
   const subjects = phenotypeData.filter(subject => {
     return filters.reduce((include, filter) => {

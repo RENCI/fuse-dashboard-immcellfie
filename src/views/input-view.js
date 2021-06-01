@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import * as d3 from "d3";
+import { max, range } from "d3-array";
 import { Card, Form, Col, Button } from "react-bootstrap";
 import { DataContext } from "../contexts";
 import { ViewWrapper } from "../components/view-wrapper";
@@ -44,9 +44,9 @@ export const InputView = () => {
 
   const numColumns = input && input.data.length > 0 ? input.data[0].values.length : 0;
 
-  const maxValue = d3.max(heatmapData, d => d.value);
+  const maxValue = max(heatmapData, d => d.value);
 
-  const ticks = [0, ...d3.range(1, 10).map(d => Math.pow(10, d))].filter(d => d < maxValue);
+  const ticks = [0, ...range(1, 10).map(d => Math.pow(10, d))].filter(d => d < maxValue);
   ticks.pop();
   ticks.push(maxValue);
 

@@ -1,15 +1,15 @@
 import React, { useMemo } from "react";
 import { Row, Col, Card, Button } from "react-bootstrap";
 import { X } from "react-bootstrap-icons";
-import * as d3 from "d3";
+import { format } from "d3-format";
 import { VegaWrapper } from "../vega-wrapper";
 import { histogram, densityComparison, bar, barComparison } from "../../vega-specs";
 import "./detail-vis.css";
 
 const { Subtitle, Body, Footer } = Card;
 
-const formatNumber = d => isNaN(d) ? "Inconclusive" : d3.format(".2f")(d);
-const formatPValue = d => d < 0.001 ? "0.001" : d3.format(".3f")(d);
+const formatNumber = d => isNaN(d) ? "Inconclusive" : format(".2f")(d);
+const formatPValue = d => d < 0.001 ? "0.001" : format(".3f")(d);
 
 const subgroupValues = (value, key) => {  
   return value ? value[key].filter(({ value }) => !isNaN(value)) : [];

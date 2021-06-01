@@ -1,6 +1,6 @@
 import React, { useContext, useState, useMemo } from "react";
 import { Form, Col } from "react-bootstrap";
-import * as d3 from "d3";
+import { extent, min } from "d3-array";
 import { DataContext } from "../../contexts";
 import { ResizeWrapper } from "../resize-wrapper";
 import { VegaWrapper } from "../vega-wrapper";
@@ -66,13 +66,13 @@ export const VolcanoVis = ({ data, subgroups }) => {
   };
 
   const foldChangeExtent = useMemo(() => {
-    const extent = d3.extent(volcanoData, data => data.foldChange);
+    const ext = extent(volcanoData, data => data.foldChange);
 
-    return Math.max(1 / Math.abs(extent[0]), Math.abs(extent[1]), foldChangeThreshold);
+    return Math.max(1 / Math.abs(ext[0]), Math.abs(ext[1]), foldChangeThreshold);
   }, [volcanoData, foldChangeThreshold]);
 
   const pValueExtent = useMemo(() => {
-    return Math.min(d3.min(volcanoData, data => data.pValue), significanceLevel);
+    return Math.min(min(volcanoData, data => data.pValue), significanceLevel);
   }, [volcanoData, significanceLevel]);
 
   const visibleData = volcanoData.filter(node => node.depth > 0 && node.depth <= depth);

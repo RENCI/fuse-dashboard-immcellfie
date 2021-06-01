@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Form, Button, Col } from "react-bootstrap";
 import { ArrowCounterclockwise, XCircle } from "react-bootstrap-icons";
-import * as d3 from "d3";
+import { group, ascending } from "d3-array";
 import { DataContext } from "../../contexts";
 import { LabelEdit } from "../label-edit";
 import { VegaWrapper } from "../vega-wrapper";
@@ -42,12 +42,12 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
   const nameLabel = name => (name[0].toUpperCase() + name.substring(1)).replace(/_/gi, " ");
 
   const filterText = filters => {
-    return Array.from(d3.group(filters, filter => filter.phenotype)).reduce((text, phenotype, i) => {
+    return Array.from(group(filters, filter => filter.phenotype)).reduce((text, phenotype, i) => {
       const pheno = (
         <span key={ i }>{ i > 0 ? <span className="font-weight-bold"> and </span> : null }
           (
           { nameLabel(phenotype[0]) }:
-          { phenotype[1].sort((a, b) => d3.ascending(a.value, b.value)).map(({ value }, i) => {
+          { phenotype[1].sort((a, b) => ascending(a.value, b.value)).map(({ value }, i) => {
             return <span key={ i }>{ i > 0 ? <span className="font-weight-bold"> or </span> : null } { value }</span>;
           })}
           )
