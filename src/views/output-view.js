@@ -20,16 +20,9 @@ export const OutputView = () => {
   
   return (
     <>
-      { !output ? 
-        <ViewWrapper>
-          { !phenotypeData ? 
-            <DataMissing message="No data loaded" showHome={ true } /> 
-          : 
-            <ModelSelection 
-              outputName={ practiceData.output } 
-              outputType={ practiceData.outputType }
-            />         
-          }
+      { !phenotypeData ? 
+        <ViewWrapper> 
+          <DataMissing message="No data loaded" showHome={ true } /> 
         </ViewWrapper>
       :
         <Row>

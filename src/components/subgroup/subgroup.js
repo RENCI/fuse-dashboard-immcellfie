@@ -43,12 +43,19 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
 
   const filterText = filters => {
     return Array.from(d3.group(filters, filter => filter.phenotype)).reduce((text, phenotype, i) => {
-      return text + (i > 0 ? " and " : "") + 
-        "(" + nameLabel(phenotype[0]) + ": " + 
-        phenotype[1].sort((a, b) => d3.ascending(a.value, b.value)).map(({ value }, i) => {
-          return (i > 0 ? " or " : "") + value;
-        }).join("") + ")";
-    }, "");
+      const pheno = (
+        <span key={ i }>{ i > 0 ? <span className="font-weight-bold"> and </span> : null }
+          (
+          { nameLabel(phenotype[0]) }:
+          { phenotype[1].sort((a, b) => d3.ascending(a.value, b.value)).map(({ value }, i) => {
+            return <span key={ i }>{ i > 0 ? <span className="font-weight-bold"> or </span> : null } { value }</span>;
+          })}
+          )
+        </span>
+      );
+
+      return [...text, pheno];
+    }, []);
   };
 
   const charts = subgroup.phenotypes.map((phenotype, i) => {    

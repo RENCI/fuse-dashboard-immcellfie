@@ -24,65 +24,65 @@ export const CellfieOutput = () => {
   };
 
   return (
-    <>
-      { hierarchy && 
-        <Card>
-          <Container 
-            activeKey={ tab }
-            mountOnEnter={ true }
-            unmountOnExit={ false }
-            onSelect={ onSelect }
-          >
-            <Header>
-              <Title>CellFIE Output Visualizations</Title>
-              <Nav 
-                activeKey={ tab }
-                variant="tabs" 
-                justify={ true }
-              >
-                <Item>
-                  <Link eventKey="hierarchy">Hierarchy</Link>
-                </Item>
-                <Item>
-                  <Link eventKey="volcano">Volcano plot</Link>
-                </Item>
-                <Item>
-                  <Link eventKey="heatmap">Heatmap</Link>
-                </Item>
-                <Item>
-                  <Link eventKey="escher">Pathway map</Link>
-                </Item>
-              </Nav>
-            </Header>
-            <Body>
-              <Content>
-                <Pane eventKey="hierarchy">
-                  <HierarchyVis
-                    hierarchy={ hierarchy }
-                    tree={ tree } 
-                    subgroups={ currentSubgroups }
-                  />
-                </Pane>
-                <Pane eventKey="volcano">
-                  <VolcanoVis
-                    data={ tree.descendants() }
-                    subgroups={ currentSubgroups }
-                  />
-                </Pane>
-                <Pane eventKey="heatmap">
-                  <HeatmapVis
-                    data={ tree.descendants() }
-                    subgroups={ currentSubgroups }
-                  />
-                </Pane>
-                <Pane eventKey="escher">
-                  <PathwayVis />
-                </Pane>
-              </Content>
-            </Body>
-          </Container>
-        </Card>
-      }
-    </>
+    <Card>
+      <Container 
+        activeKey={ tab }
+        mountOnEnter={ true }
+        unmountOnExit={ false }
+        onSelect={ onSelect }
+      >
+        <Header>
+          <Title>CellFIE Output Visualizations</Title>
+          { hierarchy && 
+            <Nav 
+              activeKey={ tab }
+              variant="tabs" 
+              justify={ true }
+            >
+              <Item>
+                <Link eventKey="hierarchy">Hierarchy</Link>
+              </Item>
+              <Item>
+                <Link eventKey="volcano">Volcano plot</Link>
+              </Item>
+              <Item>
+                <Link eventKey="heatmap">Heatmap</Link>
+              </Item>
+              <Item>
+                <Link eventKey="escher">Pathway map</Link>
+              </Item>
+            </Nav>
+          }
+        </Header>
+        <Body>
+          { !hierarchy ? <>No CellFIE output data</> : 
+            <Content>
+              <Pane eventKey="hierarchy">
+                <HierarchyVis
+                  hierarchy={ hierarchy }
+                  tree={ tree } 
+                  subgroups={ currentSubgroups }
+                />
+              </Pane>
+              <Pane eventKey="volcano">
+                <VolcanoVis
+                  data={ tree.descendants() }
+                  subgroups={ currentSubgroups }
+                />
+              </Pane>
+              <Pane eventKey="heatmap">
+                <HeatmapVis
+                  data={ tree.descendants() }
+                  subgroups={ currentSubgroups }
+                />
+              </Pane>
+              <Pane eventKey="escher">
+                <PathwayVis />
+              </Pane>
+            </Content>
+          }
+        </Body>
+      </Container>
+    </Card>
   );  
 };
