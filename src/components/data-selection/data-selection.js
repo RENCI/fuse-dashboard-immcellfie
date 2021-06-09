@@ -1,14 +1,15 @@
 import React, { useState, useContext } from "react";
-import { Card, Form, InputGroup, Alert, Row, Col } from "react-bootstrap";
+import { Card, Form, InputGroup, Alert, Row, Col, Button } from "react-bootstrap";
 import { SpinnerButton } from "../spinner-button";
 import { DataContext } from "../../contexts";
+import { FileSelect } from "../file-select";
 import { PhenotypeInfo } from "../phenotype-info";
 import { ExpressionInfo } from "../expression-info";
 import { CellfieLink, SubgroupsLink, ExpressionLink } from "../page-links";
 import { api } from "../../api";
 
 const { Header, Body, Footer } = Card;
-const { Label, Group, Control, Text, File } = Form;
+const { Label, Group, Control, Text } = Form;
 
 export const DataSelection = ({ phenotypeName }) => {
   const [{ phenotypeData, input }, dataDispatch] = useContext(DataContext);
@@ -16,6 +17,8 @@ export const DataSelection = ({ phenotypeName }) => {
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState();
+  const [phenotypeDataFile, setPhenotypeDataFile] = useState(null);
+  const [expressionDataFile, setExpressionDataFile] = useState(null);
 
   const onIdChange = evt => {
     setId(evt.target.value);
@@ -29,6 +32,7 @@ export const DataSelection = ({ phenotypeName }) => {
 
   const onSubmitClick = () => {
     setSubmitting(true);
+    setMessage();
 
     dataDispatch({ type: "clearData" });
 
@@ -40,6 +44,7 @@ export const DataSelection = ({ phenotypeName }) => {
 
   const onLoadPracticeClick = async () => {
     setLoading(true);
+    setMessage();
 
     dataDispatch({ type: "clearData" });
 
@@ -50,18 +55,29 @@ export const DataSelection = ({ phenotypeName }) => {
     setLoading(false);
   };
 
-  const onFileUpload = async evt => {
-    if (evt.target.files.length === 1) {
-      setLoading(true);
+  const onPhenotypeFileSelect = file => {
+    setPhenotypeDataFile(file);    
+  };
 
-      dataDispatch({ type: "clearData" });
+  const onExpressionFileSelect = file => {
+    setExpressionDataFile(file);
+  };
 
-      const data = await api.loadFile(evt.target.files[0]);
+  const onUploadDataClick = async () => {
+    setLoading(true);
+    setMessage();
 
-      dataDispatch({ type: "setPhenotypes", data: data });
+    dataDispatch({ type: "clearData" });
 
-      setLoading(false);
-    }
+    const phenotypeData = await api.loadFile(phenotypeDataFile);
+    const expressionData = await api.loadFile(expressionDataFile);
+
+    // XXX: Check number of subjects?
+
+    dataDispatch({ type: "setPhenotypes", data: phenotypeData });
+    dataDispatch({ type: "setInput", data: expressionData });
+
+    setLoading(false);
   };
 
   const disabled = loading || submitting;
@@ -98,11 +114,25 @@ export const DataSelection = ({ phenotypeName }) => {
           <Text>OR</Text>
         </Group>
         <Group>   
-          <File
-            label="Upload phenotype data"
-            custom        
-            onChange={ onFileUpload }
+          <FileSelect
+            defaultLabel="Select phenotype data"
+            onChange={ onPhenotypeFileSelect }
           />
+        </Group>
+        <Group>   
+          <FileSelect
+            defaultLabel="Select expression data"
+            onChange={ onExpressionFileSelect }
+          />
+        </Group>
+        <Group>
+          <Button
+            variant="outline-secondary"
+            disabled={ !phenotypeDataFile || !expressionDataFile }
+            onClick={ onUploadDataClick }
+          >
+            Upload data
+          </Button>
         </Group>
         <Group>
           <Text>OR</Text>
