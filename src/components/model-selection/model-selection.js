@@ -104,7 +104,7 @@ const initialParameters = [
 ];
 
 export const ModelSelection = ({ outputName, outputType }) => {
-  const [, dataDispatch] = useContext(DataContext);
+  const [{ rawOutput }, dataDispatch] = useContext(DataContext);
   const [organism, setOrganism] = useState("human");
   const [currentModels, setCurrentModels] = useState(models.filter(({ organism }) => organism === "human"));
   const [model, setModel] = useState(models.find(({ organism }) => organism === "human"));
@@ -274,7 +274,7 @@ export const ModelSelection = ({ outputName, outputType }) => {
           </Col>
           <Col>
             <Group controlId="threshold_type_select">
-            <Label><h6>Threshold type</h6></Label>
+              <Label><h6>Threshold type</h6></Label>
               <Control 
                 as="select"
                 value={ thresholdType.value }
@@ -296,17 +296,15 @@ export const ModelSelection = ({ outputName, outputType }) => {
         </Row>
         <Row>
           <Col>
-            <Group>
-              <SpinnerButton 
-                block
-                disabled={ running }
-                spin={ running }
-                onClick={ onRunCellfieClick }
-              >
-                Run CellFIE
-              </SpinnerButton>
-            </Group>                        
-          </Col>
+            <SpinnerButton 
+              block
+              disabled={ running }
+              spin={ running }
+              onClick={ onRunCellfieClick }
+            >
+              Run CellFIE
+            </SpinnerButton> 
+          </Col>       
         </Row>
       </Body>
     </Card>

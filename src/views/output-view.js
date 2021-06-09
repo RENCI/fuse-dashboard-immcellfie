@@ -16,7 +16,7 @@ const practiceData = {
 };
 
 export const OutputView = () => {
-  const [{ phenotypeData, output }] = useContext(DataContext);
+  const [{ phenotypeData }] = useContext(DataContext);
   
   return (
     <>

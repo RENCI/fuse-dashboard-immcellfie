@@ -59,9 +59,7 @@ export const InputView = () => {
   return (
     <ViewWrapper>
       { !phenotypeData ? 
-          <>
-            <DataMissing message="No data loaded" showHome={ true } />
-          </> 
+        <DataMissing message="No data loaded" showHome={ true } />
       : !input ? 
           <div className="text-center">
             <DataMissing message="No expression data loaded" /> 

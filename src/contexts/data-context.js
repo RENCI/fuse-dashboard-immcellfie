@@ -19,6 +19,7 @@ const timeSort = {
 
 const initialState = {
   // Phenotype data for each subject
+  rawPhenotypeData: null,
   phenotypeData: null,
 
   // Phenotype options created from phenotype data
@@ -31,9 +32,11 @@ const initialState = {
   selectedSubgroups: null,
 
   // Expression data used as CellFIE input
+  rawInput: null,
   input: null,
 
   // CellFIE output
+  rawOutput: null,
   output: null,
 
   // CellFIE output with hierarchy info
@@ -451,11 +454,13 @@ const reducer = (state, action) => {
     case "setInput":
       return {
         ...state,
+        rawInput: action.file,
         input: parseInput(action.file)
       };
 
     case "setPhenotypes": {
-      const phenotypeData = parsePhenotypeData(action.file);
+      const rawPhenotypeData = action.file;
+      const phenotypeData = parsePhenotypeData(rawPhenotypeData);
       const phenotypes = createPhenotypes(phenotypeData);
 
       // Create initial group with all subjects
@@ -466,6 +471,7 @@ const reducer = (state, action) => {
 
       return {
         ...state,
+        rawPhenotypeData: rawPhenotypeData,
         phenotypeData: phenotypeData,
         phenotypes: phenotypes,
         subgroups: subgroups,
@@ -474,13 +480,15 @@ const reducer = (state, action) => {
     }
     
     case "setOutput": {
-      const output = action.fileType === "tsv" ? parseTSVOutput(action.file) : parseCSVOutput(action.file);
+      const rawOutput = action.file;
+      const output = action.fileType === "tsv" ? parseTSVOutput(rawOutput) : parseCSVOutput(rawOutput);
       const hierarchy = createHierarchy(output);
       const tree = createTree(hierarchy);
       updateTree(tree, state.subgroups, state.selectedSubgroups, state.overlapMethod);
 
       return {
         ...state,
+        rawOutput: rawOutput,
         output: output,
         hierarchy: hierarchy,
         tree: tree
