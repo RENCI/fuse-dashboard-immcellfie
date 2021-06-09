@@ -45,7 +45,7 @@ export const DataSelection = ({ phenotypeName }) => {
 
     const data = await api.loadPracticeData(phenotypeName);
 
-    dataDispatch({ type: "setPhenotypes", file: data });
+    dataDispatch({ type: "setPhenotypes", data: data });
 
     setLoading(false);
   };
@@ -58,7 +58,7 @@ export const DataSelection = ({ phenotypeName }) => {
 
       const data = await api.loadFile(evt.target.files[0]);
 
-      dataDispatch({ type: "setPhenotypes", file: data });
+      dataDispatch({ type: "setPhenotypes", data: data });
 
       setLoading(false);
     }

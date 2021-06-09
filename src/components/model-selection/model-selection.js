@@ -175,7 +175,7 @@ export const ModelSelection = ({ outputName, outputType }) => {
     setTimeout(async () => {
       const output = await api.loadPracticeData(outputName);
 
-      dataDispatch({ type: "setOutput", file: output, fileType: outputType });
+      dataDispatch({ type: "setOutput", data: output, fileType: outputType });
 
       setRunning(false);
 //      setMessage("CellFIE output data loaded");

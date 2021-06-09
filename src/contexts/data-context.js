@@ -454,12 +454,12 @@ const reducer = (state, action) => {
     case "setInput":
       return {
         ...state,
-        rawInput: action.file,
-        input: parseInput(action.file)
+        rawInput: action.data,
+        input: parseInput(action.data)
       };
 
     case "setPhenotypes": {
-      const rawPhenotypeData = action.file;
+      const rawPhenotypeData = action.data;
       const phenotypeData = parsePhenotypeData(rawPhenotypeData);
       const phenotypes = createPhenotypes(phenotypeData);
 
@@ -480,7 +480,7 @@ const reducer = (state, action) => {
     }
     
     case "setOutput": {
-      const rawOutput = action.file;
+      const rawOutput = action.data;
       const output = action.fileType === "tsv" ? parseTSVOutput(rawOutput) : parseCSVOutput(rawOutput);
       const hierarchy = createHierarchy(output);
       const tree = createTree(hierarchy);
