@@ -48,14 +48,10 @@ export const DownloadView = () => {
             Download Data
           </Header>
           <Body>  
-            <Row>
-              <Col>{ download(phenotypeLink, "phenotypes.csv", "Phenotype data", HomeLink, "No phenotype data") }</Col>
-            </Row>
-            <Row className="mt-3">
-              <Col>{ download(outputLink, "cellfie-output.csv", "CellFIE output", CellfieLink, "No CellFIE output") }</Col>
-            </Row>
-            <Row className="mt-3">
-              <Col>{ download(inputLink, "expression-data.tsv", "Expression data", ExpressionLink, "No expression data") }</Col>
+            <Row className="align-items-center">
+              <Col className="text-center">{ download(phenotypeLink, "phenotypes.csv", "Phenotype data", HomeLink, "No phenotype data") }</Col>
+              <Col className="text-center">{ download(outputLink, "cellfie-output.csv", "CellFIE output", CellfieLink, "No CellFIE output") }</Col>
+              <Col className="text-center">{ download(inputLink, "expression-data.tsv", "Expression data", ExpressionLink, "No expression data") }</Col>
             </Row>
           </Body>
         </Card>

@@ -14,7 +14,7 @@ export const FileSelect = ({ defaultLabel, onChange }) => {
   }
 
   const label = file ? 
-    <><span className="text-muted">Selected: </span>{ file.name }</> :
+    file.name :
     <span className="text-muted">{ defaultLabel }</span>;
 
   return (

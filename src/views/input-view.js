@@ -64,7 +64,7 @@ export const InputView = () => {
           <div className="text-center">
             <DataMissing message="No expression data loaded" /> 
             <Button
-              variant="outline-secondary"
+              variant="outline-primary"
               onClick={ onLoadDataClick }
             >
               Load expression data for current dataset
