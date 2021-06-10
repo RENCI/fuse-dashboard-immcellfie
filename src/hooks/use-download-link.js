@@ -11,5 +11,5 @@ export const useDownloadLink = (data, type) => {
     const blob = new Blob([data], { type: type });
 
     return URL.createObjectURL(blob);
-  }, [data]);
+  }, [data, type]);
 };

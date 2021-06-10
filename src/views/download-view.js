@@ -3,7 +3,7 @@ import { Col, Card, Form, Button } from "react-bootstrap";
 import { Download } from "react-bootstrap-icons";
 import { ViewWrapper } from "../components/view-wrapper";
 import { DataMissing } from "../components/data-missing";
-import { HomeLink, CellfieLink, SubgroupsLink, ExpressionLink } from "../components/page-links";
+import { HomeLink, CellfieLink, ExpressionLink } from "../components/page-links";
 import { DataContext } from "../contexts";
 import { useDownloadLink } from "../hooks";
 
