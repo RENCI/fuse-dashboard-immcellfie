@@ -7,11 +7,12 @@ import { PhenotypeInfo } from "../phenotype-info";
 import { ExpressionInfo } from "../expression-info";
 import { CellfieLink, SubgroupsLink, ExpressionLink } from "../page-links";
 import { api } from "../../api";
+import { practiceData } from "../../datasets";
 
 const { Header, Body, Footer } = Card;
 const { Label, Group, Control, Text } = Form;
 
-export const DataSelection = ({ phenotypeName }) => {
+export const DataSelection = () => {
   const [{ phenotypeData, input }, dataDispatch] = useContext(DataContext);
   const [id, setId] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -48,7 +49,7 @@ export const DataSelection = ({ phenotypeName }) => {
 
     dataDispatch({ type: "clearData" });
 
-    const data = await api.loadPracticeData(phenotypeName);
+    const data = await api.loadPracticeData(practiceData.phenotypes);
 
     dataDispatch({ type: "setPhenotypes", source: "practice", name: "phenotype data", data: data });
 

@@ -12,9 +12,9 @@ const { Header, Body } = Card;
 const { Row } = Form;
 
 export const DownloadView = () => {
-  const [{ rawPhenotypeData, rawOutput, rawInput }] = useContext(DataContext);
-  const phenotypeLink = useDownloadLink(rawPhenotypeData);
+  const [{ rawOutput, rawPhenotypeData, rawInput }] = useContext(DataContext);
   const outputLink = useDownloadLink(rawOutput);
+  const phenotypeLink = useDownloadLink(rawPhenotypeData);
   const inputLink = useDownloadLink(rawInput, "text/tsv");
   const [zipLink, setZipLink] = useState(null);
 
@@ -24,8 +24,8 @@ export const DownloadView = () => {
     const createZipLink = async () => {
       const zip = new JSZip();
   
-      if (rawPhenotypeData) zip.file("phenotypes.csv", rawPhenotypeData);
       if (rawOutput) zip.file("cellfie-output.csv", rawOutput);
+      if (rawPhenotypeData) zip.file("phenotypes.csv", rawPhenotypeData);
       if (rawInput) zip.file("expression-data.tsv", rawInput);
   
       const blob = await zip.generateAsync({ type: "blob" });
@@ -58,6 +58,14 @@ export const DownloadView = () => {
     );
   };
 
+  /*
+  const onLoadDataClick = async () => {
+    const data = await api.loadPracticeData(practiceData.input);
+
+    dataDispatch({ type: "setInput", source: "practice", name: "expression data", data: data });
+  };
+  */
+
   return (   
     <ViewWrapper>
       { !rawPhenotypeData ? 
@@ -69,8 +77,8 @@ export const DownloadView = () => {
           </Header>
           <Body>  
             <Row className="align-items-center">
-              <Col className="text-center">{ download(phenotypeLink, "phenotypes.csv", "Phenotype data", HomeLink, "No phenotype data") }</Col>
               <Col className="text-center">{ download(outputLink, "cellfie-output.csv", "CellFIE output", CellfieLink, "No CellFIE output") }</Col>
+              <Col className="text-center">{ download(phenotypeLink, "phenotypes.csv", "Phenotype data", HomeLink, "No phenotype data") }</Col>
               <Col className="text-center">{ download(inputLink, "expression-data.tsv", "Expression data", ExpressionLink, "No expression data") }</Col>
               <Col className="text-center border-left">{ download(zipLink, "immcellfie-data.zip", "Zip file", null, "No data") }</Col>
             </Row>

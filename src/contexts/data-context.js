@@ -18,6 +18,9 @@ const timeSort = {
 };
 
 const initialState = {
+  // Info for current dataset (source, names, etc.)
+  dataInfo: null,
+
   // Phenotype data for each subject
   rawPhenotypeData: null,
   phenotypeData: null,

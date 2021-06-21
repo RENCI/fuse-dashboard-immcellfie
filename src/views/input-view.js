@@ -9,13 +9,10 @@ import { expressionHeatmap } from "../vega-specs";
 import { DataMissing } from "../components/data-missing";
 import { api } from "../api";
 import { sequential } from "../colors";
+import { practiceData } from "../datasets";
 
 const { Header, Body } = Card;
 const { Group, Label, Control, Row } = Form;
-
-const practiceData = {
-  input: "HPA.tsv"
-};
 
 export const InputView = () => {
   const [{ phenotypeData, input, groups }, dataDispatch] = useContext(DataContext);  
