@@ -50,7 +50,7 @@ export const DataSelection = ({ phenotypeName }) => {
 
     const data = await api.loadPracticeData(phenotypeName);
 
-    dataDispatch({ type: "setPhenotypes", data: data });
+    dataDispatch({ type: "setPhenotypes", source: "practice", name: "phenotype data", data: data });
 
     setLoading(false);
   };
@@ -74,8 +74,8 @@ export const DataSelection = ({ phenotypeName }) => {
 
     // XXX: Check number of subjects?
 
-    dataDispatch({ type: "setPhenotypes", data: phenotypeData });
-    dataDispatch({ type: "setInput", data: expressionData });
+    dataDispatch({ type: "setPhenotypes", source: "upload", name: phenotypeDataFile.name, data: phenotypeData });
+    dataDispatch({ type: "setInput", source: "upload", name: expressionDataFile.name, data: expressionData });
 
     setLoading(false);
   };
@@ -149,10 +149,10 @@ export const DataSelection = ({ phenotypeName }) => {
         </Group>
         <Row className="row-eq-height">
           <Col>
-            { phenotypeData && <PhenotypeInfo data={ phenotypeData } /> }
+            { phenotypeData && <PhenotypeInfo phenotypeData={ phenotypeData } /> }
           </Col>
           <Col>
-            { input && <ExpressionInfo data={ input } /> }
+            { input && <ExpressionInfo expressionData={ input } /> }
           </Col>
         </Row>
         { message && <Alert variant="info">{ message }</Alert> }

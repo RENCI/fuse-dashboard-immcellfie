@@ -1,5 +1,3 @@
-// Borrowed from BioData Catalyst Website
-
 import { useMemo } from "react";
 
 export const useDownloadLink = (data, type) => {

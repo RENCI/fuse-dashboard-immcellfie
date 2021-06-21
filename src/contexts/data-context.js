@@ -51,14 +51,12 @@ const initialState = {
 };
 
 const parseInput = data => {
-  return {
-    data: tsvParseRows(data, row => {
-      return {
-        gene: row[0],
-        values: row.slice(1).map(d => +d)
-      };
-    })
-  };
+  return tsvParseRows(data, row => {
+    return {
+      gene: row[0],
+      values: row.slice(1).map(d => +d)
+    };
+  });
 };
 
 const parseNumber = d => d < 0 ? NaN : +d;
@@ -455,16 +453,24 @@ const reducer = (state, action) => {
       return {
         ...state,
         rawInput: action.data,
-        input: parseInput(action.data)
+        input: {
+          source: action.source,
+          name: action.name,
+          data: parseInput(action.data)
+        }
       };
 
     case "setPhenotypes": {
       const rawPhenotypeData = action.data;
-      const phenotypeData = parsePhenotypeData(rawPhenotypeData);
-      const phenotypes = createPhenotypes(phenotypeData);
+      const phenotypeData = {
+        source: action.source,
+        name: action.name,
+        data: parsePhenotypeData(rawPhenotypeData)
+      };
+      const phenotypes = createPhenotypes(phenotypeData.data);
 
       // Create initial group with all subjects
-      const subgroups = [createSubgroup("All subjects", phenotypeData, phenotypes, [])];
+      const subgroups = [createSubgroup("All subjects", phenotypeData.data, phenotypes, [])];
 
       // Select this subgroup
       const selectedSubgroups = [subgroups[0].key, null];
@@ -502,7 +508,10 @@ const reducer = (state, action) => {
 
     case "addSubgroup": {
       const subgroup = createSubgroup(
-        getNewSubgroupName(state.subgroups), state.phenotypeData, state.phenotypes, state.subgroups
+        getNewSubgroupName(state.subgroups), 
+        state.phenotypeData.data, 
+        state.phenotypes, 
+        state.subgroups
       );
 
       const selectedSubgroups = state.selectedSubgroups[1] === null ?
@@ -535,7 +544,7 @@ const reducer = (state, action) => {
           filters: []
         };
 
-        filterSubgroup(reset, state.phenotypeData, state.phenotypes);
+        filterSubgroup(reset, state.phenotypeData.data, state.phenotypes);
 
         return reset;
       });
@@ -609,7 +618,7 @@ const reducer = (state, action) => {
         subgroup.filters.splice(filterIndex, 1);
       }     
 
-      filterSubgroup(subgroup, state.phenotypeData, state.phenotypes);
+      filterSubgroup(subgroup, state.phenotypeData.data, state.phenotypes);
 
       const subgroups = state.subgroups.map((sg, i) => {
         return i === index ? subgroup : sg;
@@ -632,7 +641,7 @@ const reducer = (state, action) => {
 
       subgroup.filters = subgroup.filters.filter(({ phenotype }) => phenotype !== action.phenotype);
 
-      filterSubgroup(subgroup, state.phenotypeData, state.phenotypes);
+      filterSubgroup(subgroup, state.phenotypeData.data, state.phenotypes);
       
       const subgroups = state.subgroups.map((sg, i) => {
         return i === index ? subgroup : sg;
