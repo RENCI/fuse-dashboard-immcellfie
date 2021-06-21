@@ -53,7 +53,7 @@ export const InputView = () => {
   const onLoadDataClick = async () => {
     const data = await api.loadPracticeData(practiceData.input);
 
-    dataDispatch({ type: "setInput", data: data });
+    dataDispatch({ type: "setInput", source: "practice", name: "expression data", data: data });
   };
 
   return (
