@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { max, range } from "d3-array";
-import { Card, Form, Col, Button } from "react-bootstrap";
+import { Card, Form, Col } from "react-bootstrap";
 import { DataContext } from "../contexts";
 import { ViewWrapper } from "../components/view-wrapper";
 import { ResizeWrapper } from "../components/resize-wrapper";
