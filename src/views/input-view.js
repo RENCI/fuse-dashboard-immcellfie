@@ -15,7 +15,7 @@ const { Header, Body } = Card;
 const { Group, Label, Control, Row } = Form;
 
 export const InputView = () => {
-  const [{ phenotypeData, input, groups }, dataDispatch] = useContext(DataContext);  
+  const [{ dataInfo, phenotypeData, expressionData, groups }, dataDispatch] = useContext(DataContext);  
   const [sortBy, setSortBy] = useState("median");
   const [color, setColor] = useState(sequential[0]);
 
@@ -28,7 +28,7 @@ export const InputView = () => {
   };
 
   // Transform to work with vega heatmap
-  const heatmapData = !input ? [] : input.data.reduce((data, row) => {
+  const heatmapData = !expressionData ? [] : expressionData.reduce((data, row) => {
     return data.concat(row.values.map((value, i) => {
       return {
         gene: row.gene,
@@ -39,7 +39,7 @@ export const InputView = () => {
     }));
   }, []);
 
-  const numColumns = input && input.data.length > 0 ? input.data[0].values.length : 0;
+  const numColumns = expressionData && expressionData.length > 0 ? expressionData[0].values.length : 0;
 
   const maxValue = max(heatmapData, d => d.value);
 
@@ -48,16 +48,21 @@ export const InputView = () => {
   ticks.push(maxValue);
 
   const onLoadDataClick = async () => {
-    const data = await api.loadPracticeData(practiceData.input);
-
-    dataDispatch({ type: "setInput", source: "practice", name: "expression data", data: data });
+    if (dataInfo.source === "practice") {
+      const data = await api.loadPracticeData(practiceData.expressionData);
+  
+      dataDispatch({ type: "setExpressionData", data: data });      
+    }
+    else if (dataInfo.source === "ImmuneSpace") {
+      // XXX: Handle this case
+    }
   };
 
   return (
     <ViewWrapper>
       { !phenotypeData ? 
         <DataMissing message="No data loaded" showHome={ true } />
-      : !input ? 
+      : !expressionData ? 
           <div className="text-center">
             <DataMissing message="No expression data loaded" /> 
             <Button

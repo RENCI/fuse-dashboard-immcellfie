@@ -13,7 +13,7 @@ const { Header, Body, Footer } = Card;
 const { Label, Group, Control, Text } = Form;
 
 export const DataSelection = () => {
-  const [{ phenotypeData, input }, dataDispatch] = useContext(DataContext);
+  const [{ dataInfo, phenotypeData, expressionData }, dataDispatch] = useContext(DataContext);
   const [id, setId] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -47,7 +47,10 @@ export const DataSelection = () => {
     setLoading(true);
     setMessage();
 
-    dataDispatch({ type: "clearData" });
+    dataDispatch({ 
+      type: "setDataInfo", 
+      source: "practice"
+    });
 
     const data = await api.loadPracticeData(practiceData.phenotypes);
 
@@ -68,15 +71,20 @@ export const DataSelection = () => {
     setLoading(true);
     setMessage();
 
-    dataDispatch({ type: "clearData" });
-
     const phenotypeData = await api.loadFile(phenotypeDataFile);
     const expressionData = await api.loadFile(expressionDataFile);
 
+    dataDispatch({ 
+      type: "setDataInfo", 
+      source: "upload",
+      phenotypeName: phenotypeDataFile.name,
+      expressionName: expressionDataFile.name
+    });
+
     // XXX: Check number of subjects?
 
-    dataDispatch({ type: "setPhenotypes", source: "upload", name: phenotypeDataFile.name, data: phenotypeData });
-    dataDispatch({ type: "setInput", source: "upload", name: expressionDataFile.name, data: expressionData });
+    dataDispatch({ type: "setPhenotypes", data: phenotypeData });
+    dataDispatch({ type: "setExpressionData", data: expressionData });
 
     setLoading(false);
   };
@@ -150,10 +158,22 @@ export const DataSelection = () => {
         </Group>
         <Row className="row-eq-height">
           <Col>
-            { phenotypeData && <PhenotypeInfo phenotypeData={ phenotypeData } /> }
+            { phenotypeData && 
+              <PhenotypeInfo 
+                source={ dataInfo.source }
+                name={ dataInfo.phenotypeName } 
+                data={ phenotypeData } 
+              /> 
+            }
           </Col>
           <Col>
-            { input && <ExpressionInfo expressionData={ input } /> }
+            { expressionData && 
+              <ExpressionInfo 
+                source={ dataInfo.source }
+                name={ dataInfo.expressionName } 
+                data={ expressionData } 
+              /> 
+            }
           </Col>
         </Row>
         { message && <Alert variant="info">{ message }</Alert> }

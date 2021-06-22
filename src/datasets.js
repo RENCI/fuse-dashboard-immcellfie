@@ -1,6 +1,6 @@
 export const practiceData = {
   phenotypes: "testphenotypes.csv",
-  input: "HPA.tsv",
+  expressionData: "HPA.tsv",
   output: "HPA.expected",
   outputType: "tsv",
 };

@@ -12,21 +12,21 @@ const { Header, Body } = Card;
 const { Row } = Form;
 
 export const DownloadView = () => {
-  const [{ rawOutput, rawPhenotypeData, rawInput }] = useContext(DataContext);
+  const [{ rawOutput, rawPhenotypeData, rawExpressionData }] = useContext(DataContext);
   const outputLink = useDownloadLink(rawOutput);
   const phenotypeLink = useDownloadLink(rawPhenotypeData);
-  const inputLink = useDownloadLink(rawInput, "text/tsv");
+  const inputLink = useDownloadLink(rawExpressionData, "text/tsv");
   const [zipLink, setZipLink] = useState(null);
 
   useEffect(() => {
-    if (!rawPhenotypeData && !rawOutput && !rawInput) return null;
+    if (!rawPhenotypeData && !rawOutput && !rawExpressionData) return null;
 
     const createZipLink = async () => {
       const zip = new JSZip();
   
       if (rawOutput) zip.file("cellfie-output.csv", rawOutput);
       if (rawPhenotypeData) zip.file("phenotypes.csv", rawPhenotypeData);
-      if (rawInput) zip.file("expression-data.tsv", rawInput);
+      if (rawExpressionData) zip.file("expression-data.tsv", rawExpressionData);
   
       const blob = await zip.generateAsync({ type: "blob" });
   
@@ -34,7 +34,7 @@ export const DownloadView = () => {
     };
 
     createZipLink();
-  }, [rawPhenotypeData, rawOutput, rawInput]);
+  }, [rawPhenotypeData, rawOutput, rawExpressionData]);
 
   const download = (link, fileName, text, AlternateLink, alternateText) => {
     return (

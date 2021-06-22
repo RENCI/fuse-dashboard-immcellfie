@@ -35,8 +35,8 @@ const initialState = {
   selectedSubgroups: null,
 
   // Expression data used as CellFIE input
-  rawInput: null,
-  input: null,
+  rawExpressionData: null,
+  expressionData: null,
 
   // CellFIE output
   rawOutput: null,
@@ -53,7 +53,7 @@ const initialState = {
   overlapMethod: "both"
 };
 
-const parseInput = data => {
+const parseExpressionData = data => {
   return tsvParseRows(data, row => {
     return {
       gene: row[0],
@@ -452,28 +452,41 @@ const keyIndex = (key, subgroups) => {
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "setInput":
+    case "setDataInfo": {
+      const phenotypeName = action.phenotypeName ? action.phenotypeName :
+        action.source === "practice" ? "phenotypes" :
+        action.source === "ImmuneSpace" ? "phenotypes" :
+        "unknown";
+
+      const expressionName = action.expressionName ? action.expressionName :
+        action.source === "practice" ? "expression data" :
+        action.source === "ImmuneSpace" ? "expression data" :
+        "unknown";
+
+      return {
+        ...initialState,
+        dataInfo: {
+          source: action.source,
+          phenotypeName: phenotypeName,
+          expressionName: expressionName
+        }
+      };
+    }
+
+    case "setExpressionData":
       return {
         ...state,
-        rawInput: action.data,
-        input: {
-          source: action.source,
-          name: action.name,
-          data: parseInput(action.data)
-        }
+        rawExpressionData: action.data,
+        expressionData: parseExpressionData(action.data)
       };
 
     case "setPhenotypes": {
       const rawPhenotypeData = action.data;
-      const phenotypeData = {
-        source: action.source,
-        name: action.name,
-        data: parsePhenotypeData(rawPhenotypeData)
-      };
-      const phenotypes = createPhenotypes(phenotypeData.data);
+      const phenotypeData = parsePhenotypeData(rawPhenotypeData);
+      const phenotypes = createPhenotypes(phenotypeData);
 
       // Create initial group with all subjects
-      const subgroups = [createSubgroup("All subjects", phenotypeData.data, phenotypes, [])];
+      const subgroups = [createSubgroup("All subjects", phenotypeData, phenotypes, [])];
 
       // Select this subgroup
       const selectedSubgroups = [subgroups[0].key, null];
@@ -512,7 +525,7 @@ const reducer = (state, action) => {
     case "addSubgroup": {
       const subgroup = createSubgroup(
         getNewSubgroupName(state.subgroups), 
-        state.phenotypeData.data, 
+        state.phenotypeData, 
         state.phenotypes, 
         state.subgroups
       );
@@ -547,7 +560,7 @@ const reducer = (state, action) => {
           filters: []
         };
 
-        filterSubgroup(reset, state.phenotypeData.data, state.phenotypes);
+        filterSubgroup(reset, state.phenotypeData, state.phenotypes);
 
         return reset;
       });
@@ -621,7 +634,7 @@ const reducer = (state, action) => {
         subgroup.filters.splice(filterIndex, 1);
       }     
 
-      filterSubgroup(subgroup, state.phenotypeData.data, state.phenotypes);
+      filterSubgroup(subgroup, state.phenotypeData, state.phenotypes);
 
       const subgroups = state.subgroups.map((sg, i) => {
         return i === index ? subgroup : sg;
@@ -644,7 +657,7 @@ const reducer = (state, action) => {
 
       subgroup.filters = subgroup.filters.filter(({ phenotype }) => phenotype !== action.phenotype);
 
-      filterSubgroup(subgroup, state.phenotypeData.data, state.phenotypes);
+      filterSubgroup(subgroup, state.phenotypeData, state.phenotypes);
       
       const subgroups = state.subgroups.map((sg, i) => {
         return i === index ? subgroup : sg;
