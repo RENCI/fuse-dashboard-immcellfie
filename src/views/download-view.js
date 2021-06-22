@@ -4,7 +4,8 @@ import { Download } from "react-bootstrap-icons";
 import * as JSZip from "jszip";
 import { ViewWrapper } from "../components/view-wrapper";
 import { DataMissing } from "../components/data-missing";
-import { HomeLink, CellfieLink, ExpressionLink } from "../components/page-links";
+import { HomeLink, CellfieLink } from "../components/page-links";
+import { LoadExpression } from "../components/load-expression";
 import { DataContext } from "../contexts";
 import { useDownloadLink } from "../hooks";
 
@@ -56,15 +57,7 @@ export const DownloadView = () => {
         }
       </div>
     );
-  };
-
-  /*
-  const onLoadDataClick = async () => {
-    const data = await api.loadPracticeData(practiceData.input);
-
-    dataDispatch({ type: "setInput", source: "practice", name: "expression data", data: data });
-  };
-  */
+  };  
 
   return (   
     <ViewWrapper>
@@ -79,7 +72,7 @@ export const DownloadView = () => {
             <Row className="align-items-center">
               <Col className="text-center">{ download(outputLink, "cellfie-output.csv", "CellFIE output", CellfieLink, "No CellFIE output") }</Col>
               <Col className="text-center">{ download(phenotypeLink, "phenotypes.csv", "Phenotype data", HomeLink, "No phenotype data") }</Col>
-              <Col className="text-center">{ download(inputLink, "expression-data.tsv", "Expression data", ExpressionLink, "No expression data") }</Col>
+              <Col className="text-center">{ download(inputLink, "expression-data.tsv", "Expression data", LoadExpression, "No expression data") }</Col>
               <Col className="text-center border-left">{ download(zipLink, "immcellfie-data.zip", "Zip file", null, "No data") }</Col>
             </Row>
           </Body>

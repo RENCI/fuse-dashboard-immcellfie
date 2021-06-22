@@ -7,15 +7,14 @@ import { ResizeWrapper } from "../components/resize-wrapper";
 import { VegaWrapper } from "../components/vega-wrapper";
 import { expressionHeatmap } from "../vega-specs";
 import { DataMissing } from "../components/data-missing";
-import { api } from "../api";
+import { LoadExpression } from "../components/load-expression";
 import { sequential } from "../colors";
-import { practiceData } from "../datasets";
 
 const { Header, Body } = Card;
 const { Group, Label, Control, Row } = Form;
 
 export const InputView = () => {
-  const [{ dataInfo, phenotypeData, expressionData, groups }, dataDispatch] = useContext(DataContext);  
+  const [{ phenotypeData, expressionData, groups }] = useContext(DataContext);  
   const [sortBy, setSortBy] = useState("median");
   const [color, setColor] = useState(sequential[0]);
 
@@ -47,17 +46,6 @@ export const InputView = () => {
   ticks.pop();
   ticks.push(maxValue);
 
-  const onLoadDataClick = async () => {
-    if (dataInfo.source === "practice") {
-      const data = await api.loadPracticeData(practiceData.expressionData);
-  
-      dataDispatch({ type: "setExpressionData", data: data });      
-    }
-    else if (dataInfo.source === "ImmuneSpace") {
-      // XXX: Handle this case
-    }
-  };
-
   return (
     <ViewWrapper>
       { !phenotypeData ? 
@@ -65,12 +53,7 @@ export const InputView = () => {
       : !expressionData ? 
           <div className="text-center">
             <DataMissing message="No expression data loaded" /> 
-            <Button
-              variant="outline-primary"
-              onClick={ onLoadDataClick }
-            >
-              Load expression data for current dataset
-            </Button>
+            <LoadExpression />
           </div>
       : <Card>
           <Header as="h5">
