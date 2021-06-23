@@ -89,6 +89,8 @@ export const DataSelection = () => {
     setLoading(false);
   };
 
+  const orText = <Text className="mt-2"><em>OR</em></Text>;
+
   const disabled = loading || submitting;
 
   return (
@@ -97,65 +99,73 @@ export const DataSelection = () => {
         Data Selection
       </Header>
       <Body>
-        <Group>        
-          <Label>
-            Load ImmuneSpace dataset ID
-          </Label>
-          <InputGroup>
-            <InputGroup.Prepend>
-              <SpinnerButton 
-                variant="primary"
-                disabled={ disabled || id === "" }
-                spin={ submitting }
-                onClick={ onSubmitClick }>
-                Submit
-              </SpinnerButton>
-            </InputGroup.Prepend>
-            <Control 
-              type="text"
-              value={ id }
-              onChange={ onIdChange } 
-              onKeyPress={ onIdKeyPress }
-            />
-          </InputGroup>
-        </Group>
-        <Group>
-          <Text>OR</Text>
-        </Group>
-        <Group>   
-          <FileSelect
-            defaultLabel="Select phenotype data"
-            onChange={ onPhenotypeFileSelect }
-          />
-        </Group>
-        <Group>   
-          <FileSelect
-            defaultLabel="Select expression data"
-            onChange={ onExpressionFileSelect }
-          />
-        </Group>
-        <Group>
-          <Button
-            variant="outline-secondary"
-            disabled={ !phenotypeDataFile || !expressionDataFile }
-            onClick={ onUploadDataClick }
-          >
-            Upload data
-          </Button>
-        </Group>
-        <Group>
-          <Text>OR</Text>
-        </Group>
-        <Group>   
-          <SpinnerButton 
-            variant="outline-secondary"
-            disabled={ disabled }
-            spin={ loading }
-            onClick={ onLoadPracticeClick }
-          >
-            Load practice data
-          </SpinnerButton>
-        </Group>
+        <Row>
+          <Col>    
+            <Group>  
+              <Label>
+                Load ImmuneSpace dataset ID
+              </Label>
+              <InputGroup>
+                <InputGroup.Prepend>
+                  <SpinnerButton 
+                    variant="primary"
+                    disabled={ disabled || id === "" }
+                    spin={ submitting }
+                    onClick={ onSubmitClick }>
+                    Submit
+                  </SpinnerButton>
+                </InputGroup.Prepend>
+                <Control 
+                  type="text"
+                  value={ id }
+                  onChange={ onIdChange } 
+                  onKeyPress={ onIdKeyPress }
+                />
+              </InputGroup>
+            </Group>  
+          </Col>
+          <Col sm="auto">
+            { orText }
+          </Col>
+          <Col> 
+            <Group>
+              <FileSelect
+                defaultLabel="Select phenotype data"
+                onChange={ onPhenotypeFileSelect }
+              />
+            </Group>  
+            <Group>
+              <FileSelect
+                defaultLabel="Select expression data"
+                onChange={ onExpressionFileSelect }
+              />
+            </Group> 
+            <Group>
+              <Button
+                variant="outline-secondary"
+                disabled={ !phenotypeDataFile || !expressionDataFile }
+                onClick={ onUploadDataClick }
+              >
+                Upload data
+              </Button>              
+            </Group>
+          </Col>
+          <Col sm="auto">
+            { orText }
+          </Col>
+          <Col>   
+            <SpinnerButton 
+              variant="outline-secondary"
+              disabled={ disabled }
+              spin={ loading }
+              block={ true }
+              onClick={ onLoadPracticeClick }
+            >
+              Load practice data
+            </SpinnerButton>
+          </Col>
+        </Row>
+        { phenotypeData && <hr /> }
         <Row className="row-eq-height">
           <Col>
             { phenotypeData && 
