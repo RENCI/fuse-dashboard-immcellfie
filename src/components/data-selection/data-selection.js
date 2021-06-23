@@ -10,7 +10,7 @@ import { api } from "../../api";
 import { practiceData } from "../../datasets";
 
 const { Header, Body, Footer } = Card;
-const { Label, Group, Control, Text } = Form;
+const { Group, Control } = Form;
 
 export const DataSelection = () => {
   const [{ dataInfo, phenotypeData, expressionData }, dataDispatch] = useContext(DataContext);
@@ -89,7 +89,7 @@ export const DataSelection = () => {
     setLoading(false);
   };
 
-  const orText = <Text className="mt-2"><em>OR</em></Text>;
+  const orText = <em className="small">OR</em>
 
   const disabled = loading || submitting;
 
@@ -101,10 +101,8 @@ export const DataSelection = () => {
       <Body>
         <Row>
           <Col>    
+            <h6>Load ImmuneSpace dataset ID</h6>
             <Group>  
-              <Label>
-                Load ImmuneSpace dataset ID
-              </Label>
               <InputGroup>
                 <InputGroup.Prepend>
                   <SpinnerButton 
@@ -128,6 +126,7 @@ export const DataSelection = () => {
             { orText }
           </Col>
           <Col> 
+            <h6>Upload data</h6>
             <Group>
               <FileSelect
                 defaultLabel="Select phenotype data"
@@ -144,9 +143,10 @@ export const DataSelection = () => {
               <Button
                 variant="outline-secondary"
                 disabled={ !phenotypeDataFile || !expressionDataFile }
+                block
                 onClick={ onUploadDataClick }
               >
-                Upload data
+                Upload
               </Button>              
             </Group>
           </Col>
@@ -154,6 +154,7 @@ export const DataSelection = () => {
             { orText }
           </Col>
           <Col>   
+            <h6>Load practice data</h6>
             <SpinnerButton 
               variant="outline-secondary"
               disabled={ disabled }
@@ -161,7 +162,7 @@ export const DataSelection = () => {
               block={ true }
               onClick={ onLoadPracticeClick }
             >
-              Load practice data
+              Load
             </SpinnerButton>
           </Col>
         </Row>
