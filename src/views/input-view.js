@@ -1,24 +1,20 @@
 import React, { useContext, useState } from "react";
 import { max, range } from "d3-array";
-import { Card, Form, Col, Button } from "react-bootstrap";
+import { Card, Form, Col } from "react-bootstrap";
 import { DataContext } from "../contexts";
 import { ViewWrapper } from "../components/view-wrapper";
 import { ResizeWrapper } from "../components/resize-wrapper";
 import { VegaWrapper } from "../components/vega-wrapper";
 import { expressionHeatmap } from "../vega-specs";
 import { DataMissing } from "../components/data-missing";
-import { api } from "../api";
+import { LoadExpression } from "../components/load-expression";
 import { sequential } from "../colors";
 
 const { Header, Body } = Card;
 const { Group, Label, Control, Row } = Form;
 
-const practiceData = {
-  input: "HPA.tsv"
-};
-
 export const InputView = () => {
-  const [{ phenotypeData, input, groups }, dataDispatch] = useContext(DataContext);  
+  const [{ phenotypeData, expressionData, groups }] = useContext(DataContext);  
   const [sortBy, setSortBy] = useState("median");
   const [color, setColor] = useState(sequential[0]);
 
@@ -31,7 +27,7 @@ export const InputView = () => {
   };
 
   // Transform to work with vega heatmap
-  const heatmapData = !input ? [] : input.data.reduce((data, row) => {
+  const heatmapData = !expressionData ? [] : expressionData.reduce((data, row) => {
     return data.concat(row.values.map((value, i) => {
       return {
         gene: row.gene,
@@ -42,7 +38,7 @@ export const InputView = () => {
     }));
   }, []);
 
-  const numColumns = input && input.data.length > 0 ? input.data[0].values.length : 0;
+  const numColumns = expressionData && expressionData.length > 0 ? expressionData[0].values.length : 0;
 
   const maxValue = max(heatmapData, d => d.value);
 
@@ -50,25 +46,14 @@ export const InputView = () => {
   ticks.pop();
   ticks.push(maxValue);
 
-  const onLoadDataClick = async () => {
-    const data = await api.loadPracticeData(practiceData.input);
-
-    dataDispatch({ type: "setInput", file: data });
-  };
-
   return (
     <ViewWrapper>
       { !phenotypeData ? 
         <DataMissing message="No data loaded" showHome={ true } />
-      : !input ? 
+      : !expressionData ? 
           <div className="text-center">
             <DataMissing message="No expression data loaded" /> 
-            <Button
-              variant="outline-secondary"
-              onClick={ onLoadDataClick }
-            >
-              Load expression data for current dataset
-            </Button>
+            <LoadExpression />
           </div>
       : <Card>
           <Header as="h5">

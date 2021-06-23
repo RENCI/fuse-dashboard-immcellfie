@@ -6,14 +6,7 @@ import { ModelSelection } from "../components/model-selection";
 import { SubgroupSelection } from "../components/subgroup-selection";
 import { CellfieOutput } from "../components/cellfie-output";
 import { DataMissing } from "../components/data-missing";
-
-const practiceData = {
-  output: "HPA.expected",
-  outputType: "tsv",
-  //output: "ASD.output",
-  //output: "TD.output",
-  //outputType: "csv"
-};
+import { practiceData } from "../datasets";
 
 export const OutputView = () => {
   const [{ phenotypeData }] = useContext(DataContext);

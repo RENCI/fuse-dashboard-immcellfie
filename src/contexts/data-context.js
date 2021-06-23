@@ -18,6 +18,9 @@ const timeSort = {
 };
 
 const initialState = {
+  // Info for current dataset (source, names, etc.)
+  dataInfo: null,
+
   // Phenotype data for each subject
   rawPhenotypeData: null,
   phenotypeData: null,
@@ -32,8 +35,8 @@ const initialState = {
   selectedSubgroups: null,
 
   // Expression data used as CellFIE input
-  rawInput: null,
-  input: null,
+  rawExpressionData: null,
+  expressionData: null,
 
   // CellFIE output
   rawOutput: null,
@@ -50,15 +53,13 @@ const initialState = {
   overlapMethod: "both"
 };
 
-const parseInput = data => {
-  return {
-    data: tsvParseRows(data, row => {
-      return {
-        gene: row[0],
-        values: row.slice(1).map(d => +d)
-      };
-    })
-  };
+const parseExpressionData = data => {
+  return tsvParseRows(data, row => {
+    return {
+      gene: row[0],
+      values: row.slice(1).map(d => +d)
+    };
+  });
 };
 
 const parseNumber = d => d < 0 ? NaN : +d;
@@ -451,15 +452,36 @@ const keyIndex = (key, subgroups) => {
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "setInput":
+    case "setDataInfo": {
+      const phenotypeName = action.phenotypeName ? action.phenotypeName :
+        action.source === "practice" ? "phenotypes" :
+        action.source === "ImmuneSpace" ? "phenotypes" :
+        "unknown";
+
+      const expressionName = action.expressionName ? action.expressionName :
+        action.source === "practice" ? "expression data" :
+        action.source === "ImmuneSpace" ? "expression data" :
+        "unknown";
+
+      return {
+        ...initialState,
+        dataInfo: {
+          source: action.source,
+          phenotypeName: phenotypeName,
+          expressionName: expressionName
+        }
+      };
+    }
+
+    case "setExpressionData":
       return {
         ...state,
-        rawInput: action.file,
-        input: parseInput(action.file)
+        rawExpressionData: action.data,
+        expressionData: parseExpressionData(action.data)
       };
 
     case "setPhenotypes": {
-      const rawPhenotypeData = action.file;
+      const rawPhenotypeData = action.data;
       const phenotypeData = parsePhenotypeData(rawPhenotypeData);
       const phenotypes = createPhenotypes(phenotypeData);
 
@@ -480,7 +502,7 @@ const reducer = (state, action) => {
     }
     
     case "setOutput": {
-      const rawOutput = action.file;
+      const rawOutput = action.data;
       const output = action.fileType === "tsv" ? parseTSVOutput(rawOutput) : parseCSVOutput(rawOutput);
       const hierarchy = createHierarchy(output);
       const tree = createTree(hierarchy);
@@ -502,7 +524,10 @@ const reducer = (state, action) => {
 
     case "addSubgroup": {
       const subgroup = createSubgroup(
-        getNewSubgroupName(state.subgroups), state.phenotypeData, state.phenotypes, state.subgroups
+        getNewSubgroupName(state.subgroups), 
+        state.phenotypeData, 
+        state.phenotypes, 
+        state.subgroups
       );
 
       const selectedSubgroups = state.selectedSubgroups[1] === null ?

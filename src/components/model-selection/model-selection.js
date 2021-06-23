@@ -104,7 +104,7 @@ const initialParameters = [
 ];
 
 export const ModelSelection = ({ outputName, outputType }) => {
-  const [{ rawOutput }, dataDispatch] = useContext(DataContext);
+  const [,dataDispatch] = useContext(DataContext);
   const [organism, setOrganism] = useState("human");
   const [currentModels, setCurrentModels] = useState(models.filter(({ organism }) => organism === "human"));
   const [model, setModel] = useState(models.find(({ organism }) => organism === "human"));
@@ -175,7 +175,7 @@ export const ModelSelection = ({ outputName, outputType }) => {
     setTimeout(async () => {
       const output = await api.loadPracticeData(outputName);
 
-      dataDispatch({ type: "setOutput", file: output, fileType: outputType });
+      dataDispatch({ type: "setOutput", data: output, fileType: outputType });
 
       setRunning(false);
 //      setMessage("CellFIE output data loaded");
