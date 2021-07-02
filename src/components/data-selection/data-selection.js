@@ -101,7 +101,7 @@ export const DataSelection = () => {
       <Body>
         <Row>
           <Col>    
-            <h6>Load ImmuneSpace dataset ID</h6>
+            <h6>Load ImmuneSpace group ID</h6>
             <Group>  
               <InputGroup>
                 <InputGroup.Prepend>
@@ -166,28 +166,37 @@ export const DataSelection = () => {
             </SpinnerButton>
           </Col>
         </Row>
-        { phenotypeData && <hr /> }
-        <Row className="row-eq-height">
-          <Col>
-            { phenotypeData && 
-              <PhenotypeInfo 
-                source={ dataInfo.source }
-                name={ dataInfo.phenotypeName } 
-                data={ phenotypeData } 
-              /> 
-            }
-          </Col>
-          <Col>
-            { expressionData && 
-              <ExpressionInfo 
-                source={ dataInfo.source }
-                name={ dataInfo.expressionName } 
-                data={ expressionData } 
-              /> 
-            }
-          </Col>
-        </Row>
-        { message && <Alert variant="info">{ message }</Alert> }
+        { (phenotypeData || expressionData) && 
+          <>
+            <hr />
+            <Row className="row-eq-height">
+              <Col>
+                { phenotypeData && 
+                  <PhenotypeInfo 
+                    source={ dataInfo.source }
+                    name={ dataInfo.phenotypeName } 
+                    data={ phenotypeData } 
+                  /> 
+                }
+              </Col>
+              <Col>
+                { expressionData && 
+                  <ExpressionInfo 
+                    source={ dataInfo.source }
+                    name={ dataInfo.expressionName } 
+                    data={ expressionData } 
+                  /> 
+                }
+              </Col>
+            </Row>
+          </>
+        }
+        { message && 
+          <>
+            <hr />
+            <Alert variant="info">{ message }</Alert> 
+          </>
+        }
       </Body>
       { phenotypeData &&
         <Footer>
