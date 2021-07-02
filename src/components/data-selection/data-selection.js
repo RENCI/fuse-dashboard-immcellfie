@@ -59,7 +59,8 @@ export const DataSelection = () => {
     try {
       const data = await api.loadGroupId(id);
 
-      dataDispatch({ type: "setPhenotypes", source: "ImmuneSpace", name: "group id: " + id, data: data });
+      dataDispatch({ type: "setDataInfo", source: "ImmuneSpace" });
+      dataDispatch({ type: "setPhenotypes", data: data });
     }
     catch (error) {
       console.log(error);
@@ -74,20 +75,13 @@ export const DataSelection = () => {
     setLoading(true);
     setErrorMessage();
 
-    dataDispatch({ 
-      type: "setDataInfo", 
-      source: "practice"
-    });
+    dataDispatch({ type: "clearData" });
 
     try {
       const data = await api.loadPracticeData(practiceData.phenotypes);
 
-      dataDispatch({ 
-        type: "setPhenotypes", 
-        source: "practice", 
-        name: "phenotype data", 
-        data: data 
-      });
+      dataDispatch({ type: "setDataInfo", source: "practice" });
+      dataDispatch({ type: "setPhenotypes", data: data });
     }
     catch (error) {
       console.log(error);
