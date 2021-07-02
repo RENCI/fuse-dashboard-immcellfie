@@ -1,24 +1,19 @@
 import axios from "axios";
 
 export const api = {
-  loadPracticeData: async name => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_DATA_API_ROOT}${name}`);
+  loadGroupId: async id => {
+    const response = await axios.get(`${process.env.REACT_API_ROOT}/get_group_id/${id}`);
 
-      return response.data;
-    }
-    catch (error) {
-      console.log(error);
-    }
+    return response.data;
   },
   loadFile: async file => {
-    try {
-      const response = await axios.get(window.URL.createObjectURL(file));
+    const response = await axios.get(window.URL.createObjectURL(file));
 
-      return response.data;
-    }
-    catch (error) {
-      console.log(error);
-    }
+    return response.data;
+  },
+  loadPracticeData: async name => {
+    const response = await axios.get(`${process.env.REACT_APP_DATA_API_ROOT}${name}`);
+
+    return response.data;
   }
 }

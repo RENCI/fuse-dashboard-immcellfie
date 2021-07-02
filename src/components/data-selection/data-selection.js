@@ -17,9 +17,28 @@ export const DataSelection = () => {
   const [id, setId] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState();
+  const [errorMessage, setErrorMessage] = useState();
   const [phenotypeDataFile, setPhenotypeDataFile] = useState(null);
   const [expressionDataFile, setExpressionDataFile] = useState(null);
+
+  const getErrorMessage = error => {
+    if (error.response) {
+      // Client received response
+      console.log(error.response);
+
+      return <>Request failed</>;
+    } 
+    else if (error.request) {
+      // Client never received a response, or request never left
+      console.log(error.request);
+
+      return <>Request failed</>;
+    } 
+    else {
+      // Anything else
+      return <>Request failed</>;
+    }
+  };
 
   const onIdChange = evt => {
     setId(evt.target.value);
@@ -31,31 +50,51 @@ export const DataSelection = () => {
     }
   };
 
-  const onSubmitClick = () => {
+  const onSubmitClick = async () => {
     setSubmitting(true);
-    setMessage();
+    setErrorMessage();
 
     dataDispatch({ type: "clearData" });
 
-    setTimeout(() => {
-      setSubmitting(false);
-      setMessage(<>Submitting ID <strong>{ id }</strong> failed</>);
-    }, 1000);
+    try {
+      const data = await api.loadGroupId(id);
+
+      dataDispatch({ type: "setPhenotypes", source: "ImmuneSpace", name: "group id: " + id, data: data });
+    }
+    catch (error) {
+      console.log(error);
+
+      setErrorMessage(getErrorMessage(error));
+    }
+
+    setSubmitting(false);
   };
 
   const onLoadPracticeClick = async () => {
     setLoading(true);
-    setMessage();
+    setErrorMessage();
 
     dataDispatch({ 
       type: "setDataInfo", 
       source: "practice"
     });
 
-    const data = await api.loadPracticeData(practiceData.phenotypes);
+    try {
+      const data = await api.loadPracticeData(practiceData.phenotypes);
 
-    dataDispatch({ type: "setPhenotypes", source: "practice", name: "phenotype data", data: data });
+      dataDispatch({ 
+        type: "setPhenotypes", 
+        source: "practice", 
+        name: "phenotype data", 
+        data: data 
+      });
+    }
+    catch (error) {
+      console.log(error);
 
+      setErrorMessage(getErrorMessage(error));
+    }
+  
     setLoading(false);
   };
 
@@ -69,22 +108,29 @@ export const DataSelection = () => {
 
   const onUploadDataClick = async () => {
     setLoading(true);
-    setMessage();
+    setErrorMessage();
 
-    const phenotypeData = await api.loadFile(phenotypeDataFile);
-    const expressionData = await api.loadFile(expressionDataFile);
+    try {
+      const phenotypeData = await api.loadFile(phenotypeDataFile);
+      const expressionData = await api.loadFile(expressionDataFile);
 
-    dataDispatch({ 
-      type: "setDataInfo", 
-      source: "upload",
-      phenotypeName: phenotypeDataFile.name,
-      expressionName: expressionDataFile.name
-    });
+      dataDispatch({ 
+        type: "setDataInfo", 
+        source: "upload",
+        phenotypeName: phenotypeDataFile.name,
+        expressionName: expressionDataFile.name
+      });
 
-    // XXX: Check number of subjects?
+      // XXX: Check number of subjects?
 
-    dataDispatch({ type: "setPhenotypes", data: phenotypeData });
-    dataDispatch({ type: "setExpressionData", data: expressionData });
+      dataDispatch({ type: "setPhenotypes", data: phenotypeData });
+      dataDispatch({ type: "setExpressionData", data: expressionData });
+    }
+    catch (error) {
+      console.log(error);
+
+      setErrorMessage(getErrorMessage(error));
+    }
 
     setLoading(false);
   };
@@ -191,10 +237,10 @@ export const DataSelection = () => {
             </Row>
           </>
         }
-        { message && 
+        { errorMessage && 
           <>
             <hr />
-            <Alert variant="info">{ message }</Alert> 
+            <Alert variant="danger">{ errorMessage }</Alert> 
           </>
         }
       </Body>
