@@ -57,6 +57,12 @@ export const DataSelection = () => {
     dataDispatch({ type: "clearData" });
 
     try {
+      const info = await api.getDataInfo();
+
+      console.log(info);
+
+      dataDispatch({ type: "setDataInfo", source: "immcellfie"})
+
       const data = await api.loadGroupId(id);
 
       dataDispatch({ type: "setDataInfo", source: "ImmuneSpace" });
