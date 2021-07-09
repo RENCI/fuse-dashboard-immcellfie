@@ -36,6 +36,28 @@ const getUrl = async id => {
   return response.data.url;
 };
 
+const readStream = async stream => {
+  const reader = stream.getReader();
+  let result = "";
+
+  for (let i = 0; ; i++) {
+    console.log(i);
+
+    let { done, value } = await reader.read();
+
+    console.log(done, value);
+
+    if (done) {
+      return result;
+    }
+
+    console.log(value.length);
+    console.log(result.length);
+
+    result += value;
+  }
+}
+
 export const api = {
   loadGroupId: async id => {
     const response = await axios.get(`${ process.env.REACT_API_ROOT }/get_group_id/${ id }`);
@@ -70,16 +92,14 @@ export const api = {
     //const exp = await immcellfieInstance.get(expression_url);
     //const exp = await immcellfieInstance.get(`/irods-rest2/fileStream?path=/devImmcellfieZone/home/test1/study/gene.csv`);
     
-    fetch(`http://dev-immcellfie.edc.renci.org:80/irods-rest2/fileStream?path=/devImmcellfieZone/home/test1/study/gene.csv`, {
+    const exp = await fetch(`http://dev-immcellfie.edc.renci.org:80/irods-rest2/fileStream?path=/devImmcellfieZone/home/test1/study/gene.csv`, {
       method: "get",
       headers: new Headers({
         Authorization: 'Bearer ' + token
       })
-    })
-    .then(response => response.text())
-    .then(data => {
-      console.log(data);
     });
+
+    const data = await readStream(exp.body);
     
 /*
     d3.csv(`http://dev-immcellfie.edc.renci.org:80/irods-rest2/fileStream?path=/devImmcellfieZone/home/test1/study/gene.csv`, {
