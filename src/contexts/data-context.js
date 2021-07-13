@@ -453,22 +453,20 @@ const keyIndex = (key, subgroups) => {
 const reducer = (state, action) => {
   switch (action.type) {
     case "setDataInfo": {
-      const phenotypeName = action.phenotypeName ? action.phenotypeName :
-        action.source === "practice" ? "phenotypes" :
-        action.source === "ImmuneSpace" ? "phenotypes" :
-        "unknown";
+      const phenotypeInfo = action.phenotypeInfo ? action.phenotypeInfo :
+        action.source === "practice" ? { name: "phenotypes" } :
+        { name: "unknown" };
 
-      const expressionName = action.expressionName ? action.expressionName :
-        action.source === "practice" ? "expression data" :
-        action.source === "ImmuneSpace" ? "expression data" :
-        "unknown";
+      const expressionInfo = action.expressionInfo ? action.expressionInfo :
+        action.source === "practice" ? { name: "expression data" } :
+        { name: "unknown" };
 
       return {
         ...initialState,
         dataInfo: {
           source: action.source,
-          phenotypeName: phenotypeName,
-          expressionName: expressionName
+          phenotypeInfo: phenotypeInfo,
+          expressionInfo: expressionInfo
         }
       };
     }

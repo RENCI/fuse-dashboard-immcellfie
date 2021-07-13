@@ -119,8 +119,8 @@ export const DataSelection = () => {
       dataDispatch({ 
         type: "setDataInfo", 
         source: "upload",
-        phenotypeName: phenotypeDataFile.name,
-        expressionName: expressionDataFile.name
+        phenotypeInfo: { name: phenotypeDataFile.name },
+        expressionInfo: { name: expressionDataFile.name }
       });
 
       // XXX: Check number of subjects?
@@ -222,7 +222,7 @@ export const DataSelection = () => {
                 { phenotypeData && 
                   <PhenotypeInfo 
                     source={ dataInfo.source }
-                    name={ dataInfo.phenotypeName } 
+                    name={ dataInfo.phenotypeInfo.name } 
                     data={ phenotypeData } 
                   /> 
                 }
@@ -231,7 +231,7 @@ export const DataSelection = () => {
                 { expressionData && 
                   <ExpressionInfo 
                     source={ dataInfo.source }
-                    name={ dataInfo.expressionName } 
+                    name={ dataInfo.expressionInfo.name }
                     data={ expressionData } 
                   /> 
                 }
