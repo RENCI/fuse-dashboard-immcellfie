@@ -57,16 +57,18 @@ export const DataSelection = () => {
     dataDispatch({ type: "clearData" });
 
     try {
-      const info = await api.getDataInfo();
+      const [phenotypeInfo, expressionInfo] = await api.getDataInfo(id);
 
-      console.log(info);
+      dataDispatch({ 
+        type: "setDataInfo", 
+        source: "immcellfie",
+        phenotypeInfo: phenotypeInfo,
+        expressionInfo: expressionInfo
+      });
 
-      dataDispatch({ type: "setDataInfo", source: "immcellfie"})
+      const phenotypeData = await api.loadDataUrl(phenotypeInfo.url);
 
-      const data = await api.loadGroupId(id);
-
-      dataDispatch({ type: "setDataInfo", source: "ImmuneSpace" });
-      dataDispatch({ type: "setPhenotypes", data: data });
+      dataDispatch({ type: "setPhenotypes", data: phenotypeData });
     }
     catch (error) {
       console.log(error);
