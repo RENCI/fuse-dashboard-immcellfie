@@ -3,7 +3,7 @@ import axios from "axios";
 let token = null;
 
 const getToken = async () => {
-  const response = await axios.post(`http://dev-immcellfie.edc.renci.org:80/irods-rest2/token`, {}, {
+  const response = await axios.post(`${ process.env.REACT_APP_API_ROOT }${ process.env.REACT_APP_API_TOKEN}`, {}, {
     auth: {
       username: "rods",
       password: "woot"
@@ -14,7 +14,7 @@ const getToken = async () => {
 };
 
 const getObjectIds = async id => {
-  const response = await axios.get(`http://dev-immcellfie.edc.renci.org:80/ga4gh/drs/v1/objects/${ id }`, {
+  const response = await axios.get(`${ process.env.REACT_APP_API_ROOT }${ process.env.REACT_APP_API_OBJECTS_DIR}${ id }`, {
     headers: { Authorization: 'Bearer ' + token }
   });
 
@@ -22,7 +22,7 @@ const getObjectIds = async id => {
 };
 
 const getDataUrl = async id => {
-  const response = await axios.get(`http://dev-immcellfie.edc.renci.org:80/ga4gh/drs/v1/objects/${ id }/access/irods-rest`, {
+  const response = await axios.get(`${ process.env.REACT_APP_API_ROOT }${ process.env.REACT_APP_API_OBJECTS_DIR}${ id }/access/irods-rest`, {
     headers: { Authorization: 'Bearer ' + token }
   });
 
@@ -64,7 +64,7 @@ export const api = {
     return response.data;
   },
   loadPracticeData: async name => {
-    const response = await axios.get(`${ process.env.REACT_APP_DATA_API_ROOT }${ name }`);
+    const response = await axios.get(`${ process.env.REACT_APP_PRACTICE_DATA_ROOT }${ name }`);
 
     return response.data;
   },
