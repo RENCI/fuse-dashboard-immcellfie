@@ -13,8 +13,10 @@ export const LoadExpression = () => {
   
       dataDispatch({ type: "setExpressionData", data: data });      
     }
-    else if (dataInfo.source === "ImmuneSpace") {
-      // XXX: Handle this case
+    else if (dataInfo.source === "immcellfie") {
+      const data = await api.loadDataUrl(dataInfo.expressionInfo.url);
+
+      dataDispatch({ type: "setExpressionData", data: data });   
     }
   };
 
