@@ -14,7 +14,7 @@ const { Group, Control } = Form;
 
 export const DataSelection = () => {
   const [{ dataInfo, phenotypeData, expressionData }, dataDispatch] = useContext(DataContext);
-  const [id, setId] = useState("");
+  const [id, setId] = useState("mock_obj1");
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
