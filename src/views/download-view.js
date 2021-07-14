@@ -51,8 +51,8 @@ export const DownloadView = () => {
           </Button>
         : 
           <>
-            <div>{ alternateText }</div> 
-            { AlternateLink && <div><AlternateLink /></div> }
+            <div><small className="text-muted">{ alternateText }</small></div>
+            { AlternateLink && <AlternateLink /> }
           </>
         }
       </div>
@@ -69,11 +69,14 @@ export const DownloadView = () => {
             Download Data
           </Header>
           <Body>  
-            <Row className="align-items-center">
+            <Row className="align-items-end">
               <Col className="text-center">{ download(outputLink, "cellfie-output.csv", "CellFIE output", CellfieLink, "No CellFIE output") }</Col>
               <Col className="text-center">{ download(phenotypeLink, "phenotypes.csv", "Phenotype data", HomeLink, "No phenotype data") }</Col>
               <Col className="text-center">{ download(inputLink, "expression-data.tsv", "Expression data", LoadExpression, "No expression data") }</Col>
-              <Col className="text-center border-left">{ download(zipLink, "immcellfie-data.zip", "Zip file", null, "No data") }</Col>
+            </Row>
+            <hr />
+            <Row>
+              <Col className="text-center">{ download(zipLink, "immcellfie-data.zip", "Zip file", null, "No data") }</Col>
             </Row>
           </Body>
         </Card>
