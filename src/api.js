@@ -73,7 +73,7 @@ export const api = {
       token = await getToken();
     }
 
-    const [phenotype_id, expression_id] = await getObjectIds("mock_obj" + id);
+    const [phenotype_id, expression_id] = await getObjectIds(id);
 
     const phenotype_url = await getDataUrl(phenotype_id);
     const expression_url = await getDataUrl(expression_id);
