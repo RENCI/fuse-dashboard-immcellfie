@@ -104,7 +104,7 @@ const initialParameters = [
 ];
 
 export const ModelSelection = ({ outputName, outputType }) => {
-  const [,dataDispatch] = useContext(DataContext);
+  const [{ dataInfo, rawExpressionData },dataDispatch] = useContext(DataContext);
   const [organism, setOrganism] = useState("human");
   const [currentModels, setCurrentModels] = useState(models.filter(({ organism }) => organism === "human"));
   const [model, setModel] = useState(models.find(({ organism }) => organism === "human"));
@@ -169,17 +169,29 @@ export const ModelSelection = ({ outputName, outputType }) => {
     dispatch({ type: "resetValue", name: name });
   };
 
-  const onRunCellfieClick = () => {
+  const onRunCellfieClick = async () => {
     setRunning(true);
 
-    setTimeout(async () => {
-      const output = await api.loadPracticeData(outputName);
+    console.log(dataInfo);
+    console.log(rawExpressionData);
+    console.log(parameters);
 
-      dataDispatch({ type: "setOutput", data: output, fileType: outputType });
+    if (dataInfo.source === "upload") { 
+      const id = await api.runCellfie(rawExpressionData, model, parameters.reduce(parameter => {
+        parameters[parameter.name] = parameter.value;
+        return parameters; 
+      }, {}));
+    }
+    else {
+      setTimeout(async () => {
+        const output = await api.loadPracticeData(outputName);
 
-      setRunning(false);
-//      setMessage("CellFIE output data loaded");
-    }, 1000);
+        dataDispatch({ type: "setOutput", data: output, fileType: outputType });
+
+        setRunning(false);
+  //      setMessage("CellFIE output data loaded");
+      }, 1000);
+    }
   };
 
   const currentParameters = parameters.filter(({ type, name }) => {

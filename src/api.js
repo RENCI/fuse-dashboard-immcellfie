@@ -2,6 +2,8 @@ import axios from "axios";
 
 let token = null;
 
+let status = null;
+
 const getToken = async () => {
   const response = await axios.post(`${ process.env.REACT_APP_API_ROOT }${ process.env.REACT_APP_API_TOKEN}`, {}, {
     auth: {
@@ -55,7 +57,9 @@ const readStream = async stream => {
 
     result += decoder.decode(value);
   }
-}
+};
+
+const cellfieFileUrl = (id, file) => `${ process.env.REACT_APP_API_ROOT }/get_output/${ id }/${ file }`;
 
 export const api = {
   loadFile: async file => {
@@ -88,5 +92,49 @@ export const api = {
     const data = await readStream(stream);
 
     return data;
+  },
+  runCellfie: async (data, model, parameters) => {
+/*    
+    const result = await axios.post(`${ process.env.REACT_APP_API_ROOT }/run`, {
+      data: data,
+      ref: model,
+      param: parameters
+    });
+
+    console.log(result);
+*/
+    console.log(data, model, parameters);
+
+    status = "Running";
+
+    setTimeout(() => {
+      status = "Finished";
+    }, 5000);
+
+    return "abcd"    
+  },
+  checkCellfieStatus: async id => {
+/*    
+    const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }/check_status/${ id }`);
+
+    console.log(result);
+*/
+    return status;    
+  },
+  getCellfieOutput: async id => {
+/*    
+    const results = await Promise.all([
+      axios.get(cellfieFileUrl(id, "taskInfo")), 
+      axios.get(cellfieFileUrl(id, "score")),
+      axios.get(cellfieFileUrl(id, "score_binary"))
+    ]);
+*/
+    const results = await Promise.all([
+      axios.get(`${ process.env.REACT_APP_PRACTICE_DATA_ROOT }taskInfo.csv`),
+      axios.get(`${ process.env.REACT_APP_PRACTICE_DATA_ROOT }score.csv`),
+      axios.get(`${ process.env.REACT_APP_PRACTICE_DATA_ROOT }score_binary.csv`)
+    ]);
+
+    console.log(results);
   }
 }
