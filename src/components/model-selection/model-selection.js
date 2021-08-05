@@ -30,11 +30,11 @@ const initialParameters = [
   {
     label: "Percentile or value",
     name: "percentile_or_value",    
-    default: "--percent",
-    value: "--percent",
+    default: "percent",
+    value: "percent",
     options: [
-      { name: "percentile", value: "--percent" },
-      { name: "value", value: "--value" }
+      { name: "percentile", value: "percent" },
+      { name: "value", value: "value" }
     ]
   },
   {
@@ -69,7 +69,7 @@ const initialParameters = [
     label: "Low percentile",
     name: "low_percentile",
     type: "local",
-    flag: "--low",
+    flag: "low",
     default: 25,
     value: 25,
     range: [0, 100]
@@ -78,7 +78,7 @@ const initialParameters = [
     label: "High percentile",
     name: "high_percentile",
     type: "local",
-    flag: "--high",
+    flag: "high",
     default: 75,
     value: 75,
     range: [0, 100]
@@ -87,7 +87,7 @@ const initialParameters = [
     label: "Low value",
     name: "low_value",
     type: "local",
-    flag: "--low",
+    flag: "low",
     default: 5,
     value: 5,
     range: [0, Number.MAX_SAFE_INTEGER]
@@ -96,7 +96,7 @@ const initialParameters = [
     label: "High value",
     name: "high_value",
     type: "local",
-    flag: "--high",
+    flag: "high",
     default: 10,
     value: 10,
     range: [0, Number.MAX_SAFE_INTEGER]
@@ -104,7 +104,7 @@ const initialParameters = [
 ];
 
 export const ModelSelection = ({ outputName, outputType }) => {
-  const [{ dataInfo, rawExpressionData },dataDispatch] = useContext(DataContext);
+  const [{ dataInfo, expressionData, rawExpressionData },dataDispatch] = useContext(DataContext);
   const [organism, setOrganism] = useState("human");
   const [currentModels, setCurrentModels] = useState(models.filter(({ organism }) => organism === "human"));
   const [model, setModel] = useState(models.find(({ organism }) => organism === "human"));
@@ -172,15 +172,17 @@ export const ModelSelection = ({ outputName, outputType }) => {
   const onRunCellfieClick = async () => {
     setRunning(true);
 
-    console.log(dataInfo);
-    console.log(rawExpressionData);
-    console.log(parameters);
+    if (dataInfo.source === "upload") {
+      const n = expressionData.length > 0 ? expressionData[0].values.length : 0;
 
-    if (dataInfo.source === "upload") { 
-      const id = await api.runCellfie(rawExpressionData, model, parameters.reduce(parameter => {
+      const id = await api.runCellfie(rawExpressionData, n, model.value, parameters.reduce((parameters, parameter) => {
         parameters[parameter.name] = parameter.value;
         return parameters; 
       }, {}));
+
+      //setInterval(() => {
+        //const status = await api.getCellfieStatus(id);
+      //}, 100);
     }
     else {
       setTimeout(async () => {

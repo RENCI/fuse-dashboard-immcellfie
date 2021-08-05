@@ -93,17 +93,15 @@ export const api = {
 
     return data;
   },
-  runCellfie: async (data, model, parameters) => {
-/*    
-    const result = await axios.post(`${ process.env.REACT_APP_API_ROOT }/run`, {
+  runCellfie: async (data, sampleNumber, model, parameters) => {    
+    const result = await axios.post(`${ process.env.REACT_APP_API_ROOT }/cellfie/run/upload_data`, {
       data: data,
-      ref: model,
-      param: parameters
+      SampleNumber: sampleNumber,
+      Ref: model,
+      Param: parameters
     });
 
     console.log(result);
-*/
-    console.log(data, model, parameters);
 
     status = "Running";
 
