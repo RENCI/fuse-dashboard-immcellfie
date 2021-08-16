@@ -104,7 +104,7 @@ const initialParameters = [
 ];
 
 export const ModelSelection = ({ outputName, outputType }) => {
-  const [{ dataInfo, expressionData, rawExpressionData },dataDispatch] = useContext(DataContext);
+  const [{ dataInfo, expressionData, rawExpressionData, expressionFile },dataDispatch] = useContext(DataContext);
   const [organism, setOrganism] = useState("human");
   const [currentModels, setCurrentModels] = useState(models.filter(({ organism }) => organism === "human"));
   const [model, setModel] = useState(models.find(({ organism }) => organism === "human"));
@@ -175,14 +175,15 @@ export const ModelSelection = ({ outputName, outputType }) => {
     if (dataInfo.source === "upload") {
       const n = expressionData.length > 0 ? expressionData[0].values.length : 0;
 
-      const id = await api.runCellfie(rawExpressionData, n, model.value, parameters.reduce((parameters, parameter) => {
+      const id = await api.runCellfie(expressionFile, n, model.value, parameters.reduce((parameters, parameter) => {
         parameters[parameter.name] = parameter.value;
         return parameters; 
       }, {}));
 
-      //setInterval(() => {
-        //const status = await api.getCellfieStatus(id);
-      //}, 100);
+      setInterval(async () => {
+        const output = await api.getCellfieOutput(id);
+      }, 5000);
+    
     }
     else {
       setTimeout(async () => {

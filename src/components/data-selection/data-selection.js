@@ -126,7 +126,7 @@ export const DataSelection = () => {
       // XXX: Check number of subjects?
 
       dataDispatch({ type: "setPhenotypes", data: phenotypeData });
-      dataDispatch({ type: "setExpressionData", data: expressionData });
+      dataDispatch({ type: "setExpressionData", data: expressionData, file: expressionDataFile });
     }
     catch (error) {
       console.log(error);

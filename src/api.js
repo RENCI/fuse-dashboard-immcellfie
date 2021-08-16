@@ -93,13 +93,27 @@ export const api = {
 
     return data;
   },
-  runCellfie: async (data, sampleNumber, model, parameters) => {    
-    const result = await axios.post(`${ process.env.REACT_APP_API_ROOT }/cellfie/run/upload_data`, {
-      data: data,
-      SampleNumber: sampleNumber,
-      Ref: model,
-      Param: parameters
+  runCellfie: async (file, sampleNumber, model, parameters) => {    
+    const formData = new FormData();
+    formData.append("data", file);
+    formData.append("SampleNumber", sampleNumber);
+    formData.append("Ref", model);
+    //formData.append("Param", parameters);
+
+/*
+    const result = await fetch(`${ process.env.REACT_APP_API_ROOT }cellfie/run/upload_data`, {
+      method: "post",
+      body: formData
     });
+*/
+    
+    const result = await axios({
+      method: "post",
+      url: `${ process.env.REACT_APP_API_ROOT }cellfie/run/upload_data`,
+      data: formData,
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    
 
     console.log(result);
 
@@ -109,7 +123,7 @@ export const api = {
       status = "Finished";
     }, 5000);
 
-    return "abcd"    
+    return result.data.task_id;    
   },
   checkCellfieStatus: async id => {
 /*    

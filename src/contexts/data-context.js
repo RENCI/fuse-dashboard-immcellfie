@@ -35,6 +35,7 @@ const initialState = {
   selectedSubgroups: null,
 
   // Expression data used as CellFIE input
+  expressionFile: null,
   rawExpressionData: null,
   expressionData: null,
 
@@ -54,7 +55,7 @@ const initialState = {
 };
 
 const parseExpressionData = data => {
-  return tsvParseRows(data, row => {
+  return csvParseRows(data, row => {
     return {
       gene: row[0],
       values: row.slice(1).map(d => +d)
@@ -474,6 +475,7 @@ const reducer = (state, action) => {
     case "setExpressionData":
       return {
         ...state,
+        expressionFile: action.file,
         rawExpressionData: action.data,
         expressionData: parseExpressionData(action.data)
       };
