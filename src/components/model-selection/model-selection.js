@@ -22,24 +22,24 @@ const models = [
 ];
 
 const thresholdTypes = [
-  { name: "global", value: "global-thresh" },
-  { name: "local", value: "local-thresh" }
+  { name: "global", value: "global" },
+  { name: "local", value: "local" }
 ];
 
 const initialParameters = [
   {
     label: "Percentile or value",
-    name: "percentile_or_value",    
-    default: "percent",
-    value: "percent",
+    name: "PercentileOrValue",    
+    default: "percentile",
+    value: "percentile",
     options: [
-      { name: "percentile", value: "percent" },
+      { name: "percentile", value: "percentile" },
       { name: "value", value: "value" }
     ]
   },
   {
     label: "Percentile",
-    name: "percentile",
+    name: "Percentile",
     type: "global",
     default: 50,
     value: 50,
@@ -47,7 +47,7 @@ const initialParameters = [
   },
   {
     label: "Value",
-    name: "value",
+    name: "Value",
     type: "global",
     default: 5,
     value: 5,
@@ -55,7 +55,7 @@ const initialParameters = [
   },
   {
     label: "Local threshold type",
-    name: "local_threshold_type",
+    name: "LocalThresholdType",
     type: "local",
     flag: "-t",
     default: "minmaxmean",
@@ -67,7 +67,7 @@ const initialParameters = [
   },
   {
     label: "Low percentile",
-    name: "low_percentile",
+    name: "PercentileLow",
     type: "local",
     flag: "low",
     default: 25,
@@ -76,7 +76,7 @@ const initialParameters = [
   },
   {
     label: "High percentile",
-    name: "high_percentile",
+    name: "PercentileHigh",
     type: "local",
     flag: "high",
     default: 75,
@@ -85,7 +85,7 @@ const initialParameters = [
   },
   {
     label: "Low value",
-    name: "low_value",
+    name: "ValueLow",
     type: "local",
     flag: "low",
     default: 5,
@@ -94,7 +94,7 @@ const initialParameters = [
   },
   {
     label: "High value",
-    name: "high_value",
+    name: "ValueHigh",
     type: "local",
     flag: "high",
     default: 10,
@@ -183,7 +183,7 @@ export const ModelSelection = ({ outputName, outputType }) => {
       const id = await api.runCellfie(expressionFile, n, model.value, parameters.reduce((parameters, parameter) => {
         parameters[parameter.name] = parameter.value;
         return parameters; 
-      }, {}));
+      }, { ThreshType: thresholdType.value }));
 
       time.current = new Date();
 

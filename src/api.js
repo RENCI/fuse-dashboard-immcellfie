@@ -100,6 +100,8 @@ export const api = {
     formData.append("data", file);
     formData.append("SampleNumber", sampleNumber);
     formData.append("Ref", model);
+    Object.entries(parameters).forEach(([key, value]) => formData.append(key, value));
+
     //formData.append("Param", parameters);
 
 /*
