@@ -61,7 +61,7 @@ const readStream = async stream => {
 
 const cellfieFileUrl = (id, file) => `${ process.env.REACT_APP_API_ROOT }get_output/${ id }/${ file }`;
 
-const getCellfieResult = (id, name) => `${ process.env.REACT_APP_API_ROOT }cellfie/results/${ id }/${ name }`;
+const cellfieResult = (id, name) => `${ process.env.REACT_APP_API_ROOT }cellfie/results/${ id }/${ name }`;
 
 export const api = {
   loadFile: async file => {
@@ -131,9 +131,7 @@ export const api = {
 */
     // XXX: Check for valid file until get status is implemented
     try {
-      const result = await axios.get(getCellfieResult(id, "taskInfo"));
-
-      console.log(result);
+      const result = await axios.get(cellfieResult(id, "taskInfo"));
 
       return "ready";
     }
@@ -143,12 +141,10 @@ export const api = {
   },
   getCellfieOutput: async id => {
     const results = await Promise.all([
-      axios.get(getCellfieResult(id, "taskInfo")), 
-      axios.get(getCellfieResult(id, "score")),
-      axios.get(getCellfieResult(id, "score_binary"))
+      axios.get(cellfieResult(id, "taskInfo")), 
+      axios.get(cellfieResult(id, "score")),
+      axios.get(cellfieResult(id, "score_binary"))
     ]);
-
-    console.log(results);
 
     return {
       taskInfo: results[0].data,

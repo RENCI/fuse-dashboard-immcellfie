@@ -216,11 +216,12 @@ export const ModelSelection = ({ outputName, outputType }) => {
   };
 
   const currentParameters = parameters.filter(({ type, name }) => {
-    const pv = name.includes("percent") ? "percent" : name.includes("value") ? "value" : null;
+    const pv = name.toLowerCase().includes("percent") ? "percent" : 
+      name.toLowerCase().includes("value") ? "value" : null;
 
     return !type || 
       (type === thresholdType.name && 
-      (!pv || parameters.find(({ name }) => name === "percentile_or_value").value.includes(pv)));
+      (!pv || parameters.find(({ name }) => name === "PercentileOrValue").value.includes(pv)));
   }).map((parameter, i) => {
       return (
         parameter.options ?
