@@ -145,13 +145,13 @@ export const api = {
       axios.get(getCellfieResult(id, "score")),
       axios.get(getCellfieResult(id, "score_binary"))
     ]);
-/*
-    const results = await Promise.all([
-      axios.get(`${ process.env.REACT_APP_PRACTICE_DATA_ROOT }taskInfo.csv`),
-      axios.get(`${ process.env.REACT_APP_PRACTICE_DATA_ROOT }score.csv`),
-      axios.get(`${ process.env.REACT_APP_PRACTICE_DATA_ROOT }score_binary.csv`)
-    ]);
-*/
-    return results;
+
+    console.log(results);
+
+    return {
+      taskInfo: results[0].data,
+      score: results[1].data,
+      scoreBinary: results[2].data
+    };
   }
 }

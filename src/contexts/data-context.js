@@ -90,7 +90,7 @@ const parseTSVOutput = data => {
 
 const parsePhenotypeData = data => {
   // XXX: Hack to match test phenotype data to test expression/output data
-  const n = 32;
+  const n = 4;
 
   const csv = csvParse(data);
 
@@ -128,6 +128,24 @@ const parseCSVOutput = data => {
       };      
     })
   };
+};
+
+const combineOutput = (taskInfo, score, scoreBinary) => {
+  const taskInfoParsed = csvParseRows(taskInfo).slice(1);
+  const scoreParsed = csvParseRows(score);
+  const scoreBinaryParsed = csvParseRows(scoreBinary);
+
+  return {
+    tasks: taskInfoParsed.map((task, i) => {
+      return {
+        id: task[0],
+        name: task[1],        
+        phenotype: [task[1], task[3], task[2]],
+        scores: scoreParsed[i].map(parseNumber),
+        activities: scoreBinaryParsed[i].map(parseNumber)
+      };  
+    })
+  }
 };
 
 const createPhenotypes = phenotypeData => {
@@ -322,6 +340,8 @@ const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod) => {
 
     // Compute subgroup scores and activities
     const processSubgroup = (subjects, which) => {
+      console.log(subjects, which)
+
       if (subjects.length === 0) {
         node.data["scores" + which] = [];
         node.data["score" + which] = null;
@@ -500,7 +520,30 @@ const reducer = (state, action) => {
         selectedSubgroups: selectedSubgroups
       };
     }
+
+    case "setOutput": {
+      const output = combineOutput(action.output.taskInfo, action.output.score, action.output.scoreBinary);
+
+      console.log(output);
+
+      const hierarchy = createHierarchy(output);
+      const tree = createTree(hierarchy);
+      updateTree(tree, state.subgroups, state.selectedSubgroups, state.overlapMethod);
+
+      return {
+        ...state,
+        rawOutput: {
+          taskInfo: action.taskInfo,
+          score: action.score,
+          scoreBinary: action.scoreBinary
+        },
+        output: output,
+        hierarchy: hierarchy,
+        tree: tree
+      };
+    }
     
+/*    
     case "setOutput": {
       const rawOutput = action.data;
       const output = action.fileType === "tsv" ? parseTSVOutput(rawOutput) : parseCSVOutput(rawOutput);
@@ -516,6 +559,7 @@ const reducer = (state, action) => {
         tree: tree
       };
     }
+*/    
 
     case "clearData":
       return {

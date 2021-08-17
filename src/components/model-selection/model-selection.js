@@ -197,7 +197,9 @@ export const ModelSelection = ({ outputName, outputType }) => {
 
           const output = await api.getCellfieOutput(id);
 
-          console.log(output);
+          dataDispatch({ type: "setOutput", output: output });
+
+          setRunning(false);
         }
       }, 10000);    
     }
