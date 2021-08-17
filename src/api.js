@@ -59,7 +59,9 @@ const readStream = async stream => {
   }
 };
 
-const cellfieFileUrl = (id, file) => `${ process.env.REACT_APP_API_ROOT }/get_output/${ id }/${ file }`;
+const cellfieFileUrl = (id, file) => `${ process.env.REACT_APP_API_ROOT }get_output/${ id }/${ file }`;
+
+const getCellfieResult = (id, name) => `${ process.env.REACT_APP_API_ROOT }cellfie/results/${ id }/${ name }`;
 
 export const api = {
   loadFile: async file => {
@@ -117,12 +119,6 @@ export const api = {
 
     console.log(result);
 
-    status = "Running";
-
-    setTimeout(() => {
-      status = "Finished";
-    }, 5000);
-
     return result.data.task_id;    
   },
   checkCellfieStatus: async id => {
@@ -131,22 +127,31 @@ export const api = {
 
     console.log(result);
 */
-    return status;    
+    // XXX: Check for valid file until get status is implemented
+    try {
+      const result = await axios.get(getCellfieResult(id, "taskInfo"));
+
+      console.log(result);
+
+      return "ready";
+    }
+    catch {
+      return "computing";
+    }   
   },
   getCellfieOutput: async id => {
-/*    
     const results = await Promise.all([
-      axios.get(cellfieFileUrl(id, "taskInfo")), 
-      axios.get(cellfieFileUrl(id, "score")),
-      axios.get(cellfieFileUrl(id, "score_binary"))
+      axios.get(getCellfieResult(id, "taskInfo")), 
+      axios.get(getCellfieResult(id, "score")),
+      axios.get(getCellfieResult(id, "score_binary"))
     ]);
-*/
+/*
     const results = await Promise.all([
       axios.get(`${ process.env.REACT_APP_PRACTICE_DATA_ROOT }taskInfo.csv`),
       axios.get(`${ process.env.REACT_APP_PRACTICE_DATA_ROOT }score.csv`),
       axios.get(`${ process.env.REACT_APP_PRACTICE_DATA_ROOT }score_binary.csv`)
     ]);
-
-    console.log(results);
+*/
+    return results;
   }
 }

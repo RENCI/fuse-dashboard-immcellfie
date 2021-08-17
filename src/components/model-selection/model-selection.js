@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useContext } from "react";
+import React, { useState, useReducer, useContext, useEffect, useRef } from "react";
 import { Row, Col, Card, Form, Button, InputGroup } from "react-bootstrap";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
 import { SpinnerButton } from "../spinner-button";
@@ -104,7 +104,9 @@ const initialParameters = [
 ];
 
 export const ModelSelection = ({ outputName, outputType }) => {
-  const [{ dataInfo, expressionData, rawExpressionData, expressionFile },dataDispatch] = useContext(DataContext);
+  const [{ dataInfo, expressionData, expressionFile },dataDispatch] = useContext(DataContext);
+  const timer = useRef();
+  const time = useRef();
   const [organism, setOrganism] = useState("human");
   const [currentModels, setCurrentModels] = useState(models.filter(({ organism }) => organism === "human"));
   const [model, setModel] = useState(models.find(({ organism }) => organism === "human"));
@@ -137,6 +139,9 @@ export const ModelSelection = ({ outputName, outputType }) => {
     }
   }, initialParameters);
   //const [message, setMessage] = useState();
+
+  // Clean up setInterval timer if component unmounts
+  useEffect(() => () => clearInterval(timer.current), []);
 
   const organisms = models.reduce((organisms, model) => {
     if (!organisms.includes(model.organism)) organisms.push(model.organism);
@@ -180,10 +185,21 @@ export const ModelSelection = ({ outputName, outputType }) => {
         return parameters; 
       }, {}));
 
-      setInterval(async () => {
-        const output = await api.getCellfieOutput(id);
-      }, 5000);
-    
+      time.current = new Date();
+
+      timer.current = setInterval(async () => {
+        const status = await api.checkCellfieStatus(id);
+
+        console.log((new Date() - time.current) / 1000 + " seconds");
+
+        if (status === "ready") {
+          clearInterval(timer.current);
+
+          const output = await api.getCellfieOutput(id);
+
+          console.log(output);
+        }
+      }, 10000);    
     }
     else {
       setTimeout(async () => {
