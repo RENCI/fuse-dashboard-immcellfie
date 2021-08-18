@@ -143,9 +143,7 @@ export const DataSelection = () => {
     setState(states.normal);
   };
 
-  const orText = <em className="small">OR</em>
-
-  console.log(state);
+  const orText = <em className="small">OR</em>;
 
   const disabled = state !== states.normal;
 
