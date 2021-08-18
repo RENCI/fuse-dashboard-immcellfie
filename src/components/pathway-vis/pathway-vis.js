@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Form, Card } from "react-bootstrap";
+import { DataContext } from "../../contexts";
 import { EscherWrapper } from "../escher-wrapper";
 import { LoadingSpinner } from "../loading-spinner";
 import "./pathway-vis.css";
@@ -19,6 +20,7 @@ const maps = [
 ];
 
 export const PathwayVis = () => {
+  const [{ reactionScores }] = useContext(DataContext);
   const [loading, setLoading] = useState(true);
   const [map, setMap] = useState(maps[0]);
 
@@ -57,6 +59,7 @@ export const PathwayVis = () => {
         <Body className={ "p-0" }>
           <EscherWrapper 
             map={ map ? path + map + ".json" : null } 
+            reactionScores={ reactionScores }
             onLoaded={ onLoaded }
           />
         </Body>

@@ -2,8 +2,6 @@ import axios from "axios";
 
 let token = null;
 
-let status = null;
-
 const getToken = async () => {
   const response = await axios.post(`${ process.env.REACT_APP_API_ROOT }${ process.env.REACT_APP_API_TOKEN}`, {}, {
     auth: {
@@ -58,8 +56,6 @@ const readStream = async stream => {
     result += decoder.decode(value);
   }
 };
-
-const cellfieFileUrl = (id, file) => `${ process.env.REACT_APP_API_ROOT }get_output/${ id }/${ file }`;
 
 const cellfieResult = (id, name) => `${ process.env.REACT_APP_API_ROOT }cellfie/results/${ id }/${ name }`;
 
@@ -133,13 +129,15 @@ export const api = {
     const results = await Promise.all([
       axios.get(cellfieResult(id, "taskInfo")), 
       axios.get(cellfieResult(id, "score")),
-      axios.get(cellfieResult(id, "score_binary"))
+      axios.get(cellfieResult(id, "score_binary")),
+      axios.get(cellfieResult(id, "detailScoring"))
     ]);
 
     return {
       taskInfo: results[0].data,
       score: results[1].data,
-      scoreBinary: results[2].data
+      scoreBinary: results[2].data,
+      detailScoring: results[3].data
     };
   }
 }

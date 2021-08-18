@@ -50,6 +50,9 @@ const initialState = {
   // since we have to calculate the layout external to the Vega spec
   tree: null,
 
+  // Reaction scores from detailed CellFIE output
+  reactionScores: null,
+
   // Method for handling subgroup overlap
   overlapMethod: "both"
 };
@@ -91,32 +94,9 @@ const parsePhenotypeData = data => {
   csv.forEach((subject, i) => subject.index = i);
 
   return csv;
-}
-
-const parseCSVOutput = data => {
-  return {
-    tasks: csvParseRows(data, (row, i) => {
-      if (i === 0) return;
-
-      const offset = 4;
-      const n = (row.length - offset) / 2;
-
-      return {
-        id: row[0],
-        name: row[1],        
-        phenotype: [row[1], row[3], row[2]],
-        scores: row.slice(offset, offset + n).map(parseNumber),
-        activities: row.slice(offset + n).map(parseNumber)
-      };      
-    })
-  };
 };
 
 const combineOutput = (taskInfo, score, scoreBinary) => {
-  console.log(taskInfo);
-  console.log(score);
-  console.log(scoreBinary);
-
   const taskInfoParsed = csvParseRows(taskInfo).slice(1);
   const scoreParsed = csvParseRows(score);
   const scoreBinaryParsed = csvParseRows(scoreBinary);
@@ -132,6 +112,56 @@ const combineOutput = (taskInfo, score, scoreBinary) => {
       };  
     })
   }
+};
+
+const getReactionScores = detailScoring => {
+  const idCol = 4;
+  const scoreCol = 5;
+
+  const csv = csvParseRows(detailScoring);
+
+  return csv.slice(1).reduce((scores, row) => {
+    scores[row[idCol]] = row[scoreCol];
+    return scores;
+  }, {});
+
+  /*
+  const cols = 8;
+  const idCol = 4;
+  const scoreCol = 5;
+
+  const csv = csvParseRows(detailScoring);
+
+  if (csv.length === 0) return null;
+
+  const n = csv[0].length / cols;
+
+  const scores = new Array(n).fill({});
+
+  csv.forEach((row, i) => {
+    if (i === 0) return;
+
+    scores.forEach((sample, j) => {
+      const offset = j * cols;
+
+      sample[csv[i][offset + idCol]] = csv[i][offset + scoreCol];
+    });
+  });
+
+  Object.keys(scores[0]).forEach(key => {
+    const values = scores.reduce((values, sample) => {
+      values.add(sample[key]);
+      return values;
+    }, new Set());
+
+    if (values > 1) {
+      console.log(key);
+      console.log(values.values());
+    }
+  });
+
+  return scores;
+  */
 };
 
 const createPhenotypes = phenotypeData => {
@@ -516,7 +546,8 @@ const reducer = (state, action) => {
         rawOutput: {...action.output},
         output: output,
         hierarchy: hierarchy,
-        tree: tree
+        tree: tree,
+        reactionScores: getReactionScores(action.output.detailScoring)
       };
     }   
 

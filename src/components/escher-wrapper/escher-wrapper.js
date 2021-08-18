@@ -3,13 +3,14 @@ import Builder from "escher";
 import { json, csv } from "d3-fetch";
 import "./escher-wrapper.css"; 
 
-export const EscherWrapper = ({ map, onLoaded }) => {
+export const EscherWrapper = ({ map, reactionScores, onLoaded }) => {
   const div = useRef();
   const builder = useRef();
 
   const first_load_callback = escherBuilder => {
     builder.current = escherBuilder;
 
+    /*
     csv("/data/escher/EscherDataTest1.csv").then(data => {
       const reactionData = data.reduce((reactionData, reaction) => {
         reactionData[reaction.RxnID] = reaction.RxnScore;
@@ -19,6 +20,9 @@ export const EscherWrapper = ({ map, onLoaded }) => {
 
       builder.current.set_reaction_data([reactionData]);
     });
+    */
+
+    builder.current.set_reaction_data([reactionScores]);
   };
 
   useEffect(() => {

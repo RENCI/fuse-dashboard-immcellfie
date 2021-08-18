@@ -3,5 +3,6 @@ export const practiceData = {
   expressionData: "HPA.csv",
   taskInfo: "HPA_taskInfo.csv",
   score: "HPA_score.csv",
-  scoreBinary: "HPA_score_binary.csv"
+  scoreBinary: "HPA_score_binary.csv",
+  detailScoring: "detailScoring.csv"
 };
