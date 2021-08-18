@@ -96,30 +96,19 @@ export const api = {
     return data;
   },
   runCellfie: async (file, sampleNumber, model, parameters) => {    
+    // Set data and parameters as form data
     const formData = new FormData();
     formData.append("data", file);
     formData.append("SampleNumber", sampleNumber);
     formData.append("Ref", model);
     Object.entries(parameters).forEach(([key, value]) => formData.append(key, value));
 
-    //formData.append("Param", parameters);
-
-/*
-    const result = await fetch(`${ process.env.REACT_APP_API_ROOT }cellfie/run/upload_data`, {
-      method: "post",
-      body: formData
-    });
-*/
-    
-    const result = await axios({
-      method: "post",
-      url: `${ process.env.REACT_APP_API_ROOT }cellfie/run/upload_data`,
-      data: formData,
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-    
-
-    console.log(result);
+    // Make post request
+    const result = await axios.post(
+      `${ process.env.REACT_APP_API_ROOT }cellfie/run/upload_data`, 
+      formData,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
 
     return result.data.task_id;    
   },
@@ -131,12 +120,13 @@ export const api = {
 */
     // XXX: Check for valid file until get status is implemented
     try {
-      const result = await axios.get(cellfieResult(id, "taskInfo"));
+      await axios.get(cellfieResult(id, "taskInfo"));
 
       return "ready";
     }
-    catch {
-      return "computing";
+    catch (error) {
+      if (error.message.includes("404")) return "computing";
+      else throw (error);
     }   
   },
   getCellfieOutput: async id => {

@@ -88,10 +88,7 @@ const parseTSVOutput = data => {
   };
 };
 
-const parsePhenotypeData = data => {
-  // XXX: Hack to match test phenotype data to test expression/output data
-  const n = 4;
-
+const parsePhenotypeDataRandomize = (data, n = 32) => {
   const csv = csvParse(data);
 
   const random = randomInt(csv.length);
@@ -109,6 +106,14 @@ const parsePhenotypeData = data => {
   result.columns = csv.columns;
 
   return result;
+}
+
+const parsePhenotypeData = data => {
+  const csv = csvParse(data);
+
+  csv.forEach((subject, i) => subject.index = i);
+
+  return csv;
 }
 
 const parseCSVOutput = data => {
@@ -340,8 +345,6 @@ const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod) => {
 
     // Compute subgroup scores and activities
     const processSubgroup = (subjects, which) => {
-      console.log(subjects, which)
-
       if (subjects.length === 0) {
         node.data["scores" + which] = [];
         node.data["score" + which] = null;
@@ -523,9 +526,6 @@ const reducer = (state, action) => {
 
     case "setOutput": {
       const output = combineOutput(action.output.taskInfo, action.output.score, action.output.scoreBinary);
-
-      console.log(output);
-
       const hierarchy = createHierarchy(output);
       const tree = createTree(hierarchy);
       updateTree(tree, state.subgroups, state.selectedSubgroups, state.overlapMethod);
