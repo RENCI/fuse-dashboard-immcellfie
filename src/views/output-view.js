@@ -6,7 +6,6 @@ import { ModelSelection } from "../components/model-selection";
 import { SubgroupSelection } from "../components/subgroup-selection";
 import { CellfieOutput } from "../components/cellfie-output";
 import { DataMissing } from "../components/data-missing";
-import { practiceData } from "../datasets";
 
 export const OutputView = () => {
   const [{ phenotypeData }] = useContext(DataContext);
@@ -20,10 +19,7 @@ export const OutputView = () => {
       :
         <Row>
           <Col xs={ 12 } xl={ 4 }>
-            <ModelSelection 
-              outputName={ practiceData.output } 
-              outputType={ practiceData.outputType }
-            />         
+            <ModelSelection />         
             <SubgroupSelection />         
           </Col>            
           <Col xs={ 12 } xl={ 8 }>

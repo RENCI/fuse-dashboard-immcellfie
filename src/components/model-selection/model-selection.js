@@ -4,6 +4,7 @@ import { ArrowCounterclockwise } from "react-bootstrap-icons";
 import { SpinnerButton } from "../spinner-button";
 import { DataContext } from "../../contexts";
 import { api } from "../../api";
+import { practiceData } from "../../datasets";
 
 const { Header, Body } = Card;
 const { Label, Group, Control } = Form;
@@ -103,7 +104,7 @@ const initialParameters = [
   }
 ];
 
-export const ModelSelection = ({ outputName, outputType }) => {
+export const ModelSelection = () => {
   const [{ dataInfo, expressionData, expressionFile },dataDispatch] = useContext(DataContext);
   const timer = useRef();
   const time = useRef();
@@ -203,11 +204,17 @@ export const ModelSelection = ({ outputName, outputType }) => {
         }
       }, 10000);    
     }
-    else {
+    else if (dataInfo.source === "practice") {
       setTimeout(async () => {
-        const output = await api.loadPracticeData(outputName);
+        const taskInfo = await api.loadPracticeData(practiceData.taskInfo);
+        const score = await api.loadPracticeData(practiceData.score);
+        const scoreBinary = await api.loadPracticeData(practiceData.score);
 
-        dataDispatch({ type: "setOutput", data: output, fileType: outputType });
+        dataDispatch({ type: "setOutput", output: {
+          taskInfo: taskInfo,
+          score: score,
+          scoreBinary: scoreBinary
+        }});
 
         setRunning(false);
   //      setMessage("CellFIE output data loaded");

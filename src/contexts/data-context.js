@@ -113,6 +113,10 @@ const parseCSVOutput = data => {
 };
 
 const combineOutput = (taskInfo, score, scoreBinary) => {
+  console.log(taskInfo);
+  console.log(score);
+  console.log(scoreBinary);
+
   const taskInfoParsed = csvParseRows(taskInfo).slice(1);
   const scoreParsed = csvParseRows(score);
   const scoreBinaryParsed = csvParseRows(scoreBinary);
