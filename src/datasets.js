@@ -1,5 +1,5 @@
 export const practiceData = {
-  phenotypes: "testphenotypes.csv",
+  phenotypes: "TestPhenotypes_32.csv",
   expressionData: "HPA.csv",
   taskInfo: "HPA_taskInfo.csv",
   score: "HPA_score.csv",
