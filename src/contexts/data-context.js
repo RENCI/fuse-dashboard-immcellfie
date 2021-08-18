@@ -513,11 +513,7 @@ const reducer = (state, action) => {
 
       return {
         ...state,
-        rawOutput: {
-          taskInfo: action.taskInfo,
-          score: action.score,
-          scoreBinary: action.scoreBinary
-        },
+        rawOutput: {...action.output},
         output: output,
         hierarchy: hierarchy,
         tree: tree

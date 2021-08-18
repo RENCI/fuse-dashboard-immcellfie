@@ -208,7 +208,7 @@ export const ModelSelection = () => {
       setTimeout(async () => {
         const taskInfo = await api.loadPracticeData(practiceData.taskInfo);
         const score = await api.loadPracticeData(practiceData.score);
-        const scoreBinary = await api.loadPracticeData(practiceData.score);
+        const scoreBinary = await api.loadPracticeData(practiceData.scoreBinary);
 
         dataDispatch({ type: "setOutput", output: {
           taskInfo: taskInfo,
