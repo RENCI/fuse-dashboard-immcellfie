@@ -1,5 +1,5 @@
 import React, { createContext, useReducer } from "react";
-import { tsvParseRows, csvParseRows, csvParse } from "d3-dsv";
+import { csvParseRows, csvParse } from "d3-dsv";
 import { randomInt } from "d3-random";
 import { stratify } from "d3-hierarchy";
 import { merge, mean, group } from "d3-array";
@@ -64,29 +64,6 @@ const parseExpressionData = data => {
 };
 
 const parseNumber = d => d < 0 ? NaN : +d;
-
-const parseTSVOutput = data => {
-  return {
-    tasks: tsvParseRows(data, row => {
-      if (row.length !== 3) return null;
-
-      const info = csvParseRows(row[0])[0];
-
-      // Reorder phenotype info to go from task to system
-      const phenotype = [info[1], info[3], info[2]];
-
-      const scores = csvParseRows(row[1])[0].map(parseNumber);
-
-      return {
-        id: info[0],
-        name: info[1],        
-        phenotype: phenotype,
-        scores: scores,
-        activities: csvParseRows(row[2])[0].map(parseNumber)
-      };
-    })
-  };
-};
 
 const parsePhenotypeDataRandomize = (data, n = 32) => {
   const csv = csvParse(data);
@@ -541,25 +518,7 @@ const reducer = (state, action) => {
         hierarchy: hierarchy,
         tree: tree
       };
-    }
-    
-/*    
-    case "setOutput": {
-      const rawOutput = action.data;
-      const output = action.fileType === "tsv" ? parseTSVOutput(rawOutput) : parseCSVOutput(rawOutput);
-      const hierarchy = createHierarchy(output);
-      const tree = createTree(hierarchy);
-      updateTree(tree, state.subgroups, state.selectedSubgroups, state.overlapMethod);
-
-      return {
-        ...state,
-        rawOutput: rawOutput,
-        output: output,
-        hierarchy: hierarchy,
-        tree: tree
-      };
-    }
-*/    
+    }   
 
     case "clearData":
       return {
