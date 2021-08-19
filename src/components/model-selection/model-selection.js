@@ -1,8 +1,9 @@
-import React, { useState, useReducer, useContext, useEffect, useRef } from "react";
+import React, { useState, useReducer, useContext, useEffect } from "react";
 import { Row, Col, Card, Form, Button, InputGroup } from "react-bootstrap";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
 import { SpinnerButton } from "../spinner-button";
 import { DataContext } from "../../contexts";
+import { TaskStatusContext } from "../../contexts";
 import { api } from "../../api";
 import { practiceData } from "../../datasets";
 
@@ -105,14 +106,12 @@ const initialParameters = [
 ];
 
 export const ModelSelection = () => {
-  const [{ dataInfo, expressionData, expressionFile },dataDispatch] = useContext(DataContext);
-  const timer = useRef();
-  const time = useRef();
+  const [{ dataInfo, expressionData, expressionFile }, dataDispatch] = useContext(DataContext);
+  const [{ status, elapsedTime }, taskStatusDispatch] = useContext(TaskStatusContext);
   const [organism, setOrganism] = useState("human");
   const [currentModels, setCurrentModels] = useState(models.filter(({ organism }) => organism === "human"));
   const [model, setModel] = useState(models.find(({ organism }) => organism === "human"));
   const [thresholdType, setThresholdType] = useState(thresholdTypes[0]);
-  const [running, setRunning] = useState(false);
   const [parameters, dispatch] = useReducer((state, action) => {
     switch (action.type) {
       case "setValue":  {
@@ -139,16 +138,18 @@ export const ModelSelection = () => {
         throw new Error("Invalid parameters action: " + action.type);
     }
   }, initialParameters);
-  //const [message, setMessage] = useState();
-
-  // Clean up setInterval timer if component unmounts
-  useEffect(() => () => clearInterval(timer.current), []);
 
   const organisms = models.reduce((organisms, model) => {
     if (!organisms.includes(model.organism)) organisms.push(model.organism);
 
     return organisms;
   }, []);
+
+  useEffect(() => {
+    if (status === "finished") {
+      taskStatusDispatch({ type: "setStatus", status: null });
+    }
+  }, [status]);
 
   const onOrganismChange = evt => {
     const value = evt.target.value;
@@ -176,7 +177,7 @@ export const ModelSelection = () => {
   };
 
   const onRunCellfieClick = async () => {
-    setRunning(true);
+    taskStatusDispatch({ type: "setStatus", status: "running" });
 
     if (dataInfo.source === "upload") {
       const n = expressionData.length > 0 ? expressionData[0].values.length : 0;
@@ -186,21 +187,20 @@ export const ModelSelection = () => {
         return parameters; 
       }, { ThreshType: thresholdType.value }));
 
-      time.current = new Date();
+      let time = new Date();
 
-      timer.current = setInterval(async () => {
+      let timer = setInterval(async () => {
         const status = await api.checkCellfieStatus(id);
 
-        console.log((new Date() - time.current) / 1000 + " seconds");
+        console.log((new Date() - time) / 1000 + " seconds");
 
         if (status === "ready") {
-          clearInterval(timer.current);
+          clearInterval(timer);
 
           const output = await api.getCellfieOutput(id);
 
           dataDispatch({ type: "setOutput", output: output });
-
-          setRunning(false);
+          taskStatusDispatch({ type: "setStatus", status: "finished" });
         }
       }, 10000);    
     }
@@ -218,8 +218,7 @@ export const ModelSelection = () => {
           detailScoring: detailScoring
         }});
 
-        setRunning(false);
-  //      setMessage("CellFIE output data loaded");
+        taskStatusDispatch({ type: "setStatus", status: null });
       }, 1000);
     }
   };
@@ -341,8 +340,8 @@ export const ModelSelection = () => {
           <Col>
             <SpinnerButton 
               block
-              disabled={ running }
-              spin={ running }
+              disabled={ status !== null }
+              spin={ status !== null }
               onClick={ onRunCellfieClick }
             >
               Run CellFIE

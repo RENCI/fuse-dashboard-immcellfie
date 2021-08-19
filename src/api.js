@@ -62,8 +62,6 @@ const cellfieResultStream = async (id, name) => {
   const stream = await getStream(`${ process.env.REACT_APP_API_ROOT }cellfie/results/${ id }/${ name }`);
   const data = await readStream(stream);
 
-  console.log(data);
-
   return data;
 };
 
