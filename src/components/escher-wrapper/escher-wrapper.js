@@ -22,6 +22,8 @@ export const EscherWrapper = ({ map, reactionScores, onLoaded }) => {
     });
     */
 
+    console.log(reactionScores);
+
     builder.current.set_reaction_data([reactionScores]);
   };
 

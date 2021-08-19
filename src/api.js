@@ -29,13 +29,12 @@ const getDataUrl = async id => {
   return response.data.url;
 };
 
-const getStream = async url => {
-  const response = await fetch(url, {
-    method: "get",
-    headers: new Headers({
-      Authorization: 'Bearer ' + token
-    })
-  });
+const getStream = async (url, token = null) => {
+  const params = { method: "get" };
+
+  if (token) params.headers = new Headers({ Authorization: 'Bearer ' + token })
+
+  const response = await fetch(url, params);
 
   return response.body;
 }; 
@@ -58,6 +57,15 @@ const readStream = async stream => {
 };
 
 const cellfieResult = (id, name) => `${ process.env.REACT_APP_API_ROOT }cellfie/results/${ id }/${ name }`;
+
+const cellfieResultStream = async (id, name) => {
+  const stream = await getStream(`${ process.env.REACT_APP_API_ROOT }cellfie/results/${ id }/${ name }`);
+  const data = await readStream(stream);
+
+  console.log(data);
+
+  return data;
+};
 
 export const api = {
   loadFile: async file => {
@@ -86,7 +94,7 @@ export const api = {
     ];
   },
   loadDataUrl: async url => {
-    const stream = await getStream(url);
+    const stream = await getStream(url, token);
     const data = await readStream(stream);
 
     return data;
@@ -127,17 +135,17 @@ export const api = {
   },
   getCellfieOutput: async id => {
     const results = await Promise.all([
-      axios.get(cellfieResult(id, "taskInfo")), 
-      axios.get(cellfieResult(id, "score")),
-      axios.get(cellfieResult(id, "score_binary")),
-      axios.get(cellfieResult(id, "detailScoring"))
+      cellfieResultStream(id, "taskInfo"), 
+      cellfieResultStream(id, "score"),
+      cellfieResultStream(id, "score_binary"),
+      cellfieResultStream(id, "detailScoring")
     ]);
 
     return {
-      taskInfo: results[0].data,
-      score: results[1].data,
-      scoreBinary: results[2].data,
-      detailScoring: results[3].data
+      taskInfo: results[0],
+      score: results[1],
+      scoreBinary: results[2],
+      detailScoring: results[3]
     };
   }
 }

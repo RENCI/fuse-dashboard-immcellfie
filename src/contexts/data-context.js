@@ -115,6 +115,8 @@ const combineOutput = (taskInfo, score, scoreBinary) => {
 };
 
 const getReactionScores = detailScoring => {
+  console.log(detailScoring);
+
   const idCol = 4;
   const scoreCol = 5;
 
