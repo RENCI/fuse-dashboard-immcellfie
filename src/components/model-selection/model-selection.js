@@ -187,12 +187,12 @@ export const ModelSelection = () => {
         return parameters; 
       }, { ThreshType: thresholdType.value }));
 
-      let time = new Date();
+      const startTime = new Date();
 
-      let timer = setInterval(async () => {
+      const timer = setInterval(async () => {
         const status = await api.checkCellfieStatus(id);
 
-        console.log((new Date() - time) / 1000 + " seconds");
+        console.log((new Date() - startTime) / 1000 + " seconds");
 
         if (status === "ready") {
           clearInterval(timer);
