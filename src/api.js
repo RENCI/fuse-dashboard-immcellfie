@@ -115,21 +115,9 @@ export const api = {
     return result.data.task_id;    
   },
   checkCellfieStatus: async id => {
-/*    
-    const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }/check_status/${ id }`);
+    const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/status/${ id }`);
 
-    console.log(result);
-*/
-    // XXX: Check for valid file until get status is implemented
-    try {
-      await axios.get(cellfieResult(id, "taskInfo"));
-
-      return "ready";
-    }
-    catch (error) {
-      if (error.message.includes("404")) return "computing";
-      else throw (error);
-    }   
+    return result.data.task_status; 
   },
   getCellfieOutput: async id => {
     const results = await Promise.all([

@@ -177,24 +177,21 @@ export const ModelSelection = () => {
   };
 
   const onRunCellfieClick = async () => {
-    taskStatusDispatch({ type: "setStatus", status: "running" });
-
     if (dataInfo.source === "upload") {
       const n = expressionData.length > 0 ? expressionData[0].values.length : 0;
 
       const id = await api.runCellfie(expressionFile, n, model.value, parameters.reduce((parameters, parameter) => {
         parameters[parameter.name] = parameter.value;
         return parameters; 
-      }, { ThreshType: thresholdType.value }));
+      }, { ThreshType: thresholdType.value }));      
 
-      const startTime = new Date();
+      checkStatus();
+      const timer = setInterval(checkStatus, 5000);    
 
-      const timer = setInterval(async () => {
+      async function checkStatus() {
         const status = await api.checkCellfieStatus(id);
 
-        console.log((new Date() - startTime) / 1000 + " seconds");
-
-        if (status === "ready") {
+        if (status === "finished") {
           clearInterval(timer);
 
           const output = await api.getCellfieOutput(id);
@@ -202,7 +199,10 @@ export const ModelSelection = () => {
           dataDispatch({ type: "setOutput", output: output });
           taskStatusDispatch({ type: "setStatus", status: "finished" });
         }
-      }, 10000);    
+        else {
+          taskStatusDispatch({ type: "setStatus", status: status });
+        }
+      }
     }
     else if (dataInfo.source === "practice") {
       setTimeout(async () => {

@@ -59,6 +59,9 @@ const initialState = {
 
 const parseExpressionData = data => {
   return csvParseRows(data, row => {
+    // Check for header
+    if (row[0] === "genes") return null;
+
     return {
       gene: row[0],
       values: row.slice(1).map(d => +d)
