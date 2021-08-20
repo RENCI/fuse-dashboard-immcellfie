@@ -208,6 +208,8 @@ export const ModelSelection = () => {
       }
     }
     else if (dataInfo.source === "practice") {
+      taskStatusDispatch({ type: "setStatus", status: "started" });
+
       setTimeout(async () => {
         const taskInfo = await api.loadPracticeData(practiceData.taskInfo);
         const score = await api.loadPracticeData(practiceData.score);
