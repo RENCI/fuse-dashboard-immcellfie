@@ -1,6 +1,6 @@
-import React, { useState, useReducer, useContext, useEffect } from "react";
-import { Row, Col, Card, Form, Button, InputGroup } from "react-bootstrap";
-import { ArrowCounterclockwise } from "react-bootstrap-icons";
+import React, { useState, useReducer, useContext, useEffect, useRef } from "react";
+import { Row, Col, Card, Form, Button, ButtonGroup, InputGroup } from "react-bootstrap";
+import { ArrowCounterclockwise, XLg } from "react-bootstrap-icons";
 import { SpinnerButton } from "../spinner-button";
 import { DataContext } from "../../contexts";
 import { TaskStatusContext } from "../../contexts";
@@ -108,6 +108,7 @@ const initialParameters = [
 export const ModelSelection = () => {
   const [{ dataInfo, expressionData, expressionFile }, dataDispatch] = useContext(DataContext);
   const [{ status }, taskStatusDispatch] = useContext(TaskStatusContext);
+  const timer = useRef();
   const [organism, setOrganism] = useState("human");
   const [currentModels, setCurrentModels] = useState(models.filter(({ organism }) => organism === "human"));
   const [model, setModel] = useState(models.find(({ organism }) => organism === "human"));
@@ -178,6 +179,8 @@ export const ModelSelection = () => {
 
   const onRunCellfieClick = async () => {
     if (dataInfo.source === "upload") {
+      taskStatusDispatch({ type: "setStatus", status: "initializing" });
+
       const n = expressionData.length > 0 ? expressionData[0].values.length : 0;
 
       const id = await api.runCellfie(expressionFile, n, model.value, parameters.reduce((parameters, parameter) => {
@@ -186,13 +189,13 @@ export const ModelSelection = () => {
       }, { ThreshType: thresholdType.value }));      
 
       checkStatus();
-      const timer = setInterval(checkStatus, 5000);    
+      timer.current = setInterval(checkStatus, 5000);    
 
       async function checkStatus() {
         const status = await api.checkCellfieStatus(id);
 
         if (status === "finished") {
-          clearInterval(timer);
+          clearInterval(timer.current);
 
           const output = await api.getCellfieOutput(id);
 
@@ -222,6 +225,12 @@ export const ModelSelection = () => {
       }, 1000);
     }
   };
+
+  const onCancelCellfieClick = () => {
+    clearInterval(timer.current);
+
+    taskStatusDispatch({ type: "setStatus", status: null });
+  }
 
   const currentParameters = parameters.filter(({ type, name }) => {
     const pv = name.toLowerCase().includes("percent") ? "percent" : 
@@ -338,25 +347,27 @@ export const ModelSelection = () => {
         </Row>
         <Row>
           <Col>
-            <SpinnerButton 
-              block
-              disabled={ status !== null }
-              spin={ status !== null }
-              onClick={ onRunCellfieClick }
-            >
-              Run CellFIE
-            </SpinnerButton> 
+            <ButtonGroup style={{ width: "100%" }}>
+              <SpinnerButton 
+                block
+                disabled={ status !== null }
+                spin={ status !== null }
+                onClick={ onRunCellfieClick }
+              >
+                Run CellFIE
+              </SpinnerButton> 
+              { status !== null &&
+                <Button 
+                  variant="danger"
+                  onClick={ onCancelCellfieClick }
+                >
+                  <XLg className="d-flex align-items-center" />
+                </Button>
+              }
+            </ButtonGroup>
           </Col>       
         </Row>
       </Body>
     </Card>
   );
-};           
-
-/*
-            { message && 
-              <Group>  
-               <Alert variant="info">{ message }</Alert>
-              </Group>  
-            }
-*/
+};
