@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { Card, Form, InputGroup, Alert, Row, Col, Button } from "react-bootstrap";
+import { Card, Form, InputGroup, Alert, Row, Col } from "react-bootstrap";
 import { SpinnerButton } from "../spinner-button";
 import { DataContext } from "../../contexts";
 import { FileSelect } from "../file-select";
@@ -12,11 +12,17 @@ import { practiceData } from "../../datasets";
 const { Header, Body, Footer } = Card;
 const { Group, Control } = Form;
 
+const states = {
+  normal: "normal",
+  submitting: "submitting",
+  uploading: "uploading",
+  loading: "loading"
+};
+
 export const DataSelection = () => {
   const [{ dataInfo, phenotypeData, expressionData }, dataDispatch] = useContext(DataContext);
   const [id, setId] = useState("mock_obj1");
-  const [submitting, setSubmitting] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [state, setState] = useState(states.normal);
   const [errorMessage, setErrorMessage] = useState();
   const [phenotypeDataFile, setPhenotypeDataFile] = useState(null);
   const [expressionDataFile, setExpressionDataFile] = useState(null);
@@ -51,7 +57,7 @@ export const DataSelection = () => {
   };
 
   const onSubmitClick = async () => {
-    setSubmitting(true);
+    setState(states.normal);
     setErrorMessage();
 
     dataDispatch({ type: "clearData" });
@@ -76,11 +82,11 @@ export const DataSelection = () => {
       setErrorMessage(getErrorMessage(error));
     }
 
-    setSubmitting(false);
+    setState(states.normal);
   };
 
   const onLoadPracticeClick = async () => {
-    setLoading(true);
+    setState(states.loading);
     setErrorMessage();
 
     dataDispatch({ type: "clearData" });
@@ -97,7 +103,7 @@ export const DataSelection = () => {
       setErrorMessage(getErrorMessage(error));
     }
   
-    setLoading(false);
+    setState(states.normal);
   };
 
   const onPhenotypeFileSelect = file => {
@@ -109,7 +115,7 @@ export const DataSelection = () => {
   };
 
   const onUploadDataClick = async () => {
-    setLoading(true);
+    setState(states.uploading);
     setErrorMessage();
 
     try {
@@ -126,7 +132,7 @@ export const DataSelection = () => {
       // XXX: Check number of subjects?
 
       dataDispatch({ type: "setPhenotypes", data: phenotypeData });
-      dataDispatch({ type: "setExpressionData", data: expressionData });
+      dataDispatch({ type: "setExpressionData", data: expressionData, file: expressionDataFile });
     }
     catch (error) {
       console.log(error);
@@ -134,12 +140,12 @@ export const DataSelection = () => {
       setErrorMessage(getErrorMessage(error));
     }
 
-    setLoading(false);
+    setState(states.normal);
   };
 
-  const orText = <em className="small">OR</em>
+  const orText = <em className="small">OR</em>;
 
-  const disabled = loading || submitting;
+  const disabled = state !== states.normal;
 
   return (
     <Card>
@@ -156,7 +162,7 @@ export const DataSelection = () => {
                   <SpinnerButton 
                     variant="primary"
                     disabled={ disabled || id === "" }
-                    spin={ submitting }
+                    spin={ state === "submitting" }
                     onClick={ onSubmitClick }>
                     Submit
                   </SpinnerButton>
@@ -188,14 +194,15 @@ export const DataSelection = () => {
               />
             </Group> 
             <Group>
-              <Button
+              <SpinnerButton
                 variant="outline-secondary"
-                disabled={ !phenotypeDataFile || !expressionDataFile }
-                block
+                disabled={ disabled || !phenotypeDataFile || !expressionDataFile }
+                spin={ state === "uploading" }
+                block={ true }
                 onClick={ onUploadDataClick }
               >
                 Upload
-              </Button>              
+              </SpinnerButton>              
             </Group>
           </Col>
           <Col sm="auto">
@@ -206,7 +213,7 @@ export const DataSelection = () => {
             <SpinnerButton 
               variant="outline-secondary"
               disabled={ disabled }
-              spin={ loading }
+              spin={ state === "loading" }
               block={ true }
               onClick={ onLoadPracticeClick }
             >

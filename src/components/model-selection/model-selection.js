@@ -1,9 +1,11 @@
-import React, { useState, useReducer, useContext } from "react";
-import { Row, Col, Card, Form, Button, InputGroup } from "react-bootstrap";
-import { ArrowCounterclockwise } from "react-bootstrap-icons";
+import React, { useState, useReducer, useContext, useEffect, useRef } from "react";
+import { Row, Col, Card, Form, Button, ButtonGroup, InputGroup } from "react-bootstrap";
+import { ArrowCounterclockwise, XLg } from "react-bootstrap-icons";
 import { SpinnerButton } from "../spinner-button";
 import { DataContext } from "../../contexts";
+import { TaskStatusContext } from "../../contexts";
 import { api } from "../../api";
+import { practiceData } from "../../datasets";
 
 const { Header, Body } = Card;
 const { Label, Group, Control } = Form;
@@ -22,24 +24,24 @@ const models = [
 ];
 
 const thresholdTypes = [
-  { name: "global", value: "global-thresh" },
-  { name: "local", value: "local-thresh" }
+  { name: "global", value: "global" },
+  { name: "local", value: "local" }
 ];
 
 const initialParameters = [
   {
     label: "Percentile or value",
-    name: "percentile_or_value",    
-    default: "--percent",
-    value: "--percent",
+    name: "PercentileOrValue",    
+    default: "percentile",
+    value: "percentile",
     options: [
-      { name: "percentile", value: "--percent" },
-      { name: "value", value: "--value" }
+      { name: "percentile", value: "percentile" },
+      { name: "value", value: "value" }
     ]
   },
   {
     label: "Percentile",
-    name: "percentile",
+    name: "Percentile",
     type: "global",
     default: 50,
     value: 50,
@@ -47,7 +49,7 @@ const initialParameters = [
   },
   {
     label: "Value",
-    name: "value",
+    name: "Value",
     type: "global",
     default: 5,
     value: 5,
@@ -55,7 +57,7 @@ const initialParameters = [
   },
   {
     label: "Local threshold type",
-    name: "local_threshold_type",
+    name: "LocalThresholdType",
     type: "local",
     flag: "-t",
     default: "minmaxmean",
@@ -67,49 +69,50 @@ const initialParameters = [
   },
   {
     label: "Low percentile",
-    name: "low_percentile",
+    name: "PercentileLow",
     type: "local",
-    flag: "--low",
+    flag: "low",
     default: 25,
     value: 25,
     range: [0, 100]
   },
   {
     label: "High percentile",
-    name: "high_percentile",
+    name: "PercentileHigh",
     type: "local",
-    flag: "--high",
+    flag: "high",
     default: 75,
     value: 75,
     range: [0, 100]
   },
   {
     label: "Low value",
-    name: "low_value",
+    name: "ValueLow",
     type: "local",
-    flag: "--low",
+    flag: "low",
     default: 5,
     value: 5,
     range: [0, Number.MAX_SAFE_INTEGER]
   },
   {
     label: "High value",
-    name: "high_value",
+    name: "ValueHigh",
     type: "local",
-    flag: "--high",
+    flag: "high",
     default: 10,
     value: 10,
     range: [0, Number.MAX_SAFE_INTEGER]
   }
 ];
 
-export const ModelSelection = ({ outputName, outputType }) => {
-  const [,dataDispatch] = useContext(DataContext);
+export const ModelSelection = () => {
+  const [{ dataInfo, expressionData, expressionFile }, dataDispatch] = useContext(DataContext);
+  const [{ status }, taskStatusDispatch] = useContext(TaskStatusContext);
+  const timer = useRef();
   const [organism, setOrganism] = useState("human");
   const [currentModels, setCurrentModels] = useState(models.filter(({ organism }) => organism === "human"));
   const [model, setModel] = useState(models.find(({ organism }) => organism === "human"));
   const [thresholdType, setThresholdType] = useState(thresholdTypes[0]);
-  const [running, setRunning] = useState(false);
   const [parameters, dispatch] = useReducer((state, action) => {
     switch (action.type) {
       case "setValue":  {
@@ -136,13 +139,18 @@ export const ModelSelection = ({ outputName, outputType }) => {
         throw new Error("Invalid parameters action: " + action.type);
     }
   }, initialParameters);
-  //const [message, setMessage] = useState();
 
   const organisms = models.reduce((organisms, model) => {
     if (!organisms.includes(model.organism)) organisms.push(model.organism);
 
     return organisms;
   }, []);
+
+  useEffect(() => {
+    if (status === "finished") {
+      taskStatusDispatch({ type: "setStatus", status: null });
+    }
+  }, [status, taskStatusDispatch]);
 
   const onOrganismChange = evt => {
     const value = evt.target.value;
@@ -169,25 +177,70 @@ export const ModelSelection = ({ outputName, outputType }) => {
     dispatch({ type: "resetValue", name: name });
   };
 
-  const onRunCellfieClick = () => {
-    setRunning(true);
+  const onRunCellfieClick = async () => {
+    if (dataInfo.source === "upload") {
+      taskStatusDispatch({ type: "setStatus", status: "initializing" });
 
-    setTimeout(async () => {
-      const output = await api.loadPracticeData(outputName);
+      const n = expressionData.length > 0 ? expressionData[0].values.length : 0;
 
-      dataDispatch({ type: "setOutput", data: output, fileType: outputType });
+      const id = await api.runCellfie(expressionFile, n, model.value, parameters.reduce((parameters, parameter) => {
+        parameters[parameter.name] = parameter.value;
+        return parameters; 
+      }, { ThreshType: thresholdType.value }));      
 
-      setRunning(false);
-//      setMessage("CellFIE output data loaded");
-    }, 1000);
+      checkStatus();
+      timer.current = setInterval(checkStatus, 5000);    
+
+      async function checkStatus() {
+        const status = await api.checkCellfieStatus(id);
+
+        if (status === "finished") {
+          clearInterval(timer.current);
+
+          const output = await api.getCellfieOutput(id);
+
+          dataDispatch({ type: "setOutput", output: output });
+          taskStatusDispatch({ type: "setStatus", status: "finished" });
+        }
+        else {
+          taskStatusDispatch({ type: "setStatus", status: status });
+        }
+      }
+    }
+    else if (dataInfo.source === "practice") {
+      taskStatusDispatch({ type: "setStatus", status: "started" });
+
+      setTimeout(async () => {
+        const taskInfo = await api.loadPracticeData(practiceData.taskInfo);
+        const score = await api.loadPracticeData(practiceData.score);
+        const scoreBinary = await api.loadPracticeData(practiceData.scoreBinary);
+        const detailScoring = await api.loadPracticeData(practiceData.detailScoring);
+
+        dataDispatch({ type: "setOutput", output: {
+          taskInfo: taskInfo,
+          score: score,
+          scoreBinary: scoreBinary,
+          detailScoring: detailScoring
+        }});
+
+        taskStatusDispatch({ type: "setStatus", status: null });
+      }, 1000);
+    }
   };
 
+  const onCancelCellfieClick = () => {
+    clearInterval(timer.current);
+
+    taskStatusDispatch({ type: "setStatus", status: null });
+  }
+
   const currentParameters = parameters.filter(({ type, name }) => {
-    const pv = name.includes("percent") ? "percent" : name.includes("value") ? "value" : null;
+    const pv = name.toLowerCase().includes("percent") ? "percent" : 
+      name.toLowerCase().includes("value") ? "value" : null;
 
     return !type || 
       (type === thresholdType.name && 
-      (!pv || parameters.find(({ name }) => name === "percentile_or_value").value.includes(pv)));
+      (!pv || parameters.find(({ name }) => name === "PercentileOrValue").value.includes(pv)));
   }).map((parameter, i) => {
       return (
         parameter.options ?
@@ -296,25 +349,27 @@ export const ModelSelection = ({ outputName, outputType }) => {
         </Row>
         <Row>
           <Col>
-            <SpinnerButton 
-              block
-              disabled={ running }
-              spin={ running }
-              onClick={ onRunCellfieClick }
-            >
-              Run CellFIE
-            </SpinnerButton> 
+            <ButtonGroup style={{ width: "100%" }}>
+              <SpinnerButton 
+                block
+                disabled={ status !== null }
+                spin={ status !== null }
+                onClick={ onRunCellfieClick }
+              >
+                Run CellFIE
+              </SpinnerButton> 
+              { status !== null &&
+                <Button 
+                  variant="danger"
+                  onClick={ onCancelCellfieClick }
+                >
+                  <XLg className="d-flex align-items-center" />
+                </Button>
+              }
+            </ButtonGroup>
           </Col>       
         </Row>
       </Body>
     </Card>
   );
-};           
-
-/*
-            { message && 
-              <Group>  
-               <Alert variant="info">{ message }</Alert>
-              </Group>  
-            }
-*/
+};

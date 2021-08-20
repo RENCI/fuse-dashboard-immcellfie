@@ -1,6 +1,5 @@
 import React, { createContext, useReducer } from "react";
-import { tsvParseRows, csvParseRows, csvParse } from "d3-dsv";
-import { randomInt } from "d3-random";
+import { csvParseRows, csvParse } from "d3-dsv";
 import { stratify } from "d3-hierarchy";
 import { merge, mean, group } from "d3-array";
 import ttest2 from "@stdlib/stats/ttest2";
@@ -35,6 +34,7 @@ const initialState = {
   selectedSubgroups: null,
 
   // Expression data used as CellFIE input
+  expressionFile: null,
   rawExpressionData: null,
   expressionData: null,
 
@@ -49,12 +49,18 @@ const initialState = {
   // since we have to calculate the layout external to the Vega spec
   tree: null,
 
+  // Reaction scores from detailed CellFIE output
+  reactionScores: null,
+
   // Method for handling subgroup overlap
   overlapMethod: "both"
 };
 
 const parseExpressionData = data => {
-  return tsvParseRows(data, row => {
+  return csvParseRows(data, row => {
+    // Check for header
+    if (row[0] === "genes") return null;
+
     return {
       gene: row[0],
       values: row.slice(1).map(d => +d)
@@ -64,33 +70,8 @@ const parseExpressionData = data => {
 
 const parseNumber = d => d < 0 ? NaN : +d;
 
-const parseTSVOutput = data => {
-  return {
-    tasks: tsvParseRows(data, row => {
-      if (row.length !== 3) return null;
-
-      const info = csvParseRows(row[0])[0];
-
-      // Reorder phenotype info to go from task to system
-      const phenotype = [info[1], info[3], info[2]];
-
-      const scores = csvParseRows(row[1])[0].map(parseNumber);
-
-      return {
-        id: info[0],
-        name: info[1],        
-        phenotype: phenotype,
-        scores: scores,
-        activities: csvParseRows(row[2])[0].map(parseNumber)
-      };
-    })
-  };
-};
-
-const parsePhenotypeData = data => {
-  // XXX: Hack to match test phenotype data to test expression/output data
-  const n = 32;
-
+/*
+const parsePhenotypeDataRandomize = (data, n = 32) => {
   const csv = csvParse(data);
 
   const random = randomInt(csv.length);
@@ -109,24 +90,58 @@ const parsePhenotypeData = data => {
 
   return result;
 }
+*/
 
-const parseCSVOutput = data => {
+const parsePhenotypeData = data => {
+  const csv = csvParse(data);
+
+  csv.forEach((subject, i) => subject.index = i);
+
+  return csv;
+};
+
+const combineOutput = (taskInfo, score, scoreBinary) => {
+  const taskInfoParsed = csvParseRows(taskInfo).slice(1);
+  const scoreParsed = csvParseRows(score);
+  const scoreBinaryParsed = csvParseRows(scoreBinary);
+
   return {
-    tasks: csvParseRows(data, (row, i) => {
-      if (i === 0) return;
-
-      const offset = 4;
-      const n = (row.length - offset) / 2;
-
+    tasks: taskInfoParsed.map((task, i) => {
       return {
-        id: row[0],
-        name: row[1],        
-        phenotype: [row[1], row[3], row[2]],
-        scores: row.slice(offset, offset + n).map(parseNumber),
-        activities: row.slice(offset + n).map(parseNumber)
-      };      
+        id: task[0],
+        name: task[1],        
+        phenotype: [task[1], task[3], task[2]],
+        scores: scoreParsed[i].map(parseNumber),
+        activities: scoreBinaryParsed[i].map(parseNumber)
+      };  
     })
-  };
+  }
+};
+
+const getReactionScores = detailScoring => {
+  const cols = 8;
+  const idCol = 4;
+  const scoreCol = 5;
+
+  const csv = csvParseRows(detailScoring);
+
+  if (csv.length === 0) return null;
+
+  const n = csv[0].length / cols;
+
+  const scores = new Array(n).fill().map(() => ({}));
+
+  csv.forEach((row, i) => {
+    if (i === 0) return;
+
+    scores.forEach((sample, j) => {
+      const offset = j * cols;
+
+      sample[row[offset + idCol]] = row[offset + scoreCol];
+    });
+  });
+
+  return scores[0];
 };
 
 const createPhenotypes = phenotypeData => {
@@ -474,6 +489,7 @@ const reducer = (state, action) => {
     case "setExpressionData":
       return {
         ...state,
+        expressionFile: action.file,
         rawExpressionData: action.data,
         expressionData: parseExpressionData(action.data)
       };
@@ -498,22 +514,22 @@ const reducer = (state, action) => {
         selectedSubgroups: selectedSubgroups
       };
     }
-    
+
     case "setOutput": {
-      const rawOutput = action.data;
-      const output = action.fileType === "tsv" ? parseTSVOutput(rawOutput) : parseCSVOutput(rawOutput);
+      const output = combineOutput(action.output.taskInfo, action.output.score, action.output.scoreBinary);
       const hierarchy = createHierarchy(output);
       const tree = createTree(hierarchy);
       updateTree(tree, state.subgroups, state.selectedSubgroups, state.overlapMethod);
 
       return {
         ...state,
-        rawOutput: rawOutput,
+        rawOutput: {...action.output},
         output: output,
         hierarchy: hierarchy,
-        tree: tree
+        tree: tree,
+        reactionScores: getReactionScores(action.output.detailScoring)
       };
-    }
+    }   
 
     case "clearData":
       return {
