@@ -1,6 +1,5 @@
 import React, { createContext, useReducer } from "react";
 import { csvParseRows, csvParse } from "d3-dsv";
-import { randomInt } from "d3-random";
 import { stratify } from "d3-hierarchy";
 import { merge, mean, group } from "d3-array";
 import ttest2 from "@stdlib/stats/ttest2";
@@ -71,6 +70,7 @@ const parseExpressionData = data => {
 
 const parseNumber = d => d < 0 ? NaN : +d;
 
+/*
 const parsePhenotypeDataRandomize = (data, n = 32) => {
   const csv = csvParse(data);
 
@@ -90,6 +90,7 @@ const parsePhenotypeDataRandomize = (data, n = 32) => {
 
   return result;
 }
+*/
 
 const parsePhenotypeData = data => {
   const csv = csvParse(data);

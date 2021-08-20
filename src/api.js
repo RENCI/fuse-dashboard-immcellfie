@@ -56,7 +56,7 @@ const readStream = async stream => {
   }
 };
 
-const cellfieResult = (id, name) => `${ process.env.REACT_APP_API_ROOT }cellfie/results/${ id }/${ name }`;
+//const cellfieResult = (id, name) => `${ process.env.REACT_APP_API_ROOT }cellfie/results/${ id }/${ name }`;
 
 const cellfieResultStream = async (id, name) => {
   const stream = await getStream(`${ process.env.REACT_APP_API_ROOT }cellfie/results/${ id }/${ name }`);

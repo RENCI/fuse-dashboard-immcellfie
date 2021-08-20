@@ -7,27 +7,11 @@ export const EscherWrapper = ({ map, reactionScores, onLoaded }) => {
   const div = useRef();
   const builder = useRef();
 
-  useEffect(() => {
-    const first_load_callback = escherBuilder => {
-      builder.current = escherBuilder;
-  
-      /*
-      csv("/data/escher/EscherDataTest1.csv").then(data => {
-        const reactionData = data.reduce((reactionData, reaction) => {
-          reactionData[reaction.RxnID] = reaction.RxnScore;
-  
-          return reactionData;
-        }, {});
-  
-        builder.current.set_reaction_data([reactionData]);
-      });
-      */
-  
-      console.log(reactionScores);
-  
-      builder.current.set_reaction_data([reactionScores]);
-    };
+  const first_load_callback = escherBuilder => {
+    builder.current = escherBuilder;
+  };
 
+  useEffect(() => {
     const options = {
       menu: 'all',
       scroll_behavior: 'zoom',
@@ -59,7 +43,13 @@ export const EscherWrapper = ({ map, reactionScores, onLoaded }) => {
     }).catch(error => {
       console.log(error);
     });
-  }, [map, onLoaded])
+  }, [map, onLoaded]);
+
+  useEffect(() => {
+    if (builder.current) {
+      builder.current.set_reaction_data(reactionScores);
+    }
+  }, [reactionScores]);
 
   return (       
     <div className="wrapperDiv" ref={ div }></div>
