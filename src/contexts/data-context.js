@@ -115,18 +115,6 @@ const combineOutput = (taskInfo, score, scoreBinary) => {
 };
 
 const getReactionScores = detailScoring => {
-/*  
-  const idCol = 4;
-  const scoreCol = 5;
-
-  const csv = csvParseRows(detailScoring);
-
-  return csv.slice(1).reduce((scores, row) => {
-    scores[row[idCol]] = row[scoreCol];
-    return scores;
-  }, {});
-*/  
-
   const cols = 8;
   const idCol = 4;
   const scoreCol = 5;
@@ -137,7 +125,7 @@ const getReactionScores = detailScoring => {
 
   const n = csv[0].length / cols;
 
-  const scores = new Array(n).fill({});
+  const scores = new Array(n).fill().map(() => ({}));
 
   csv.forEach((row, i) => {
     if (i === 0) return;
@@ -145,23 +133,9 @@ const getReactionScores = detailScoring => {
     scores.forEach((sample, j) => {
       const offset = j * cols;
 
-      sample[csv[i][offset + idCol]] = csv[i][offset + scoreCol];
+      sample[row[offset + idCol]] = row[offset + scoreCol];
     });
   });
-
-  Object.keys(scores[0]).forEach(key => {
-    const values = scores.reduce((values, sample) => {
-      values.add(sample[key]);
-      return values;
-    }, new Set());
-
-    if (values > 1) {
-      console.log(key);
-      console.log(values.values());
-    }
-  });
-
-  console.log(scores);
 
   return scores[0];
 };
