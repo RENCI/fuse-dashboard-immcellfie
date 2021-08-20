@@ -115,6 +115,7 @@ const combineOutput = (taskInfo, score, scoreBinary) => {
 };
 
 const getReactionScores = detailScoring => {
+/*  
   const idCol = 4;
   const scoreCol = 5;
 
@@ -124,8 +125,8 @@ const getReactionScores = detailScoring => {
     scores[row[idCol]] = row[scoreCol];
     return scores;
   }, {});
+*/  
 
-  /*
   const cols = 8;
   const idCol = 4;
   const scoreCol = 5;
@@ -160,8 +161,9 @@ const getReactionScores = detailScoring => {
     }
   });
 
-  return scores;
-  */
+  console.log(scores);
+
+  return scores[0];
 };
 
 const createPhenotypes = phenotypeData => {

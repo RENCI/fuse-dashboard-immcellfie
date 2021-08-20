@@ -107,7 +107,7 @@ const initialParameters = [
 
 export const ModelSelection = () => {
   const [{ dataInfo, expressionData, expressionFile }, dataDispatch] = useContext(DataContext);
-  const [{ status, elapsedTime }, taskStatusDispatch] = useContext(TaskStatusContext);
+  const [{ status }, taskStatusDispatch] = useContext(TaskStatusContext);
   const [organism, setOrganism] = useState("human");
   const [currentModels, setCurrentModels] = useState(models.filter(({ organism }) => organism === "human"));
   const [model, setModel] = useState(models.find(({ organism }) => organism === "human"));
@@ -149,7 +149,7 @@ export const ModelSelection = () => {
     if (status === "finished") {
       taskStatusDispatch({ type: "setStatus", status: null });
     }
-  }, [status]);
+  }, [status, taskStatusDispatch]);
 
   const onOrganismChange = evt => {
     const value = evt.target.value;
