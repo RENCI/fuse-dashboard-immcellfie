@@ -21,7 +21,7 @@ const states = {
 
 export const DataSelection = () => {
   const [{ dataInfo, phenotypeData, expressionData }, dataDispatch] = useContext(DataContext);
-  const [id, setId] = useState("mock_obj1");
+  const [id, setId] = useState("");
   const [state, setState] = useState(states.normal);
   const [errorMessage, setErrorMessage] = useState();
   const [phenotypeDataFile, setPhenotypeDataFile] = useState(null);
