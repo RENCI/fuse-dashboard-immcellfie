@@ -11,7 +11,7 @@ export const TaskStatus = () => {
   
   const message = status ? status[0].toUpperCase() + status.substring(1) : null;
 
-  const variant = status === "initializing" ? "primary" :
+  const variant = status === "connecting" ? "primary" :
     status === "queued" ? "info" :
     "success";
 

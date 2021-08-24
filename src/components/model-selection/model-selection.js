@@ -179,7 +179,7 @@ export const ModelSelection = () => {
 
   const onRunCellfieClick = async () => {
     if (dataInfo.source === "upload") {
-      taskStatusDispatch({ type: "setStatus", status: "initializing" });
+      taskStatusDispatch({ type: "setStatus", status: "Connecting" });
 
       const n = expressionData.length > 0 ? expressionData[0].values.length : 0;
 
