@@ -23,6 +23,7 @@ const initialState = {
   // Phenotype data for each subject
   rawPhenotypeData: null,
   phenotypeData: null,
+  numPhenotypeSubjects: 0,
 
   // Phenotype options created from phenotype data
   phenotypes: null,
@@ -37,6 +38,7 @@ const initialState = {
   expressionFile: null,
   rawExpressionData: null,
   expressionData: null,
+  numExpressionSubjects: 0,
 
   // CellFIE output
   rawOutput: null,
@@ -91,6 +93,35 @@ const parsePhenotypeDataRandomize = (data, n = 32) => {
   return result;
 }
 */
+
+const createPhenotypeData = expressionData => {
+  if (expressionData.length === 0) return "";
+
+  return expressionData[0].values.reduce((string, current, i) => {
+    return string + "auto\n";
+  }, "Auto\n");
+};
+
+const initializePhenotypeData = (state, rawPhenotypeData) => {
+  const phenotypeData = parsePhenotypeData(rawPhenotypeData);
+  const phenotypes = createPhenotypes(phenotypeData);
+
+  // Create initial group with all subjects
+  const subgroups = [createSubgroup("All subjects", phenotypeData, phenotypes, [])];
+
+  // Select this subgroup
+  const selectedSubgroups = [subgroups[0].key, null];
+
+  return {
+    ...state,
+    rawPhenotypeData: rawPhenotypeData,
+    phenotypeData: phenotypeData,
+    numPhenotypeSubjects: phenotypeData.length,
+    phenotypes: phenotypes,
+    subgroups: subgroups,
+    selectedSubgroups: selectedSubgroups
+  };
+}
 
 const parsePhenotypeData = data => {
   const csv = csvParse(data);
@@ -487,33 +518,24 @@ const reducer = (state, action) => {
     }
 
     case "setExpressionData":
+      const expressionData = parseExpressionData(action.data);
+
+      let newState = {...state};
+
+      if (!state.phenotypeData) {
+        newState = initializePhenotypeData(newState, createPhenotypeData(expressionData));
+      }
+
       return {
-        ...state,
+        ...newState,
         expressionFile: action.file,
         rawExpressionData: action.data,
-        expressionData: parseExpressionData(action.data)
+        expressionData: parseExpressionData(action.data),
+        numExpressionSubjects: expressionData.length > 0 ? expressionData[0].values.length : 0
       };
 
-    case "setPhenotypes": {
-      const rawPhenotypeData = action.data;
-      const phenotypeData = parsePhenotypeData(rawPhenotypeData);
-      const phenotypes = createPhenotypes(phenotypeData);
-
-      // Create initial group with all subjects
-      const subgroups = [createSubgroup("All subjects", phenotypeData, phenotypes, [])];
-
-      // Select this subgroup
-      const selectedSubgroups = [subgroups[0].key, null];
-
-      return {
-        ...state,
-        rawPhenotypeData: rawPhenotypeData,
-        phenotypeData: phenotypeData,
-        phenotypes: phenotypes,
-        subgroups: subgroups,
-        selectedSubgroups: selectedSubgroups
-      };
-    }
+    case "setPhenotypes":
+      return initializePhenotypeData(state, action.data);
 
     case "setOutput": {
       const output = combineOutput(action.output.taskInfo, action.output.score, action.output.scoreBinary);

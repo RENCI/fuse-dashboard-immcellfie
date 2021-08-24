@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Card, Form, InputGroup, Alert, Row, Col } from "react-bootstrap";
 import { SpinnerButton } from "../spinner-button";
 import { DataContext } from "../../contexts";
@@ -20,12 +20,24 @@ const states = {
 };
 
 export const DataSelection = () => {
-  const [{ dataInfo, phenotypeData, expressionData }, dataDispatch] = useContext(DataContext);
+  const [
+    { dataInfo, phenotypeData, expressionData, numPhenotypeSubjects, numExpressionSubjects }, 
+    dataDispatch
+  ] = useContext(DataContext);
   const [id, setId] = useState("");
   const [state, setState] = useState(states.normal);
   const [errorMessage, setErrorMessage] = useState();
   const [phenotypeDataFile, setPhenotypeDataFile] = useState(null);
   const [expressionDataFile, setExpressionDataFile] = useState(null);
+
+  useEffect(() => {
+    if (dataInfo && dataInfo.source === "upload" && numPhenotypeSubjects !== numExpressionSubjects) {
+      setErrorMessage(`Number of subjects in phenotype data (${ numPhenotypeSubjects }) does not match number of subjets in expression data (${ numExpressionSubjects }). Please upload data with matching subject numbers.`);
+    }
+    else {
+      setErrorMessage();
+    }
+  }, [dataInfo, numPhenotypeSubjects, numExpressionSubjects])
 
   const getErrorMessage = error => {
     if (error.response) {
@@ -119,19 +131,18 @@ export const DataSelection = () => {
     setErrorMessage();
 
     try {
-      const phenotypeData = await api.loadFile(phenotypeDataFile);
       const expressionData = await api.loadFile(expressionDataFile);
+      const phenotypeData = phenotypeDataFile ? await api.loadFile(phenotypeDataFile) : null;
 
       dataDispatch({ 
         type: "setDataInfo", 
         source: "upload",
-        phenotypeInfo: { name: phenotypeDataFile.name },
+        phenotypeInfo: { name: phenotypeDataFile ? phenotypeDataFile.name : "Auto-generated" },
         expressionInfo: { name: expressionDataFile.name }
       });
 
-      // XXX: Check number of subjects?
-
-      dataDispatch({ type: "setPhenotypes", data: phenotypeData });
+      // Set phenotype data first
+      if (phenotypeData) dataDispatch({ type: "setPhenotypes", data: phenotypeData });
       dataDispatch({ type: "setExpressionData", data: expressionData, file: expressionDataFile });
     }
     catch (error) {
@@ -180,23 +191,23 @@ export const DataSelection = () => {
             { orText }
           </Col>
           <Col> 
-            <h6>Upload data</h6>
+            <h6>Upload data</h6> 
             <Group>
               <FileSelect
-                defaultLabel="Select phenotype data"
-                onChange={ onPhenotypeFileSelect }
-              />
-            </Group>  
-            <Group>
-              <FileSelect
-                defaultLabel="Select expression data"
+                defaultLabel="Required: select expression data"
                 onChange={ onExpressionFileSelect }
+              />
+            </Group> 
+            <Group>
+              <FileSelect
+                defaultLabel="Optional: select phenotype data"
+                onChange={ onPhenotypeFileSelect }
               />
             </Group> 
             <Group>
               <SpinnerButton
                 variant="outline-secondary"
-                disabled={ disabled || !phenotypeDataFile || !expressionDataFile }
+                disabled={ disabled || !expressionDataFile }
                 spin={ state === "uploading" }
                 block={ true }
                 onClick={ onUploadDataClick }
