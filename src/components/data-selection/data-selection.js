@@ -237,20 +237,20 @@ export const DataSelection = () => {
             <hr />
             <Row className="row-eq-height">
               <Col>
+                { 
+                  <ExpressionInfo 
+                    source={ dataInfo.source }
+                    name={ dataInfo.expressionInfo.name }
+                    data={ expressionData } 
+                  /> 
+                }
+              </Col>
+              <Col>
                 { phenotypeData && 
                   <PhenotypeInfo 
                     source={ dataInfo.source }
                     name={ dataInfo.phenotypeInfo.name } 
                     data={ phenotypeData } 
-                  /> 
-                }
-              </Col>
-              <Col>
-                { expressionData && 
-                  <ExpressionInfo 
-                    source={ dataInfo.source }
-                    name={ dataInfo.expressionInfo.name }
-                    data={ expressionData } 
                   /> 
                 }
               </Col>
