@@ -52,7 +52,7 @@ const initialState = {
   tree: null,
 
   // Reaction scores from detailed CellFIE output
-  reactionScores: null,
+  reactionScores: null,  
 
   // Method for handling subgroup overlap
   overlapMethod: "both"
@@ -97,7 +97,7 @@ const parsePhenotypeDataRandomize = (data, n = 32) => {
 const createPhenotypeData = expressionData => {
   if (expressionData.length === 0) return "";
 
-  return expressionData[0].values.reduce((string, current, i) => {
+  return expressionData[0].values.reduce(string => {
     return string + "auto\n";
   }, "Auto\n");
 };
@@ -168,12 +168,31 @@ const getReactionScores = detailScoring => {
     scores.forEach((sample, j) => {
       const offset = j * cols;
 
-      sample[row[offset + idCol]] = row[offset + scoreCol];
+      sample[row[offset + idCol]] = +row[offset + scoreCol];
     });
   });
 
-  return scores[0];
+  return scores;
 };
+
+const setReactionScores = (subgroup, subjects, reactionScores) => {
+  if (!subgroup) return;
+
+  if (subjects.length === 0) {
+    subgroup.reactionScores = null;
+    return;
+  }
+
+  const scores = reactionScores.filter((scores, i) => {
+    return subjects.find(({ index }) => index === i);
+  });
+
+  subgroup.reactionScores = Object.keys(scores[0]).reduce((aggregate, key) => {
+    aggregate[key] = mean(scores, d => d[key]);
+
+    return aggregate;
+  }, {});
+}
 
 const createPhenotypes = phenotypeData => {
   return phenotypeData.columns
@@ -315,7 +334,7 @@ const getSubgroup = (key, subgroups) => key !== null ? subgroups.find(subgroup =
 
 const subgroupContains = (subgroup, index) => subgroup && subgroup.subjects.some(subject => subject.index === index);
 
-const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod) => {
+const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod, reactionScores) => {
   if (!tree) return;
 
   // Get subgroups
@@ -336,6 +355,10 @@ const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod) => {
 
   const subjects1 = getSubjects(subgroup1, subgroup2, "subgroup1");
   const subjects2 = getSubjects(subgroup2, subgroup1, "subgroup2");
+
+  // Set reaction scores for subgroups
+  setReactionScores(subgroup1, subjects1, reactionScores);
+  setReactionScores(subgroup2, subjects2, reactionScores);
 
   tree.each(node => {
     // Check if it is a leaf node (single subject)
@@ -541,7 +564,8 @@ const reducer = (state, action) => {
       const output = combineOutput(action.output.taskInfo, action.output.score, action.output.scoreBinary);
       const hierarchy = createHierarchy(output);
       const tree = createTree(hierarchy);
-      updateTree(tree, state.subgroups, state.selectedSubgroups, state.overlapMethod);
+      const reactionScores = getReactionScores(action.output.detailScoring);
+      updateTree(tree, state.subgroups, state.selectedSubgroups, state.overlapMethod, reactionScores);
 
       return {
         ...state,
@@ -549,7 +573,7 @@ const reducer = (state, action) => {
         output: output,
         hierarchy: hierarchy,
         tree: tree,
-        reactionScores: getReactionScores(action.output.detailScoring)
+        reactionScores: reactionScores
       };
     }   
 
@@ -574,7 +598,7 @@ const reducer = (state, action) => {
         subgroup
       ];
 
-      updateTree(state.tree, subgroups, selectedSubgroups, state.overlapMethod);
+      updateTree(state.tree, subgroups, selectedSubgroups, state.overlapMethod, state.reactionScores);
 
       return {
         ...state,
@@ -601,7 +625,7 @@ const reducer = (state, action) => {
         return reset;
       });
 
-      updateTree(state.tree, subgroups, state.selectedSubgroups, state.overlapMethod);
+      updateTree(state.tree, subgroups, state.selectedSubgroups, state.overlapMethod, state.reactionScores);
 
       return {
         ...state,
@@ -627,7 +651,7 @@ const reducer = (state, action) => {
         selectedSubgroups[1] = null;
       }
 
-      updateTree(state.tree, subgroups, selectedSubgroups, state.overlapMethod);
+      updateTree(state.tree, subgroups, selectedSubgroups, state.overlapMethod, state.reactionScores);
 
       return {
         ...state,
@@ -676,7 +700,7 @@ const reducer = (state, action) => {
         return i === index ? subgroup : sg;
       });
 
-      updateTree(state.tree, subgroups, state.selectedSubgroups, state.overlapMethod);
+      updateTree(state.tree, subgroups, state.selectedSubgroups, state.overlapMethod, state.reactionScores);
 
       return {
         ...state,
@@ -699,7 +723,7 @@ const reducer = (state, action) => {
         return i === index ? subgroup : sg;
       });
 
-      updateTree(state.tree, subgroups, state.selectedSubgroups, state.overlapMethod);
+      updateTree(state.tree, subgroups, state.selectedSubgroups, state.overlapMethod, state.reactionScores);
 
       return {
         ...state,
@@ -735,7 +759,7 @@ const reducer = (state, action) => {
           [subgroup.key, state.selectedSubgroups[1]] :
           [state.selectedSubgroups[0], subgroup.key];
 
-        updateTree(state.tree, state.subgroups, selectedSubgroups, state.overlapMethod);      
+        updateTree(state.tree, state.subgroups, selectedSubgroups, state.overlapMethod, state.reactionScores);      
 
         return {
           ...state,
@@ -745,7 +769,7 @@ const reducer = (state, action) => {
     }
 
     case "setOverlapMethod":       
-      updateTree(state.tree, state.subgroups, state.selectedSubgroups, action.method);
+      updateTree(state.tree, state.subgroups, state.selectedSubgroups, action.method, state.reactionScores);
 
       return {
         ...state,
