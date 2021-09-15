@@ -178,53 +178,58 @@ export const ModelSelection = () => {
   };
 
   const onRunCellfieClick = async () => {
-    if (dataInfo.source === "upload") {
-      taskStatusDispatch({ type: "setStatus", status: "Connecting" });
+    try {
+      if (dataInfo.source === "upload") {
+        taskStatusDispatch({ type: "setStatus", status: "connecting" });
 
-      const n = expressionData.length > 0 ? expressionData[0].values.length : 0;
+        const n = expressionData.length > 0 ? expressionData[0].values.length : 0;
 
-      const id = await api.runCellfie(expressionFile, n, model.value, parameters.reduce((parameters, parameter) => {
-        parameters[parameter.name] = parameter.value;
-        return parameters; 
-      }, { ThreshType: thresholdType.value }));      
+        const id = await api.runCellfie(expressionFile, n, model.value, parameters.reduce((parameters, parameter) => {
+          parameters[parameter.name] = parameter.value;
+          return parameters; 
+        }, { ThreshType: thresholdType.value }));      
 
-      checkStatus();
-      timer.current = setInterval(checkStatus, 5000);    
+        checkStatus();
+        timer.current = setInterval(checkStatus, 5000);    
 
-      async function checkStatus() {
-        const status = await api.checkCellfieStatus(id);
+        async function checkStatus() {
+          const status = await api.checkCellfieStatus(id);
 
-        if (status === "finished") {
-          clearInterval(timer.current);
+          if (status === "finished") {
+            clearInterval(timer.current);
 
-          const output = await api.getCellfieOutput(id);
+            const output = await api.getCellfieOutput(id);
 
-          dataDispatch({ type: "setOutput", output: output });
-          taskStatusDispatch({ type: "setStatus", status: "finished" });
-        }
-        else {
-          taskStatusDispatch({ type: "setStatus", status: status });
+            dataDispatch({ type: "setOutput", output: output });
+            taskStatusDispatch({ type: "setStatus", status: "finished" });
+          }
+          else {
+            taskStatusDispatch({ type: "setStatus", status: status });
+          }
         }
       }
+      else if (dataInfo.source === "practice") {
+        taskStatusDispatch({ type: "setStatus", status: "started" });
+
+        setTimeout(async () => {
+          const taskInfo = await api.loadPracticeData(practiceData.taskInfo);
+          const score = await api.loadPracticeData(practiceData.score);
+          const scoreBinary = await api.loadPracticeData(practiceData.scoreBinary);
+          const detailScoring = await api.loadPracticeData(practiceData.detailScoring);
+
+          dataDispatch({ type: "setOutput", output: {
+            taskInfo: taskInfo,
+            score: score,
+            scoreBinary: scoreBinary,
+            detailScoring: detailScoring
+          }});
+
+          taskStatusDispatch({ type: "setStatus", status: null });
+        }, 1000);
+      }
     }
-    else if (dataInfo.source === "practice") {
-      taskStatusDispatch({ type: "setStatus", status: "started" });
-
-      setTimeout(async () => {
-        const taskInfo = await api.loadPracticeData(practiceData.taskInfo);
-        const score = await api.loadPracticeData(practiceData.score);
-        const scoreBinary = await api.loadPracticeData(practiceData.scoreBinary);
-        const detailScoring = await api.loadPracticeData(practiceData.detailScoring);
-
-        dataDispatch({ type: "setOutput", output: {
-          taskInfo: taskInfo,
-          score: score,
-          scoreBinary: scoreBinary,
-          detailScoring: detailScoring
-        }});
-
-        taskStatusDispatch({ type: "setStatus", status: null });
-      }, 1000);
+    catch (error) {
+      console.log(error);
     }
   };
 

@@ -15,7 +15,6 @@ export const TaskStatus = () => {
     status === "queued" ? "info" :
     "success";
 
-
   const icon = status === "finished" ? <CheckCircle className="text-success ml-1" /> : 
     <Spinner animation="border" size="sm" className="ml-1" variant={ variant } />;
 
