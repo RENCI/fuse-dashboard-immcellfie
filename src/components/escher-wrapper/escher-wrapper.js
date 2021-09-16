@@ -1,14 +1,14 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import Builder from "escher";
 import { json } from "d3-fetch";
 import "./escher-wrapper.css"; 
 
 export const EscherWrapper = ({ map, reactionScores, onLoaded }) => {
   const div = useRef();
-  const builder = useRef();
+  const [builder, setBuilder] = useState(null);
 
   const first_load_callback = escherBuilder => {
-    builder.current = escherBuilder;
+    setBuilder(escherBuilder);
   };
 
   useEffect(() => {
@@ -35,21 +35,21 @@ export const EscherWrapper = ({ map, reactionScores, onLoaded }) => {
 
   useEffect(() => {
     json(map).then(map => { 
-      if (builder.current) {
-        builder.current.load_map(map);
+      if (builder) {
+        builder.load_map(map);
 
         onLoaded();
       }
     }).catch(error => {
       console.log(error);
     });
-  }, [map, onLoaded]);
+  }, [builder, map, onLoaded]);
 
   useEffect(() => {
-    if (builder.current) {
-      builder.current.set_reaction_data(reactionScores);
+    if (builder) {
+      builder.set_reaction_data(reactionScores);
     }
-  }, [reactionScores]);
+  }, [builder, reactionScores]);
 
   return (       
     <div className="wrapperDiv" ref={ div }></div>

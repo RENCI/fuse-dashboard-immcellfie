@@ -21,14 +21,16 @@ export const DownloadView = () => {
   const outputLink = useZipLink([
     { data: rawOutput && rawOutput.taskInfo , fileName: "taskInfo.csv" },
     { data: rawOutput && rawOutput.score, fileName: "score.csv" },
-    { data: rawOutput && rawOutput.scoreBinary, fileName: "score_binary.csv" }
+    { data: rawOutput && rawOutput.scoreBinary, fileName: "score_binary.csv" },
+    { data: rawOutput && rawOutput.detailScoring, fileName: "detailScoring.csv" }
   ]);
   const allLink = useZipLink([
     { data: rawPhenotypeData, fileName: "phenotypes.csv" },
     { data: rawExpressionData, fileName: "expression.csv" },
     { data: rawOutput && rawOutput.taskInfo , fileName: "taskInfo.csv" },
     { data: rawOutput && rawOutput.score, fileName: "score.csv" },
-    { data: rawOutput && rawOutput.scoreBinary, fileName: "score_binary.csv" }
+    { data: rawOutput && rawOutput.scoreBinary, fileName: "score_binary.csv" },
+    { data: rawOutput && rawOutput.detailScoring, fileName: "detailScoring.csv" }
   ]);
 /*
   useEffect(() => {
