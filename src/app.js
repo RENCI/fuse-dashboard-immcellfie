@@ -1,18 +1,16 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route, NavLink } from "react-router-dom";
-import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
-import { PersonCircle } from "react-bootstrap-icons";
+import { Container, Navbar, Nav } from "react-bootstrap";
 import { 
   Home, 
   SubgroupView,
   InputView, 
   OutputView, 
-  DownloadView,
-  AdminView, 
-  UserView 
+  DownloadView
 } from "./views";
 import { UserProvider, DataProvider, TaskStatusProvider } from "./contexts";
 import { TaskStatus } from "./components/task-status";
+import { EmailNav } from "./components/email-nav";
 
 export const App = () => { 
   return (
@@ -27,9 +25,9 @@ export const App = () => {
                 src="/txlogo-cropped-alpha-2.png" 
                 alt="translational science logo"
                 height="25px"
-                className="mr-2"              
+                className="mr-2 align-text-top"              
               />
-              <span className="align-middle">ImmCellFIE Dashboard</span>
+              <span className="align-text-bottom">ImmCellFIE Dashboard</span>
             </Navbar.Brand>
             <Navbar.Toggle />
             <Navbar.Collapse>
@@ -40,12 +38,13 @@ export const App = () => {
                 <Nav.Link as={ NavLink } to="/expression-data">Expression data</Nav.Link>
                 <Nav.Link as={ NavLink } to="/downloads">Downloads</Nav.Link>
               </Nav>
-            </Navbar.Collapse>  
+              <EmailNav />
+            </Navbar.Collapse>
           </Navbar>
           <Switch>
             <Route exact path="/"><Home /></Route>
             <Route exact path="/cellfie"><OutputView /></Route>
-            <Route exact path="/subgroups"><SubgroupView /></Route>
+            <Route exact path="/subgroups"><SubgroupView /></Route>s
             <Route exact path="/expression-data"><InputView /></Route>
             <Route exact path="/downloads"><DownloadView /></Route>
           </Switch>

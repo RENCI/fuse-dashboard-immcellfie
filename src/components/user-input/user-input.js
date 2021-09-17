@@ -2,29 +2,37 @@ import React, { useContext, useEffect, useState } from "react";
 import { Card, Form, InputGroup, Button } from "react-bootstrap";
 import { UserContext } from "../../contexts";
 
-const { Header, Body, Footer } = Card;
-const { Group, Control } = Form;
+const { Header, Body } = Card;
+const { Group, Control, Text } = Form;
 
 export const UserInput = () => {
   const [{ email }, dispatch  ] = useContext(UserContext);
-  const [emailEdit, setEmailEdit] = useState("");
+  const [emailValue, setEmailValue] = useState("");
+  const [emailValid, setEmailValid] = useState(false);
+
+  const validateEmail = email => {
+    const regex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;      
+
+    return regex.test(email);
+  };
 
   useEffect(() => {
-    setEmailEdit(email);
+    setEmailValue(email);
   }, [email]);
 
   const onSubmitClick = () => {
     // XXX: Retrieve tasks
 
-    dispatch({ type: "setEmail", email: emailEdit });
+    dispatch({ type: "setEmail", email: emailValue });
   };
 
   const onEmailChange = evt => {
-    setEmailEdit(evt.target.value);
+    setEmailValue(evt.target.value);
+    setEmailValid(validateEmail(evt.target.value));
   };
 
   const onEmailKeyPress = evt => {
-    if (evt.key === "Enter") {
+    if (emailValid && evt.key === "Enter") {
       onSubmitClick();
     }
   };
@@ -35,13 +43,13 @@ export const UserInput = () => {
         User Input
       </Header>
       <Body>
-        <h6>Email address</h6>
+        <h6>Email address to associate with CellFIE runs</h6>
         <Group>  
           <InputGroup>
             <InputGroup.Prepend>
               <Button 
                 variant="primary"
-                disabled={ !emailEdit }
+                disabled={ !emailValid }
                 onClick={ onSubmitClick }>
                 Submit
               </Button>
@@ -49,11 +57,16 @@ export const UserInput = () => {
             <Control 
               type="email"
               placeholder="Enter email"
-              value={ emailEdit }
+              value={ emailValue }
               onChange={ onEmailChange } 
               onKeyPress={ onEmailKeyPress }
             />
           </InputGroup>
+            { !emailValid && 
+              <Text className="text-muted">
+                Please enter a valid email address
+              </Text>
+            }
         </Group>  
       </Body>
     </Card>

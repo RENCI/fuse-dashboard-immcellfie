@@ -20,7 +20,9 @@ export const OutputView = () => {
         <Row>
           <Col xs={ 12 } xl={ 4 }>
             <ModelSelection />         
-            <SubgroupSelection />         
+            <div className="mt-4">
+              <SubgroupSelection />  
+            </div>       
           </Col>            
           <Col xs={ 12 } xl={ 8 }>
             <CellfieOutput /> 

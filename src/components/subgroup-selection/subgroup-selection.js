@@ -61,7 +61,7 @@ export const SubgroupSelection = () => {
   const subgroup2Contained = subgroup2 && subgroup2.subjects.length === overlap;
 
   return (
-    <Card className="mt-4">
+    <Card>
       <Header as="h5">
         <Row>
           <Col>
