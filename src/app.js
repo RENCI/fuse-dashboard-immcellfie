@@ -40,16 +40,7 @@ export const App = () => {
                 <Nav.Link as={ NavLink } to="/expression-data">Expression data</Nav.Link>
                 <Nav.Link as={ NavLink } to="/downloads">Downloads</Nav.Link>
               </Nav>
-            </Navbar.Collapse>
-            <Navbar.Collapse className="justify-content-end">
-              <Nav>
-                <NavDropdown title={ <PersonCircle /> } alignRight>
-                  <NavDropdown.Item as={ NavLink } to="/admin">Administration</NavDropdown.Item>
-                  <NavDropdown.Divider />
-                  <NavDropdown.Item as={ NavLink } to="/user">User profile</NavDropdown.Item>
-                </NavDropdown> 
-              </Nav>
-            </Navbar.Collapse>
+            </Navbar.Collapse>  
           </Navbar>
           <Switch>
             <Route exact path="/"><Home /></Route>
@@ -57,8 +48,6 @@ export const App = () => {
             <Route exact path="/subgroups"><SubgroupView /></Route>
             <Route exact path="/expression-data"><InputView /></Route>
             <Route exact path="/downloads"><DownloadView /></Route>
-            <Route exact path="/admin"><AdminView /></Route>
-            <Route exact path="/user"><UserView /></Route>
           </Switch>
         </Container>
       </Router>
