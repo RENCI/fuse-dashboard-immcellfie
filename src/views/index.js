@@ -1,6 +1,6 @@
 export * from "./home";
 export * from "./subgroup-view";
-export * from "./input-view";
+export * from "./expression-view";
 export * from "./output-view";
 export * from "./download-view";
 export * from "./admin-view";

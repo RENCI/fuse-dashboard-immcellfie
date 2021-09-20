@@ -11,6 +11,7 @@ export const UserInput = () => {
   const [emailValid, setEmailValid] = useState(false);
 
   const validateEmail = email => {
+    // Taken from: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/email#validation
     const regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;      
 
     return regex.test(email);
