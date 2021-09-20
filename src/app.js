@@ -3,9 +3,10 @@ import { BrowserRouter as Router, Switch, Route, NavLink } from "react-router-do
 import { Container, Navbar, Nav } from "react-bootstrap";
 import { 
   Home, 
-  SubgroupView,
   InputView, 
+  SubgroupView,
   OutputView, 
+  ExpressionView,
   DownloadView
 } from "./views";
 import { UserProvider, DataProvider, TaskStatusProvider } from "./contexts";
@@ -33,6 +34,7 @@ export const App = () => {
             <Navbar.Collapse>
               <Nav>
                 <Nav.Link as={ NavLink } exact to="/">Home</Nav.Link>
+                <Nav.Link as={ NavLink } to="/input">Input</Nav.Link>
                 <Nav.Link as={ NavLink } to="/cellfie">CellFIE</Nav.Link>
                 <Nav.Link as={ NavLink } to="/subgroups">Subgroups</Nav.Link>
                 <Nav.Link as={ NavLink } to="/expression-data">Expression data</Nav.Link>
@@ -43,9 +45,10 @@ export const App = () => {
           </Navbar>
           <Switch>
             <Route exact path="/"><Home /></Route>
+            <Route exact path="/input"><InputView /></Route>
             <Route exact path="/cellfie"><OutputView /></Route>
             <Route exact path="/subgroups"><SubgroupView /></Route>s
-            <Route exact path="/expression-data"><InputView /></Route>
+            <Route exact path="/expression-data"><ExpressionView /></Route>
             <Route exact path="/downloads"><DownloadView /></Route>
           </Switch>
         </Container>

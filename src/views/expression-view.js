@@ -13,7 +13,7 @@ import { sequential } from "../colors";
 const { Header, Body } = Card;
 const { Group, Label, Control, Row } = Form;
 
-export const InputView = () => {
+export const ExpressionView = () => {
   const [{ phenotypeData, expressionData, groups }] = useContext(DataContext);  
   const [sortBy, setSortBy] = useState("median");
   const [color, setColor] = useState(sequential[0]);

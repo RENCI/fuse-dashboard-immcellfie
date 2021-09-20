@@ -133,5 +133,10 @@ export const api = {
       scoreBinary: results[2],
       detailScoring: results[3]
     };
+  },
+  getTasks: async email => {
+    // XXX: Stub
+    return [];
+    //return [0, 0];
   }
 }

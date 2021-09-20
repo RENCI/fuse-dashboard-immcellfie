@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Card, Form, InputGroup, Alert, Row, Col } from "react-bootstrap";
-import { SpinnerButton } from "../spinner-button";
 import { DataContext } from "../../contexts";
+import { SpinnerButton } from "../spinner-button";
 import { FileSelect } from "../file-select";
 import { PhenotypeInfo } from "../phenotype-info";
 import { ExpressionInfo } from "../expression-info";
