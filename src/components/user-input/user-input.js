@@ -1,14 +1,16 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { Card, Form, InputGroup, Button, Row, Col } from "react-bootstrap";
-import { UserContext } from "../../contexts";
+import { UserContext, DataContext } from "../../contexts";
 import { CellfieLink, InputLink } from "../page-links";
 import { api } from "../../api";
+import { practiceData } from "../../datasets";
 
 const { Header, Body, Footer } = Card;
 const { Group, Control, Text } = Form;
 
 export const UserInput = () => {
-  const [{ email, tasks }, dispatch  ] = useContext(UserContext);
+  const [, dataDispatch  ] = useContext(DataContext);
+  const [{ email, tasks }, userDispatch  ] = useContext(UserContext);
   const [emailValue, setEmailValue] = useState("");
   const [emailValid, setEmailValid] = useState(false);
   const buttonRef = useRef();
@@ -38,12 +40,32 @@ export const UserInput = () => {
   const onSubmit = async evt => {
     evt.preventDefault();
 
-    dispatch({ type: "setEmail", email: emailValue });
+    dataDispatch({ type: "clearData" });
+
+    userDispatch({ type: "setEmail", email: emailValue });
 
     try {
       const tasks = await api.getTasks(emailValue);
 
-      dispatch({ type: "setTasks", tasks: tasks });
+      userDispatch({ type: "setTasks", tasks: tasks });
+
+      // XXX: Load practice data for now if there are tasks
+      if (tasks.length > 0) {
+        const phenotypes = await api.loadPracticeData(practiceData.phenotypes);
+        const taskInfo = await api.loadPracticeData(practiceData.taskInfo);
+        const score = await api.loadPracticeData(practiceData.score);
+        const scoreBinary = await api.loadPracticeData(practiceData.scoreBinary);
+        const detailScoring = await api.loadPracticeData(practiceData.detailScoring);
+
+        dataDispatch({ type: "setDataInfo", source: "practice" });
+        dataDispatch({ type: "setPhenotypes", data: phenotypes });
+        dataDispatch({ type: "setOutput", output: {
+          taskInfo: taskInfo,
+          score: score,
+          scoreBinary: scoreBinary,
+          detailScoring: detailScoring
+        }});
+      }
     }
     catch (error) {
       console.log(error);

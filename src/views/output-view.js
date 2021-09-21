@@ -4,6 +4,7 @@ import { DataContext } from "../contexts";
 import { ViewWrapper } from "../components/view-wrapper";
 import { ModelSelection } from "../components/model-selection";
 import { SubgroupSelection } from "../components/subgroup-selection";
+import { TaskSelection } from "../components/task-selection";
 import { CellfieOutput } from "../components/cellfie-output";
 import { DataMissing } from "../components/data-missing";
 
@@ -22,7 +23,10 @@ export const OutputView = () => {
             <ModelSelection />         
             <div className="mt-4">
               <SubgroupSelection />  
-            </div>       
+            </div>               
+            <div className="mt-4">
+              <TaskSelection />  
+            </div>   
           </Col>            
           <Col xs={ 12 } xl={ 8 }>
             <CellfieOutput /> 
