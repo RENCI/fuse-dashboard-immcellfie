@@ -48,6 +48,7 @@ export const UserInput = () => {
       const tasks = await api.getTasks(emailValue);
 
       userDispatch({ type: "setTasks", tasks: tasks });
+      if (tasks.length > 0) userDispatch({ type: "setActiveTask", task: tasks[0] });
 
       // XXX: Load practice data for now if there are tasks
       if (tasks.length > 0) {

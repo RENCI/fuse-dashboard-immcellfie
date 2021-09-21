@@ -137,6 +137,6 @@ export const api = {
   getTasks: async email => {
     // XXX: Stub
     //return [];
-    return [0, 0];
+    return Array.from({ length: 5 }, () => ({}));
   }
 }

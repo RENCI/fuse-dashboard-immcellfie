@@ -11,13 +11,24 @@ const reducer = (state, action) => {
       return {
         ...state,
         email: action.email
-      }
+      };
 
     case "setTasks":
       return {
         ...state,
         tasks: action.tasks
-      }
+      };
+
+    case "setActiveTask": {
+      const tasks = [...state.tasks];
+
+      tasks.forEach(task => task.active = task === action.task);
+
+      return {
+        ...state,
+        tasks: tasks
+      };
+    }
 
     default: 
       throw new Error("Invalid user context action: " + action.type);
