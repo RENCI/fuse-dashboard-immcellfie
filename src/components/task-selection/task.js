@@ -1,5 +1,5 @@
 import React from "react";
-import { ListGroup, Spinner } from "react-bootstrap";
+import { ListGroup, Row, Col, Spinner } from "react-bootstrap";
 import { CheckCircle, XCircle } from "react-bootstrap-icons";
 
 const { Item } = ListGroup;
@@ -21,9 +21,10 @@ export const Task = ({ task, onClick }) => {
       disabled={ task.status !== "finished" }
       onClick= { () => onClick(task) }
     >
-      <div className="d-flex align-items-center">        
-        { task.id }{ icon }
-      </div>
+      <Row className="d-flex align-items-center">        
+        <Col>{ task.id }</Col>
+        <Col xs="auto">{ icon }</Col>
+      </Row>
     </Item>
   );
 };
