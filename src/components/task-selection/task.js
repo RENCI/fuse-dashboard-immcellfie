@@ -1,9 +1,18 @@
 import React from "react";
-import { ListGroup } from "react-bootstrap";
+import { ListGroup, Spinner } from "react-bootstrap";
+import { CheckCircle, XCircle } from "react-bootstrap-icons";
 
 const { Item } = ListGroup;
 
 export const Task = ({ task, onClick }) => {
+  const variant = task.status === "connecting" ? "primary" :
+    task.status === "queued" ? "info" :
+    "success";
+
+  const icon = task.status === "finished" ? <CheckCircle className="text-success ml-1" /> :
+    task.status === "failed" ? <XCircle className="text-danger ml-1" /> :
+    <Spinner animation="border" size="sm" className="ml-1" variant={ variant } />;
+
   return (
     <Item  
       key={ task.id }
@@ -12,7 +21,9 @@ export const Task = ({ task, onClick }) => {
       disabled={ task.status !== "finished" }
       onClick= { () => onClick(task) }
     >
-      I'm a task!
+      <div className="d-flex align-items-center">        
+        { task.id }{ icon }
+      </div>
     </Item>
   );
 };
