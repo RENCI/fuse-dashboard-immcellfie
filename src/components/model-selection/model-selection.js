@@ -2,8 +2,7 @@ import React, { useState, useReducer, useContext, useEffect, useRef } from "reac
 import { Row, Col, Card, Form, Button, ButtonGroup, InputGroup } from "react-bootstrap";
 import { ArrowCounterclockwise, XLg } from "react-bootstrap-icons";
 import { SpinnerButton } from "../spinner-button";
-import { DataContext } from "../../contexts";
-import { TaskStatusContext } from "../../contexts";
+import { UserContext, DataContext, TaskStatusContext } from "../../contexts";
 import { api } from "../../api";
 import { practiceData } from "../../datasets";
 
@@ -106,6 +105,7 @@ const initialParameters = [
 ];
 
 export const ModelSelection = () => {
+  const [{ email }, userDispatch] = useContext(UserContext);
   const [{ dataInfo, expressionData, expressionFile }, dataDispatch] = useContext(DataContext);
   const [{ status }, taskStatusDispatch] = useContext(TaskStatusContext);
   const timer = useRef();
@@ -184,11 +184,14 @@ export const ModelSelection = () => {
 
         const n = expressionData.length > 0 ? expressionData[0].values.length : 0;
 
-        const id = await api.runCellfie(expressionFile, n, model.value, parameters.reduce((parameters, parameter) => {
+        const id = await api.runCellfie(email, expressionFile, n, model.value, parameters.reduce((parameters, parameter) => {
           parameters[parameter.name] = parameter.value;
           return parameters; 
         }, { ThreshType: thresholdType.value }));      
 
+        console.log(id);
+
+/*        
         checkStatus();
         timer.current = setInterval(checkStatus, 5000);    
 
@@ -202,11 +205,17 @@ export const ModelSelection = () => {
 
             dataDispatch({ type: "setOutput", output: output });
             taskStatusDispatch({ type: "setStatus", status: "finished" });
+
+            const tasks = await api.getTasks(email);
+
+            userDispatch({ type: "setTasks", tasks: tasks });
+            userDispatch({ type: "setActiveTask", id: id });
           }
           else {
             taskStatusDispatch({ type: "setStatus", status: status });
           }
         }
+*/        
       }
       else if (dataInfo.source === "practice") {
         taskStatusDispatch({ type: "setStatus", status: "started" });

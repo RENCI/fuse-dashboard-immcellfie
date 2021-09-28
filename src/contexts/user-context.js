@@ -21,8 +21,19 @@ const reducer = (state, action) => {
 
     case "setActiveTask": {
       const tasks = [...state.tasks];
+      tasks.forEach(task => task.active = task.id === action.id);
 
-      tasks.forEach(task => task.active = task === action.task);
+      return {
+        ...state,
+        tasks: tasks
+      };
+    }
+
+    case "setStatus": {
+      const tasks = [...state.tasks];
+      const task = state.tasks.find(({ id }) => id === action.id);
+
+      if (task) task.status = action.status;
 
       return {
         ...state,

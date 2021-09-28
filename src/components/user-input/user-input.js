@@ -45,27 +45,32 @@ export const UserInput = () => {
     userDispatch({ type: "setEmail", email: emailValue });
 
     try {
-      const tasks = await api.getTasks(emailValue);
+      const tasks = await api.getCellfieTasks(emailValue);
 
       userDispatch({ type: "setTasks", tasks: tasks });
-      if (tasks.length > 0) userDispatch({ type: "setActiveTask", task: tasks[0] });
 
-      // XXX: Load practice data for now if there are tasks
-      if (tasks.length > 0) {
-        const phenotypes = await api.loadPracticeData(practiceData.phenotypes);
-        const taskInfo = await api.loadPracticeData(practiceData.taskInfo);
-        const score = await api.loadPracticeData(practiceData.score);
-        const scoreBinary = await api.loadPracticeData(practiceData.scoreBinary);
-        const detailScoring = await api.loadPracticeData(practiceData.detailScoring);
+      let hasActive = false;
 
-        dataDispatch({ type: "setDataInfo", source: "practice" });
-        dataDispatch({ type: "setPhenotypes", data: phenotypes });
-        dataDispatch({ type: "setOutput", output: {
-          taskInfo: taskInfo,
-          score: score,
-          scoreBinary: scoreBinary,
-          detailScoring: detailScoring
-        }});
+      for (const task of tasks) {
+        const status = await api.checkCellfieStatus(task.id);
+  
+        userDispatch({ type: "setStatus", id: task.id, status: status });
+
+        if (!hasActive && status === "finished") {        
+          // XXX: Load practice input data for now
+          const phenotypes = await api.loadPracticeData(practiceData.phenotypes);
+
+          dataDispatch({ type: "setDataInfo", source: "practice" });
+          dataDispatch({ type: "setPhenotypes", data: phenotypes });
+
+          const output = await api.getCellfieOutput(task.id);
+
+          dataDispatch({ type: "setOutput", output: output });
+          //taskStatusDispatch({ type: "setStatus", status: "finished" });
+
+          userDispatch({ type: "setActiveTask", id: task.id });
+          hasActive = true;
+        }
       }
     }
     catch (error) {

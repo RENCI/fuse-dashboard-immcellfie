@@ -97,7 +97,7 @@ export const api = {
 
     return data;
   },
-  runCellfie: async (file, sampleNumber, model, parameters) => {    
+  runCellfie: async (email, file, sampleNumber, model, parameters) => {    
     // Set data and parameters as form data
     const formData = new FormData();
     formData.append("data", file);
@@ -109,7 +109,10 @@ export const api = {
     const result = await axios.post(
       `${ process.env.REACT_APP_API_ROOT }cellfie/run/upload_data`, 
       formData,
-      { headers: { "Content-Type": "multipart/form-data" } }
+      { 
+        headers: { "Content-Type": "multipart/form-data" },
+        params: { "email": email }
+      }
     );
 
     return result.data.task_id;    
@@ -134,9 +137,17 @@ export const api = {
       detailScoring: results[3]
     };
   },
-  getTasks: async email => {
-    // XXX: Stub
-    //return [];
-    return Array.from({ length: 5 }, () => ({}));
+  getCellfieTasks: async email => {
+    const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/get_task_ids/${ email }`);
+
+    const tasks = result.data.map(({ task_id }) => ({ id: task_id }));
+
+    for (const task of tasks) {
+      const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/get_run_parameters/${ task.id }`);
+
+      task.parameters = result.data;
+    }
+
+    return tasks;
   }
 }
