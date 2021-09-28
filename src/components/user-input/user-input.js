@@ -57,6 +57,9 @@ export const UserInput = () => {
         userDispatch({ type: "setStatus", id: task.id, status: status });
 
         if (!hasActive && status === "finished") {        
+          userDispatch({ type: "setActiveTask", id: task.id });
+          hasActive = true;
+
           // XXX: Load practice input data for now
           const phenotypes = await api.loadPracticeData(practiceData.phenotypes);
 
@@ -66,10 +69,6 @@ export const UserInput = () => {
           const output = await api.getCellfieOutput(task.id);
 
           dataDispatch({ type: "setOutput", output: output });
-          //taskStatusDispatch({ type: "setStatus", status: "finished" });
-
-          userDispatch({ type: "setActiveTask", id: task.id });
-          hasActive = true;
         }
       }
     }
