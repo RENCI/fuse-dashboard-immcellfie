@@ -19,6 +19,17 @@ const reducer = (state, action) => {
         tasks: action.tasks
       };
 
+    case "addTask": {
+      const tasks = [...state.tasks];
+      tasks.push({ id: action.id })
+
+      return {
+        ...state,
+        tasks: tasks
+      };
+    }
+
+
     case "setActiveTask": {
       const tasks = [...state.tasks];
       tasks.forEach(task => task.active = task.id === action.id);

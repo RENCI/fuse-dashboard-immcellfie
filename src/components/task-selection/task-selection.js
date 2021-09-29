@@ -35,7 +35,7 @@ export const TaskSelection = () => {
   };
 
   const taskDisplays = tasks.length === 0 ? 
-    <span>No current CellFIE tasks found for <b>{ email }</b></span> :
+    <Item><span>No current CellFIE tasks found for <b>{ email }</b></span></Item> :
     tasks.sort((a, b) => sortOrder[b.status] - sortOrder[a.status])
       .map(task => <Task task={ task } onClick={ onTaskClick } />);
 

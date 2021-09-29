@@ -187,9 +187,11 @@ export const ModelSelection = () => {
         const id = await api.runCellfie(email, expressionFile, n, model.value, parameters.reduce((parameters, parameter) => {
           parameters[parameter.name] = parameter.value;
           return parameters; 
-        }, { ThreshType: thresholdType.value }));      
+        }, { ThreshType: thresholdType.value }));     
 
-        console.log(id);
+        userDispatch({ type: "addTask", id: id });
+        userDispatch({ type: "setActiveTask", id: id });
+
 
 /*        
         checkStatus();
