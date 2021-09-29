@@ -1,5 +1,5 @@
 # fuse-dashboard-immcellfie
-Dashboard for ImmCellFIE project
+Dashboard for FUSE ImmCellFIE project.
 
 Visit the main repo for FUSE ImmCellFIE [here](https://github.com/RENCI/fuse-immcellfie).
 
