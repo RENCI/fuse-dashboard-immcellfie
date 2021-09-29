@@ -1,6 +1,6 @@
 import React from "react";
 import { ListGroup, Row, Col, Spinner } from "react-bootstrap";
-import { CheckCircle, XCircle } from "react-bootstrap-icons";
+import { ArrowRight, CheckCircle, XCircle } from "react-bootstrap-icons";
 
 const { Item } = ListGroup;
 
@@ -16,12 +16,12 @@ export const Task = ({ task, onClick }) => {
   return (
     <Item  
       key={ task.id }
-      variant={ task.active ? "primary" : null }
       action
       disabled={ task.status !== "finished" }
       onClick= { () => onClick(task) }
     >
-      <Row className="d-flex align-items-center">        
+      <Row className="d-flex align-items-center">
+        <Col xs="auto" style={{ visibility: !task.active ? "hidden" : null }}><ArrowRight /></Col>        
         <Col>{ task.id }</Col>
         <Col xs="auto">{ icon }</Col>
       </Row>

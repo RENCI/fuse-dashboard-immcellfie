@@ -6,6 +6,15 @@ import { api } from "../../api";
 import { practiceData } from "../../datasets";
 
 const { Header, Body } = Card;
+const { Item } = ListGroup;
+
+const sortOrder = {
+  failed: 0,
+  connecting: 1,
+  queued: 2,
+  started: 3,
+  finished: 4
+};
 
 export const TaskSelection = () => {
   const [, dataDispatch  ] = useContext(DataContext);
@@ -25,10 +34,10 @@ export const TaskSelection = () => {
     dataDispatch({ type: "setOutput", output: output });
   };
 
-  const taskDisplays = tasks.length === 0 ? <div>No current CellFIE tasks found for <b>{ email }</b></div> :
-    <ListGroup>
-      { tasks.map(task => <Task task={ task } onClick={ onTaskClick } />) }
-    </ListGroup>
+  const taskDisplays = tasks.length === 0 ? 
+    <span>No current CellFIE tasks found for <b>{ email }</b></span> :
+    tasks.sort((a, b) => sortOrder[b.status] - sortOrder[a.status])
+      .map(task => <Task task={ task } onClick={ onTaskClick } />);
 
   return (
     <Card>
@@ -36,7 +45,9 @@ export const TaskSelection = () => {
         Select CellFIE Task
       </Header>
       <Body>
-        { taskDisplays }
+        <ListGroup variant="flush">
+          { taskDisplays }
+        </ListGroup>
       </Body>
     </Card>
   );
