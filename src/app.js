@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route, NavLink } from "react-router-dom";
 import { Container, Navbar, Nav } from "react-bootstrap";
+import { QuestionCircle } from "react-bootstrap-icons";
 import { 
   Home, 
   InputView, 
@@ -41,6 +42,17 @@ export const App = () => {
                 <Nav.Link as={ NavLink } to="/downloads">Downloads</Nav.Link>
               </Nav>
               <EmailNav />
+            </Navbar.Collapse>
+            <Navbar.Collapse className="justify-content-end">
+              <Nav>
+                <Nav.Link 
+                  href="https://github.com/RENCI/fuse-dashboard-immcellfie/wiki" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  <QuestionCircle className="text-info" />
+                </Nav.Link>
+              </Nav>
             </Navbar.Collapse>
           </Navbar>
           <Switch>
