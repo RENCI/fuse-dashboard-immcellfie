@@ -10,10 +10,10 @@ const { Item } = ListGroup;
 
 const sortOrder = {
   failed: 0,
-  connecting: 1,
-  queued: 2,
-  started: 3,
-  finished: 4
+  finished: 1,
+  started: 2,
+  queued: 3,
+  connecting: 4
 };
 
 export const TaskSelection = () => {
