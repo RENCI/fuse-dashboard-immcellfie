@@ -1,9 +1,46 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
-import { Toast, Spinner } from "react-bootstrap";
-import { CheckCircle } from "react-bootstrap-icons";
-import { TaskStatusContext } from "../../contexts";
-import "./task-status.css";
+import React, { useContext } from "react";
+import { Badge } from "react-bootstrap";
+import { DataContext, UserContext } from "../../contexts";
+import { TaskStatusIcon } from "../task-status-icon";
 
+// XXX: Should move this to colors.js and use in task-status-icon
+const statusColor = {
+  connecting: "primary",
+  queued: "info",
+  started: "success"
+};
+
+export const TaskStatus = () => {
+  const [, dataDispatch  ] = useContext(DataContext);
+  const [{ tasks }, userDispatch  ] = useContext(UserContext);
+
+  const taskCounts = tasks.filter(({ status }) => {
+    return status === "connecting" || status === "queued" || status === "started";
+  }).reduce((taskCounts, task) => {
+    if (!taskCounts[task.status]) taskCounts[task.status] = 0;
+
+    taskCounts[task.status] ++;
+
+    return taskCounts;
+  }, {});
+
+  return (
+    <div>
+      { Object.entries(taskCounts).map(entry => {
+        const [status, count] = entry;
+
+        return (
+          <span key={ status } className="mr-2">
+            <TaskStatusIcon task={{ status: status } } />
+            <Badge className={ "text-" + statusColor[status] }>{ count }</Badge>
+          </span>
+        );
+      })}
+    </div>
+  );
+};
+
+/*
 export const TaskStatus = () => {
   const [{ status }] = useContext(TaskStatusContext);
   const [time, setTime] = useState(null);
@@ -60,3 +97,4 @@ export const TaskStatus = () => {
     </div>
   );
 };           
+*/

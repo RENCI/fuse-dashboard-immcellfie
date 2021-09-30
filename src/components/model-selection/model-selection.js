@@ -1,8 +1,8 @@
-import React, { useState, useReducer, useContext, useEffect, useRef } from "react";
+import React, { useState, useReducer, useContext, useRef } from "react";
 import { Row, Col, Card, Form, Button, ButtonGroup, InputGroup } from "react-bootstrap";
 import { ArrowCounterclockwise, XLg } from "react-bootstrap-icons";
 import { SpinnerButton } from "../spinner-button";
-import { UserContext, DataContext, TaskStatusContext } from "../../contexts";
+import { UserContext, DataContext } from "../../contexts";
 import { api } from "../../api";
 import { practiceData } from "../../datasets";
 
@@ -105,9 +105,8 @@ const initialParameters = [
 ];
 
 export const ModelSelection = () => {
-  const [{ email }, userDispatch] = useContext(UserContext);
+  const [{ email, tasks }, userDispatch] = useContext(UserContext);
   const [{ dataInfo, expressionData, expressionFile }, dataDispatch] = useContext(DataContext);
-  const [{ status }, taskStatusDispatch] = useContext(TaskStatusContext);
   const timer = useRef();
   const [organism, setOrganism] = useState("human");
   const [currentModels, setCurrentModels] = useState(models.filter(({ organism }) => organism === "human"));
@@ -140,17 +139,14 @@ export const ModelSelection = () => {
     }
   }, initialParameters);
 
+  const activeTask = tasks.find(({ active }) => active);
+  const running = activeTask && activeTask.status !== "finished" && activeTask.status !== "failed";
+
   const organisms = models.reduce((organisms, model) => {
     if (!organisms.includes(model.organism)) organisms.push(model.organism);
 
     return organisms;
   }, []);
-
-  useEffect(() => {
-    if (status === "finished") {
-      taskStatusDispatch({ type: "setStatus", status: null });
-    }
-  }, [status, taskStatusDispatch]);
 
   const onOrganismChange = evt => {
     const value = evt.target.value;
@@ -180,8 +176,6 @@ export const ModelSelection = () => {
   const onRunCellfieClick = async () => {
     try {
       if (dataInfo.source === "upload") {
-        taskStatusDispatch({ type: "setStatus", status: "connecting" });
-
         const n = expressionData.length > 0 ? expressionData[0].values.length : 0;
 
         const id = await api.runCellfie(email, expressionFile, n, model.value, parameters.reduce((parameters, parameter) => {
@@ -190,10 +184,9 @@ export const ModelSelection = () => {
         }, { ThreshType: thresholdType.value }));     
 
         userDispatch({ type: "addTask", id: id });
+        userDispatch({ type: "setStatus", id: id, status: "connecting" });
         userDispatch({ type: "setActiveTask", id: id });
-
-
-/*        
+      
         checkStatus();
         timer.current = setInterval(checkStatus, 5000);    
 
@@ -201,26 +194,25 @@ export const ModelSelection = () => {
           const status = await api.checkCellfieStatus(id);
 
           if (status === "finished") {
-            clearInterval(timer.current);
+            clearInterval(timer.current);            
+
+            userDispatch({ type: "setStatus", id: id, status: status });
 
             const output = await api.getCellfieOutput(id);
 
             dataDispatch({ type: "setOutput", output: output });
-            taskStatusDispatch({ type: "setStatus", status: "finished" });
-
-            const tasks = await api.getTasks(email);
-
-            userDispatch({ type: "setTasks", tasks: tasks });
-            userDispatch({ type: "setActiveTask", id: id });
           }
           else {
-            taskStatusDispatch({ type: "setStatus", status: status });
+            userDispatch({ type: "setStatus", id: id, status: status });
           }
-        }
-*/        
+        }        
       }
       else if (dataInfo.source === "practice") {
-        taskStatusDispatch({ type: "setStatus", status: "started" });
+        const id = "practice";
+
+        userDispatch({ type: "addTask", id: id });
+        userDispatch({ type: "setStatus", id: id, status: "connecting" });
+        userDispatch({ type: "setActiveTask", id: id });
 
         setTimeout(async () => {
           const taskInfo = await api.loadPracticeData(practiceData.taskInfo);
@@ -235,7 +227,7 @@ export const ModelSelection = () => {
             detailScoring: detailScoring
           }});
 
-          taskStatusDispatch({ type: "setStatus", status: null });
+          userDispatch({ type: "setStatus", id: id, status: "finished" });
         }, 1000);
       }
     }
@@ -246,8 +238,6 @@ export const ModelSelection = () => {
 
   const onCancelCellfieClick = () => {
     clearInterval(timer.current);
-
-    taskStatusDispatch({ type: "setStatus", status: null });
   }
 
   const currentParameters = parameters.filter(({ type, name }) => {
@@ -368,13 +358,12 @@ export const ModelSelection = () => {
             <ButtonGroup style={{ width: "100%" }}>
               <SpinnerButton 
                 block
-                disabled={ status !== null }
-                spin={ status !== null }
+                spin={ running }
                 onClick={ onRunCellfieClick }
               >
                 Run CellFIE
               </SpinnerButton> 
-              { status !== null &&
+              { running &&
                 <Button 
                   variant="danger"
                   onClick={ onCancelCellfieClick }
