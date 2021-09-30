@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { Card, Form, InputGroup, Button, Row, Col } from "react-bootstrap";
 import { UserContext, DataContext } from "../../contexts";
+import { LoadingSpinner } from "../loading-spinner";
 import { CellfieLink, InputLink } from "../page-links";
 import { api } from "../../api";
 import { practiceData } from "../../datasets";
@@ -13,6 +14,7 @@ export const UserInput = () => {
   const [{ email, tasks }, userDispatch  ] = useContext(UserContext);
   const [emailValue, setEmailValue] = useState("");
   const [emailValid, setEmailValid] = useState(false);
+  const [loading, setLoading] = useState(false);
   const buttonRef = useRef();
 
   const validateEmail = email => {
@@ -39,6 +41,8 @@ export const UserInput = () => {
 
   const onSubmit = async evt => {
     evt.preventDefault();
+
+    setLoading(true);
 
     dataDispatch({ type: "clearData" });
 
@@ -71,6 +75,8 @@ export const UserInput = () => {
           dataDispatch({ type: "setOutput", output: output });
         }
       }
+
+      setLoading(false);
     }
     catch (error) {
       console.log(error);
@@ -119,7 +125,11 @@ export const UserInput = () => {
       { email &&
         <Footer>
           <Row>
-            { tasks.length > 0 ? 
+            { loading ?
+              <Col className="text-center">
+                <LoadingSpinner />
+              </Col>
+            : tasks.length > 0 ? 
               <>
                 <Col className="text-center">
                   <CellfieLink />
