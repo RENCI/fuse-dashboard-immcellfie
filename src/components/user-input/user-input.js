@@ -26,6 +26,7 @@ export const UserInput = () => {
 
   useEffect(() => {
     setEmailValue(email);
+    setEmailValid(validateEmail(email));
   }, [email]);
 
   const onEmailChange = evt => {
