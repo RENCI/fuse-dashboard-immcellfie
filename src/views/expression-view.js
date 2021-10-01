@@ -1,19 +1,21 @@
 import React, { useContext, useState } from "react";
 import { max, range } from "d3-array";
 import { Card, Form, Col } from "react-bootstrap";
-import { DataContext } from "../contexts";
+import { UserContext, DataContext } from "../contexts";
 import { ViewWrapper } from "../components/view-wrapper";
 import { ResizeWrapper } from "../components/resize-wrapper";
 import { VegaWrapper } from "../components/vega-wrapper";
 import { expressionHeatmap } from "../vega-specs";
 import { DataMissing } from "../components/data-missing";
 import { LoadExpression } from "../components/load-expression";
+import { HomeLink, InputLink } from "../components/page-links";
 import { sequential } from "../colors";
 
 const { Header, Body } = Card;
 const { Group, Label, Control, Row } = Form;
 
 export const ExpressionView = () => {
+  const [{ email }] = useContext(UserContext);
   const [{ phenotypeData, expressionData, groups }] = useContext(DataContext);  
   const [sortBy, setSortBy] = useState("median");
   const [color, setColor] = useState(sequential[0]);
@@ -48,8 +50,10 @@ export const ExpressionView = () => {
 
   return (
     <ViewWrapper>
-      { !phenotypeData ? 
-        <DataMissing message="No data loaded" showHome={ true } />
+      { !email ?
+        <DataMissing message="No user email selected" pageLink={ <HomeLink /> } />
+      : !phenotypeData ? 
+        <DataMissing message="No data loaded" pageLink={ <InputLink /> } />
       : !expressionData ? 
           <div className="text-center">
             <DataMissing message="No expression data loaded" /> 

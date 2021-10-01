@@ -1,12 +1,11 @@
 import React from "react";
-import { HomeLink } from "../page-links";
 
 
-export const DataMissing = ({ message, showHome }) => {
+export const DataMissing = ({ message, pageLink }) => {
   return (
     <div className="text-center">
       <h5>{ message }</h5>
-      { showHome && <HomeLink /> }
+      { pageLink }
     </div>
   );
 };           

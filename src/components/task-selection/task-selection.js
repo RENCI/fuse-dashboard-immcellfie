@@ -23,15 +23,24 @@ export const TaskSelection = () => {
   const onTaskClick = async task => {
     userDispatch({ type: "setActiveTask", id: task.id });
 
-    // XXX: Load practice input data for now
-    const phenotypes = await api.loadPracticeData(practiceData.phenotypes);
+    if (task.status === "finished") {      
+      // XXX: Load practice input data for now
+      const phenotypes = await api.loadPracticeData(practiceData.phenotypes);
 
-    dataDispatch({ type: "setDataInfo", source: "practice" });
-    dataDispatch({ type: "setPhenotypes", data: phenotypes });
+      dataDispatch({ type: "setDataInfo", source: "practice" });
+      dataDispatch({ type: "setPhenotypes", data: phenotypes });
 
-    const output = await api.getCellfieOutput(task.id);
+      const output = await api.getCellfieOutput(task.id);
 
-    dataDispatch({ type: "setOutput", output: output });
+      dataDispatch({ type: "setOutput", output: output });
+    }
+    else {
+      // XXX: Load practice input data for now
+      const phenotypes = await api.loadPracticeData(practiceData.phenotypes);
+
+      dataDispatch({ type: "setDataInfo", source: "practice" });
+      dataDispatch({ type: "setPhenotypes", data: phenotypes });
+    }
   };
 
   const taskDisplays = tasks.length === 0 ? 

@@ -5,6 +5,7 @@ import { HierarchyVis } from "../hierarchy-vis";
 import { HeatmapVis } from "../heatmap-vis";
 import { VolcanoVis } from "../volcano-vis";
 import { PathwayVis } from "../pathway-vis";
+import { LoadingSpinner } from "../loading-spinner";
 import { useLocalStorage } from "../../hooks";
 
 const { Header, Title, Body } = Card;
@@ -15,7 +16,7 @@ export const CellfieOutput = () => {
   const [{ hierarchy, tree, subgroups, selectedSubgroups }] = useContext(DataContext);
   const [tab, setTab] = useLocalStorage("CellfieOutputTab", "hierarchy");
 
-  const currentSubgroups = selectedSubgroups.map(key => {
+  const currentSubgroups = selectedSubgroups && selectedSubgroups.map(key => {
     return key !== null ? subgroups.find(subgroup => subgroup.key === key) : null;
   });
 

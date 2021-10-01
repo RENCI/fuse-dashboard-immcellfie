@@ -94,7 +94,7 @@ export const UserInput = () => {
           onSubmit={ onSubmit }
           onKeyPress={ onKeyPress }
         >
-          <h6>Email address to associate with CellFIE runs</h6>
+          <h6>Email address for CellFIE tasks</h6>
           <Group>  
             <InputGroup>
               <InputGroup.Prepend>

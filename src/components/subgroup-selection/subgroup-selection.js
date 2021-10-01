@@ -5,6 +5,7 @@ import { SubgroupsLink } from "../page-links";
 import { OverlapVis } from "../overlap-vis";
 import { WarningMessage } from "../warning-message";
 import { subgroupColors } from "../../colors";
+import { LoadingSpinner } from "../loading-spinner";
 import "./subgroup-selection.css";
 
 const { Header, Body } = Card;
@@ -13,6 +14,8 @@ const { color1, color2 } = subgroupColors;
 
 export const SubgroupSelection = () => {
   const [{ subgroups, selectedSubgroups, overlapMethod }, dataDispatch] = useContext(DataContext);
+
+  if (!subgroups) return null;
 
   const onChange = (which, key) => {
     const subgroupKey = key === "none" ? null : +key;

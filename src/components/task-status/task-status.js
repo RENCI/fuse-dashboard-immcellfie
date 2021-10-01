@@ -46,6 +46,8 @@ export const TaskStatus = () => {
       const id = task.id;
       const timer = setInterval(checkStatus, 5000);    
 
+      checkStatus();
+
       taskTimersDispatch({ type: "add", id: id, timer: timer });
 
       async function checkStatus() {
