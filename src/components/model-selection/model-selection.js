@@ -1,7 +1,6 @@
-import React, { useState, useReducer, useContext, useRef } from "react";
+import React, { useState, useReducer, useContext } from "react";
 import { Row, Col, Card, Form, Button, ButtonGroup, InputGroup } from "react-bootstrap";
-import { ArrowCounterclockwise, XLg } from "react-bootstrap-icons";
-import { SpinnerButton } from "../spinner-button";
+import { ArrowCounterclockwise } from "react-bootstrap-icons";
 import { UserContext, DataContext } from "../../contexts";
 import { api } from "../../api";
 import { practiceData } from "../../datasets";
@@ -107,7 +106,6 @@ const initialParameters = [
 export const ModelSelection = () => {
   const [{ email, tasks }, userDispatch] = useContext(UserContext);
   const [{ dataInfo, expressionData, expressionFile }, dataDispatch] = useContext(DataContext);
-  const timer = useRef();
   const [organism, setOrganism] = useState("human");
   const [currentModels, setCurrentModels] = useState(models.filter(({ organism }) => organism === "human"));
   const [model, setModel] = useState(models.find(({ organism }) => organism === "human"));
@@ -138,9 +136,6 @@ export const ModelSelection = () => {
         throw new Error("Invalid parameters action: " + action.type);
     }
   }, initialParameters);
-
-  const activeTask = tasks.find(({ active }) => active);
-  const running = activeTask && activeTask.status !== "finished" && activeTask.status !== "failed";
 
   const organisms = models.reduce((organisms, model) => {
     if (!organisms.includes(model.organism)) organisms.push(model.organism);
@@ -185,28 +180,7 @@ export const ModelSelection = () => {
 
         userDispatch({ type: "addTask", id: id });
         userDispatch({ type: "setStatus", id: id, status: "submitting" });
-        userDispatch({ type: "setActiveTask", id: id });
-/*      
-        checkStatus();
-        timer.current = setInterval(checkStatus, 5000);    
-
-        async function checkStatus() {
-          const status = await api.checkCellfieStatus(id);
-
-          if (status === "finished") {
-            clearInterval(timer.current);            
-
-            userDispatch({ type: "setStatus", id: id, status: status });
-
-            const output = await api.getCellfieOutput(id);
-
-            dataDispatch({ type: "setOutput", output: output });
-          }
-          else {
-            userDispatch({ type: "setStatus", id: id, status: status });
-          }
-        }        
-*/        
+        userDispatch({ type: "setActiveTask", id: id });       
       }
       else if (dataInfo.source === "practice") {
         const id = "practice";
@@ -236,10 +210,6 @@ export const ModelSelection = () => {
       console.log(error);
     }
   };
-
-  const onCancelCellfieClick = () => {
-    clearInterval(timer.current);
-  }
 
   const currentParameters = parameters.filter(({ type, name }) => {
     const pv = name.toLowerCase().includes("percent") ? "percent" : 
@@ -357,21 +327,12 @@ export const ModelSelection = () => {
         <Row>
           <Col>
             <ButtonGroup style={{ width: "100%" }}>
-              <SpinnerButton 
+              <Button 
                 block
-                spin={ running }
                 onClick={ onRunCellfieClick }
               >
                 Run CellFIE
-              </SpinnerButton> 
-              { running &&
-                <Button 
-                  variant="danger"
-                  onClick={ onCancelCellfieClick }
-                >
-                  <XLg className="d-flex align-items-center" />
-                </Button>
-              }
+              </Button> 
             </ButtonGroup>
           </Col>       
         </Row>

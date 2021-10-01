@@ -18,78 +18,61 @@ function isActive(status) {
 export const TaskStatus = () => {
   const [, dataDispatch] = useContext(DataContext);
   const [{ tasks }, userDispatch] = useContext(UserContext);
-  const [hasTimer, hasTimerDispatch] = useReducer((state, action) => {
+  const [taskTimers, taskTimersDispatch] = useReducer((state, action) => {
     switch (action.type) {
-
-      // XXX: Need to store timer ids here in case we want to cancel
-
-
       case "add": {
-        if (state.includes(action.id)) return state;
+        const newState = {...state};
 
-        return [...state, action.id];
+        newState[action.id] = action.timer;
+
+        return newState;
       }
 
       case "remove": {
-        if (!state.includes(action.id)) return state;
+        const newState = {...state};
 
-        return state.filter(id => id !== action.id);
+        delete newState[action.id];
+
+        return newState;
       }
-    }
-  }, []);
 
-  const checkStatus = async id => {
-    const 
-
-  };
-
-  /*
-  const checkStatus = async () => {
-    const status = await api.checkCellfieStatus(id);
-  
-    if (status === "finished") {
-      clearInterval(timer.current);            
-  
-      userDispatch({ type: "setStatus", id: id, status: status });
-  
-      const output = await api.getCellfieOutput(id);
-  
-      dataDispatch({ type: "setOutput", output: output });
+      default: 
+        throw new Error("Invalid taskTimers action: " + action.type);
     }
-    else {
-      userDispatch({ type: "setStatus", id: id, status: status });
-    }
-  };
-  */
+  }, {});
 
   useEffect(() => {
-    console.log(tasks);
+    tasks.filter(task => isActive(task.status) && !taskTimers[task.id]).forEach(task => {
+      const id = task.id;
+      const timer = setInterval(checkStatus, 5000);    
 
-    tasks.forEach(task => {
-      if (isActive(task) && !hasTimer.includes(task.id)) {
-        checkStatus();
+      taskTimersDispatch({ type: "add", id: id, timer: timer });
 
-        timer.current = setInterval(checkStatus, 5000);    
+      async function checkStatus() {
+        const status = await api.checkCellfieStatus(id);
 
-        async function checkStatus() {
-          const status = await api.checkCellfieStatus(id);
+        if (status === "finished") {
+          clearInterval(timer);            
+          taskTimersDispatch({ type: "remove", id: id });
 
-          if (status === "finished") {
-            clearInterval(timer.current);            
+          userDispatch({ type: "setStatus", id: id, status: status });
 
-            userDispatch({ type: "setStatus", id: id, status: status });
+          const output = await api.getCellfieOutput(id);
 
-            const output = await api.getCellfieOutput(id);
+          dataDispatch({ type: "setOutput", output: output });
+        }
+        else if (status === "failed") {
+          clearInterval(timer);            
+          taskTimersDispatch({ type: "remove", id: id });
 
-            dataDispatch({ type: "setOutput", output: output });
-          }
-          else {
-            userDispatch({ type: "setStatus", id: id, status: status });
-          }
-        }        
+          userDispatch({ type: "setStatus", id: id, status: status });
+        }
+        else {
+          userDispatch({ type: "setStatus", id: id, status: status });
+        }     
       }
     });
-  }, [tasks]);
+  }, [tasks, taskTimers, dataDispatch, userDispatch]);
 
   const taskCounts = tasks.filter(({ status }) => isActive(status)).reduce((taskCounts, task) => {
     if (!taskCounts[task.status]) taskCounts[task.status] = 0;
