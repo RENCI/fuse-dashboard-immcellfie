@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useContext } from "react";
+import React, { useState, useReducer, useContext, useEffect } from "react";
 import { Row, Col, Card, Form, Button, ButtonGroup, InputGroup } from "react-bootstrap";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
 import { UserContext, DataContext } from "../../contexts";
@@ -104,7 +104,7 @@ const initialParameters = [
 ];
 
 export const ModelSelection = () => {
-  const [{ email }, userDispatch] = useContext(UserContext);
+  const [{ email, tasks }, userDispatch] = useContext(UserContext);
   const [{ dataInfo, expressionData, expressionFile }, dataDispatch] = useContext(DataContext);
   const [organism, setOrganism] = useState("human");
   const [currentModels, setCurrentModels] = useState(models.filter(({ organism }) => organism === "human"));
@@ -114,8 +114,9 @@ export const ModelSelection = () => {
     switch (action.type) {
       case "setValue":  {
         const newState = [...state];
-
         const parameter = newState.find(({ name }) => name === action.name);
+
+        if (!parameter) return state;
 
         parameter.value = action.value;
 
@@ -124,8 +125,9 @@ export const ModelSelection = () => {
 
       case "resetValue":  {
         const newState = [...state];
-
         const parameter = newState.find(({ name }) => name === action.name);
+
+        if (!parameter) return state;
 
         parameter.value = parameter.default;
 
@@ -142,6 +144,30 @@ export const ModelSelection = () => {
 
     return organisms;
   }, []);
+
+  useEffect(() => {
+    if (!tasks) return;
+
+    const activeTask = tasks.find(({ active }) => active);
+
+    if (activeTask.parameters) {
+      const p = activeTask.parameters;
+
+      // XXX: Refactor with Change callbacks below
+      const model = models.find(({ value }) => value === p.Ref);
+      const organism = model.organism;
+      const newModels = models.filter(({ organism }) => organism === organism);
+
+      setOrganism(organism);
+      setCurrentModels(newModels);
+      setModel(model);
+      setThresholdType(thresholdTypes.find(({ value }) => value === p.ThreshType));
+      Object.entries(p).filter(([key]) => key !== "Ref" && key !== "ThreshType" && key !== "SampleNumber")
+        .forEach(([key, value]) => {
+          dispatch({ type: "setValue", name: key, value: value });
+        });
+    }
+  }, [tasks]);
 
   const onOrganismChange = evt => {
     const value = evt.target.value;
