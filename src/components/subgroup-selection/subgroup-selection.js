@@ -5,7 +5,6 @@ import { SubgroupsLink } from "../page-links";
 import { OverlapVis } from "../overlap-vis";
 import { WarningMessage } from "../warning-message";
 import { subgroupColors } from "../../colors";
-import { LoadingSpinner } from "../loading-spinner";
 import "./subgroup-selection.css";
 
 const { Header, Body } = Card;

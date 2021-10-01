@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Tab, Card, Nav } from "react-bootstrap";
-import { DataContext } from "../../contexts";
+import { UserContext, DataContext } from "../../contexts";
 import { HierarchyVis } from "../hierarchy-vis";
 import { HeatmapVis } from "../heatmap-vis";
 import { VolcanoVis } from "../volcano-vis";
@@ -13,6 +13,7 @@ const { Item, Link } = Nav;
 const { Container, Content, Pane } = Tab;
 
 export const CellfieOutput = () => {
+  const [{ tasks }] = useContext(UserContext);
   const [{ hierarchy, tree, subgroups, selectedSubgroups }] = useContext(DataContext);
   const [tab, setTab] = useLocalStorage("CellfieOutputTab", "hierarchy");
 
@@ -56,7 +57,11 @@ export const CellfieOutput = () => {
           }
         </Header>
         <Body>
-          { !hierarchy ? <>No CellFIE output data</> : 
+          { !hierarchy && tasks.length > 0 ? 
+            <LoadingSpinner />
+          : !hierarchy ? 
+            <>No CellFIE output data</> 
+          : 
             <Content>
               <Pane eventKey="hierarchy">
                 <HierarchyVis
