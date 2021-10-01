@@ -13,7 +13,7 @@ const sortOrder = {
   finished: 1,
   started: 2,
   queued: 3,
-  connecting: 4
+  submitting: 4
 };
 
 export const TaskSelection = () => {

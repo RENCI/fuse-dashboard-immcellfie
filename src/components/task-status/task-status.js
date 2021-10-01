@@ -1,22 +1,97 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useReducer } from "react";
 import { Badge } from "react-bootstrap";
 import { DataContext, UserContext } from "../../contexts";
 import { TaskStatusIcon } from "../task-status-icon";
+import { api } from "../../api";
 
 // XXX: Should move this to colors.js and use in task-status-icon
 const statusColor = {
-  connecting: "primary",
+  submitting: "primary",
   queued: "info",
   started: "success"
 };
+     
+function isActive(status) {
+  return status === "submitting" || status === "queued" || status === "started";
+};
 
 export const TaskStatus = () => {
-  const [, dataDispatch  ] = useContext(DataContext);
-  const [{ tasks }, userDispatch  ] = useContext(UserContext);
+  const [, dataDispatch] = useContext(DataContext);
+  const [{ tasks }, userDispatch] = useContext(UserContext);
+  const [hasTimer, hasTimerDispatch] = useReducer((state, action) => {
+    switch (action.type) {
 
-  const taskCounts = tasks.filter(({ status }) => {
-    return status === "connecting" || status === "queued" || status === "started";
-  }).reduce((taskCounts, task) => {
+      // XXX: Need to store timer ids here in case we want to cancel
+
+
+      case "add": {
+        if (state.includes(action.id)) return state;
+
+        return [...state, action.id];
+      }
+
+      case "remove": {
+        if (!state.includes(action.id)) return state;
+
+        return state.filter(id => id !== action.id);
+      }
+    }
+  }, []);
+
+  const checkStatus = async id => {
+    const 
+
+  };
+
+  /*
+  const checkStatus = async () => {
+    const status = await api.checkCellfieStatus(id);
+  
+    if (status === "finished") {
+      clearInterval(timer.current);            
+  
+      userDispatch({ type: "setStatus", id: id, status: status });
+  
+      const output = await api.getCellfieOutput(id);
+  
+      dataDispatch({ type: "setOutput", output: output });
+    }
+    else {
+      userDispatch({ type: "setStatus", id: id, status: status });
+    }
+  };
+  */
+
+  useEffect(() => {
+    console.log(tasks);
+
+    tasks.forEach(task => {
+      if (isActive(task) && !hasTimer.includes(task.id)) {
+        checkStatus();
+
+        timer.current = setInterval(checkStatus, 5000);    
+
+        async function checkStatus() {
+          const status = await api.checkCellfieStatus(id);
+
+          if (status === "finished") {
+            clearInterval(timer.current);            
+
+            userDispatch({ type: "setStatus", id: id, status: status });
+
+            const output = await api.getCellfieOutput(id);
+
+            dataDispatch({ type: "setOutput", output: output });
+          }
+          else {
+            userDispatch({ type: "setStatus", id: id, status: status });
+          }
+        }        
+      }
+    });
+  }, [tasks]);
+
+  const taskCounts = tasks.filter(({ status }) => isActive(status)).reduce((taskCounts, task) => {
     if (!taskCounts[task.status]) taskCounts[task.status] = 0;
 
     taskCounts[task.status] ++;
@@ -48,7 +123,7 @@ export const TaskStatus = () => {
   
   const message = status ? status[0].toUpperCase() + status.substring(1) : null;
 
-  const variant = status === "connecting" ? "primary" :
+  const variant = status === "submitting" ? "primary" :
     status === "queued" ? "info" :
     "success";
 

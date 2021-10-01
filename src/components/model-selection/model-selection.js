@@ -184,9 +184,9 @@ export const ModelSelection = () => {
         }, { ThreshType: thresholdType.value }));     
 
         userDispatch({ type: "addTask", id: id });
-        userDispatch({ type: "setStatus", id: id, status: "connecting" });
+        userDispatch({ type: "setStatus", id: id, status: "submitting" });
         userDispatch({ type: "setActiveTask", id: id });
-      
+/*      
         checkStatus();
         timer.current = setInterval(checkStatus, 5000);    
 
@@ -206,12 +206,13 @@ export const ModelSelection = () => {
             userDispatch({ type: "setStatus", id: id, status: status });
           }
         }        
+*/        
       }
       else if (dataInfo.source === "practice") {
         const id = "practice";
 
         userDispatch({ type: "addTask", id: id });
-        userDispatch({ type: "setStatus", id: id, status: "connecting" });
+        userDispatch({ type: "setStatus", id: id, status: "submitting" });
         userDispatch({ type: "setActiveTask", id: id });
 
         setTimeout(async () => {
