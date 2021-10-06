@@ -146,7 +146,7 @@ export const ModelSelection = () => {
   }, []);
 
   useEffect(() => {
-    if (!tasks) return;
+    if (!tasks || tasks.length == 0) return;
 
     const activeTask = tasks.find(({ active }) => active);
 
@@ -156,7 +156,7 @@ export const ModelSelection = () => {
       // XXX: Refactor with Change callbacks below
       const model = models.find(({ value }) => value === p.Ref);
       const organism = model.organism;
-      const newModels = models.filter(({ organism }) => organism === organism);
+      const newModels = models.filter(model => model.organism === organism);
 
       setOrganism(organism);
       setCurrentModels(newModels);

@@ -59,7 +59,7 @@ const readStream = async stream => {
 //const cellfieResult = (id, name) => `${ process.env.REACT_APP_API_ROOT }cellfie/results/${ id }/${ name }`;
 
 const cellfieResultStream = async (id, name) => {
-  const stream = await getStream(`${ process.env.REACT_APP_API_ROOT }cellfie/results/${ id }/${ name }`);
+  const stream = await getStream(`${ process.env.REACT_APP_API_ROOT }cellfie/task/results/${ id }/${ name }`);
   const data = await readStream(stream);
 
   return data;
@@ -107,7 +107,7 @@ export const api = {
 
     // Make post request
     const result = await axios.post(
-      `${ process.env.REACT_APP_API_ROOT }cellfie/run/upload_data`, 
+      `${ process.env.REACT_APP_API_ROOT }cellfie/task/submit`, 
       formData,
       { 
         headers: { "Content-Type": "multipart/form-data" },
@@ -118,7 +118,7 @@ export const api = {
     return result.data.task_id;    
   },
   checkCellfieStatus: async id => {
-    const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/status/${ id }`);
+    const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/task/status/${ id }`);
 
     return result.data.task_status; 
   },
@@ -138,12 +138,12 @@ export const api = {
     };
   },
   getCellfieTasks: async email => {
-    const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/get_task_ids/${ email }`);
+    const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/task/ids/${ email }`);
 
     const tasks = result.data.map(({ task_id }) => ({ id: task_id }));
 
     for (const task of tasks) {
-      const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/get_run_parameters/${ task.id }`);
+      const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/task/parameters/${ task.id }`);
 
       task.parameters = result.data;
     }

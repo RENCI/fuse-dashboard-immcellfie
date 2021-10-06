@@ -54,7 +54,7 @@ export const TaskSelection = () => {
         Select CellFIE Task
       </Header>
       <Body>
-        <ListGroup variant="flush">
+        <ListGroup variant="flush" as="ul">
           { taskDisplays }
         </ListGroup>
       </Body>
