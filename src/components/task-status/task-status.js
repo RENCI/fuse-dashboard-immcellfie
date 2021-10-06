@@ -11,7 +11,8 @@ const statusColor = {
   started: "success"
 };
      
-function isActive(status) {
+// XXX: Create a task utils file and move there
+const isActive = status => {
   return status === "submitting" || status === "queued" || status === "started";
 };
 
@@ -52,6 +53,14 @@ export const TaskStatus = () => {
 
       async function checkStatus() {
         const status = await api.checkCellfieStatus(id);
+
+        console.log(task.info);
+
+        if (!task.info.start_date || !task.info.end_date) {
+          const info = await api.getCellfieTaskInfo(id);
+
+          userDispatch({ type: "setInfo", id: id, info: info });
+        }
 
         if (status === "finished") {
           clearInterval(timer);            

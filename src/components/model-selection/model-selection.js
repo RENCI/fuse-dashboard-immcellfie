@@ -105,7 +105,7 @@ const initialParameters = [
 
 export const ModelSelection = () => {
   const [{ email, tasks }, userDispatch] = useContext(UserContext);
-  const [{ dataInfo, expressionData, expressionFile }, dataDispatch] = useContext(DataContext);
+  const [{ dataInfo, expressionData, expressionFile, phenotypeFile }, dataDispatch] = useContext(DataContext);
   const [organism, setOrganism] = useState("human");
   const [currentModels, setCurrentModels] = useState(models.filter(({ organism }) => organism === "human"));
   const [model, setModel] = useState(models.find(({ organism }) => organism === "human"));
@@ -146,11 +146,11 @@ export const ModelSelection = () => {
   }, []);
 
   useEffect(() => {
-    if (!tasks || tasks.length == 0) return;
+    if (!tasks) return;
 
     const activeTask = tasks.find(({ active }) => active);
 
-    if (activeTask.parameters) {
+    if (activeTask && activeTask.parameters) {
       const p = activeTask.parameters;
 
       // XXX: Refactor with Change callbacks below
@@ -199,19 +199,22 @@ export const ModelSelection = () => {
       if (dataInfo.source === "upload") {
         const n = expressionData.length > 0 ? expressionData[0].values.length : 0;
 
-        const id = await api.runCellfie(email, expressionFile, n, model.value, parameters.reduce((parameters, parameter) => {
+        const id = await api.runCellfie(email, expressionFile, phenotypeFile, n, model.value, parameters.reduce((parameters, parameter) => {
           parameters[parameter.name] = parameter.value;
           return parameters; 
         }, { ThreshType: thresholdType.value }));     
 
-        userDispatch({ type: "addTask", id: id });
+        const params = await api.getCellfieTaskParameters(id);
+        const info = await api.getCellfieTaskInfo(id);
+
+        userDispatch({ type: "addTask", id: id, parameters: params, info: info });
         userDispatch({ type: "setStatus", id: id, status: "submitting" });
         userDispatch({ type: "setActiveTask", id: id });       
       }
       else if (dataInfo.source === "practice") {
         const id = "practice";
 
-        userDispatch({ type: "addTask", id: id });
+        userDispatch({ type: "addTask", id: id, parameters: { Ref: "practice" }, info: { date_created: new Date().toISOString() } });
         userDispatch({ type: "setStatus", id: id, status: "submitting" });
         userDispatch({ type: "setActiveTask", id: id });
 

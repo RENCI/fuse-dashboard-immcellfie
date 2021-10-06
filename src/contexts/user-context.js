@@ -21,14 +21,17 @@ const reducer = (state, action) => {
 
     case "addTask": {
       const tasks = [...state.tasks];
-      tasks.push({ id: action.id })
+      tasks.push({ 
+        id: action.id, 
+        parameters: action.parameters, 
+        info: action.info
+      });
 
       return {
         ...state,
         tasks: tasks
       };
     }
-
 
     case "setActiveTask": {
       const tasks = [...state.tasks];
@@ -45,6 +48,18 @@ const reducer = (state, action) => {
       const task = state.tasks.find(({ id }) => id === action.id);
 
       if (task) task.status = action.status;
+
+      return {
+        ...state,
+        tasks: tasks
+      };
+    }
+
+    case "setInfo": {
+      const tasks = [...state.tasks];
+      const task = state.tasks.find(({ id }) => id === action.id);
+
+      if (task) task.info = action.info;
 
       return {
         ...state,

@@ -65,6 +65,27 @@ const cellfieResultStream = async (id, name) => {
   return data;
 };
 
+const getTaskParameters = async id => {
+  const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/task/parameters/${ id }`);
+
+  return result.data;
+};
+
+const getTaskInfo = async id => {
+  const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/task/metadata/${ id }`);
+
+  const info = {...result.data};
+
+  const createDate = key => info[key] ? new Date(info[key]) : null;
+
+  // Convert to dates
+  info.date_created = createDate("date_created");
+  info.start_date = createDate("start_date");
+  info.end_date = createDate("end_date");
+
+  return info;
+};
+
 export const api = {
   loadFile: async file => {
     const response = await axios.get(window.URL.createObjectURL(file));
@@ -97,10 +118,11 @@ export const api = {
 
     return data;
   },
-  runCellfie: async (email, file, sampleNumber, model, parameters) => {    
+  runCellfie: async (email, expressionData, phenotypeData, sampleNumber, model, parameters) => {    
     // Set data and parameters as form data
     const formData = new FormData();
-    formData.append("data", file);
+    formData.append("expression_data", expressionData);
+    formData.append("phenotype_data", phenotypeData);
     formData.append("SampleNumber", sampleNumber);
     formData.append("Ref", model);
     Object.entries(parameters).forEach(([key, value]) => formData.append(key, value));
@@ -120,7 +142,17 @@ export const api = {
   checkCellfieStatus: async id => {
     const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/task/status/${ id }`);
 
-    return result.data.task_status; 
+    return result.data.status; 
+  },
+  getCellfieTaskParameters: async id => {
+    const parameters = await getTaskParameters(id);
+
+    return parameters;
+  },
+  getCellfieTaskInfo: async id => {
+    const info = await getTaskInfo(id);
+
+    return info;
   },
   getCellfieOutput: async id => {
     const results = await Promise.all([
@@ -143,9 +175,8 @@ export const api = {
     const tasks = result.data.map(({ task_id }) => ({ id: task_id }));
 
     for (const task of tasks) {
-      const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/task/parameters/${ task.id }`);
-
-      task.parameters = result.data;
+      task.parameters = await getTaskParameters(task.id);
+      task.info = await getTaskInfo(task.id);
     }
 
     return tasks;
