@@ -43,10 +43,28 @@ export const TaskSelection = () => {
     }
   };
 
+  const onDeleteClick = async task => {
+    const success = await api.deleteCellfieTask(task.id);
+
+    if (success) {
+      userDispatch({ type: "removeTask", id: task.id });
+    }
+    else {
+      // XXX: Show message?
+    };
+  };
+
   const taskDisplays = tasks.length === 0 ? 
     <Item><span>No current CellFIE tasks found for <b>{ email }</b></span></Item> :
     tasks.sort((a, b) => sortOrder[b.status] - sortOrder[a.status])
-      .map((task, i) => <Task key={ i } task={ task } onClick={ onTaskClick } />);
+      .map(task => (
+        <Task 
+          key={ task.id } 
+          task={ task } 
+          onClick={ onTaskClick }
+          onDeleteClick={ onDeleteClick } 
+        />
+      ));
 
   return (
     <Card>

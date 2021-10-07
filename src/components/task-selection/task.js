@@ -1,12 +1,28 @@
 import React, { useState, useRef, useEffect } from "react";
-import { ListGroup, Row, Col, Button, Collapse } from "react-bootstrap";
-import { ChevronDown, ChevronUp } from "react-bootstrap-icons";
+import { ListGroup, Row, Col, Button, Collapse, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { ChevronDown, ChevronUp, XLg } from "react-bootstrap-icons";
 import { TaskStatusIcon } from "../task-status-icon";
 import "./task-selection.css";
 
 const { Item } = ListGroup;
 
-export const Task = ({ task, onClick }) => {
+const timeString = milliseconds => {
+  const seconds = milliseconds / 1000;
+  const m = Math.floor(seconds / 60);
+  const s = Math.round(seconds % 60);
+
+  return m + ":" + (s < 10 ? "0" : "") + s;
+};
+
+const objectDisplay = object => (
+  <small className="text-muted">
+    { Object.entries(object).map(([key, value]) => (
+      <div key={ key }>{ key }: { !value ? "missing" : value.toLocaleString ? value.toLocaleString() : value }</div>
+    )) }
+  </small>
+);
+
+export const Task = ({ task, onClick, onDeleteClick }) => {
   const [time, setTime] = useState(null);
   const [expand, setExpand] = useState(false);
   const timer = useRef();
@@ -17,11 +33,11 @@ export const Task = ({ task, onClick }) => {
   const start = task.info.start_date;
   const end = task.info.end_date;
 
-console.log(created, start, end, time);
-
-  const elapsed = start && end ? (end - start) / 1000 : 
-    start && time ? (time - start) / 1000 :
+  const elapsed = start && end ? (end - start) : 
+    start && time ? (time - start) :
     null;
+
+  // XXX: Move organism/model options to separate file so we can use here and in model selection
   const model = task.parameters.Ref.replace(".mat", "");
 
   const summary = (
@@ -29,25 +45,17 @@ console.log(created, start, end, time);
       <small className="text-muted">
         { created.toLocaleString() }
       </small>
-      <small className="text-muted ml-3">
-        { Math.floor(elapsed / 60) + "m:" + Math.round(elapsed % 60) + "s" }
-      </small>
       <div>{ model }</div>
     </>
   );
 
   useEffect(() => {
-    console.log("EFFECT");
-
     if (start && !end && !timer.current) {
-      console.log("START");
       timer.current = setInterval(() => {
-        console.log("TIMEERERER");
         setTime(new Date());
       }, 1000);
     }
     else if (end && timer.current) {
-      console.log("END");
       clearInterval(timer.current);
       setTime(null);
       timer.current = null;
@@ -55,6 +63,7 @@ console.log(created, start, end, time);
   }, [start, end]);
 
   useEffect(() => {
+    // Clean up timer
     return () => {
       if (timer.current) {
         clearInterval(timer.current);
@@ -67,6 +76,12 @@ console.log(created, start, end, time);
 
     setExpand(!expand);
   };
+
+  const onDeleteButtonClick = evt => {
+    evt.stopPropagation();
+
+    onDeleteClick(task);
+  }
 
   return (
     <Item  
@@ -87,10 +102,43 @@ console.log(created, start, end, time);
           </Button>
         </Col>      
         <Col>{ summary }</Col>
-        <Col xs="auto"><TaskStatusIcon task={ task } /></Col>
+        <Col xs="auto" className="text-right">
+          <TaskStatusIcon task={ task } />
+          { elapsed && 
+            <div className="text-muted small">
+              { timeString(elapsed) }
+            </div>
+          }
+        </Col>
       </Row>      
       <Collapse in={ expand }>
-        <div>Boo!</div>
+        <div>
+          <Row className="mt-3 border-top pt-3">
+            <Col>
+              { objectDisplay(task.info) }              
+            </Col>
+            <Col>
+              { objectDisplay(task.parameters) }
+            </Col>
+            <Col xs="auto">
+              <OverlayTrigger
+                overlay={
+                  <Tooltip>
+                    Delete task
+                  </Tooltip>
+                }
+              >
+                <Button 
+                  size={ "sm"}
+                  variant={ "outline-danger" }
+                  onClick={ onDeleteButtonClick }
+                >
+                  <XLg className="mb-1" />
+                </Button>                
+              </OverlayTrigger>
+            </Col>
+          </Row>
+        </div>
       </Collapse>
     </Item>
   );

@@ -33,6 +33,29 @@ const reducer = (state, action) => {
       };
     }
 
+    case "removeTask": {
+      const tasks = [...state.tasks];
+
+      const index = tasks.findIndex(({ id }) => id === action.id);
+
+      if (index !== -1) {
+        // Remove task
+        const task = tasks[index];
+
+        tasks.splice(index, 1);
+
+        // Set new active task if necessary
+        if (task.active && tasks.length > 0) {
+          tasks[0].active = true;
+        }
+      }
+
+      return {
+        ...state,
+        tasks: tasks
+      };
+    }
+
     case "setActiveTask": {
       const tasks = [...state.tasks];
       tasks.forEach(task => task.active = task.id === action.id);

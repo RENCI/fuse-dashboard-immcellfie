@@ -180,5 +180,10 @@ export const api = {
     }
 
     return tasks;
+  },
+  deleteCellfieTask: async id => {
+    const result = await axios.post(`${ process.env.REACT_APP_API_ROOT }cellfie/task/delete/${ id }`);
+
+    return result.data.status === "done";
   }
 }

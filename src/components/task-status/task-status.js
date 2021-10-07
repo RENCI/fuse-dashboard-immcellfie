@@ -54,8 +54,6 @@ export const TaskStatus = () => {
       async function checkStatus() {
         const status = await api.checkCellfieStatus(id);
 
-        console.log(task.info);
-
         if (!task.info.start_date || !task.info.end_date) {
           const info = await api.getCellfieTaskInfo(id);
 
@@ -84,6 +82,15 @@ export const TaskStatus = () => {
       }
     });
   }, [tasks, taskTimers, dataDispatch, userDispatch]);
+
+  useEffect(() => {
+    // Clean up timers
+    return () => {
+      for (const timer in taskTimers) {
+        clearInterval(timer);
+      }
+    }
+  });
 
   const taskCounts = tasks.filter(({ status }) => isActive(status)).reduce((taskCounts, task) => {
     if (!taskCounts[task.status]) taskCounts[task.status] = 0;
