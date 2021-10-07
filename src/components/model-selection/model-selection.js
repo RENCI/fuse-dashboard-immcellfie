@@ -196,7 +196,7 @@ export const ModelSelection = () => {
 
   const onRunCellfieClick = async () => {
     try {
-      if (dataInfo.source === "upload") {
+      if (dataInfo.source === "upload" && dataInfo.source === "cellfie") {
         const n = expressionData.length > 0 ? expressionData[0].values.length : 0;
 
         const id = await api.runCellfie(email, expressionFile, phenotypeFile, n, model.value, parameters.reduce((parameters, parameter) => {
@@ -209,7 +209,9 @@ export const ModelSelection = () => {
 
         userDispatch({ type: "addTask", id: id, parameters: params, info: info });
         userDispatch({ type: "setStatus", id: id, status: "submitting" });
-        userDispatch({ type: "setActiveTask", id: id });       
+        userDispatch({ type: "setActiveTask", id: id });      
+        
+        dataDispatch({ type: "clearData" });
       }
       else if (dataInfo.source === "practice") {
         const id = "practice";
@@ -217,6 +219,8 @@ export const ModelSelection = () => {
         userDispatch({ type: "addTask", id: id, parameters: { Ref: "practice" }, info: { date_created: new Date().toISOString() } });
         userDispatch({ type: "setStatus", id: id, status: "submitting" });
         userDispatch({ type: "setActiveTask", id: id });
+
+        dataDispatch({ type: "clearData" });
 
         setTimeout(async () => {
           const taskInfo = await api.loadPracticeData(practiceData.taskInfo);

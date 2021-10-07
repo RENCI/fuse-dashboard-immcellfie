@@ -42,23 +42,37 @@ export const TaskStatus = () => {
     }
   }, {});
 
+  // Set active task
+  useEffect(() => {
+    const activeTask = tasks.find(({ active }) => active);
+
+    if (!activeTask && tasks.length > 0) {
+      const task = tasks.reduce((activeTask, task) => {
+        return task.status !== "failed" && task.info.date_created > activeTask.info.date_created ? task : activeTask;
+      });
+
+      userDispatch({ type: "setActiveTask", id: task.id });
+    }
+  }, [tasks]);
+
+  // Check status and info
   useEffect(() => {
     tasks.filter(task => isActive(task.status) && !taskTimers[task.id]).forEach(task => {
       const id = task.id;
-      const timer = setInterval(checkStatus, 5000);    
-
-      checkStatus();
+      const timer = setInterval(checkStatus, 1000);    
 
       taskTimersDispatch({ type: "add", id: id, timer: timer });
 
-      async function checkStatus() {
-        const status = await api.checkCellfieStatus(id);
+      checkStatus();
 
+      async function checkStatus() {
         if (!task.info.start_date || !task.info.end_date) {
           const info = await api.getCellfieTaskInfo(id);
 
           userDispatch({ type: "setInfo", id: id, info: info });
         }
+
+        const status = await api.checkCellfieStatus(id);
 
         if (status === "finished") {
           clearInterval(timer);            
@@ -66,9 +80,11 @@ export const TaskStatus = () => {
 
           userDispatch({ type: "setStatus", id: id, status: status });
 
-          const output = await api.getCellfieOutput(id);
+          if (task.active) {
+            const output = await api.getCellfieOutput(id);
 
-          dataDispatch({ type: "setOutput", output: output });
+            dataDispatch({ type: "setOutput", output: output });
+          }            
         }
         else if (status === "failed") {
           clearInterval(timer);            
@@ -83,8 +99,8 @@ export const TaskStatus = () => {
     });
   }, [tasks, taskTimers, dataDispatch, userDispatch]);
 
+  // Clean up timers
   useEffect(() => {
-    // Clean up timers
     return () => {
       for (const timer in taskTimers) {
         clearInterval(timer);
@@ -115,62 +131,3 @@ export const TaskStatus = () => {
     </div>
   );
 };
-
-/*
-export const TaskStatus = () => {
-  const [{ status }] = useContext(TaskStatusContext);
-  const [time, setTime] = useState(null);
-  const timer = useRef();
-  
-  const message = status ? status[0].toUpperCase() + status.substring(1) : null;
-
-  const variant = status === "submitting" ? "primary" :
-    status === "queued" ? "info" :
-    "success";
-
-  const icon = status === "finished" ? <CheckCircle className="text-success ml-1" /> : 
-    <Spinner animation="border" size="sm" className="ml-1" variant={ variant } />;
-
-  const details = status === "finished" ? "Navigate to CellFIE page to see results" :
-    "Elapsed time: " + Math.floor(time / 60) + "m:" + Math.round(time % 60) + "s";
-
-  useEffect(() => {
-    if (status !== null && !timer.current) {
-      const startTime = new Date();
-
-      setTime(0);
-
-      timer.current = setInterval(() => {
-        setTime((new Date() - startTime) / 1000);
-      }, 1000);    
-    }
-    else if (status === "finished" || status === null) {
-      clearInterval(timer.current);
-      setTime(null);
-      timer.current = null;
-    }
-  }, [status, timer.curent]);
-
-  useEffect(() => () => clearInterval(timer.current), []);
-
-  return (
-    status !== null && 
-    <div className="wrapper">
-      <Toast bg="info">
-        <Toast.Header closeButton={ false } className="pr-5">
-          <strong>CellFIE Status</strong>
-        </Toast.Header>
-        <Toast.Body className="pr-5">
-          <div className="d-flex align-items-center">
-            { message }
-            { icon }
-          </div>
-          <div className="small text-muted mt-1">
-            { details }
-          </div>
-        </Toast.Body>
-      </Toast>
-    </div>
-  );
-};           
-*/

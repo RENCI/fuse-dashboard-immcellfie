@@ -21,25 +21,37 @@ export const TaskSelection = () => {
   const [{ email, tasks }, userDispatch  ] = useContext(UserContext);
 
   const onTaskClick = async task => {
-    userDispatch({ type: "setActiveTask", id: task.id });
+    const id = task.id;
+
+    userDispatch({ type: "setActiveTask", id: id });
 
     if (task.status === "finished") {      
+      dataDispatch({ type: "clearData"});
+
       // XXX: Load practice input data for now
       const phenotypes = await api.loadPracticeData(practiceData.phenotypes);
 
-      dataDispatch({ type: "setDataInfo", source: "practice" });
+      dataDispatch({ type: "setDataInfo", source: "cellfie" });
       dataDispatch({ type: "setPhenotypes", data: phenotypes });
 
-      const output = await api.getCellfieOutput(task.id);
+      //const phenotypes = await api.getCellfiePhenotypes(id);
+      //console.log(phenotypes);
+
+      const output = await api.getCellfieOutput(id);
 
       dataDispatch({ type: "setOutput", output: output });
     }
     else {
+      dataDispatch({ type: "clearData"});
+
       // XXX: Load practice input data for now
       const phenotypes = await api.loadPracticeData(practiceData.phenotypes);
 
-      dataDispatch({ type: "setDataInfo", source: "practice" });
+      dataDispatch({ type: "setDataInfo", source: "cellfie" });
       dataDispatch({ type: "setPhenotypes", data: phenotypes });
+
+      //const phenotypes = await api.getCellfiePhenotypes(id);
+      //console.log(phenotypes);
     }
   };
 
@@ -56,15 +68,18 @@ export const TaskSelection = () => {
 
   const taskDisplays = tasks.length === 0 ? 
     <Item><span>No current CellFIE tasks found for <b>{ email }</b></span></Item> :
-    tasks.sort((a, b) => sortOrder[b.status] - sortOrder[a.status])
-      .map(task => (
-        <Task 
-          key={ task.id } 
-          task={ task } 
-          onClick={ onTaskClick }
-          onDeleteClick={ onDeleteClick } 
-        />
-      ));
+    tasks.sort((a, b) => {
+      return a.status === b.status ? 
+        b.info.date_created - a.info.date_created :
+        sortOrder[b.status] - sortOrder[a.status];
+    }).map(task => (
+      <Task 
+        key={ task.id } 
+        task={ task } 
+        onClick={ onTaskClick }
+        onDeleteClick={ onDeleteClick } 
+      />
+    ));
 
   return (
     <Card>

@@ -7,6 +7,8 @@ import "./task-selection.css";
 const { Item } = ListGroup;
 
 const timeString = milliseconds => {
+  if (milliseconds < 0) return "-:--";
+
   const seconds = milliseconds / 1000;
   const m = Math.floor(seconds / 60);
   const s = Math.round(seconds % 60);
@@ -27,15 +29,13 @@ export const Task = ({ task, onClick, onDeleteClick }) => {
   const [expand, setExpand] = useState(false);
   const timer = useRef();
 
-  const clickable = task.status !== "failed";
-
   const created = task.info.date_created;
   const start = task.info.start_date;
   const end = task.info.end_date;
 
   const elapsed = start && end ? (end - start) : 
     start && time ? (time - start) :
-    null;
+    -1;
 
   // XXX: Move organism/model options to separate file so we can use here and in model selection
   const model = task.parameters.Ref.replace(".mat", "");
@@ -50,17 +50,17 @@ export const Task = ({ task, onClick, onDeleteClick }) => {
   );
 
   useEffect(() => {
-    if (start && !end && !timer.current) {
+    if (task.status !== "failed" && start && !end && !timer.current) {
       timer.current = setInterval(() => {
         setTime(new Date());
       }, 1000);
     }
-    else if (end && timer.current) {
+    else if ((task.status === "failed" || end) && timer.current) {
       clearInterval(timer.current);
       setTime(null);
       timer.current = null;
     }
-  }, [start, end]);
+  }, [task.status, start, end]);
 
   useEffect(() => {
     // Clean up timer
@@ -87,9 +87,8 @@ export const Task = ({ task, onClick, onDeleteClick }) => {
     <Item  
       as="li"
       key={ task.id }
-      action={ clickable }
       className={ task.active ? "task-active" : null }
-      onClick={ clickable ? () => onClick(task) : null }
+      onClick={ () => onClick(task) }
     >
       <Row className="d-flex align-items-center">  
         <Col xs="auto" >
@@ -104,7 +103,7 @@ export const Task = ({ task, onClick, onDeleteClick }) => {
         <Col>{ summary }</Col>
         <Col xs="auto" className="text-right">
           <TaskStatusIcon task={ task } />
-          { elapsed && 
+          { task.status !== "failed" && 
             <div className="text-muted small">
               { timeString(elapsed) }
             </div>

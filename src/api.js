@@ -169,6 +169,16 @@ export const api = {
       detailScoring: results[3]
     };
   },
+  getCellfieExpressionData: async id => {
+    const result = await cellfieResultStream(id, "input");
+
+    return result;
+  },
+  getCellfiePhenotypes: async id => {
+    const result = await cellfieResultStream(id, "phenotypes");
+
+    return result;
+  },
   getCellfieTasks: async email => {
     const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/task/ids/${ email }`);
 

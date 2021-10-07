@@ -4,7 +4,6 @@ import { UserContext, DataContext } from "../../contexts";
 import { LoadingSpinner } from "../loading-spinner";
 import { CellfieLink, InputLink } from "../page-links";
 import { api } from "../../api";
-import { practiceData } from "../../datasets";
 
 const { Header, Body, Footer } = Card;
 const { Group, Control, Text } = Form;
@@ -54,27 +53,10 @@ export const UserInput = () => {
 
       userDispatch({ type: "setTasks", tasks: tasks });
 
-      let hasActive = false;
-
       for (const task of tasks) {
         const status = await api.checkCellfieStatus(task.id);
   
         userDispatch({ type: "setStatus", id: task.id, status: status });
-
-        if (!hasActive && status === "finished") {        
-          userDispatch({ type: "setActiveTask", id: task.id });
-          hasActive = true;
-
-          // XXX: Load practice input data for now
-          const phenotypes = await api.loadPracticeData(practiceData.phenotypes);
-
-          dataDispatch({ type: "setDataInfo", source: "practice" });
-          dataDispatch({ type: "setPhenotypes", data: phenotypes });
-
-          const output = await api.getCellfieOutput(task.id);
-
-          dataDispatch({ type: "setOutput", output: output });
-        }
       }
 
       setLoading(false);
