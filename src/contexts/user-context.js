@@ -25,6 +25,7 @@ const reducer = (state, action) => {
       const tasks = [...state.tasks];
       tasks.push({ 
         id: action.id, 
+        status: action.status,
         parameters: action.parameters, 
         info: action.info
       });

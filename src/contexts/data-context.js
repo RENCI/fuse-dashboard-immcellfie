@@ -35,7 +35,6 @@ const initialState = {
   selectedSubgroups: null,
 
   // Expression data used as CellFIE input
-  expressionFile: null,
   rawExpressionData: null,
   expressionData: null,
   numExpressionSubjects: 0,
@@ -580,6 +579,16 @@ const reducer = (state, action) => {
     case "clearData":
       return {
         ...initialState
+      };
+
+    case "clearOutput":
+      return {
+        ...state,
+        rawOutput: null,
+        output: null,
+        hierarchy: null,
+        tree: null,
+        reactionScores: null
       };
 
     case "addSubgroup": {

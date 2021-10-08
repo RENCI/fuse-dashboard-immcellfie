@@ -65,6 +65,12 @@ const cellfieResultStream = async (id, name) => {
   return data;
 };
 
+const checkTaskStatus = async id => {
+  const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/task/status/${ id }`);
+
+  return result.data.status; 
+};
+
 const getTaskParameters = async id => {
   const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/task/parameters/${ id }`);
 
@@ -139,10 +145,10 @@ export const api = {
 
     return result.data.task_id;    
   },
-  checkCellfieStatus: async id => {
-    const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/task/status/${ id }`);
+  checkCellfieTaskStatus: async id => {
+    const status = await checkTaskStatus(id);
 
-    return result.data.status; 
+    return status; 
   },
   getCellfieTaskParameters: async id => {
     const parameters = await getTaskParameters(id);
@@ -185,6 +191,7 @@ export const api = {
     const tasks = result.data.map(({ task_id }) => ({ id: task_id }));
 
     for (const task of tasks) {
+      task.status = await checkTaskStatus(task.id);
       task.parameters = await getTaskParameters(task.id);
       task.info = await getTaskInfo(task.id);
     }

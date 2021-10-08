@@ -105,7 +105,7 @@ const initialParameters = [
 
 export const ModelSelection = () => {
   const [{ email, tasks }, userDispatch] = useContext(UserContext);
-  const [{ dataInfo, expressionData, expressionFile, phenotypeFile }, dataDispatch] = useContext(DataContext);
+  const [{ dataInfo, rawExpressionData, expressionData, expressionFile, rawPhenotypeData, phenotypes, phenotypeFile }, dataDispatch] = useContext(DataContext);
   const [organism, setOrganism] = useState("human");
   const [currentModels, setCurrentModels] = useState(models.filter(({ organism }) => organism === "human"));
   const [model, setModel] = useState(models.find(({ organism }) => organism === "human"));
@@ -145,6 +145,7 @@ export const ModelSelection = () => {
     return organisms;
   }, []);
 
+  // XXX: Need a different way to check for changed active task
   useEffect(() => {
     if (!tasks) return;
 
@@ -196,22 +197,32 @@ export const ModelSelection = () => {
 
   const onRunCellfieClick = async () => {
     try {
-      if (dataInfo.source === "upload" && dataInfo.source === "cellfie") {
+      if (dataInfo.source === "upload" || dataInfo.source === "cellfie") {
         const n = expressionData.length > 0 ? expressionData[0].values.length : 0;
 
-        const id = await api.runCellfie(email, expressionFile, phenotypeFile, n, model.value, parameters.reduce((parameters, parameter) => {
+        // Create blobs
+        const dataBlob = data => {
+          return new Blob([data], { type: "mimeString" });
+        };
+
+        const expressionBlob = dataBlob(rawExpressionData);
+        const phenotypesBlob = dataBlob(rawPhenotypeData);
+
+        // Run Cellfie
+        const id = await api.runCellfie(email, expressionBlob, phenotypesBlob, n, model.value, parameters.reduce((parameters, parameter) => {
           parameters[parameter.name] = parameter.value;
           return parameters; 
         }, { ThreshType: thresholdType.value }));     
 
+        // Get task info
         const params = await api.getCellfieTaskParameters(id);
         const info = await api.getCellfieTaskInfo(id);
 
-        userDispatch({ type: "addTask", id: id, parameters: params, info: info });
-        userDispatch({ type: "setStatus", id: id, status: "submitting" });
+        // Create task
+        userDispatch({ type: "addTask", id: id, status: "submitting", parameters: params, info: info });
         userDispatch({ type: "setActiveTask", id: id });      
         
-        dataDispatch({ type: "clearData" });
+        dataDispatch({ type: "clearOutput" });
       }
       else if (dataInfo.source === "practice") {
         const id = "practice";

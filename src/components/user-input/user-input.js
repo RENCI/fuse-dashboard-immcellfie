@@ -53,10 +53,28 @@ export const UserInput = () => {
 
       userDispatch({ type: "setTasks", tasks: tasks });
 
-      for (const task of tasks) {
-        const status = await api.checkCellfieStatus(task.id);
-  
-        userDispatch({ type: "setStatus", id: task.id, status: status });
+      // Set active task
+      if (tasks.length > 0) {
+        const task = tasks.reduce((activeTask, task) => {
+          return task.status !== "failed" && task.info.date_created > activeTask.info.date_created ? task : activeTask;
+        });
+
+        const id = task.id;
+
+        userDispatch({ type: "setActiveTask", id: id });
+
+        const phenotypes = await api.getCellfiePhenotypes(id);
+        const expressionData = await api.getCellfieExpressionData(id);
+
+        dataDispatch({ type: "setDataInfo", source: "cellfie" });
+        dataDispatch({ type: "setPhenotypes", data: phenotypes });
+        dataDispatch({ type: "setExpressionData", data: expressionData });
+
+        if (task.status === "finished") {  
+          const output = await api.getCellfieOutput(id);
+
+          dataDispatch({ type: "setOutput", output: output });
+        }
       }
 
       setLoading(false);

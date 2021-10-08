@@ -21,37 +21,24 @@ export const TaskSelection = () => {
   const [{ email, tasks }, userDispatch  ] = useContext(UserContext);
 
   const onTaskClick = async task => {
+    if (task.active) return;
+
     const id = task.id;
 
     userDispatch({ type: "setActiveTask", id: id });
+    dataDispatch({ type: "clearOutput" });
 
-    if (task.status === "finished") {      
-      dataDispatch({ type: "clearData"});
+    const phenotypes = await api.getCellfiePhenotypes(id);
+    const expressionData = await api.getCellfieExpressionData(id);
 
-      // XXX: Load practice input data for now
-      const phenotypes = await api.loadPracticeData(practiceData.phenotypes);
+    dataDispatch({ type: "setDataInfo", source: "cellfie" });
+    dataDispatch({ type: "setPhenotypes", data: phenotypes });
+    dataDispatch({ type: "setExpressionData", data: expressionData });
 
-      dataDispatch({ type: "setDataInfo", source: "cellfie" });
-      dataDispatch({ type: "setPhenotypes", data: phenotypes });
-
-      //const phenotypes = await api.getCellfiePhenotypes(id);
-      //console.log(phenotypes);
-
+    if (task.status === "finished") {  
       const output = await api.getCellfieOutput(id);
 
       dataDispatch({ type: "setOutput", output: output });
-    }
-    else {
-      dataDispatch({ type: "clearData"});
-
-      // XXX: Load practice input data for now
-      const phenotypes = await api.loadPracticeData(practiceData.phenotypes);
-
-      dataDispatch({ type: "setDataInfo", source: "cellfie" });
-      dataDispatch({ type: "setPhenotypes", data: phenotypes });
-
-      //const phenotypes = await api.getCellfiePhenotypes(id);
-      //console.log(phenotypes);
     }
   };
 

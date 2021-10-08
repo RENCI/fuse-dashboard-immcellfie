@@ -143,7 +143,7 @@ export const DataSelection = () => {
 
       // Set phenotype data first
       if (phenotypeData) dataDispatch({ type: "setPhenotypes", data: phenotypeData });
-      dataDispatch({ type: "setExpressionData", data: expressionData, file: expressionDataFile });
+      dataDispatch({ type: "setExpressionData", data: expressionData });
     }
     catch (error) {
       console.log(error);
