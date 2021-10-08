@@ -105,7 +105,7 @@ const initialParameters = [
 
 export const ModelSelection = () => {
   const [{ email, tasks }, userDispatch] = useContext(UserContext);
-  const [{ dataInfo, rawExpressionData, expressionData, expressionFile, rawPhenotypeData, phenotypes, phenotypeFile }, dataDispatch] = useContext(DataContext);
+  const [{ dataInfo, rawExpressionData, expressionData, rawPhenotypeData }, dataDispatch] = useContext(DataContext);
   const [organism, setOrganism] = useState("human");
   const [currentModels, setCurrentModels] = useState(models.filter(({ organism }) => organism === "human"));
   const [model, setModel] = useState(models.find(({ organism }) => organism === "human"));

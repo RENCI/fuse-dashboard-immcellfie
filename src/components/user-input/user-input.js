@@ -55,11 +55,11 @@ export const UserInput = () => {
 
       // Set active task
       if (tasks.length > 0) {
-        const task = tasks.reduce((activeTask, task) => {
+        const activeTask = tasks.reduce((activeTask, task) => {
           return task.status !== "failed" && task.info.date_created > activeTask.info.date_created ? task : activeTask;
         });
 
-        const id = task.id;
+        const id = activeTask.id;
 
         userDispatch({ type: "setActiveTask", id: id });
 
@@ -70,7 +70,7 @@ export const UserInput = () => {
         dataDispatch({ type: "setPhenotypes", data: phenotypes });
         dataDispatch({ type: "setExpressionData", data: expressionData });
 
-        if (task.status === "finished") {  
+        if (activeTask.status === "finished") {  
           const output = await api.getCellfieOutput(id);
 
           dataDispatch({ type: "setOutput", output: output });

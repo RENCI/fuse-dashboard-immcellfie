@@ -3,7 +3,6 @@ import { Badge } from "react-bootstrap";
 import { DataContext, UserContext } from "../../contexts";
 import { TaskStatusIcon } from "../task-status-icon";
 import { api } from "../../api";
-import { practiceData } from "../../datasets";
 
 // XXX: Should move this to colors.js and use in task-status-icon
 const statusColor = {
@@ -42,42 +41,6 @@ export const TaskStatus = () => {
         throw new Error("Invalid taskTimers action: " + action.type);
     }
   }, {});
-/*
-  // Set active task
-  useEffect(() => {
-    const loadData = async task => {
-      // XXX: Load practice input data for now
-      const phenotypes = await api.loadPracticeData(practiceData.phenotypes);
-      //const phenotypes = await api.getCellfiePhenotypes(id);
-      //console.log(phenotypes);
-      const expressionData = await api.getCellfieExpressionData(task.id);
-
-      dataDispatch({ type: "setDataInfo", source: "cellfie" });
-      dataDispatch({ type: "setPhenotypes", data: phenotypes });
-      dataDispatch({ type: "setExpressionData", data: expressionData });
-  
-      if (task.status === "finished") {  
-        const output = await api.getCellfieOutput(task.id);
-  
-        dataDispatch({ type: "setOutput", output: output });
-      }
-    };
-
-    const activeTask = tasks.find(({ active }) => active);
-
-    if (!activeTask && tasks.length > 0) {
-      const task = tasks.reduce((activeTask, task) => {
-        return task.status !== "failed" && task.info.date_created > activeTask.info.date_created ? task : activeTask;
-      });
-
-      userDispatch({ type: "setActiveTask", id: task.id });
-
-      dataDispatch({ type: "clearData"});
-
-      loadData(task);
-    }
-  }, [tasks, userDispatch, dataDispatch]);
-*/  
 
   // Check status and info
   useEffect(() => {

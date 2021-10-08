@@ -3,7 +3,6 @@ import { Card, ListGroup } from "react-bootstrap";
 import { DataContext, UserContext } from "../../contexts";
 import { Task } from "./task";
 import { api } from "../../api";
-import { practiceData } from "../../datasets";
 
 const { Header, Body } = Card;
 const { Item } = ListGroup;
@@ -20,9 +19,7 @@ export const TaskSelection = () => {
   const [, dataDispatch  ] = useContext(DataContext);
   const [{ email, tasks }, userDispatch  ] = useContext(UserContext);
 
-  const onTaskClick = async task => {
-    if (task.active) return;
-
+  const selectTask = async task => {
     const id = task.id;
 
     userDispatch({ type: "setActiveTask", id: id });
@@ -42,11 +39,26 @@ export const TaskSelection = () => {
     }
   };
 
+  const onTaskClick = async task => {
+    if (task.active) return;
+
+    selectTask(task);
+  };
+
   const onDeleteClick = async task => {
     const success = await api.deleteCellfieTask(task.id);
 
     if (success) {
       userDispatch({ type: "removeTask", id: task.id });
+
+      // Set active task if necessary
+      if (task.active && tasks.length > 0) {
+        const activeTask = tasks.filter(({ id }) => id !== task.id).reduce((activeTask, task) => {
+          return task.status !== "failed" && task.info.date_created > activeTask.info.date_created ? task : activeTask;
+        });
+
+        selectTask(activeTask);
+      }
     }
     else {
       // XXX: Show message?
