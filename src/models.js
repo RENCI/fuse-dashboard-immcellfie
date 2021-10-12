@@ -10,11 +10,15 @@ export const models = [
   { organism: "Chinese hamster", name: "iCHOv1", value: "MT_iCHOv1_final.mat" }
 ];
 
-export const organisms = models.reduce((organisms, model) => {
-  if (!organisms.includes(model.organism)) organisms.push(model.organism);
+const getOrganisms = models => {
+  return models.reduce((organisms, model) => {
+    if (!organisms.includes(model.organism)) organisms.push(model.organism);
 
-  return organisms;
-}, []);
+    return organisms;
+  }, []);
+};
+
+export const organisms = getOrganisms(models);
 
 export const getModels = organism => {
   return models.filter(model => model.organism === organism);

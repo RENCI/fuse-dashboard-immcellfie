@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { Card, Form, InputGroup, Button, Row, Col } from "react-bootstrap";
-import { UserContext, DataContext } from "../../contexts";
+import { UserContext, DataContext, ModelContext } from "../../contexts";
 import { LoadingSpinner } from "../loading-spinner";
 import { CellfieLink, InputLink } from "../page-links";
 import { api } from "../../api";
@@ -11,6 +11,7 @@ const { Group, Control, Text } = Form;
 export const UserInput = () => {
   const [, dataDispatch  ] = useContext(DataContext);
   const [{ email, tasks }, userDispatch  ] = useContext(UserContext);
+  const [, modelDispatch] = useContext(ModelContext);
   const [emailValue, setEmailValue] = useState("");
   const [emailValid, setEmailValid] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -69,6 +70,8 @@ export const UserInput = () => {
         dataDispatch({ type: "setDataInfo", source: "cellfie" });
         dataDispatch({ type: "setPhenotypes", data: phenotypes });
         dataDispatch({ type: "setExpressionData", data: expressionData });
+
+        modelDispatch({ type: "setParameters", parameters: activeTask.parameters });
 
         if (activeTask.status === "finished") {  
           const output = await api.getCellfieOutput(id);

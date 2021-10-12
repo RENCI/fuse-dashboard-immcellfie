@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { Row, Col, Card, Form, Button, ButtonGroup, InputGroup } from "react-bootstrap";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
 import { UserContext, DataContext, ModelContext } from "../../contexts";
@@ -10,39 +10,11 @@ const { Label, Group, Control } = Form;
 const { Append } = InputGroup;
 
 export const ModelSelection = () => {
-  const [{ email, tasks }, userDispatch] = useContext(UserContext);
+  const [{ email }, userDispatch] = useContext(UserContext);
   const [{ dataInfo, rawExpressionData, expressionData, rawPhenotypeData }, dataDispatch] = useContext(DataContext);
   const [{ organism, model, parameters }, modelDispatch] = useContext(ModelContext); 
 
-  const thresholdType = parameters.find(({ name }) => name === "ThreshType");
-
-  // XXX: Need a different way to check for changed active task
-  // XXX: Potentially move cellfie parameters to a context, and set explicitly as needed
-/*  
-  useEffect(() => {
-    if (!tasks) return;
-
-    const activeTask = tasks.find(({ active }) => active);
-
-    if (activeTask && activeTask.parameters) {
-      const p = activeTask.parameters;
-
-      // XXX: Refactor with Change callbacks below
-      const model = models.find(({ value }) => value === p.Ref);
-      const organism = model.organism;
-      const newModels = models.filter(model => model.organism === organism);
-
-      setOrganism(organism);
-      setCurrentModels(newModels);
-      setModel(model);
-      setThresholdType(thresholdTypes.find(({ value }) => value === p.ThreshType));
-      Object.entries(p).filter(([key]) => key !== "Ref" && key !== "ThreshType" && key !== "SampleNumber")
-        .forEach(([key, value]) => {
-          dispatch({ type: "setValue", name: key, value: value });
-        });
-    }
-  }, [tasks]);
-*/  
+  const thresholdType = parameters.find(({ name }) => name === "ThreshType"); 
 
   const onOrganismChange = evt => {
     modelDispatch({ type: "setOrganism", value: evt.target.value });
