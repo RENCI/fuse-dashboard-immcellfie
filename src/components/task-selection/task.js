@@ -37,6 +37,8 @@ export const Task = ({ task, onClick, onDeleteClick }) => {
     start && time ? (time - start) :
     -1;
 
+  console.log(task);
+
   // XXX: Move organism/model options to separate file so we can use here and in model selection
   const model = task.parameters.Ref.replace(".mat", "");
 

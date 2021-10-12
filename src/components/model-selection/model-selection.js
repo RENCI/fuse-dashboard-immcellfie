@@ -34,58 +34,31 @@ export const ModelSelection = () => {
 
   const onRunCellfieClick = async () => {
     try {
-      if (dataInfo.source === "upload" || dataInfo.source === "cellfie") {
-        const n = expressionData.length > 0 ? expressionData[0].values.length : 0;
+      const n = expressionData.length > 0 ? expressionData[0].values.length : 0;
 
-        // Create blobs
-        const dataBlob = data => {
-          return new Blob([data], { type: "mimeString" });
-        };
+      // Create blobs
+      const dataBlob = data => {
+        return new Blob([data], { type: "mimeString" });
+      };
 
-        const expressionBlob = dataBlob(rawExpressionData);
-        const phenotypesBlob = dataBlob(rawPhenotypeData);
+      const expressionBlob = dataBlob(rawExpressionData);
+      const phenotypesBlob = dataBlob(rawPhenotypeData);
 
-        // Run Cellfie
-        const id = await api.runCellfie(email, expressionBlob, phenotypesBlob, n, model.value.value, parameters.reduce((parameters, parameter) => {
-          parameters[parameter.name] = parameter.value;
-          return parameters; 
-        }, {}));     
+      // Run Cellfie
+      const id = await api.runCellfie(email, expressionBlob, phenotypesBlob, n, model.value.value, parameters.reduce((parameters, parameter) => {
+        parameters[parameter.name] = parameter.value;
+        return parameters; 
+      }, {}));     
 
-        // Get task info
-        const params = await api.getCellfieTaskParameters(id);
-        const info = await api.getCellfieTaskInfo(id);
+      // Get task info
+      const params = await api.getCellfieTaskParameters(id);
+      const info = await api.getCellfieTaskInfo(id);
 
-        // Create task
-        userDispatch({ type: "addTask", id: id, status: "submitting", parameters: params, info: info });
-        userDispatch({ type: "setActiveTask", id: id });      
-        
-        dataDispatch({ type: "clearOutput" });
-      }
-      else if (dataInfo.source === "practice") {
-        const id = "practice";
-
-        userDispatch({ type: "addTask", id: id, parameters: { Ref: "practice" }, info: { date_created: new Date().toISOString() } });
-        userDispatch({ type: "setStatus", id: id, status: "submitting" });
-        userDispatch({ type: "setActiveTask", id: id });
-
-        dataDispatch({ type: "clearData" });
-
-        setTimeout(async () => {
-          const taskInfo = await api.loadPracticeData(practiceData.taskInfo);
-          const score = await api.loadPracticeData(practiceData.score);
-          const scoreBinary = await api.loadPracticeData(practiceData.scoreBinary);
-          const detailScoring = await api.loadPracticeData(practiceData.detailScoring);
-
-          dataDispatch({ type: "setOutput", output: {
-            taskInfo: taskInfo,
-            score: score,
-            scoreBinary: scoreBinary,
-            detailScoring: detailScoring
-          }});
-
-          userDispatch({ type: "setStatus", id: id, status: "finished" });
-        }, 1000);
-      }
+      // Create task
+      userDispatch({ type: "addTask", id: id, status: "submitting", parameters: params, info: info });
+      userDispatch({ type: "setActiveTask", id: id });      
+      
+      dataDispatch({ type: "clearOutput" });
     }
     catch (error) {
       console.log(error);

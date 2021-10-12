@@ -103,18 +103,22 @@ export const DataSelection = () => {
 
     dataDispatch({ type: "clearData" });
 
-    try {
-      const data = await api.loadPracticeData(practiceData.phenotypes);
+    try {      
+      const expressionData = await api.loadPracticeData(practiceData.expressionData);
+      const phenotypeData = await api.loadPracticeData(practiceData.phenotypes);
 
       dataDispatch({ type: "setDataInfo", source: "practice" });
-      dataDispatch({ type: "setPhenotypes", data: data });
+
+      // Set phenotype data first
+      dataDispatch({ type: "setPhenotypes", data: phenotypeData });
+      dataDispatch({ type: "setExpressionData", data: expressionData });
     }
     catch (error) {
       console.log(error);
 
       setErrorMessage(getErrorMessage(error));
     }
-  
+
     setState(states.normal);
   };
 
