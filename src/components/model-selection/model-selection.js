@@ -1,7 +1,7 @@
 import React, { useState, useReducer, useContext, useEffect } from "react";
 import { Row, Col, Card, Form, Button, ButtonGroup, InputGroup } from "react-bootstrap";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
-import { UserContext, DataContext } from "../../contexts";
+import { UserContext, DataContext, ModelContext } from "../../contexts";
 import { api } from "../../api";
 import { practiceData } from "../../datasets";
 
@@ -9,143 +9,16 @@ const { Header, Body } = Card;
 const { Label, Group, Control } = Form;
 const { Append } = InputGroup;
 
-const models = [
-  { organism: "human", name: "iHSA", value: "MT_iHsa.mat" },
-  { organism: "human", name: "recon v1", value: "MT_recon_1.mat" },
-  { organism: "human", name: "recon v2", value: "MT_recon_2.mat" },
-  { organism: "human", name: "recon v2.2", value: "MT_recon_2_2_entrez.mat" },
-  { organism: "mouse", name: "iMM1416", value: "MT_iMM1415.mat" },
-//  { organism: "mouse", name: "inesMouseModel" },
-  { organism: "mouse", name: "quek", value: "MT_quek14.mat" },
-  { organism: "rat", name: "iRno", value: "MT_iRno.mat" },
-  { organism: "Chinese hamster", name: "iCHOv1", value: "MT_iCHOv1_final.mat" }
-];
-
-const thresholdTypes = [
-  { name: "global", value: "global" },
-  { name: "local", value: "local" }
-];
-
-const initialParameters = [
-  {
-    label: "Percentile or value",
-    name: "PercentileOrValue",    
-    default: "percentile",
-    value: "percentile",
-    options: [
-      { name: "percentile", value: "percentile" },
-      { name: "value", value: "value" }
-    ]
-  },
-  {
-    label: "Percentile",
-    name: "Percentile",
-    type: "global",
-    default: 50,
-    value: 50,
-    range: [0, 100]
-  },
-  {
-    label: "Value",
-    name: "Value",
-    type: "global",
-    default: 5,
-    value: 5,
-    range: [0, Number.MAX_SAFE_INTEGER]
-  },
-  {
-    label: "Local threshold type",
-    name: "LocalThresholdType",
-    type: "local",
-    flag: "-t",
-    default: "minmaxmean",
-    value: "minmaxmean",
-    options: [
-      { name: "min-max mean", value: "minmaxmean" }, 
-      { name: "mean", value: "mean" }
-    ]
-  },
-  {
-    label: "Low percentile",
-    name: "PercentileLow",
-    type: "local",
-    flag: "low",
-    default: 25,
-    value: 25,
-    range: [0, 100]
-  },
-  {
-    label: "High percentile",
-    name: "PercentileHigh",
-    type: "local",
-    flag: "high",
-    default: 75,
-    value: 75,
-    range: [0, 100]
-  },
-  {
-    label: "Low value",
-    name: "ValueLow",
-    type: "local",
-    flag: "low",
-    default: 5,
-    value: 5,
-    range: [0, Number.MAX_SAFE_INTEGER]
-  },
-  {
-    label: "High value",
-    name: "ValueHigh",
-    type: "local",
-    flag: "high",
-    default: 10,
-    value: 10,
-    range: [0, Number.MAX_SAFE_INTEGER]
-  }
-];
-
 export const ModelSelection = () => {
   const [{ email, tasks }, userDispatch] = useContext(UserContext);
   const [{ dataInfo, rawExpressionData, expressionData, rawPhenotypeData }, dataDispatch] = useContext(DataContext);
-  const [organism, setOrganism] = useState("human");
-  const [currentModels, setCurrentModels] = useState(models.filter(({ organism }) => organism === "human"));
-  const [model, setModel] = useState(models.find(({ organism }) => organism === "human"));
-  const [thresholdType, setThresholdType] = useState(thresholdTypes[0]);
-  const [parameters, dispatch] = useReducer((state, action) => {
-    switch (action.type) {
-      case "setValue":  {
-        const newState = [...state];
-        const parameter = newState.find(({ name }) => name === action.name);
+  const [{ organism, model, parameters }, modelDispatch] = useContext(ModelContext); 
 
-        if (!parameter) return state;
-
-        parameter.value = action.value;
-
-        return newState;
-      }
-
-      case "resetValue":  {
-        const newState = [...state];
-        const parameter = newState.find(({ name }) => name === action.name);
-
-        if (!parameter) return state;
-
-        parameter.value = parameter.default;
-
-        return newState;
-      }
-
-      default:
-        throw new Error("Invalid parameters action: " + action.type);
-    }
-  }, initialParameters);
-
-  const organisms = models.reduce((organisms, model) => {
-    if (!organisms.includes(model.organism)) organisms.push(model.organism);
-
-    return organisms;
-  }, []);
+  const thresholdType = parameters.find(({ name }) => name === "ThreshType");
 
   // XXX: Need a different way to check for changed active task
+  // XXX: Potentially move cellfie parameters to a context, and set explicitly as needed
+/*  
   useEffect(() => {
     if (!tasks) return;
 
@@ -169,30 +42,22 @@ export const ModelSelection = () => {
         });
     }
   }, [tasks]);
+*/  
 
   const onOrganismChange = evt => {
-    const value = evt.target.value;
-    const newModels = models.filter(({ organism }) => organism === value);
-
-    setOrganism(value);
-    setCurrentModels(newModels);
-    setModel(newModels[0]);
+    modelDispatch({ type: "setOrganism", value: evt.target.value });
   };
 
   const onModelChange = evt => {
-    setModel(models.find(({ value }) => value === evt.target.value));
-  };
-
-  const onThresholdTypeChange = evt => {
-    setThresholdType(thresholdTypes.find(({ value }) => value === evt.target.value));
+    modelDispatch({ type: "setModel", value: evt.target.value });
   };
 
   const onParameterChange = (name, value) => {
-    dispatch({ type: "setValue", name: name, value: value });
+    modelDispatch({ type: "setParameterValue", name: name, value: value });
   };
 
   const onParameterReset = name => {
-    dispatch({ type: "resetValue", name: name });
+    modelDispatch({ type: "resetParameterValue", name: name });
   };
 
   const onRunCellfieClick = async () => {
@@ -209,10 +74,10 @@ export const ModelSelection = () => {
         const phenotypesBlob = dataBlob(rawPhenotypeData);
 
         // Run Cellfie
-        const id = await api.runCellfie(email, expressionBlob, phenotypesBlob, n, model.value, parameters.reduce((parameters, parameter) => {
+        const id = await api.runCellfie(email, expressionBlob, phenotypesBlob, n, model.value.value, parameters.reduce((parameters, parameter) => {
           parameters[parameter.name] = parameter.value;
           return parameters; 
-        }, { ThreshType: thresholdType.value }));     
+        }, {}));     
 
         // Get task info
         const params = await api.getCellfieTaskParameters(id);
@@ -256,11 +121,13 @@ export const ModelSelection = () => {
   };
 
   const currentParameters = parameters.filter(({ type, name }) => {
+    if (name === "ThreshType") return false;
+
     const pv = name.toLowerCase().includes("percent") ? "percent" : 
       name.toLowerCase().includes("value") ? "value" : null;
 
     return !type || 
-      (type === thresholdType.name && 
+      (type === thresholdType.value && 
       (!pv || parameters.find(({ name }) => name === "PercentileOrValue").value.includes(pv)));
   }).map((parameter, i) => {
       return (
@@ -325,10 +192,10 @@ export const ModelSelection = () => {
               <Label><h6>Organism</h6></Label>
               <Control 
                 as="select"
-                value={ organism }
+                value={ organism.value }
                 onChange={ onOrganismChange }
               >
-                { organisms.map((organism, i) => (
+                { organism.options.map((organism, i) => (
                   <option key={ i }>{ organism }</option>
                 ))}
               </Control>
@@ -337,10 +204,10 @@ export const ModelSelection = () => {
             <Label><h6>Model</h6></Label>
               <Control 
                 as="select"
-                value={ model.value }
+                value={ model.value.value }
                 onChange={ onModelChange }
               >
-                { currentModels.map(({ name, value }, i) => (
+                { model.options.map(({ name, value }, i) => (
                   <option key={ i } value={ value }>{ name }</option>
                 ))}
               </Control>
@@ -348,20 +215,20 @@ export const ModelSelection = () => {
           </Col>
           <Col>
             <Group controlId="threshold_type_select">
-              <Label><h6>Threshold type</h6></Label>
+              <Label><h6>{ thresholdType.name }</h6></Label>
               <Control 
                 as="select"
                 value={ thresholdType.value }
-                onChange={ onThresholdTypeChange }
+                onChange={ evt => onParameterChange(thresholdType.name, evt.target.value) }
               >
-                { thresholdTypes.map(({ name, value }, i) => (
+                { thresholdType.options.map(({ name, value }, i) => (
                   <option key={ i } value={ value }>{ name }</option>
                 ))}
               </Control>
             </Group>
             <Label>
               <h6>
-                <span className="text-capitalize">{ thresholdType.name }</span> 
+                <span className="text-capitalize">{ thresholdType.value }</span> 
                 <> thresholding parameters</>
               </h6>
             </Label>

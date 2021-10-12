@@ -124,7 +124,7 @@ export const api = {
 
     return data;
   },
-  runCellfie: async (email, expressionData, phenotypeData, sampleNumber, model, parameters) => {    
+  runCellfie: async (email, expressionData, phenotypeData, sampleNumber, model, parameters) => {   
     // Set data and parameters as form data
     const formData = new FormData();
     formData.append("expression_data", expressionData);

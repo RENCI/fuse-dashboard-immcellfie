@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Card, ListGroup } from "react-bootstrap";
-import { DataContext, UserContext } from "../../contexts";
+import { DataContext, UserContext, ModelContext } from "../../contexts";
 import { Task } from "./task";
 import { api } from "../../api";
 
@@ -18,6 +18,7 @@ const sortOrder = {
 export const TaskSelection = () => {
   const [, dataDispatch  ] = useContext(DataContext);
   const [{ email, tasks }, userDispatch  ] = useContext(UserContext);
+  const [, modelDispatch] = useContext(ModelContext);
 
   const selectTask = async task => {
     const id = task.id;
@@ -31,6 +32,8 @@ export const TaskSelection = () => {
     dataDispatch({ type: "setDataInfo", source: "cellfie" });
     dataDispatch({ type: "setPhenotypes", data: phenotypes });
     dataDispatch({ type: "setExpressionData", data: expressionData });
+
+    modelDispatch({ type: "setParameters", parameters: task.parameters });
 
     if (task.status === "finished") {  
       const output = await api.getCellfieOutput(id);
