@@ -20,6 +20,6 @@ const getOrganisms = models => {
 
 export const organisms = getOrganisms(models);
 
-export const getModels = organism => {
-  return models.filter(model => model.organism === organism);
-};
+export const getModels = organism => models.filter(model => model.organism === organism);
+
+export const getModel = value => models.find(model => model.value === value);

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { ListGroup, Row, Col, Button, Collapse, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { ChevronDown, ChevronUp, XLg } from "react-bootstrap-icons";
 import { TaskStatusIcon } from "../task-status-icon";
+import { getModel } from "../../models";
 import "./task-selection.css";
 
 const { Item } = ListGroup;
@@ -37,17 +38,17 @@ export const Task = ({ task, onClick, onDeleteClick }) => {
     start && time ? (time - start) :
     -1;
 
-  console.log(task);
+  const model = getModel(task.parameters.Ref);
 
-  // XXX: Move organism/model options to separate file so we can use here and in model selection
-  const model = task.parameters.Ref.replace(".mat", "");
+  const modelName = model ? model.name : "";
+  const organism = model ? model.organism : "";
 
   const summary = (
     <>
       <small className="text-muted">
         { created.toLocaleString() }
       </small>
-      <div>{ model }</div>
+      <div>{ organism }: { modelName }</div>
     </>
   );
 
