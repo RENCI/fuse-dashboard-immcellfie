@@ -3,7 +3,6 @@ import { Row, Col, Card, Form, Button, ButtonGroup, InputGroup } from "react-boo
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
 import { UserContext, DataContext, ModelContext } from "../../contexts";
 import { api } from "../../api";
-import { practiceData } from "../../datasets";
 
 const { Header, Body } = Card;
 const { Label, Group, Control } = Form;
@@ -11,7 +10,7 @@ const { Append } = InputGroup;
 
 export const ModelSelection = () => {
   const [{ email }, userDispatch] = useContext(UserContext);
-  const [{ dataInfo, rawExpressionData, expressionData, rawPhenotypeData }, dataDispatch] = useContext(DataContext);
+  const [{ rawExpressionData, expressionData, rawPhenotypeData }, dataDispatch] = useContext(DataContext);
   const [{ organism, model, parameters }, modelDispatch] = useContext(ModelContext); 
 
   const thresholdType = parameters.find(({ name }) => name === "ThreshType"); 
