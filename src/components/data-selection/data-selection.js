@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Card, Form, InputGroup, Alert, Row, Col } from "react-bootstrap";
-import { SpinnerButton } from "../spinner-button";
 import { DataContext } from "../../contexts";
+import { SpinnerButton } from "../spinner-button";
 import { FileSelect } from "../file-select";
 import { PhenotypeInfo } from "../phenotype-info";
 import { ExpressionInfo } from "../expression-info";
@@ -103,18 +103,22 @@ export const DataSelection = () => {
 
     dataDispatch({ type: "clearData" });
 
-    try {
-      const data = await api.loadPracticeData(practiceData.phenotypes);
+    try {      
+      const expressionData = await api.loadPracticeData(practiceData.expressionData);
+      const phenotypeData = await api.loadPracticeData(practiceData.phenotypes);
 
       dataDispatch({ type: "setDataInfo", source: "practice" });
-      dataDispatch({ type: "setPhenotypes", data: data });
+
+      // Set phenotype data first
+      dataDispatch({ type: "setPhenotypes", data: phenotypeData });
+      dataDispatch({ type: "setExpressionData", data: expressionData });
     }
     catch (error) {
       console.log(error);
 
       setErrorMessage(getErrorMessage(error));
     }
-  
+
     setState(states.normal);
   };
 
@@ -143,7 +147,7 @@ export const DataSelection = () => {
 
       // Set phenotype data first
       if (phenotypeData) dataDispatch({ type: "setPhenotypes", data: phenotypeData });
-      dataDispatch({ type: "setExpressionData", data: expressionData, file: expressionDataFile });
+      dataDispatch({ type: "setExpressionData", data: expressionData });
     }
     catch (error) {
       console.log(error);

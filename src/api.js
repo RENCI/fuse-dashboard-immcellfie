@@ -59,10 +59,37 @@ const readStream = async stream => {
 //const cellfieResult = (id, name) => `${ process.env.REACT_APP_API_ROOT }cellfie/results/${ id }/${ name }`;
 
 const cellfieResultStream = async (id, name) => {
-  const stream = await getStream(`${ process.env.REACT_APP_API_ROOT }cellfie/results/${ id }/${ name }`);
+  const stream = await getStream(`${ process.env.REACT_APP_API_ROOT }cellfie/task/results/${ id }/${ name }`);
   const data = await readStream(stream);
 
   return data;
+};
+
+const checkTaskStatus = async id => {
+  const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/task/status/${ id }`);
+
+  return result.data.status; 
+};
+
+const getTaskParameters = async id => {
+  const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/task/parameters/${ id }`);
+
+  return result.data;
+};
+
+const getTaskInfo = async id => {
+  const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/task/metadata/${ id }`);
+
+  const info = {...result.data};
+
+  const createDate = key => info[key] ? new Date(info[key]) : null;
+
+  // Convert to dates
+  info.date_created = createDate("date_created");
+  info.start_date = createDate("start_date");
+  info.end_date = createDate("end_date");
+
+  return info;
 };
 
 export const api = {
@@ -97,27 +124,41 @@ export const api = {
 
     return data;
   },
-  runCellfie: async (file, sampleNumber, model, parameters) => {    
+  runCellfie: async (email, expressionData, phenotypeData, sampleNumber, model, parameters) => {   
     // Set data and parameters as form data
     const formData = new FormData();
-    formData.append("data", file);
+    formData.append("expression_data", expressionData);
+    formData.append("phenotype_data", phenotypeData);
     formData.append("SampleNumber", sampleNumber);
     formData.append("Ref", model);
     Object.entries(parameters).forEach(([key, value]) => formData.append(key, value));
 
     // Make post request
     const result = await axios.post(
-      `${ process.env.REACT_APP_API_ROOT }cellfie/run/upload_data`, 
+      `${ process.env.REACT_APP_API_ROOT }cellfie/task/submit`, 
       formData,
-      { headers: { "Content-Type": "multipart/form-data" } }
+      { 
+        headers: { "Content-Type": "multipart/form-data" },
+        params: { "email": email }
+      }
     );
 
     return result.data.task_id;    
   },
-  checkCellfieStatus: async id => {
-    const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/status/${ id }`);
+  checkCellfieTaskStatus: async id => {
+    const status = await checkTaskStatus(id);
 
-    return result.data.task_status; 
+    return status; 
+  },
+  getCellfieTaskParameters: async id => {
+    const parameters = await getTaskParameters(id);
+
+    return parameters;
+  },
+  getCellfieTaskInfo: async id => {
+    const info = await getTaskInfo(id);
+
+    return info;
   },
   getCellfieOutput: async id => {
     const results = await Promise.all([
@@ -133,5 +174,33 @@ export const api = {
       scoreBinary: results[2],
       detailScoring: results[3]
     };
+  },
+  getCellfieExpressionData: async id => {
+    const result = await cellfieResultStream(id, "input");
+
+    return result;
+  },
+  getCellfiePhenotypes: async id => {
+    const result = await cellfieResultStream(id, "phenotypes");
+
+    return result;
+  },
+  getCellfieTasks: async email => {
+    const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/task/ids/${ email }`);
+
+    const tasks = result.data.map(({ task_id }) => ({ id: task_id }));
+
+    for (const task of tasks) {
+      task.status = await checkTaskStatus(task.id);
+      task.parameters = await getTaskParameters(task.id);
+      task.info = await getTaskInfo(task.id);
+    }
+
+    return tasks;
+  },
+  deleteCellfieTask: async id => {
+    const result = await axios.delete(`${ process.env.REACT_APP_API_ROOT }cellfie/task/delete/${ id }`);
+
+    return result.data.status === "done";
   }
 }

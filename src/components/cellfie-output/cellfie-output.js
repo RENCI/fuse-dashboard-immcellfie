@@ -1,10 +1,11 @@
 import React, { useContext } from "react";
 import { Tab, Card, Nav } from "react-bootstrap";
-import { DataContext } from "../../contexts";
+import { UserContext, DataContext } from "../../contexts";
 import { HierarchyVis } from "../hierarchy-vis";
 import { HeatmapVis } from "../heatmap-vis";
 import { VolcanoVis } from "../volcano-vis";
 import { PathwayVis } from "../pathway-vis";
+import { LoadingSpinner } from "../loading-spinner";
 import { useLocalStorage } from "../../hooks";
 
 const { Header, Title, Body } = Card;
@@ -12,12 +13,15 @@ const { Item, Link } = Nav;
 const { Container, Content, Pane } = Tab;
 
 export const CellfieOutput = () => {
+  const [{ tasks }] = useContext(UserContext);
   const [{ hierarchy, tree, subgroups, selectedSubgroups }] = useContext(DataContext);
   const [tab, setTab] = useLocalStorage("CellfieOutputTab", "hierarchy");
 
-  const currentSubgroups = selectedSubgroups.map(key => {
+  const currentSubgroups = selectedSubgroups && selectedSubgroups.map(key => {
     return key !== null ? subgroups.find(subgroup => subgroup.key === key) : null;
   });
+
+  const activeTask = tasks.find(({ active }) => active);
 
   const onSelect = tab => {
     setTab(tab);
@@ -55,7 +59,19 @@ export const CellfieOutput = () => {
           }
         </Header>
         <Body>
-          { !hierarchy ? <>No CellFIE output data</> : 
+          { !activeTask ? 
+            <>
+              <div>No active task</div>
+              <small className="text-muted"> - no output data - </small>
+            </>
+          : activeTask.status !== "finished" ? 
+            <>
+              <div>Task { activeTask.status }</div>
+              <small className="text-muted"> - no output data - </small>
+            </>
+          : !hierarchy ? 
+            <LoadingSpinner /> 
+          : 
             <Content>
               <Pane eventKey="hierarchy">
                 <HierarchyVis
