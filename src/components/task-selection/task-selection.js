@@ -24,6 +24,7 @@ export const TaskSelection = () => {
     const id = task.id;
 
     userDispatch({ type: "setActiveTask", id: id });
+    modelDispatch({ type: "setParameters", parameters: task.parameters });
     dataDispatch({ type: "clearOutput" });
 
     const phenotypes = await api.getCellfiePhenotypes(id);
@@ -32,8 +33,6 @@ export const TaskSelection = () => {
     dataDispatch({ type: "setDataInfo", source: "cellfie" });
     dataDispatch({ type: "setPhenotypes", data: phenotypes });
     dataDispatch({ type: "setExpressionData", data: expressionData });
-
-    modelDispatch({ type: "setParameters", parameters: task.parameters });
 
     if (task.status === "finished") {  
       const output = await api.getCellfieOutput(id);

@@ -63,6 +63,7 @@ export const UserInput = () => {
         const id = activeTask.id;
 
         userDispatch({ type: "setActiveTask", id: id });
+        modelDispatch({ type: "setParameters", parameters: activeTask.parameters });
 
         const phenotypes = await api.getCellfiePhenotypes(id);
         const expressionData = await api.getCellfieExpressionData(id);
@@ -70,8 +71,6 @@ export const UserInput = () => {
         dataDispatch({ type: "setDataInfo", source: "cellfie" });
         dataDispatch({ type: "setPhenotypes", data: phenotypes });
         dataDispatch({ type: "setExpressionData", data: expressionData });
-
-        modelDispatch({ type: "setParameters", parameters: activeTask.parameters });
 
         if (activeTask.status === "finished") {  
           const output = await api.getCellfieOutput(id);
