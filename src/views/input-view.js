@@ -19,6 +19,6 @@ export const InputView = () => {
           <DataSelection />
         </ViewWrapper>
       }
-    </ViewWrapper>
+    </>
   ); 
 };
