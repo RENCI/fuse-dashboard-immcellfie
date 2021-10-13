@@ -10,7 +10,7 @@ import { DataMissing } from "../components/data-missing";
 import { HomeLink, InputLink } from "../components/page-links";
 
 export const OutputView = () => {
-  const [{ email, tasks }] = useContext(UserContext);
+  const [{ email }] = useContext(UserContext);
   const [{ phenotypeData }] = useContext(DataContext);
   
   return (
@@ -19,9 +19,9 @@ export const OutputView = () => {
         <ViewWrapper>
           <DataMissing message="No user email selected" pageLink={ <HomeLink /> } /> 
         </ViewWrapper>
-      : !phenotypeData && tasks.length === 0 ? 
+      : !phenotypeData ? 
         <ViewWrapper> 
-          <DataMissing message="No data loaded and no CellFIE tasks" pageLink={ <InputLink /> } /> 
+          <DataMissing message="No data loaded" pageLink={ <InputLink /> } /> 
         </ViewWrapper>
       :
         <Row>
