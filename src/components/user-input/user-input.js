@@ -76,6 +76,11 @@ export const UserInput = () => {
           const output = await api.getCellfieOutput(id);
 
           dataDispatch({ type: "setOutput", output: output });
+
+          // Load larger detail scoring asynchronously
+          api.getCellfieDetailScoring(id).then(result => {
+            dataDispatch({ type: "setDetailScoring", data: result });
+          });
         }
       }
 

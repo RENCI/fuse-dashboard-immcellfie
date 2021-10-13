@@ -21,23 +21,33 @@ export const TaskSelection = () => {
   const [, modelDispatch] = useContext(ModelContext);
 
   const selectTask = async task => {
-    const id = task.id;
+    try {
+      const id = task.id;
 
-    userDispatch({ type: "setActiveTask", id: id });
-    modelDispatch({ type: "setParameters", parameters: task.parameters });
-    dataDispatch({ type: "clearOutput" });
+      userDispatch({ type: "setActiveTask", id: id });
+      modelDispatch({ type: "setParameters", parameters: task.parameters });
+      dataDispatch({ type: "clearOutput" });
 
-    const phenotypes = await api.getCellfiePhenotypes(id);
-    const expressionData = await api.getCellfieExpressionData(id);
+      const phenotypes = await api.getCellfiePhenotypes(id);
+      const expressionData = await api.getCellfieExpressionData(id);
 
-    dataDispatch({ type: "setDataInfo", source: "cellfie" });
-    dataDispatch({ type: "setPhenotypes", data: phenotypes });
-    dataDispatch({ type: "setExpressionData", data: expressionData });
+      dataDispatch({ type: "setDataInfo", source: "cellfie" });
+      dataDispatch({ type: "setPhenotypes", data: phenotypes });
+      dataDispatch({ type: "setExpressionData", data: expressionData });
 
-    if (task.status === "finished") {  
-      const output = await api.getCellfieOutput(id);
+      if (task.status === "finished") {  
+        const output = await api.getCellfieOutput(id);
 
-      dataDispatch({ type: "setOutput", output: output });
+        dataDispatch({ type: "setOutput", output: output });
+
+        // Load larger detail scoring asynchronously
+        api.getCellfieDetailScoring(id).then(result => {
+          dataDispatch({ type: "setDetailScoring", data: result });
+        });
+      }
+    }
+    catch (err) {
+      console.log(err);
     }
   };
 

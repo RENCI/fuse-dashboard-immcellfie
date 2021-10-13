@@ -164,16 +164,17 @@ export const api = {
     const results = await Promise.all([
       cellfieResultStream(id, "taskInfo"), 
       cellfieResultStream(id, "score"),
-      cellfieResultStream(id, "score_binary"),
-      cellfieResultStream(id, "detailScoring")
+      cellfieResultStream(id, "score_binary")
     ]);
 
     return {
       taskInfo: results[0],
       score: results[1],
-      scoreBinary: results[2],
-      detailScoring: results[3]
+      scoreBinary: results[2]
     };
+  },
+  getCellfieDetailScoring: async id => {
+    return cellfieResultStream(id, "detailScoring");
   },
   getCellfieExpressionData: async id => {
     const result = await cellfieResultStream(id, "input");
