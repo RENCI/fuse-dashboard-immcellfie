@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { Form, Col } from "react-bootstrap";
-import * as d3 from "d3";
+import { merge, group, mean } from "d3-array";
 import { VegaWrapper } from "../vega-wrapper";
 import { taskHeatmap } from "../../vega-specs";
 import { sequential } from "../../colors";
@@ -32,16 +32,16 @@ export const HeatmapVis = ({ data, subgroups }) => {
 
   const heatmapData = useMemo(() => {
     const getValues = subgroup => {
-      return d3.merge(data.filter(node => node.depth === depth).map(node => {
+      return merge(data.filter(node => node.depth === depth).map(node => {
         const key = value === "score" ? "scores" + (subgroup + 1) : "activities" + (subgroup + 1);
-        const subjects = d3.group(node.data[key], ({ index }) => index);
+        const subjects = group(node.data[key], ({ index }) => index);
   
         return Array.from(subjects).map(subject => {
           return {
             name: node.data.name,
             subgroup: subgroups[subgroup].name,
             index: subject[0],
-            value: d3.mean(subject[1], value => value.value)
+            value: mean(subject[1], value => value.value)
           };
         });
       }));

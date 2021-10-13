@@ -1,6 +1,8 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Form, Col, ToggleButtonGroup, ToggleButton } from "react-bootstrap";
-import * as d3 from "d3";
+import { randomUniform, randomLcg } from "d3-random";
+import { range, extent, merge } from "d3-array";
+import { line } from "d3-shape";
 import { DataContext } from "../../contexts";
 import { voronoiTreemap as d3VoronoiTreemap } from "d3-voronoi-treemap";
 import { ResizeWrapper } from "../resize-wrapper";
@@ -101,10 +103,10 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
     if (vis.name === "voronoi" && !hasVoronoi) {
       // Create Voronoi diagram, use setTimout so loading state can update
       setTimeout(() => {
-        const prng = d3.randomUniform.source(d3.randomLcg(0.2))();
+        const prng = randomUniform.source(randomLcg(0.2))();
 
         const n = 64;
-        const clip = d3.range(0, n).map(d => {
+        const clip = range(0, n).map(d => {
           return [
             Math.cos(d / n * Math.PI * 2),
             Math.sin(d / n * Math.PI * 2)
@@ -122,10 +124,10 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
 
         voronoi(tree);
 
-        const line = d3.line();
+        const lineShape = line();
 
         tree.each(node => {
-          node.path = line(node.polygon) + "z";
+          node.path = lineShape(node.polygon) + "z";
         });
 
         setLoading(false);
@@ -137,9 +139,9 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
   }, [vis, tree, hasVoronoi]);
 
   const logRange = values => {
-    const extent = d3.extent(values);
+    const ext = extent(values);
 
-    const max = extent[0] > 0 ? Math.max(1 / extent[0], extent[1]) : extent[1];
+    const max = ext[0] > 0 ? Math.max(1 / ext[0], ext[1]) : ext[1];
 
     return [1 / max, max];
   };
@@ -148,7 +150,7 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
 
   const domain = value === "activity" ? (isComparison ? [-1, 1] : [0, 1]) :
     isComparison ? logRange(tree.descendants().filter(d => d.depth === Math.min(depth, 3)).map(d => d.data[valueField])) :
-    d3.extent(d3.merge(tree.descendants().filter(d => d.depth === depth).map(d => [d.data.score1, d.data.score2])));
+    extent(merge(tree.descendants().filter(d => d.depth === depth).map(d => [d.data.score1, d.data.score2])));
 
   const subtitle = isComparison ? 
     (subgroups[0].name + " vs. " + subgroups[1].name) : 
@@ -200,7 +202,7 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
               className="mt-2"
               type="range"
               min={ 1 }
-              max={ 4 }         
+              max={ subgroup === "comparison" ? 3 : 4 }         
               value={ depth }
               onChange={ evt => setDepth(+evt.target.value) } 
             />
@@ -259,6 +261,7 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
           <ResizeWrapper
             useWidth={ true }
             useHeight={ true }
+            minWidth={ 600 }
             aspectRatio={ 1.4 }
           > 
             <VegaWrapper

@@ -1,34 +1,14 @@
 export const expressionHeatmap = {
   $schema: "https://vega.github.io/schema/vega/v5.json",
-  width: { signal: "containerWidth - 80" },
-  height: 1,
-  padding: "auto",
-  title: "Gene expression heat map",
+  width: "container",
+  height: "auto",
+  title: "Expression heat map",
   autosize: {
     type: "pad",
-    resize: true,
-    contains: "padding"
+    resize: false,
+    contains: "content"
   },
   signals: [
-    {
-      name: "containerWidth",
-      value: 1032,
-      on: [
-        {
-          events: [
-            {
-              source: "window",
-              type: "resize"
-            },
-            {
-              source: "window",
-              type: "load"
-            }
-          ],
-          update: "containerSize()[0]"
-        }
-      ]
-    },
     {
       name: "sortBy",
       value: "median"
@@ -40,6 +20,10 @@ export const expressionHeatmap = {
     {
       name: "ticks",
       value: [0, 1]      
+    },
+    {
+      name: "numColumns",
+      value: 1
     }
   ],
   data: { 
@@ -53,7 +37,7 @@ export const expressionHeatmap = {
         data: "data",
         field: "id"
       },
-      range: "width",
+      range: { step: { signal: "max(width / (numColumns + 1), 30)" } },
       nice: true
     },
     {
@@ -68,7 +52,7 @@ export const expressionHeatmap = {
           order: "descending"
         }
       },
-      range: { "step": 4 }
+      range: { step: 4 }
     },    
     {
       name: "color",
@@ -81,12 +65,12 @@ export const expressionHeatmap = {
     {
       scale: "x",
       orient: "top",
-      title: "Subjects"
+      title: "subjects"
     },
     {
       scale: "y",
       orient: "left",
-      title: "Genes",
+      title: "genes",
       values: []
     }
   ],
@@ -94,8 +78,17 @@ export const expressionHeatmap = {
     {
       type: "gradient",
       fill: "color",
-      title: 'Values',
-      values: { signal: "ticks"}
+      title: "value",
+      orient: "top",            
+      direction: "horizontal",
+      values: { signal: "ticks" },
+      encode: {
+        labels: {
+          update: {
+            align: { value: "center" }
+          }
+        }
+      }
     }
   ],
   marks: [

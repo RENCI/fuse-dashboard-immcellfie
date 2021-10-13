@@ -3,16 +3,18 @@ import PropTypes from "prop-types";
 import { useResize } from "../../hooks";
 import "./resize-wrapper.css";
 
-export const ResizeWrapper = ({ useWidth, useHeight, aspectRatio, children }) => {
+export const ResizeWrapper = ({ useWidth, useHeight, minWidth, aspectRatio, children }) => {
   const ref = useRef();
   const { width, height } = useResize(ref, 100, 100);
 
+  const w = minWidth ? Math.max(width, minWidth) : width;
+
   const props = {};
-  if (useWidth) props.width = width;
-  if (useHeight) props.height = aspectRatio ? width / aspectRatio : height;
+  if (useWidth) props.width = w;
+  if (useHeight) props.height = aspectRatio ? w / aspectRatio : height;
 
   return (
-    <div ref={ ref }>
+    <div ref={ ref } className="resizeWrapper">
       { React.cloneElement(children, props) }
     </div>
   );
@@ -21,11 +23,13 @@ export const ResizeWrapper = ({ useWidth, useHeight, aspectRatio, children }) =>
 ResizeWrapper.defaultProps = {
   useWidth: true,
   useHeight: false,
+  minWidth: null,
   aspectRatio: null
 };
 
 ResizeWrapper.propTypes = {
   useWidth: PropTypes.bool,
   useHeight: PropTypes.bool,
+  minWidth: PropTypes.number,
   aspectRatio: PropTypes.number
 };

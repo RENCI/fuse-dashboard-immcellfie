@@ -79,6 +79,13 @@ export const barOverlap = {
         y2: { value: { expr: "height - datum.yOffset" } },
         stroke: { 
           field: "section",
+          scale: { 
+            range: [ 
+              { expr: 'colors[0]' },
+              { expr: 'colors[1]' },
+              { expr: 'colors[2]' }
+            ] 
+          },
           legend: null
         },
         order: { field: "order" }

@@ -1,5 +1,7 @@
 import React, { createContext, useReducer } from "react";
-import * as d3 from "d3";
+import { csvParseRows, csvParse } from "d3-dsv";
+import { stratify } from "d3-hierarchy";
+import { merge, mean, group } from "d3-array";
 import ttest2 from "@stdlib/stats/ttest2";
 
 const excludedPhenotypes = [
@@ -15,8 +17,13 @@ const timeSort = {
 };
 
 const initialState = {
+  // Info for current dataset (source, names, etc.)
+  dataInfo: null,
+
   // Phenotype data for each subject
+  rawPhenotypeData: null,
   phenotypeData: null,
+  numPhenotypeSubjects: 0,
 
   // Phenotype options created from phenotype data
   phenotypes: null,
@@ -28,9 +35,12 @@ const initialState = {
   selectedSubgroups: null,
 
   // Expression data used as CellFIE input
-  input: null,
+  rawExpressionData: null,
+  expressionData: null,
+  numExpressionSubjects: 0,
 
   // CellFIE output
+  rawOutput: null,
   output: null,
 
   // CellFIE output with hierarchy info
@@ -40,53 +50,32 @@ const initialState = {
   // since we have to calculate the layout external to the Vega spec
   tree: null,
 
+  // Reaction scores from detailed CellFIE output
+  reactionScores: null,  
+
   // Method for handling subgroup overlap
   overlapMethod: "both"
 };
 
-const parseInput = data => {
-  return {
-    data: d3.tsvParseRows(data, row => {
-      return {
-        gene: row[0],
-        values: row.slice(1).map(d => +d)
-      };
-    })
-  };
+const parseExpressionData = data => {
+  return csvParseRows(data, row => {
+    // Check for header
+    if (row[0] === "genes") return null;
+
+    return {
+      gene: row[0],
+      values: row.slice(1).map(d => +d)
+    };
+  });
 };
 
 const parseNumber = d => d < 0 ? NaN : +d;
 
-const parseTSVOutput = data => {
-  return {
-    tasks: d3.tsvParseRows(data, row => {
-      if (row.length !== 3) return null;
+/*
+const parsePhenotypeDataRandomize = (data, n = 32) => {
+  const csv = csvParse(data);
 
-      const info = d3.csvParseRows(row[0])[0];
-
-      // Reorder phenotype info to go from task to system
-      const phenotype = [info[1], info[3], info[2]];
-
-      const scores = d3.csvParseRows(row[1])[0].map(parseNumber);
-
-      return {
-        id: info[0],
-        name: info[1],        
-        phenotype: phenotype,
-        scores: scores,
-        activities: d3.csvParseRows(row[2])[0].map(parseNumber)
-      };
-    })
-  };
-};
-
-const parsePhenotypeData = data => {
-  // XXX: Hack to match test phenotype data to test expression/output data
-  const n = 32;
-
-  const csv = d3.csvParse(data);
-
-  const random = d3.randomInt(csv.length);
+  const random = randomInt(csv.length);
 
   const result = [];
 
@@ -102,25 +91,107 @@ const parsePhenotypeData = data => {
 
   return result;
 }
+*/
 
-const parseCSVOutput = data => {
-  return {
-    tasks: d3.csvParseRows(data, (row, i) => {
-      if (i === 0) return;
+const createPhenotypeData = expressionData => {
+  if (expressionData.length === 0) return "";
 
-      const offset = 4;
-      const n = (row.length - offset) / 2;
-
-      return {
-        id: row[0],
-        name: row[1],        
-        phenotype: [row[1], row[3], row[2]],
-        scores: row.slice(offset, offset + n).map(parseNumber),
-        activities: row.slice(offset + n).map(parseNumber)
-      };      
-    })
-  };
+  return expressionData[0].values.reduce(string => {
+    return string + "auto\n";
+  }, "Auto\n");
 };
+
+const initializePhenotypeData = (state, rawPhenotypeData) => {
+  const phenotypeData = parsePhenotypeData(rawPhenotypeData);
+  const phenotypes = createPhenotypes(phenotypeData);
+
+  // Create initial group with all subjects
+  const subgroups = [createSubgroup("All subjects", phenotypeData, phenotypes, [])];
+
+  // Select this subgroup
+  const selectedSubgroups = [subgroups[0].key, null];
+
+  return {
+    ...state,
+    rawPhenotypeData: rawPhenotypeData,
+    phenotypeData: phenotypeData,
+    numPhenotypeSubjects: phenotypeData.length,
+    phenotypes: phenotypes,
+    subgroups: subgroups,
+    selectedSubgroups: selectedSubgroups
+  };
+}
+
+const parsePhenotypeData = data => {
+  const csv = csvParse(data);
+
+  csv.forEach((subject, i) => subject.index = i);
+
+  return csv;
+};
+
+const combineOutput = (taskInfo, score, scoreBinary) => {
+  const taskInfoParsed = csvParseRows(taskInfo).slice(1);
+  const scoreParsed = csvParseRows(score);
+  const scoreBinaryParsed = csvParseRows(scoreBinary);
+
+  return {
+    tasks: taskInfoParsed.map((task, i) => {
+      return {
+        id: task[0],
+        name: task[1],        
+        phenotype: [task[1], task[3], task[2]],
+        scores: scoreParsed[i].map(parseNumber),
+        activities: scoreBinaryParsed[i].map(parseNumber)
+      };  
+    })
+  }
+};
+
+const getReactionScores = detailScoring => {
+  const cols = 8;
+  const idCol = 4;
+  const scoreCol = 5;
+
+  const csv = csvParseRows(detailScoring);
+
+  if (csv.length === 0) return null;
+
+  const n = csv[0].length / cols;
+
+  const scores = new Array(n).fill().map(() => ({}));
+
+  csv.forEach((row, i) => {
+    if (i === 0) return;
+
+    scores.forEach((sample, j) => {
+      const offset = j * cols;
+
+      sample[row[offset + idCol]] = +row[offset + scoreCol];
+    });
+  });
+
+  return scores;
+};
+
+const setReactionScores = (subgroup, subjects, reactionScores) => {
+  if (!subgroup) return;
+
+  if (subjects.length === 0) {
+    subgroup.reactionScores = null;
+    return;
+  }
+
+  const scores = reactionScores.filter((scores, i) => {
+    return subjects.find(({ index }) => index === i);
+  });
+
+  subgroup.reactionScores = Object.keys(scores[0]).reduce((aggregate, key) => {
+    aggregate[key] = mean(scores, d => d[key]);
+
+    return aggregate;
+  }, {});
+}
 
 const createPhenotypes = phenotypeData => {
   return phenotypeData.columns
@@ -209,7 +280,7 @@ const createHierarchy = output => {
 }
 
 const createTree = hierarchy => {
-  const tree = d3.stratify()
+  const tree = stratify()
       .id(d => d.name)
       .parentId(d => d.parent)
       (hierarchy);
@@ -262,7 +333,7 @@ const getSubgroup = (key, subgroups) => key !== null ? subgroups.find(subgroup =
 
 const subgroupContains = (subgroup, index) => subgroup && subgroup.subjects.some(subject => subject.index === index);
 
-const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod) => {
+const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod, reactionScores) => {
   if (!tree) return;
 
   // Get subgroups
@@ -283,6 +354,10 @@ const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod) => {
 
   const subjects1 = getSubjects(subgroup1, subgroup2, "subgroup1");
   const subjects2 = getSubjects(subgroup2, subgroup1, "subgroup2");
+
+  // Set reaction scores for subgroups
+  setReactionScores(subgroup1, subjects1, reactionScores);
+  setReactionScores(subgroup2, subjects2, reactionScores);
 
   tree.each(node => {
     // Check if it is a leaf node (single subject)
@@ -322,7 +397,7 @@ const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod) => {
       }
       else {
         const getValues = arrayName => {
-          return d3.merge(subjects.map(({ index }) => {
+          return merge(subjects.map(({ index }) => {
             return node.data[arrayName][index].map(value => {
               return {
                 value: value,
@@ -338,9 +413,9 @@ const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod) => {
         const activities = getValues("allActivities");
 
         node.data["scores" + which] = scores;
-        node.data["score" + which] = d3.mean(scores, score => score.value);
+        node.data["score" + which] = mean(scores, score => score.value);
         node.data["activities" + which] = activities;
-        node.data["activity" + which] = d3.mean(activities, activity => activity.value);
+        node.data["activity" + which] = mean(activities, activity => activity.value);
       }
     }
 
@@ -396,7 +471,7 @@ const getNewSubgroupName = subgroups => {
 };
 
 const filterSubgroup = (subgroup, phenotypeData, phenotypes) => {
-  const filters = Array.from(d3.group(subgroup.filters, d => d.phenotype));
+  const filters = Array.from(group(subgroup.filters, d => d.phenotype));
 
   const subjects = phenotypeData.filter(subject => {
     return filters.reduce((include, filter) => {
@@ -445,53 +520,83 @@ const keyIndex = (key, subgroups) => {
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "setInput":
-      return {
-        ...state,
-        input: parseInput(action.file)
-      };
+    case "setDataInfo": {
+      const phenotypeInfo = action.phenotypeInfo ? action.phenotypeInfo :
+        action.source === "practice" ? { name: "phenotypes" } :
+        { name: "unknown" };
 
-    case "setPhenotypes": {
-      const phenotypeData = parsePhenotypeData(action.file);
-      const phenotypes = createPhenotypes(phenotypeData);
-
-      // Create initial group with all subjects
-      const subgroups = [createSubgroup("All subjects", phenotypeData, phenotypes, [])];
-
-      // Select this subgroup
-      const selectedSubgroups = [subgroups[0].key, null];
+      const expressionInfo = action.expressionInfo ? action.expressionInfo :
+        action.source === "practice" ? { name: "expression data" } :
+        { name: "unknown" };
 
       return {
-        ...state,
-        phenotypeData: phenotypeData,
-        phenotypes: phenotypes,
-        subgroups: subgroups,
-        selectedSubgroups: selectedSubgroups
+        ...initialState,
+        dataInfo: {
+          source: action.source,
+          phenotypeInfo: phenotypeInfo,
+          expressionInfo: expressionInfo
+        }
       };
     }
-    
+
+    case "setExpressionData":
+      const expressionData = parseExpressionData(action.data);
+
+      let newState = {...state};
+
+      if (!state.phenotypeData) {
+        newState = initializePhenotypeData(newState, createPhenotypeData(expressionData));
+      }
+
+      return {
+        ...newState,
+        expressionFile: action.file,
+        rawExpressionData: action.data,
+        expressionData: parseExpressionData(action.data),
+        numExpressionSubjects: expressionData.length > 0 ? expressionData[0].values.length : 0
+      };
+
+    case "setPhenotypes":
+      return initializePhenotypeData(state, action.data);
+
     case "setOutput": {
-      const output = action.fileType === "tsv" ? parseTSVOutput(action.file) : parseCSVOutput(action.file);
+      const output = combineOutput(action.output.taskInfo, action.output.score, action.output.scoreBinary);
       const hierarchy = createHierarchy(output);
       const tree = createTree(hierarchy);
-      updateTree(tree, state.subgroups, state.selectedSubgroups, state.overlapMethod);
+      const reactionScores = getReactionScores(action.output.detailScoring);
+      updateTree(tree, state.subgroups, state.selectedSubgroups, state.overlapMethod, reactionScores);
 
       return {
         ...state,
+        rawOutput: {...action.output},
         output: output,
         hierarchy: hierarchy,
-        tree: tree
+        tree: tree,
+        reactionScores: reactionScores
       };
-    }
+    }   
 
     case "clearData":
       return {
         ...initialState
       };
 
+    case "clearOutput":
+      return {
+        ...state,
+        rawOutput: null,
+        output: null,
+        hierarchy: null,
+        tree: null,
+        reactionScores: null
+      };
+
     case "addSubgroup": {
       const subgroup = createSubgroup(
-        getNewSubgroupName(state.subgroups), state.phenotypeData, state.phenotypes, state.subgroups
+        getNewSubgroupName(state.subgroups), 
+        state.phenotypeData, 
+        state.phenotypes, 
+        state.subgroups
       );
 
       const selectedSubgroups = state.selectedSubgroups[1] === null ?
@@ -502,7 +607,7 @@ const reducer = (state, action) => {
         subgroup
       ];
 
-      updateTree(state.tree, subgroups, selectedSubgroups, state.overlapMethod);
+      updateTree(state.tree, subgroups, selectedSubgroups, state.overlapMethod, state.reactionScores);
 
       return {
         ...state,
@@ -529,7 +634,7 @@ const reducer = (state, action) => {
         return reset;
       });
 
-      updateTree(state.tree, subgroups, state.selectedSubgroups, state.overlapMethod);
+      updateTree(state.tree, subgroups, state.selectedSubgroups, state.overlapMethod, state.reactionScores);
 
       return {
         ...state,
@@ -555,7 +660,7 @@ const reducer = (state, action) => {
         selectedSubgroups[1] = null;
       }
 
-      updateTree(state.tree, subgroups, selectedSubgroups, state.overlapMethod);
+      updateTree(state.tree, subgroups, selectedSubgroups, state.overlapMethod, state.reactionScores);
 
       return {
         ...state,
@@ -604,7 +709,7 @@ const reducer = (state, action) => {
         return i === index ? subgroup : sg;
       });
 
-      updateTree(state.tree, subgroups, state.selectedSubgroups, state.overlapMethod);
+      updateTree(state.tree, subgroups, state.selectedSubgroups, state.overlapMethod, state.reactionScores);
 
       return {
         ...state,
@@ -627,7 +732,7 @@ const reducer = (state, action) => {
         return i === index ? subgroup : sg;
       });
 
-      updateTree(state.tree, subgroups, state.selectedSubgroups, state.overlapMethod);
+      updateTree(state.tree, subgroups, state.selectedSubgroups, state.overlapMethod, state.reactionScores);
 
       return {
         ...state,
@@ -663,7 +768,7 @@ const reducer = (state, action) => {
           [subgroup.key, state.selectedSubgroups[1]] :
           [state.selectedSubgroups[0], subgroup.key];
 
-        updateTree(state.tree, state.subgroups, selectedSubgroups, state.overlapMethod);      
+        updateTree(state.tree, state.subgroups, selectedSubgroups, state.overlapMethod, state.reactionScores);      
 
         return {
           ...state,
@@ -673,7 +778,7 @@ const reducer = (state, action) => {
     }
 
     case "setOverlapMethod":       
-      updateTree(state.tree, state.subgroups, state.selectedSubgroups, action.method);
+      updateTree(state.tree, state.subgroups, state.selectedSubgroups, action.method, state.reactionScores);
 
       return {
         ...state,

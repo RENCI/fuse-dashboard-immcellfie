@@ -1,16 +1,22 @@
 import React, { useContext } from "react";
-import { DataContext } from "../contexts";
+import { UserContext, DataContext } from "../contexts";
 import { ViewWrapper } from "../components/view-wrapper";
 import { DataGrouping } from "../components/data-grouping";
 import { DataMissing } from "../components/data-missing";
+import { HomeLink, InputLink } from "../components/page-links";
 
 export const SubgroupView = () => {
+  const [{ email }] = useContext(UserContext);
   const [{ phenotypeData }] = useContext(DataContext);
 
   return (
     <ViewWrapper>
-      { phenotypeData ? <DataGrouping />
-        : <DataMissing message="No data loaded" showHome={ true } />
+      { !email ?
+        <DataMissing message="No user email selected" pageLink={ <HomeLink /> } />
+      : !phenotypeData ? 
+        <DataMissing message="No data loaded" pageLink={ <InputLink /> } />
+      : 
+        <DataGrouping />
       }
     </ViewWrapper>
   ); 

@@ -14,6 +14,8 @@ const { color1, color2 } = subgroupColors;
 export const SubgroupSelection = () => {
   const [{ subgroups, selectedSubgroups, overlapMethod }, dataDispatch] = useContext(DataContext);
 
+  if (!subgroups) return null;
+
   const onChange = (which, key) => {
     const subgroupKey = key === "none" ? null : +key;
     dataDispatch({ type: "selectSubgroup", which: which, key: subgroupKey });
@@ -61,7 +63,7 @@ export const SubgroupSelection = () => {
   const subgroup2Contained = subgroup2 && subgroup2.subjects.length === overlap;
 
   return (
-    <Card className="mt-4">
+    <Card>
       <Header as="h5">
         <Row>
           <Col>

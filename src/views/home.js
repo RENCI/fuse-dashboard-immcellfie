@@ -1,18 +1,11 @@
 import React from "react";
 import { ViewWrapper } from "../components/view-wrapper";
-import { DataSelection } from "../components/data-selection";
-
-const practiceData = {
-  phenotype: "testphenotypes.csv"
-};
+import { UserInput } from "../components/user-input";
 
 export const Home = () => {
   return (   
     <ViewWrapper>
-      <DataSelection 
-        inputName={ practiceData.input } 
-        phenotypeName={ practiceData.phenotype }
-      />
+      <UserInput />
     </ViewWrapper>
   ); 
 };
