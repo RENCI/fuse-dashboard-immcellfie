@@ -356,8 +356,10 @@ const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod, reactionS
   const subjects2 = getSubjects(subgroup2, subgroup1, "subgroup2");
 
   // Set reaction scores for subgroups
-  setReactionScores(subgroup1, subjects1, reactionScores);
-  setReactionScores(subgroup2, subjects2, reactionScores);
+  if (reactionScores) {
+    setReactionScores(subgroup1, subjects1, reactionScores);
+    setReactionScores(subgroup2, subjects2, reactionScores);
+  }
 
   tree.each(node => {
     // Check if it is a leaf node (single subject)
@@ -563,7 +565,7 @@ const reducer = (state, action) => {
       const output = combineOutput(action.output.taskInfo, action.output.score, action.output.scoreBinary);
       const hierarchy = createHierarchy(output);
       const tree = createTree(hierarchy);
-      const reactionScores = getReactionScores(action.output.detailScoring);
+      const reactionScores = null;
       updateTree(tree, state.subgroups, state.selectedSubgroups, state.overlapMethod, reactionScores);
 
       return {
@@ -575,6 +577,20 @@ const reducer = (state, action) => {
         reactionScores: reactionScores
       };
     }   
+
+    case "setDetailScoring": {
+      const reactionScores = getReactionScores(action.data);
+      updateTree(state.tree, state.subgroups, state.selectedSubgroups, state.overlapMethod, reactionScores);
+
+      return {
+        ...state,
+        rawOutput: {
+          ...state.rawOutput,
+          detailScoring: action.data
+        },
+        reactionScores: reactionScores
+      };
+    }
 
     case "clearData":
       return {
