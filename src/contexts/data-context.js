@@ -584,6 +584,10 @@ const reducer = (state, action) => {
 
       return {
         ...state,
+        rawOutput: {
+          ...state.rawOutput,
+          detailScoring: action.data
+        },
         reactionScores: reactionScores
       };
     }
