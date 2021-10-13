@@ -23,8 +23,6 @@ export const CellfieOutput = () => {
 
   const activeTask = tasks.find(({ active }) => active);
 
-  console.log(activeTask);
-
   const onSelect = tab => {
     setTab(tab);
   };
@@ -64,7 +62,7 @@ export const CellfieOutput = () => {
           { !activeTask ? 
             <>
               <div>No active task</div>
-              <small className="text-muted">No output data</small>
+              <small className="text-muted"> - no output data - </small>
             </>
           : activeTask.status !== "finished" ? 
             <>
