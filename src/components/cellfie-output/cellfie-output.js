@@ -21,6 +21,10 @@ export const CellfieOutput = () => {
     return key !== null ? subgroups.find(subgroup => subgroup.key === key) : null;
   });
 
+  const activeTask = tasks.find(({ active }) => active);
+
+  console.log(activeTask);
+
   const onSelect = tab => {
     setTab(tab);
   };
@@ -57,10 +61,18 @@ export const CellfieOutput = () => {
           }
         </Header>
         <Body>
-          { !hierarchy && tasks.length > 0 ? 
-            <LoadingSpinner />
+          { !activeTask ? 
+            <>
+              <div>No active task</div>
+              <small className="text-muted">No output data</small>
+            </>
+          : activeTask.status !== "finished" ? 
+            <>
+              <div>Task { activeTask.status }</div>
+              <small className="text-muted"> - no output data - </small>
+            </>
           : !hierarchy ? 
-            <>No CellFIE output data</> 
+            <LoadingSpinner /> 
           : 
             <Content>
               <Pane eventKey="hierarchy">
