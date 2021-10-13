@@ -590,7 +590,7 @@ const reducer = (state, action) => {
         },
         reactionScores: reactionScores
       };
-    }
+    }   
 
     case "clearData":
       return {
