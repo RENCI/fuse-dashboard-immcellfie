@@ -35,10 +35,12 @@ const calculatePosition = (event, tooltipBox, itemBox, offsetX, offsetY) => {
 };
 
 export const VegaTooltip = ({ handler, event, item, value, children }) => {
-  const div = useRef();
+  const div = useRef();  
 
-  const { x, y } = event && div.current ?
-    calculatePosition(event, div.current.getBoundingClientRect(), handler.getItemBoundingClientRect(item), 0, 0) :
+  const rect = div.current && div.current.getBoundingClientRect();
+  
+  const { x, y } = event && rect ?
+    calculatePosition(event, rect, handler.getItemBoundingClientRect(item), 0, 0) :
     { x: 0, y: 0 };
 
   return (
@@ -46,7 +48,7 @@ export const VegaTooltip = ({ handler, event, item, value, children }) => {
       ref={div}
       className="vegaTooltip shadow"
       style={{
-        visibility: div.current && value ? "visible" : "hidden",
+        visibility: div.current && value && rect.height > 0 ? "visible" : "hidden",
         top: y + "px",
         left: x + "px"
       }}
