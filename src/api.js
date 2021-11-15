@@ -59,26 +59,26 @@ const readStream = async stream => {
 //const cellfieResult = (id, name) => `${ process.env.REACT_APP_API_ROOT }cellfie/results/${ id }/${ name }`;
 
 const cellfieResultStream = async (id, name) => {
-  const stream = await getStream(`${ process.env.REACT_APP_API_ROOT }cellfie/task/results/${ id }/${ name }`);
+  const stream = await getStream(`${ process.env.REACT_APP_API_ROOT }cellfie/results/${ id }/${ name }`);
   const data = await readStream(stream);
 
   return data;
 };
 
 const checkTaskStatus = async id => {
-  const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/task/status/${ id }`);
+  const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/status/${ id }`);
 
   return result.data.status; 
 };
 
 const getTaskParameters = async id => {
-  const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/task/parameters/${ id }`);
+  const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/parameters/${ id }`);
 
   return result.data;
 };
 
 const getTaskInfo = async id => {
-  const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/task/metadata/${ id }`);
+  const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/metadata/${ id }`);
 
   const info = {...result.data};
 
@@ -135,7 +135,7 @@ export const api = {
 
     // Make post request
     const result = await axios.post(
-      `${ process.env.REACT_APP_API_ROOT }cellfie/task/submit`, 
+      `${ process.env.REACT_APP_API_ROOT }cellfie/submit`, 
       formData,
       { 
         headers: { "Content-Type": "multipart/form-data" },
@@ -177,12 +177,12 @@ export const api = {
     return cellfieResultStream(id, "detailScoring");
   },
   getCellfieExpressionData: async id => {
-    const result = await cellfieResultStream(id, "input");
+    const result = await cellfieResultStream(id, "geneBySampleMatrix");
 
     return result;
   },
   getCellfiePhenotypes: async id => {
-    const result = await cellfieResultStream(id, "phenotypes");
+    const result = await cellfieResultStream(id, "phenoDataMatrix");
 
     return result;
   },
