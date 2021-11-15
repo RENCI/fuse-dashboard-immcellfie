@@ -187,7 +187,7 @@ export const api = {
     return result;
   },
   getCellfieTasks: async email => {
-    const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/task/ids/${ email }`);
+    const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/task_ids/${ email }`);
 
     const tasks = result.data.map(({ task_id }) => ({ id: task_id }));
 
