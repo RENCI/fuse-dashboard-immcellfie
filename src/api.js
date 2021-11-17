@@ -203,4 +203,18 @@ export const api = {
   deleteImmuneSpaceCellfieTask: async id => await deleteTask(IMMUNESPACE_CELLFIE_PATH, id),
   getImmuneSpaceCellfieOutput: async id => await getOutput(IMMUNESPACE_CELLFIE_PATH, id),
   getImmuneSpaceCellfieDetailScoring: async id => await resultStream(IMMUNESPACE_CELLFIE_PATH, id, "detailScoring"),
+
+  // Combined API
+
+  getTasks: async email => {
+    const results = await Promise.all([
+      getTasks(CELLFIE_PATH, email),
+      getTasks(IMMUNESPACE_CELLFIE_PATH, email)
+    ]);
+
+    return [
+      ...results[0],
+      ...results[1]
+    ];
+  }
 }
