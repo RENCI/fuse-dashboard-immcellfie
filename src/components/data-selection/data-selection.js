@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Card, Form, InputGroup, Alert, Row, Col, OverlayTrigger, Popover } from "react-bootstrap";
+import { Card, Form, InputGroup, Alert, Row, Col, OverlayTrigger, Popover, Button } from "react-bootstrap";
 import { BoxArrowUpRight, QuestionCircle, PersonFill } from "react-bootstrap-icons";
 import { UserContext, DataContext } from "../../contexts";
 import { SpinnerButton } from "../spinner-button";
@@ -67,7 +67,7 @@ export const DataSelection = () => {
 
   const onApiKeyKeyPress = evt => {
     if (evt.key === "Enter") {
-      onSubmitApiKeyClick();
+      onEnterApiKeyClick();
     }
   };
 
@@ -81,12 +81,12 @@ export const DataSelection = () => {
     }
   };
 
-  const onSubmitApiKeyClick = async () => {
+  const onEnterApiKeyClick = async () => {
     userDispatch({ type: "setApiKey", apiKey: inputApiKey });
   };
 
   const onSubmitGroupIdClick = async () => {
-    setState(states.normal);
+    setState(states.submitting);
     setErrorMessage();
 
     dataDispatch({ type: "clearData" });
@@ -94,18 +94,32 @@ export const DataSelection = () => {
     try {
       const downloadId = await api.getImmuneSpaceDownloadId(email, groupId, apiKey);
 
-      console.log(downloadId);
+      const timer = setInterval(checkStatus, 1000);
 
-      const phenotypeData = await api.getImmuneSpacePhenotypes(downloadId);
+      async function checkStatus() {
+        const status = await api.checkImmunspaceDownloadStatus(downloadId);
 
-      dataDispatch({ 
-        type: "setDataInfo", 
-        source: "ImmuneSpace",
-        downloadId: downloadId,
-        phenotypeInfo: { name: groupId }
-      });
+        if (status === "finished") {
+          clearInterval(timer);
 
-      if (phenotypeData) dataDispatch({ type: "setPhenotypes", data: phenotypeData });
+          const phenotypeData = await api.getImmuneSpacePhenotypes(downloadId);
+
+          dataDispatch({ 
+            type: "setDataInfo", 
+            source: "ImmuneSpace",
+            downloadId: downloadId,
+            phenotypeInfo: { name: groupId }
+          });
+    
+          dataDispatch({ type: "setPhenotypes", data: phenotypeData });
+
+          setState("normal");
+        }
+        else if (status === "failed") {
+          clearInterval(timer);
+          setState("normal");
+        }
+      };
     }
     catch (error) {
       console.log(error);
@@ -231,13 +245,13 @@ export const DataSelection = () => {
                   onKeyPress={ onApiKeyKeyPress }
                 />
                 <InputGroup.Append>
-                  <SpinnerButton 
+                  <Button 
                     variant="primary"
                     disabled={ disabled || inputApiKey === "" || inputApiKey === apiKey }
-                    spin={ state === "submitting" }
-                    onClick={ onSubmitApiKeyClick }>
-                    Submit
-                  </SpinnerButton>
+                    onClick={ onEnterApiKeyClick }
+                  >
+                    Enter
+                  </Button>
                 </InputGroup.Append>
               </InputGroup>
               <Form.Text className="text-muted">
@@ -281,7 +295,8 @@ export const DataSelection = () => {
                     variant="primary"
                     disabled={ disabled || apiKey === "" || groupId === "" }
                     spin={ state === "submitting" }
-                    onClick={ onSubmitGroupIdClick }>
+                    onClick={ onSubmitGroupIdClick }
+                  >
                     Submit
                   </SpinnerButton>
                 </InputGroup.Append>
