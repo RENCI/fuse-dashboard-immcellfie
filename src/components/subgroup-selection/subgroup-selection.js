@@ -4,7 +4,7 @@ import { DataContext } from "../../contexts";
 import { SubgroupsLink } from "../page-links";
 import { OverlapVis } from "../overlap-vis";
 import { WarningMessage } from "../warning-message";
-import { subgroupColors } from "../../colors";
+import { subgroupColors } from "../../utils/colors";
 import "./subgroup-selection.css";
 
 const { Header, Body } = Card;

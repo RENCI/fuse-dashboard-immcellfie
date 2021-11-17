@@ -2,7 +2,7 @@ import React from "react";
 import { VegaWrapper } from "../vega-wrapper";
 import { ResizeWrapper } from "../resize-wrapper";
 import { barOverlap } from "../../vega-specs";
-import { subgroupColors } from "../../colors";
+import { subgroupColors } from "../../utils/colors";
 
 const { color1, color2 } = subgroupColors;
 

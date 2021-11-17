@@ -3,7 +3,7 @@ import { Card, Form, InputGroup, Button, Row, Col } from "react-bootstrap";
 import { UserContext, DataContext, ModelContext } from "../../contexts";
 import { LoadingSpinner } from "../loading-spinner";
 import { CellfieLink, InputLink } from "../page-links";
-import { api } from "../../api";
+import { api } from "../../utils/api";
 
 const { Header, Body, Footer } = Card;
 const { Group, Control, Text } = Form;

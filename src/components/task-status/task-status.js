@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useReducer } from "react";
 import { Badge } from "react-bootstrap";
 import { DataContext, UserContext } from "../../contexts";
 import { TaskStatusIcon } from "../task-status-icon";
-import { api } from "../../api";
+import { api } from "../../utils/api";
 
 // XXX: Should move this to colors.js and use in task-status-icon
 const statusColor = {

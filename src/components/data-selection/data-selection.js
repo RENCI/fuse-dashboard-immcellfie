@@ -7,8 +7,8 @@ import { FileSelect } from "../file-select";
 import { PhenotypeInfo } from "../phenotype-info";
 import { ExpressionInfo } from "../expression-info";
 import { CellfieLink, SubgroupsLink, ExpressionLink } from "../page-links";
-import { api } from "../../api";
-import { practiceData } from "../../datasets";
+import { api } from "../../utils/api";
+import { practiceData } from "../../utils/datasets";
 
 const { Header, Body, Footer } = Card;
 const { Group, Control, Label } = Form;

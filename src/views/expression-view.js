@@ -9,7 +9,7 @@ import { expressionHeatmap } from "../vega-specs";
 import { DataMissing } from "../components/data-missing";
 import { LoadExpression } from "../components/load-expression";
 import { HomeLink, InputLink } from "../components/page-links";
-import { sequential } from "../colors";
+import { sequential } from "../utils/colors";
 
 const { Header, Body } = Card;
 const { Group, Label, Control, Row } = Form;
