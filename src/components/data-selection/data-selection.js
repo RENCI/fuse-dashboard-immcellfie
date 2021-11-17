@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Card, Form, InputGroup, Alert, Row, Col } from "react-bootstrap";
-import { DataContext } from "../../contexts";
+import { Card, Form, InputGroup, Alert, Row, Col, OverlayTrigger, Popover } from "react-bootstrap";
+import { BoxArrowUpRight, QuestionCircle, PersonFill } from "react-bootstrap-icons";
+import { UserContext, DataContext } from "../../contexts";
 import { SpinnerButton } from "../spinner-button";
 import { FileSelect } from "../file-select";
 import { PhenotypeInfo } from "../phenotype-info";
@@ -10,7 +11,7 @@ import { api } from "../../api";
 import { practiceData } from "../../datasets";
 
 const { Header, Body, Footer } = Card;
-const { Group, Control } = Form;
+const { Group, Control, Label } = Form;
 
 const states = {
   normal: "normal",
@@ -19,12 +20,14 @@ const states = {
   loading: "loading"
 };
 
-export const DataSelection = () => {
+export const DataSelection = () => {  
+  const [{ email, apiKey }, userDispatch] = useContext(UserContext);
   const [
     { dataInfo, phenotypeData, expressionData, numPhenotypeSubjects, numExpressionSubjects }, 
     dataDispatch
   ] = useContext(DataContext);
-  const [id, setId] = useState("");
+  const [inputApiKey, setInputApiKey] = useState(apiKey);
+  const [groupId, setGroupId] = useState("");
   const [state, setState] = useState(states.normal);
   const [errorMessage, setErrorMessage] = useState();
   const [phenotypeDataFile, setPhenotypeDataFile] = useState(null);
@@ -58,42 +61,58 @@ export const DataSelection = () => {
     }
   };
 
-  const onIdChange = evt => {
-    setId(evt.target.value);
+  const onApiKeyChange = evt => {
+    setInputApiKey(evt.target.value);
   };
 
-  const onIdKeyPress = evt => {
+  const onApiKeyKeyPress = evt => {
     if (evt.key === "Enter") {
-      onSubmitClick();
+      onSubmitApiKeyClick();
     }
   };
 
-  const onSubmitClick = async () => {
+  const onGroupIdChange = evt => {
+    setGroupId(evt.target.value);
+  };
+
+  const onGroupIdKeyPress = evt => {
+    if (evt.key === "Enter") {
+      onSubmitGroupIdClick();
+    }
+  };
+
+  const onSubmitApiKeyClick = async () => {
+    userDispatch({ type: "setApiKey", apiKey: inputApiKey });
+  };
+
+  const onSubmitGroupIdClick = async () => {
     setState(states.normal);
     setErrorMessage();
 
     dataDispatch({ type: "clearData" });
 
     try {
-      const [phenotypeInfo, expressionInfo] = await api.getDataInfo(id);
+      const downloadId = await api.getImmuneSpaceDownloadId(email, groupId, apiKey);
+
+      console.log(downloadId);
+
+      const phenotypeData = await api.getImmuneSpacePhenotypes(downloadId);
 
       dataDispatch({ 
         type: "setDataInfo", 
-        source: "immcellfie",
-        phenotypeInfo: phenotypeInfo,
-        expressionInfo: expressionInfo
+        source: "ImmuneSpace",
+        downloadId: downloadId,
+        phenotypeInfo: { name: groupId }
       });
 
-      const phenotypeData = await api.loadDataUrl(phenotypeInfo.url);
-
-      dataDispatch({ type: "setPhenotypes", data: phenotypeData });
+      if (phenotypeData) dataDispatch({ type: "setPhenotypes", data: phenotypeData });
     }
     catch (error) {
       console.log(error);
 
       setErrorMessage(getErrorMessage(error));
     }
-
+  
     setState(states.normal);
   };
 
@@ -170,24 +189,102 @@ export const DataSelection = () => {
       <Body>
         <Row>
           <Col>    
-            <h6>Load ImmuneSpace group ID</h6>
-            <Group>  
+            <h6>
+              ImmuneSpace 
+              <a 
+                href="https://www.immunespace.org/" 
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <BoxArrowUpRight className="ml-1 mb-1" />
+              </a>
+            </h6>
+            <Group>
+              <Label>
+                API key 
+                <OverlayTrigger
+                  placement="right"
+                  overlay={ 
+                    <Popover style={{ maxWidth: 500 }}>
+                      <Popover.Title>An <b>API key</b> is necessary to access data from <b>ImmuneSpace</b></Popover.Title>
+                      <Popover.Content>                        
+                        <div>
+                        In ImmuneSpace:
+                        <ol>
+                          <li><b><PersonFill className="mb-1" /></b> menu.</li>
+                          <li><b>External Tool Access</b></li>
+                          <li><b>Generate API Key</b>, <b>Copy to Clipboard</b>, and paste here.</li>
+                        </ol>
+                        </div>
+                      </Popover.Content>
+                    </Popover>
+                  }
+                >
+                  <QuestionCircle className="ml-1 mb-1" />
+                </OverlayTrigger>
+              </Label>
               <InputGroup>
-                <InputGroup.Prepend>
-                  <SpinnerButton 
-                    variant="primary"
-                    disabled={ disabled || id === "" }
-                    spin={ state === "submitting" }
-                    onClick={ onSubmitClick }>
-                    Submit
-                  </SpinnerButton>
-                </InputGroup.Prepend>
                 <Control 
                   type="text"
-                  value={ id }
-                  onChange={ onIdChange } 
-                  onKeyPress={ onIdKeyPress }
+                  value={ inputApiKey }
+                  onChange={ onApiKeyChange } 
+                  onKeyPress={ onApiKeyKeyPress }
                 />
+                <InputGroup.Append>
+                  <SpinnerButton 
+                    variant="primary"
+                    disabled={ disabled || inputApiKey === "" || inputApiKey === apiKey }
+                    spin={ state === "submitting" }
+                    onClick={ onSubmitApiKeyClick }>
+                    Submit
+                  </SpinnerButton>
+                </InputGroup.Append>
+              </InputGroup>
+              <Form.Text className="text-muted">
+                { apiKey ? <>Current: { apiKey }</> : <>No current API key</> } 
+              </Form.Text>
+            </Group>  
+            <Group>
+              <Label>
+                Group Label
+                <OverlayTrigger
+                  placement="right"
+                  overlay={ 
+                    <Popover style={{ maxWidth: 500 }}>
+                      <Popover.Title>A <b>Group Label</b> is used to identify data from <b>ImmuneSpace</b></Popover.Title>
+                      <Popover.Content>
+                        In Immunespace:
+                        <ol>
+                          <li>Create a group (e.g. by applying a filter)</li>
+                          <li><b>Manage Groups</b></li>
+                          <li><b>Save As</b></li>
+                          <li>Enter a <b>Participant Group Label</b></li>
+                          <li><b>Save</b></li>
+                          <li>Copy and paste the group label here</li>
+                        </ol>
+                      </Popover.Content>
+                    </Popover>
+                  }
+                >
+                  <QuestionCircle className="ml-1 mb-1" />
+                </OverlayTrigger>
+              </Label>
+              <InputGroup>
+                <Control 
+                  type="text"
+                  value={ groupId }
+                  onChange={ onGroupIdChange } 
+                  onKeyPress={ onGroupIdKeyPress }
+                />
+                <InputGroup.Append>
+                  <SpinnerButton 
+                    variant="primary"
+                    disabled={ disabled || apiKey === "" || groupId === "" }
+                    spin={ state === "submitting" }
+                    onClick={ onSubmitGroupIdClick }>
+                    Submit
+                  </SpinnerButton>
+                </InputGroup.Append>
               </InputGroup>
             </Group>  
           </Col>

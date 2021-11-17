@@ -1,33 +1,11 @@
 import axios from "axios";
 
-let token = null;
+// Paths for services
+const CELLFIE_PATH = "/cellfie";
+const IMMUNESPACE_DOWNLOAD_PATH = "/immunespace/download";
+const IMMUNESPACE_CELLFIE_PATH = "/immunespace/cellfie";
 
-const getToken = async () => {
-  const response = await axios.post(`${ process.env.REACT_APP_API_ROOT }${ process.env.REACT_APP_API_TOKEN}`, {}, {
-    auth: {
-      username: "rods",
-      password: "woot"
-    }
-  });
-
-  return response.data;
-};
-
-const getObjectIds = async id => {
-  const response = await axios.get(`${ process.env.REACT_APP_API_ROOT }${ process.env.REACT_APP_API_OBJECTS_DIR}${ id }`, {
-    headers: { Authorization: 'Bearer ' + token }
-  });
-
-  return response.data.contents.map(({ id }) => id);
-};
-
-const getDataUrl = async id => {
-  const response = await axios.get(`${ process.env.REACT_APP_API_ROOT }${ process.env.REACT_APP_API_OBJECTS_DIR}${ id }/access/irods-rest`, {
-    headers: { Authorization: 'Bearer ' + token }
-  });
-
-  return response.data.url;
-};
+// Stream helper functions
 
 const getStream = async (url, token = null) => {
   const params = { method: "get" };
@@ -56,29 +34,43 @@ const readStream = async stream => {
   }
 };
 
-//const cellfieResult = (id, name) => `${ process.env.REACT_APP_API_ROOT }cellfie/results/${ id }/${ name }`;
-
-const cellfieResultStream = async (id, name) => {
-  const stream = await getStream(`${ process.env.REACT_APP_API_ROOT }cellfie/results/${ id }/${ name }`);
+const resultStream = async (path, id, name) => {
+  const stream = await getStream(`${ process.env.REACT_APP_API_ROOT }${ path }/results/${ id }/${ name }`);
   const data = await readStream(stream);
 
   return data;
 };
 
-const checkTaskStatus = async id => {
-  const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/status/${ id }`);
+const getOutput = async (path, id) => {
+  const results = await Promise.all([
+    resultStream(path, id, "taskInfo"), 
+    resultStream(path, id, "score"),
+    resultStream(path, id, "score_binary")
+  ]);
 
-  return result.data.status; 
+  return {
+    taskInfo: results[0],
+    score: results[1],
+    scoreBinary: results[2]
+  };
 };
 
-const getTaskParameters = async id => {
-  const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/parameters/${ id }`);
+// API helper functions
+
+const getTaskParameters = async (path, id) => {
+  const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }${ path }/parameters/${ id }`);
 
   return result.data;
 };
 
-const getTaskInfo = async id => {
-  const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/metadata/${ id }`);
+const checkTaskStatus = async (path, id) => {
+  const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }${ path }/status/${ id }`);
+
+  return result.data.status; 
+};
+
+const getTaskInfo = async (path, id) => {
+  const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }${ path }/metadata/${ id }`);
 
   const info = {...result.data};
 
@@ -92,38 +84,45 @@ const getTaskInfo = async id => {
   return info;
 };
 
+const getTasks = async (path, email) => {
+  const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }${ path }/task_ids/${ email }`);
+
+  const tasks = result.data.map(({ task_id }) => ({ id: task_id }));
+
+  for (const task of tasks) {
+    task.status = await checkTaskStatus(CELLFIE_PATH, task.id);
+    task.parameters = await getTaskParameters(CELLFIE_PATH, task.id);
+    task.info = await getTaskInfo(CELLFIE_PATH, task.id);
+  }
+
+  return tasks;
+};
+
+const deleteTask = async (path, id) => {
+  const result = await axios.delete(`${ process.env.REACT_APP_API_ROOT }${ path }/delete/${ id }`);
+
+  return result.data.status === "done";
+};
+
+// Exported API functions
+
 export const api = {
+
+  // General file loading
+
   loadFile: async file => {
     const response = await axios.get(window.URL.createObjectURL(file));
 
     return response.data;
   },
   loadPracticeData: async name => {
-    const response = await axios.get(`${ process.env.REACT_APP_PRACTICE_DATA_ROOT }${ name }`);
+    const response = await axios.get(`${ process.env.REACT_APP_PRACTICE_DATA_ROOT }/${ name }`);
 
     return response.data;
   },
-  getDataInfo: async id => {
-    if (!token) {
-      token = await getToken();
-    }
 
-    const [phenotype_id, expression_id] = await getObjectIds(id);
+  // Generic Cellfie API (e.g. for uploaded data)
 
-    const phenotype_url = await getDataUrl(phenotype_id);
-    const expression_url = await getDataUrl(expression_id);
-
-    return [
-      { name: phenotype_id, url: phenotype_url },
-      { name: expression_id, url: expression_url }
-    ];
-  },
-  loadDataUrl: async url => {
-    const stream = await getStream(url, token);
-    const data = await readStream(stream);
-
-    return data;
-  },
   runCellfie: async (email, expressionData, phenotypeData, sampleNumber, model, parameters) => {   
     // Set data and parameters as form data
     const formData = new FormData();
@@ -135,7 +134,7 @@ export const api = {
 
     // Make post request
     const result = await axios.post(
-      `${ process.env.REACT_APP_API_ROOT }cellfie/submit`, 
+      `${ process.env.REACT_APP_API_ROOT }/cellfie/submit`, 
       formData,
       { 
         headers: { "Content-Type": "multipart/form-data" },
@@ -145,63 +144,63 @@ export const api = {
 
     return result.data.task_id;    
   },
-  checkCellfieTaskStatus: async id => {
-    const status = await checkTaskStatus(id);
+  getCellfieTasks: async email => await getTasks(CELLFIE_PATH, email),
+  checkCellfieTaskStatus: async id => await checkTaskStatus(CELLFIE_PATH, id), 
+  getCellfieTaskParameters: async id => await getTaskParameters(CELLFIE_PATH, id),
+  getCellfieTaskInfo: async id => await getTaskInfo(CELLFIE_PATH, id),
+  deleteCellfieTask: async id => await deleteTask(CELLFIE_PATH, id),
+  getCellfieExpressionData: async id => await resultStream(CELLFIE_PATH, id, "geneBySampleMatrix"),
+  getCellfiePhenotypes: async id => await resultStream(CELLFIE_PATH, id, "phenoDataMatrix"),
+  getCellfieOutput: async id => await getOutput(CELLFIE_PATH, id),
+  getCellfieDetailScoring: async id => await resultStream(CELLFIE_PATH, id, "detailScoring"),
 
-    return status; 
+  // ImmuneSpace download API
+
+  getImmuneSpaceDownloadId: async (email, groupId, apiKey) => {
+    const result = await axios.post(`${ process.env.REACT_APP_API_ROOT }/immunespace/download`, null, {
+      params: {
+        email: email,
+        group: groupId,
+        apikey: apiKey
+      }
+    });
+
+    return result.data.immunespace_download_id;
   },
-  getCellfieTaskParameters: async id => {
-    const parameters = await getTaskParameters(id);
+  getImmuneSpaceDownloadIds: async email => {
+    const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }/immunespace/download/ids/${ email }`);
 
-    return parameters;
+    return result.data.map(d => d.immunespace_download_id);
   },
-  getCellfieTaskInfo: async id => {
-    const info = await getTaskInfo(id);
+  getImmuneSpaceExpressionData: async downloadId => await resultStream(IMMUNESPACE_DOWNLOAD_PATH, downloadId, "geneBySampleMatrix"),
+  getImmuneSpacePhenotypes: async downloadId => await resultStream(IMMUNESPACE_DOWNLOAD_PATH, downloadId, "phenoDataMatrix"),
 
-    return info;
+  // ImmuneSpace Cellfie API
+
+  runImmuneSpaceCellfie: async (downloadId, sampleNumber, model, parameters) => {   
+    // Set data and parameters as form data
+    const formData = new FormData();
+    formData.append("SampleNumber", sampleNumber);
+    formData.append("Ref", model);
+    Object.entries(parameters).forEach(([key, value]) => formData.append(key, value));
+
+    // Make post request
+    const result = await axios.post(
+      `${ process.env.REACT_APP_API_ROOT }/immunespace/cellfie/submit`, 
+      formData,
+      { 
+        headers: { "Content-Type": "multipart/form-data" },
+        params: { "immunespace_download_id": downloadId }
+      }
+    );
+
+    return result.data.task_id;    
   },
-  getCellfieOutput: async id => {
-    const results = await Promise.all([
-      cellfieResultStream(id, "taskInfo"), 
-      cellfieResultStream(id, "score"),
-      cellfieResultStream(id, "score_binary")
-    ]);
-
-    return {
-      taskInfo: results[0],
-      score: results[1],
-      scoreBinary: results[2]
-    };
-  },
-  getCellfieDetailScoring: async id => {
-    return cellfieResultStream(id, "detailScoring");
-  },
-  getCellfieExpressionData: async id => {
-    const result = await cellfieResultStream(id, "geneBySampleMatrix");
-
-    return result;
-  },
-  getCellfiePhenotypes: async id => {
-    const result = await cellfieResultStream(id, "phenoDataMatrix");
-
-    return result;
-  },
-  getCellfieTasks: async email => {
-    const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }cellfie/task_ids/${ email }`);
-
-    const tasks = result.data.map(({ task_id }) => ({ id: task_id }));
-
-    for (const task of tasks) {
-      task.status = await checkTaskStatus(task.id);
-      task.parameters = await getTaskParameters(task.id);
-      task.info = await getTaskInfo(task.id);
-    }
-
-    return tasks;
-  },
-  deleteCellfieTask: async id => {
-    const result = await axios.delete(`${ process.env.REACT_APP_API_ROOT }cellfie/task/delete/${ id }`);
-
-    return result.data.status === "done";
-  }
+  getImmuneSpaceCellfieTasks: async email => await getTasks(IMMUNESPACE_CELLFIE_PATH, email),
+  checkImmuneSpaceCellfieTaskStatus: async id => await checkTaskStatus(IMMUNESPACE_CELLFIE_PATH, id), 
+  getImmuneSpaceCellfieTaskParameters: async id => await getTaskParameters(IMMUNESPACE_CELLFIE_PATH, id),
+  getImmuneSpaceCellfieTaskInfo: async id => await getTaskInfo(IMMUNESPACE_CELLFIE_PATH, id),
+  deleteImmuneSpaceCellfieTask: async id => await deleteTask(IMMUNESPACE_CELLFIE_PATH, id),
+  getImmuneSpaceCellfieOutput: async id => await getOutput(IMMUNESPACE_CELLFIE_PATH, id),
+  getImmuneSpaceCellfieDetailScoring: async id => await resultStream(IMMUNESPACE_CELLFIE_PATH, id, "detailScoring"),
 }

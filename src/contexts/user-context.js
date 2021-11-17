@@ -2,10 +2,9 @@ import React, { createContext, useReducer } from "react";
 
 const initialState = {
   email: "",
-  tasks: []
+  tasks: [],
+  apiKey: ""
 };
-
-
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -90,6 +89,13 @@ const reducer = (state, action) => {
       return {
         ...state,
         tasks: tasks
+      };
+    }
+
+    case "setApiKey": {
+      return {
+        ...state,
+        apiKey: action.apiKey
       };
     }
 
