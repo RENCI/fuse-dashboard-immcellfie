@@ -167,10 +167,17 @@ export const api = {
 
     return result.data.immunespace_download_id;
   },
-  getImmuneSpaceDownloadIds: async email => {
+  getImmuneSpaceDownloads: async email => {
     const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }/immunespace/download/ids/${ email }`);
 
-    return result.data.map(d => d.immunespace_download_id);
+    const downloads = result.data.map(({ immunespace_download_id }) => ({ id: immunespace_download_id }));
+  
+    for (const download of downloads) {
+      download.status = await checkTaskStatus(IMMUNESPACE_DOWNLOAD_PATH, download.id);
+      download.info = await getTaskInfo(IMMUNESPACE_DOWNLOAD_PATH, download.id);
+    }
+  
+    return downloads;
   },
   checkImmunspaceDownloadStatus: async downloadId => await checkTaskStatus(IMMUNESPACE_DOWNLOAD_PATH, downloadId),
   getImmuneSpaceExpressionData: async downloadId => await resultStream(IMMUNESPACE_DOWNLOAD_PATH, downloadId, "geneBySampleMatrix"),

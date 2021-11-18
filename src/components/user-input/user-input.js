@@ -50,6 +50,10 @@ export const UserInput = () => {
     userDispatch({ type: "setEmail", email: emailValue });
 
     try {
+      const downloads = await api.getImmuneSpaceDownloads(emailValue);
+      
+      userDispatch({ type: "setDownloads", downloads: downloads });
+
       const tasks = await api.getTasks(emailValue);
 
       userDispatch({ type: "setTasks", tasks: tasks });

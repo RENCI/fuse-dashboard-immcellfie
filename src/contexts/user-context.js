@@ -2,8 +2,9 @@ import React, { createContext, useReducer } from "react";
 
 const initialState = {
   email: "",
+  apiKey: "",
+  downloads: [],
   tasks: [],
-  apiKey: ""
 };
 
 const reducer = (state, action) => {
@@ -13,6 +14,20 @@ const reducer = (state, action) => {
         ...state,
         email: action.email
       };
+
+    case "setApiKey": {
+      return {
+        ...state,
+        apiKey: action.apiKey
+      };
+    }
+
+    case "setDownloads": {
+      return {
+        ...state,
+        downloads: action.downloads
+      };
+    }
 
     case "setTasks":
       return {
@@ -89,13 +104,6 @@ const reducer = (state, action) => {
       return {
         ...state,
         tasks: tasks
-      };
-    }
-
-    case "setApiKey": {
-      return {
-        ...state,
-        apiKey: action.apiKey
       };
     }
 
