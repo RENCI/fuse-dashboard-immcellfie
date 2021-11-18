@@ -5,6 +5,8 @@ const CELLFIE_PATH = "/cellfie";
 const IMMUNESPACE_DOWNLOAD_PATH = "/immunespace/download";
 const IMMUNESPACE_CELLFIE_PATH = "/immunespace/cellfie";
 
+const cellfiePath = immuneSpace => immuneSpace ? IMMUNESPACE_CELLFIE_PATH : CELLFIE_PATH;
+
 // Stream helper functions
 
 const getStream = async (url, token = null) => {
@@ -87,12 +89,15 @@ const getTaskInfo = async (path, id) => {
 const getTasks = async (path, email) => {
   const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }${ path }/task_ids/${ email }`);
 
+  console.log(path);
+  console.log(result);
+
   const tasks = result.data.map(({ task_id }) => ({ id: task_id }));
 
   for (const task of tasks) {
-    task.status = await checkTaskStatus(CELLFIE_PATH, task.id);
-    task.parameters = await getTaskParameters(CELLFIE_PATH, task.id);
-    task.info = await getTaskInfo(CELLFIE_PATH, task.id);
+    task.status = await checkTaskStatus(path, task.id);
+    task.parameters = await getTaskParameters(path, task.id);
+    task.info = await getTaskInfo(path, task.id);
   }
 
   return tasks;
@@ -143,16 +148,9 @@ export const api = {
     );
 
     return result.data.task_id;    
-  },
-  getCellfieTasks: async email => await getTasks(CELLFIE_PATH, email),
-  checkCellfieTaskStatus: async id => await checkTaskStatus(CELLFIE_PATH, id), 
-  getCellfieTaskParameters: async id => await getTaskParameters(CELLFIE_PATH, id),
-  getCellfieTaskInfo: async id => await getTaskInfo(CELLFIE_PATH, id),
-  deleteCellfieTask: async id => await deleteTask(CELLFIE_PATH, id),
+  }, 
   getCellfieExpressionData: async id => await resultStream(CELLFIE_PATH, id, "geneBySampleMatrix"),
   getCellfiePhenotypes: async id => await resultStream(CELLFIE_PATH, id, "phenoDataMatrix"),
-  getCellfieOutput: async id => await getOutput(CELLFIE_PATH, id),
-  getCellfieDetailScoring: async id => await resultStream(CELLFIE_PATH, id, "detailScoring"),
 
   // ImmuneSpace download API
 
@@ -204,14 +202,7 @@ export const api = {
 
     return result.data.task_id;    
   },
-  getImmuneSpaceCellfieTasks: async email => await getTasks(IMMUNESPACE_CELLFIE_PATH, email),
-  checkImmuneSpaceCellfieTaskStatus: async id => await checkTaskStatus(IMMUNESPACE_CELLFIE_PATH, id), 
-  getImmuneSpaceCellfieTaskParameters: async id => await getTaskParameters(IMMUNESPACE_CELLFIE_PATH, id),
-  getImmuneSpaceCellfieTaskInfo: async id => await getTaskInfo(IMMUNESPACE_CELLFIE_PATH, id),
-  deleteImmuneSpaceCellfieTask: async id => await deleteTask(IMMUNESPACE_CELLFIE_PATH, id),
-  getImmuneSpaceCellfieOutput: async id => await getOutput(IMMUNESPACE_CELLFIE_PATH, id),
-  getImmuneSpaceCellfieDetailScoring: async id => await resultStream(IMMUNESPACE_CELLFIE_PATH, id, "detailScoring"),
-
+  
   // Combined API
 
   getTasks: async email => {
@@ -224,5 +215,11 @@ export const api = {
       ...results[0],
       ...results[1]
     ];
-  }
+  },
+  checkCellfieTaskStatus: async (id, immuneSpace = false) => await checkTaskStatus(cellfiePath(immuneSpace), id), 
+  getCellfieTaskParameters: async (id, immuneSpace = false) => await getTaskParameters(cellfiePath(immuneSpace), id),
+  getCellfieTaskInfo: async (id, immuneSpace = false) => await getTaskInfo(cellfiePath(immuneSpace), id),
+  deleteCellfieTask: async (id, immuneSpace = false) => await deleteTask(cellfiePath(immuneSpace), id),
+  getCellfieOutput: async (id, immuneSpace = false) => await getOutput(cellfiePath(immuneSpace), id),
+  getCellfieDetailScoring: async (id, immuneSpace = false) => await resultStream(cellfiePath(immuneSpace), id, "detailScoring"),
 }

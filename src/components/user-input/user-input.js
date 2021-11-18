@@ -4,9 +4,11 @@ import { UserContext, DataContext, ModelContext } from "../../contexts";
 import { LoadingSpinner } from "../loading-spinner";
 import { CellfieLink, InputLink } from "../page-links";
 import { api } from "../../utils/api";
+import { taskUtils } from "../../utils/task-utils";
 
 const { Header, Body, Footer } = Card;
 const { Group, Control, Text } = Form;
+const { isImmuneSpace } = taskUtils;
 
 export const UserInput = () => {
   const [, dataDispatch  ] = useContext(DataContext);
@@ -65,24 +67,32 @@ export const UserInput = () => {
         });
 
         const id = activeTask.id;
+        const immuneSpace = isImmuneSpace(activeTask);
 
         userDispatch({ type: "setActiveTask", id: id });
         modelDispatch({ type: "setParameters", parameters: activeTask.parameters });
 
-        const phenotypes = await api.getCellfiePhenotypes(id);
-        const expressionData = await api.getCellfieExpressionData(id);
+        const phenotypes = immuneSpace ? 
+          await api.getImmuneSpacePhenotypes(activeTask.info.immunespace_download_id) : 
+          await api.getCellfiePhenotypes(id);
+
+
+        // XXX: Need to get expression data if not immunespace
+
+
+        //const expressionData = await api.getCellfieExpressionData(id);
 
         dataDispatch({ type: "setDataInfo", source: { name: "CellFIE" }});
         dataDispatch({ type: "setPhenotypes", data: phenotypes });
-        dataDispatch({ type: "setExpressionData", data: expressionData });
+        //dataDispatch({ type: "setExpressionData", data: expressionData });
 
         if (activeTask.status === "finished") {  
-          const output = await api.getCellfieOutput(id);
+          const output = await api.getCellfieOutput(id, immuneSpace);
 
           dataDispatch({ type: "setOutput", output: output });
 
           // Load larger detail scoring asynchronously
-          api.getCellfieDetailScoring(id).then(result => {
+          api.getCellfieDetailScoring(id, immuneSpace).then(result => {
             dataDispatch({ type: "setDetailScoring", data: result });
           });
         }

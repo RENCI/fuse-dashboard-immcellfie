@@ -10,7 +10,7 @@ const { Append } = InputGroup;
 
 export const ModelSelection = () => {
   const [{ email }, userDispatch] = useContext(UserContext);
-  const [{ dataInfo, rawExpressionData, expressionData, rawPhenotypeData }, dataDispatch] = useContext(DataContext);
+  const [{ dataInfo, rawExpressionData, rawPhenotypeData }, dataDispatch] = useContext(DataContext);
   const [{ organism, model, parameters }, modelDispatch] = useContext(ModelContext); 
 
   const thresholdType = parameters.find(({ name }) => name === "ThreshType"); 
@@ -41,18 +41,19 @@ export const ModelSelection = () => {
   const onRunCellfieClick = async () => {
     if (dataInfo.source.name === "ImmuneSpace") {
       try {
-        console.log(dataInfo);
-        console.log(rawPhenotypeData);
-
-        // Store n in data info when loading data???
-        const n = 0;
+        const n = dataInfo.phenotypes.numSubjects;
 
         // Run Cellfie
         const id = await api.runImmuneSpaceCellfie(dataInfo.source.downloadId, n, model.value.value, getParameterObject(parameters));
 
+        console.log(id);
+
         // Get task info
         const params = await api.getImmuneSpaceCellfieTaskParameters(id);
         const info = await api.getImmuneSpaceCellfieTaskInfo(id);
+
+        console.log(params);
+        console.log(info);
 
         // Create task
         userDispatch({ type: "addTask", id: id, status: "submitting", parameters: params, info: info });
@@ -66,7 +67,7 @@ export const ModelSelection = () => {
     }
     else {
       try {
-        const n = expressionData.length > 0 ? expressionData[0].values.length : 0;
+        const n = dataInfo.expression.numSubjects;
 
         // Create blobs
         const dataBlob = data => {
