@@ -39,7 +39,7 @@ export const ModelSelection = () => {
   );
 
   const onRunCellfieClick = async () => {
-    if (dataInfo.source === "ImmuneSpace") {
+    if (dataInfo.source.name === "ImmuneSpace") {
       try {
         console.log(dataInfo);
         console.log(rawPhenotypeData);
@@ -48,7 +48,7 @@ export const ModelSelection = () => {
         const n = 0;
 
         // Run Cellfie
-        const id = await api.runImmuneSpaceCellfie(dataInfo.donwloadId, n, model.value.value, getParameterObject(parameters));
+        const id = await api.runImmuneSpaceCellfie(dataInfo.source.downloadId, n, model.value.value, getParameterObject(parameters));
 
         // Get task info
         const params = await api.getImmuneSpaceCellfieTaskParameters(id);

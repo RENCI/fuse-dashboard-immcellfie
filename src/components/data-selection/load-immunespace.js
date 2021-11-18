@@ -59,9 +59,9 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
 
           dataDispatch({ 
             type: "setDataInfo", 
-            source: "ImmuneSpace",
-            downloadId: downloadId,
-            phenotypeInfo: { name: groupId }
+            source: { name: "ImmuneSpace", downloadId: downloadId },
+            phenotypes: { name: groupId },
+            expression: { name: groupId }
           });
     
           dataDispatch({ type: "setPhenotypes", data: phenotypeData });
@@ -143,7 +143,7 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
         <Form.Text className="text-muted">
           { apiKey ? <>Current: { apiKey }</> : <>No current API key</> } 
         </Form.Text>
-      </Group>  
+      </Group>
       <Group>
         <Label>
           Group Label

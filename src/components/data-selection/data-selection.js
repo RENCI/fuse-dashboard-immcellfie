@@ -12,18 +12,18 @@ import { states } from "./states";
 const { Header, Body, Footer } = Card;
 
 export const DataSelection = () => {  
-  const [{ dataInfo, phenotypeData, expressionData, numPhenotypeSubjects, numExpressionSubjects }] = useContext(DataContext);
+  const [{ dataInfo, phenotypeData, expressionData }] = useContext(DataContext);
   const [state, setState] = useState(states.normal);
   const [errorMessage, setErrorMessage] = useState();
 
   useEffect(() => {
-    if (dataInfo && dataInfo.source === "upload" && numPhenotypeSubjects !== numExpressionSubjects) {
-      setErrorMessage(`Number of subjects in phenotype data (${ numPhenotypeSubjects }) does not match number of subjets in expression data (${ numExpressionSubjects }). Please upload data with matching subject numbers.`);
+    if (dataInfo && dataInfo.source.name === "upload" && dataInfo.phenotypes.numSubjects !== dataInfo.expression.numSubjects) {
+      setErrorMessage(`Number of subjects in phenotype data (${ dataInfo.phenotypes.numSubjects }) does not match number of subjets in expression data (${ dataInfo.expression.numSubjects }). Please upload data with matching subject numbers.`);
     }
     else {
       setErrorMessage();
     }
-  }, [dataInfo, numPhenotypeSubjects, numExpressionSubjects]);
+  }, [dataInfo]);
 
   const getErrorMessage = error => {
     if (!error) {
@@ -110,8 +110,8 @@ export const DataSelection = () => {
               <Col>
                 { 
                   <ExpressionInfo 
-                    source={ dataInfo.source }
-                    name={ dataInfo.expressionInfo.name }
+                    source={ dataInfo.source.name }
+                    name={ dataInfo.expression.name }
                     data={ expressionData } 
                   /> 
                 }
@@ -119,8 +119,8 @@ export const DataSelection = () => {
               <Col>
                 { phenotypeData && 
                   <PhenotypeInfo 
-                    source={ dataInfo.source }
-                    name={ dataInfo.phenotypeInfo.name } 
+                    source={ dataInfo.source.name }
+                    name={ dataInfo.phenotypes.name } 
                     data={ phenotypeData } 
                   /> 
                 }

@@ -31,9 +31,9 @@ export const UploadData = ({ state, onSetState, onError }) => {
 
       dataDispatch({ 
         type: "setDataInfo", 
-        source: "upload",
-        phenotypeInfo: { name: phenotypeDataFile ? phenotypeDataFile.name : "Auto-generated" },
-        expressionInfo: { name: expressionDataFile.name }
+        source: { name: "upload" },
+        phenotypes: { name: phenotypeDataFile ? phenotypeDataFile.name : "Auto-generated" },
+        expression: { name: expressionDataFile.name }
       });
 
       // Set phenotype data first

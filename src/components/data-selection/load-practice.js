@@ -18,7 +18,7 @@ export const LoadPractice = ({ state, onSetState, onError }) => {
       const expressionData = await api.loadPracticeData(practiceData.expressionData);
       const phenotypeData = await api.loadPracticeData(practiceData.phenotypes);
 
-      dataDispatch({ type: "setDataInfo", source: "practice" });
+      dataDispatch({ type: "setDataInfo", source: { name: "practice" }});
 
       // Set phenotype data first
       dataDispatch({ type: "setPhenotypes", data: phenotypeData });

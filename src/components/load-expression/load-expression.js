@@ -8,12 +8,12 @@ export const LoadExpression = () => {
   const [{ dataInfo }, dataDispatch] = useContext(DataContext);  
   
   const onLoadDataClick = async () => {
-    if (dataInfo.source === "practice") {
+    if (dataInfo.sourceInfo.name === "practice") {
       const data = await api.loadPracticeData(practiceData.expressionData);
   
       dataDispatch({ type: "setExpressionData", data: data });      
     }
-    else if (dataInfo.source === "immcellfie") {
+    else if (dataInfo.sourceInfo.name === "ImmCellFIE") {
       const data = await api.loadDataUrl(dataInfo.expressionInfo.url);
 
       dataDispatch({ type: "setExpressionData", data: data });   

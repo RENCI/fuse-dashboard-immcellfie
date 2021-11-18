@@ -23,7 +23,6 @@ const initialState = {
   // Phenotype data for each subject
   rawPhenotypeData: null,
   phenotypeData: null,
-  numPhenotypeSubjects: 0,
 
   // Phenotype options created from phenotype data
   phenotypes: null,
@@ -37,7 +36,6 @@ const initialState = {
   // Expression data used as CellFIE input
   rawExpressionData: null,
   expressionData: null,
-  numExpressionSubjects: 0,
 
   // CellFIE output
   rawOutput: null,
@@ -111,11 +109,19 @@ const initializePhenotypeData = (state, rawPhenotypeData) => {
   // Select this subgroup
   const selectedSubgroups = [subgroups[0].key, null];
 
+  const dataInfo = {
+    ...state.dataInfo,
+    phenotypes: {
+      ...state.dataInfo.phenotypes, 
+      numSubjects: phenotypeData.length
+    }
+  };
+
   return {
     ...state,
+    dataInfo: dataInfo,
     rawPhenotypeData: rawPhenotypeData,
     phenotypeData: phenotypeData,
-    numPhenotypeSubjects: phenotypeData.length,
     phenotypes: phenotypes,
     subgroups: subgroups,
     selectedSubgroups: selectedSubgroups
@@ -523,21 +529,21 @@ const keyIndex = (key, subgroups) => {
 const reducer = (state, action) => {
   switch (action.type) {
     case "setDataInfo": {
-      const phenotypeInfo = action.phenotypeInfo ? action.phenotypeInfo :
-        action.source === "practice" ? { name: "phenotypes" } :
-        { name: "unknown" };
-
-      const expressionInfo = action.expressionInfo ? action.expressionInfo :
-        action.source === "practice" ? { name: "expression data" } :
-        { name: "unknown" };
+      const info = {
+        source: action.source,
+        phenotypes: action.phenotype ? action.phenotype :
+          action.source.name === "practice" ? 
+          { name: "phenotypes" } :        
+          { name: "unknown" },
+        expression: action.expression ? action.expression :
+          action.source.name === "practice" ? 
+          { name: "expression data" } :        
+          { name: "unknown" },
+      };
 
       return {
         ...initialState,
-        dataInfo: {
-          source: action.source,
-          phenotypeInfo: phenotypeInfo,
-          expressionInfo: expressionInfo
-        }
+        dataInfo: info
       };
     }
 
@@ -550,12 +556,20 @@ const reducer = (state, action) => {
         newState = initializePhenotypeData(newState, createPhenotypeData(expressionData));
       }
 
+      const dataInfo = {
+        ...state.dataInfo,
+        expression: {
+          ...state.dataInfo.expression,
+          numSubjects: expressionData.length > 0 ? expressionData[0].values.length : 0
+        }
+      };
+
       return {
         ...newState,
+        dataInfo: dataInfo,
         expressionFile: action.file,
         rawExpressionData: action.data,
-        expressionData: parseExpressionData(action.data),
-        numExpressionSubjects: expressionData.length > 0 ? expressionData[0].values.length : 0
+        expressionData: parseExpressionData(action.data)
       };
 
     case "setPhenotypes":

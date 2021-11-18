@@ -72,7 +72,7 @@ export const UserInput = () => {
         const phenotypes = await api.getCellfiePhenotypes(id);
         const expressionData = await api.getCellfieExpressionData(id);
 
-        dataDispatch({ type: "setDataInfo", source: "cellfie" });
+        dataDispatch({ type: "setDataInfo", source: { name: "CellFIE" }});
         dataDispatch({ type: "setPhenotypes", data: phenotypes });
         dataDispatch({ type: "setExpressionData", data: expressionData });
 
