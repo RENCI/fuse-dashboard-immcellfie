@@ -89,18 +89,25 @@ const getTaskInfo = async (path, id) => {
 const getTasks = async (path, email) => {
   const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }${ path }/task_ids/${ email }`);
 
-  console.log(path);
-  console.log(result);
-
   const tasks = result.data.map(({ task_id }) => ({ id: task_id }));
 
-  for (const task of tasks) {
-    task.status = await checkTaskStatus(path, task.id);
-    task.parameters = await getTaskParameters(path, task.id);
-    task.info = await getTaskInfo(path, task.id);
+  const loaded = [];
+
+  for (const task of tasks) {  
+    try {
+      task.status = await checkTaskStatus(path, task.id);
+      task.parameters = await getTaskParameters(path, task.id);
+      task.info = await getTaskInfo(path, task.id);
+
+      loaded.push(task);
+    }
+    catch (error) {
+      console.log(error);
+      console.log(`Error loading task ${ task.id }. Removing from task list.`);
+    }
   }
 
-  return tasks;
+  return loaded;
 };
 
 const deleteTask = async (path, id) => {

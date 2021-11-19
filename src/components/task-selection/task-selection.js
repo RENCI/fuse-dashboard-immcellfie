@@ -31,17 +31,19 @@ export const TaskSelection = () => {
       modelDispatch({ type: "setParameters", parameters: task.parameters });
       dataDispatch({ type: "clearOutput" });
 
+      dataDispatch({ type: "setDataInfo", source: { name: "CellFIE" }});
+
       const phenotypes = immuneSpace ? 
         await api.getImmuneSpacePhenotypes(task.info.immunespace_download_id) : 
         await api.getCellfiePhenotypes(id);
 
-      // XXX: Need to get expression data if not immunespace
-
-      //const expressionData = await api.getCellfieExpressionData(id);
-
-      dataDispatch({ type: "setDataInfo", source: { name: "CellFIE" }});
       dataDispatch({ type: "setPhenotypes", data: phenotypes });
-      //dataDispatch({ type: "setExpressionData", data: expressionData });
+
+      if (!immuneSpace) {
+        const expressionData = await api.getCellfieExpressionData(id);
+        
+        dataDispatch({ type: "setExpressionData", data: expressionData });
+      }
 
       if (task.status === "finished") {  
         const output = await api.getCellfieOutput(id, immuneSpace);

@@ -4,12 +4,14 @@ import { DataContext } from "../../contexts";
 import { PhenotypeInfo } from "../phenotype-info";
 import { ExpressionInfo } from "../expression-info";
 import { CellfieLink, SubgroupsLink, ExpressionLink } from "../page-links";
+import { errorUtils } from "../../utils/error-utils";
 import { LoadImmuneSpace } from "./load-immunespace";
 import { UploadData } from "./upload-data";
 import { LoadPractice } from "./load-practice";
 import { states } from "./states";
 
 const { Header, Body, Footer } = Card;
+const { getErrorMessage } = errorUtils;
 
 export const DataSelection = () => {  
   const [{ dataInfo, phenotypeData, expressionData }] = useContext(DataContext);
@@ -24,28 +26,6 @@ export const DataSelection = () => {
       setErrorMessage();
     }
   }, [dataInfo]);
-
-  const getErrorMessage = error => {
-    if (!error) {
-      return null;
-    }
-    else if (error.response) {
-      // Client received response
-      console.log(error.response);
-
-      return <>Request failed</>;
-    } 
-    else if (error.request) {
-      // Client never received a response, or request never left
-      console.log(error.request);
-
-      return <>Request failed</>;
-    } 
-    else {
-      // Anything else
-      return <>Request failed</>;
-    }
-  };
 
   const onError = error => {
     setErrorMessage(getErrorMessage(error));
