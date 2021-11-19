@@ -83,6 +83,16 @@ const reducer = (state, action) => {
       };
     }
 
+    case "clearActiveTask": {
+      const tasks = [...state.tasks];
+      tasks.forEach(task => task.active = false);
+
+      return {
+        ...state,
+        tasks: tasks
+      };
+    }
+
     case "setStatus": {
       const tasks = [...state.tasks];
       const task = state.tasks.find(({ id }) => id === action.id);

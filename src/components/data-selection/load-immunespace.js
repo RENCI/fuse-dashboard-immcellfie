@@ -43,6 +43,7 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
     onError();
 
     dataDispatch({ type: "clearData" });
+    userDispatch({ type: "clearActiveTask" });
 
     try {
       const downloadId = await api.getImmuneSpaceDownloadId(email, groupId, apiKey);

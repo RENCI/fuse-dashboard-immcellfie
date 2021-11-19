@@ -21,7 +21,8 @@ export const LoadExpression = () => {
     else if (dataInfo.source.name === "ImmuneSpace") {
       const data = await api.getImmuneSpaceExpressionData(dataInfo.source.downloadId);
 
-      dataDispatch({ type: "setExpressionData", data: data });
+      // Make sure csv, not tsv
+      dataDispatch({ type: "setExpressionData", data: data.replace(/\t/g, ",") });
     }
   };
 

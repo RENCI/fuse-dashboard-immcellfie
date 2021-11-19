@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { Form } from "react-bootstrap";
-import { DataContext } from "../../contexts";
+import { UserContext, DataContext } from "../../contexts";
 import { SpinnerButton } from "../spinner-button";
 import { FileSelect } from "../file-select";
 import { states } from "./states";
@@ -9,6 +9,7 @@ import { api } from "../../utils/api";
 const { Group } = Form;
 
 export const UploadData = ({ state, onSetState, onError }) => {
+  const [, userDispatch] = useContext(UserContext);
   const [, dataDispatch] = useContext(DataContext);
   const [phenotypeDataFile, setPhenotypeDataFile] = useState(null);
   const [expressionDataFile, setExpressionDataFile] = useState(null);
@@ -24,6 +25,9 @@ export const UploadData = ({ state, onSetState, onError }) => {
   const onUploadDataClick = async () => {
     onSetState(states.uploading);
     onError();
+
+    dataDispatch({ type: "clearData" });
+    userDispatch({ type: "clearActiveTask" });
 
     try {
       const expressionData = await api.loadFile(expressionDataFile);

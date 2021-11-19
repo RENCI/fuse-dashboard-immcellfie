@@ -1,11 +1,12 @@
 import React, { useContext } from "react";
-import { DataContext } from "../../contexts";
+import { UserContext, DataContext } from "../../contexts";
 import { SpinnerButton } from "../spinner-button";
 import { states } from "./states";
 import { api } from "../../utils/api";
 import { practiceData } from "../../utils/datasets";
 
 export const LoadPractice = ({ state, onSetState, onError }) => {
+  const [, userDispatch] = useContext(UserContext);
   const [, dataDispatch] = useContext(DataContext);
 
   const onLoadPracticeClick = async () => {
@@ -13,6 +14,7 @@ export const LoadPractice = ({ state, onSetState, onError }) => {
     onError();
 
     dataDispatch({ type: "clearData" });
+    userDispatch({ type: "clearActiveTask" });
 
     try {      
       const expressionData = await api.loadPracticeData(practiceData.expressionData);
