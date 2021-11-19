@@ -100,6 +100,10 @@ const getTasks = async (path, email) => {
       task.parameters = await getTaskParameters(path, task.id);
       task.info = await getTaskInfo(path, task.id);
 
+      console.log(path);
+
+      if (path === IMMUNESPACE_CELLFIE_PATH) task.isImmuneSpace = true;
+
       loaded.push(task);
     }
     catch (error) {

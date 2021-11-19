@@ -10,7 +10,6 @@ import { errorUtils } from "../../utils/error-utils";
 
 const { Header, Body, Footer } = Card;
 const { Group, Control, Text } = Form;
-const { isImmuneSpace } = taskUtils;
 const { getErrorMessage } = errorUtils;
 
 export const UserInput = () => {
@@ -76,8 +75,7 @@ export const UserInput = () => {
           return task.status !== "failed" && task.info.date_created > activeTask.info.date_created ? task : activeTask;
         });
 
-        const id = activeTask.id;
-        const immuneSpace = isImmuneSpace(activeTask);
+        const { id, isImmuneSpace } = activeTask;
 
         userDispatch({ type: "setActiveTask", id: id });
         modelDispatch({ type: "setParameters", parameters: activeTask.parameters });
@@ -85,25 +83,25 @@ export const UserInput = () => {
 
         dataDispatch({ type: "setDataInfo", source: { name: "CellFIE" }});
 
-        const phenotypes = immuneSpace ? 
+        const phenotypes = isImmuneSpace ? 
           await api.getImmuneSpacePhenotypes(activeTask.info.immunespace_download_id) : 
           await api.getCellfiePhenotypes(id);
 
         dataDispatch({ type: "setPhenotypes", data: phenotypes });
 
-        if (!immuneSpace) {
+        if (!isImmuneSpace) {
           const expressionData = await api.getCellfieExpressionData(id);
           
           dataDispatch({ type: "setExpressionData", data: expressionData });
         }
 
         if (activeTask.status === "finished") {  
-          const output = await api.getCellfieOutput(id, immuneSpace);
+          const output = await api.getCellfieOutput(id, isImmuneSpace);
 
           dataDispatch({ type: "setOutput", output: output });
 
           // Load larger detail scoring asynchronously
-          api.getCellfieDetailScoring(id, immuneSpace).then(result => {
+          api.getCellfieDetailScoring(id, isImmuneSpace).then(result => {
             dataDispatch({ type: "setDetailScoring", data: result });
           });
         }

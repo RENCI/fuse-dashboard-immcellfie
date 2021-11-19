@@ -3,11 +3,9 @@ import { Card, ListGroup } from "react-bootstrap";
 import { DataContext, UserContext, ModelContext } from "../../contexts";
 import { Task } from "./task";
 import { api } from "../../utils/api";
-import { taskUtils } from "../../utils/task-utils";
 
 const { Header, Body } = Card;
 const { Item } = ListGroup;
-const { isImmuneSpace } = taskUtils;
 
 const sortOrder = {
   failed: 0,
@@ -24,8 +22,7 @@ export const TaskSelection = () => {
 
   const selectTask = async task => {
     try {
-      const id = task.id;
-      const immuneSpace = isImmuneSpace(task);
+      const { id, isImmuneSpace } = task;
 
       userDispatch({ type: "setActiveTask", id: id });
       modelDispatch({ type: "setParameters", parameters: task.parameters });
@@ -33,25 +30,25 @@ export const TaskSelection = () => {
 
       dataDispatch({ type: "setDataInfo", source: { name: "CellFIE" }});
 
-      const phenotypes = immuneSpace ? 
+      const phenotypes = isImmuneSpace ? 
         await api.getImmuneSpacePhenotypes(task.info.immunespace_download_id) : 
         await api.getCellfiePhenotypes(id);
 
       dataDispatch({ type: "setPhenotypes", data: phenotypes });
 
-      if (!immuneSpace) {
+      if (!isImmuneSpace) {
         const expressionData = await api.getCellfieExpressionData(id);
         
         dataDispatch({ type: "setExpressionData", data: expressionData });
       }
 
       if (task.status === "finished") {  
-        const output = await api.getCellfieOutput(id, immuneSpace);
+        const output = await api.getCellfieOutput(id, isImmuneSpace);
 
         dataDispatch({ type: "setOutput", output: output });
 
         // Load larger detail scoring asynchronously
-        api.getCellfieDetailScoring(id, immuneSpace).then(result => {
+        api.getCellfieDetailScoring(id, isImmuneSpace).then(result => {
           dataDispatch({ type: "setDetailScoring", data: result });
         });
       }

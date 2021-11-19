@@ -5,7 +5,7 @@ import { TaskStatusIcon } from "../task-status-icon";
 import { api } from "../../utils/api";
 import { taskUtils } from "../../utils/task-utils";
 
-const { isActive, isImmuneSpace } = taskUtils;
+const { isActive } = taskUtils;
 
 // XXX: Should move this to colors.js and use in task-status-icon
 const statusColor = {
@@ -43,8 +43,7 @@ export const TaskStatus = () => {
   // Check status and info
   useEffect(() => {
     tasks.filter(task => isActive(task.status) && !taskTimers[task.id]).forEach(task => {     
-      const id = task.id;
-      const immuneSpace = isImmuneSpace(task);
+      const { id, isImmuneSpace } = task;
       const timer = setInterval(checkStatus, 1000);    
 
       taskTimersDispatch({ type: "add", id: id, timer: timer });
@@ -53,12 +52,12 @@ export const TaskStatus = () => {
 
       async function checkStatus() {
         if (!task.info.start_date || !task.info.end_date) {
-          const info = await api.getCellfieTaskInfo(id, immuneSpace);
+          const info = await api.getCellfieTaskInfo(id, isImmuneSpace);
 
           userDispatch({ type: "setInfo", id: id, info: info });
         }
 
-        const status = await api.checkCellfieTaskStatus(id, immuneSpace);
+        const status = await api.checkCellfieTaskStatus(id, isImmuneSpace);
 
         if (status === "finished") {
           clearInterval(timer);            
@@ -72,7 +71,7 @@ export const TaskStatus = () => {
             dataDispatch({ type: "setOutput", output: output });
                     
             // Load larger detail scoring asynchronously
-            api.getCellfieDetailScoring(id, immuneSpace).then(result => {
+            api.getCellfieDetailScoring(id, isImmuneSpace).then(result => {
               dataDispatch({ type: "setDetailScoring", data: result });
             });
           }            
