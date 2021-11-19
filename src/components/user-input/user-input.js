@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { Card, Form, InputGroup, Button, Row, Col, Alert } from "react-bootstrap";
+import { ExclamationCircle } from "react-bootstrap-icons";
 import { UserContext, DataContext, ModelContext } from "../../contexts";
 import { LoadingSpinner } from "../loading-spinner";
 import { CellfieLink, InputLink } from "../page-links";
@@ -19,6 +20,7 @@ export const UserInput = () => {
   const [emailValue, setEmailValue] = useState("");
   const [emailValid, setEmailValid] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [failedTasks, setFailedTasks] = useState([]);
   const [errorMessage, setErrorMessage] = useState();
   const buttonRef = useRef();
 
@@ -49,6 +51,7 @@ export const UserInput = () => {
     evt.preventDefault();
 
     setLoading(true);
+    setFailedTasks([]);
 
     dataDispatch({ type: "clearData" });
 
@@ -59,7 +62,11 @@ export const UserInput = () => {
       
       userDispatch({ type: "setDownloads", downloads: downloads });
 
-      const tasks = await api.getTasks(emailValue);
+      const { tasks, failed } = await api.getTasks(emailValue);
+
+      setFailedTasks(failed);
+
+      console.log(tasks, failed);
 
       userDispatch({ type: "setTasks", tasks: tasks });
 
@@ -157,7 +164,7 @@ export const UserInput = () => {
             { errorMessage ?
               <Col className="text-center">
                 <Alert variant="danger">{ errorMessage }</Alert>
-              </Col>
+              </Col>            
             : loading ?
               <Col className="text-center">
                 <LoadingSpinner />
@@ -179,6 +186,19 @@ export const UserInput = () => {
               </Col>
             }
           </Row>
+          { failedTasks.length > 0 &&
+            <Row>
+              <Col>
+                <hr />
+                { failedTasks.map(({ id }, i) => 
+                  <small key={ i } className="text-danger">
+                    <ExclamationCircle className="mb-1 mr-1"/>
+                    Loading task { id } failed.
+                  </small>
+                )}
+              </Col>
+            </Row>
+          }
         </Footer>
       }
     </Card>

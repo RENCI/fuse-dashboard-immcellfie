@@ -92,6 +92,7 @@ const getTasks = async (path, email) => {
   const tasks = result.data.map(({ task_id }) => ({ id: task_id }));
 
   const loaded = [];
+  const failed = [];
 
   for (const task of tasks) {  
     try {
@@ -104,10 +105,15 @@ const getTasks = async (path, email) => {
     catch (error) {
       console.log(error);
       console.log(`Error loading task ${ task.id }. Removing from task list.`);
+
+      failed.push(task);
     }
   }
 
-  return loaded;
+  return {
+    loaded: loaded,
+    failed: failed
+  };
 };
 
 const deleteTask = async (path, id) => {
@@ -218,10 +224,10 @@ export const api = {
       getTasks(IMMUNESPACE_CELLFIE_PATH, email)
     ]);
 
-    return [
-      ...results[0],
-      ...results[1]
-    ];
+    return {
+      tasks: [...results[0].loaded, ...results[1].loaded],
+      failed: [...results[0].failed, ...results[1].failed]
+    };
   },
   checkCellfieTaskStatus: async (id, immuneSpace = false) => await checkTaskStatus(cellfiePath(immuneSpace), id), 
   getCellfieTaskParameters: async (id, immuneSpace = false) => await getTaskParameters(cellfiePath(immuneSpace), id),
