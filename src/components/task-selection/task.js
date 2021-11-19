@@ -45,10 +45,24 @@ export const Task = ({ task, onClick, onDeleteClick }) => {
 
   const summary = (
     <>
-      <small className="text-muted">
-        { created.toLocaleString() }
-      </small>
-      <div>{ organism }: { modelName }</div>
+      <Row>
+        <Col>
+          <small className="text-muted">
+            { created.toLocaleString() }
+            </small>
+        </Col>
+        <Col>
+          <small className="text-muted">
+            { organism }: { modelName }
+          </small>
+        </Col>
+      </Row>
+      <div>          
+        { task.download ? 
+          `ImmuneSpace: ${ task.download.info.group_id }` :
+          "uploaded data" 
+        }
+      </div>
     </>
   );
 

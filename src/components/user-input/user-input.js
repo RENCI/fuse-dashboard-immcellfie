@@ -5,7 +5,6 @@ import { UserContext, DataContext, ModelContext } from "../../contexts";
 import { LoadingSpinner } from "../loading-spinner";
 import { CellfieLink, InputLink } from "../page-links";
 import { api } from "../../utils/api";
-import { taskUtils } from "../../utils/task-utils";
 import { errorUtils } from "../../utils/error-utils";
 
 const { Header, Body, Footer } = Card;
@@ -65,7 +64,10 @@ export const UserInput = () => {
 
       setFailedTasks(failed);
 
-      console.log(tasks, failed);
+      // Add downloads to tasks
+      tasks.filter(task => task.isImmuneSpace).forEach(task => {
+        task.download = downloads.find(({ id }) => id === task.info.immunespace_download_id);
+      });
 
       userDispatch({ type: "setTasks", tasks: tasks });
 
@@ -81,7 +83,20 @@ export const UserInput = () => {
         modelDispatch({ type: "setParameters", parameters: activeTask.parameters });
         dataDispatch({ type: "clearOutput" });
 
-        dataDispatch({ type: "setDataInfo", source: { name: "CellFIE" }});
+        if (isImmuneSpace) {
+          dataDispatch({ 
+            type: "setDataInfo", 
+            source: { name: "ImmuneSpace" },
+            phenotypes: { name: activeTask.download.info.group_id },
+            expression: { name: activeTask.download.info.group_id }
+          });
+        }
+        else {
+          dataDispatch({ 
+            type: "setDataInfo", 
+            source: { name: "CellFIE" }
+          });
+        }
 
         const phenotypes = isImmuneSpace ? 
           await api.getImmuneSpacePhenotypes(activeTask.info.immunespace_download_id) : 

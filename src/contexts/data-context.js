@@ -531,14 +531,8 @@ const reducer = (state, action) => {
     case "setDataInfo": {
       const info = {
         source: action.source,
-        phenotypes: action.phenotypes ? action.phenotypes :
-          action.source.name === "practice" ? 
-          { name: "phenotypes" } :        
-          { name: "unknown" },
-        expression: action.expression ? action.expression :
-          action.source.name === "practice" ? 
-          { name: "expression data" } :        
-          { name: "unknown" },
+        phenotypes: action.phenotypes ? action.phenotypes : { name: "phenotypes" },       
+        expression: action.expression ? action.expression : { name: "expression data" }
       };
 
       return {
