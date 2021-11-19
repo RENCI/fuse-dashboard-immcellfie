@@ -17,7 +17,7 @@ const sortOrder = {
 
 export const TaskSelection = () => {
   const [, dataDispatch  ] = useContext(DataContext);
-  const [{ email, tasks, downloads }, userDispatch  ] = useContext(UserContext);
+  const [{ email, tasks }, userDispatch  ] = useContext(UserContext);
   const [, modelDispatch] = useContext(ModelContext);
 
   const selectTask = async task => {
@@ -31,7 +31,7 @@ export const TaskSelection = () => {
       if (isImmuneSpace) {
         dataDispatch({ 
           type: "setDataInfo", 
-          source: { name: "ImmuneSpace" },
+          source: { name: "ImmuneSpace", downloadId: task.download.id },
           phenotypes: { name: task.download.info.group_id },
           expression: { name: task.download.info.group_id }
         });

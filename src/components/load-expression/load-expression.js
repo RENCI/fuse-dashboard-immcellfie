@@ -8,15 +8,20 @@ export const LoadExpression = () => {
   const [{ dataInfo }, dataDispatch] = useContext(DataContext);  
   
   const onLoadDataClick = async () => {
-    if (dataInfo.sourceInfo.name === "practice") {
+    if (dataInfo.source.name === "practice") {
       const data = await api.loadPracticeData(practiceData.expressionData);
   
       dataDispatch({ type: "setExpressionData", data: data });      
     }
-    else if (dataInfo.sourceInfo.name === "ImmCellFIE") {
+    else if (dataInfo.source.name === "ImmCellFIE") {
       const data = await api.loadDataUrl(dataInfo.expressionInfo.url);
 
       dataDispatch({ type: "setExpressionData", data: data });   
+    }
+    else if (dataInfo.source.name === "ImmuneSpace") {
+      const data = await api.getImmuneSpaceExpressionData(dataInfo.source.downloadId);
+
+      dataDispatch({ type: "setExpressionData", data: data });
     }
   };
 

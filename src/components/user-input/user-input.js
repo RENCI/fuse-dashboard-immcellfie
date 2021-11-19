@@ -56,13 +56,19 @@ export const UserInput = () => {
     userDispatch({ type: "setEmail", email: emailValue });
 
     try {
+      // Get ImmuneSpace downloads
       const downloads = await api.getImmuneSpaceDownloads(emailValue);
       
+      downloads.sort((a, b) => b.info.date_created - a.info.date_created);
+
       userDispatch({ type: "setDownloads", downloads: downloads });
 
-      const { tasks, failed } = await api.getTasks(emailValue);
+      // If there are downloads, initialize set an api key
+      if (downloads.length > 0) {
+        userDispatch({ type: "setApiKey", apiKey: downloads[0].info.apikey })
+      }
 
-      setFailedTasks(failed);
+      const { tasks, failed } = await api.getTasks(emailValue);
 
       // Add downloads to tasks
       tasks.filter(task => task.isImmuneSpace).forEach(task => {
@@ -86,7 +92,7 @@ export const UserInput = () => {
         if (isImmuneSpace) {
           dataDispatch({ 
             type: "setDataInfo", 
-            source: { name: "ImmuneSpace" },
+            source: { name: "ImmuneSpace", downloadId: activeTask.download.id },
             phenotypes: { name: activeTask.download.info.group_id },
             expression: { name: activeTask.download.info.group_id }
           });
@@ -123,6 +129,7 @@ export const UserInput = () => {
       }
 
       setLoading(false);
+      setFailedTasks(failed);
     }
     catch (error) {
       console.log(error);

@@ -85,6 +85,14 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
 
   const disabled = state !== states.normal;
 
+  const finished = downloads.filter(({ status }) => status === "finished");
+
+  const apiKeys = Array.from(finished.reduce((apiKeys, download) => {
+    apiKeys.add(download.info.apikey);
+
+    return apiKeys;
+  }, new Set()));
+
   return (
     <>   
       <h6>
@@ -126,10 +134,16 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
         <InputGroup>
           <Control 
             type="text"
+            list="apiKeys"
             value={ inputApiKey }
             onChange={ onApiKeyChange } 
             onKeyPress={ onApiKeyKeyPress }
           />
+          <datalist id="apiKeys">
+            { apiKeys.map((key, i) => 
+              <option key={ i }>{ key }</option>
+            )}
+          </datalist>
           <InputGroup.Append>
             <Button 
               variant="primary"
@@ -172,10 +186,16 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
         <InputGroup>
           <Control 
             type="text"
+            list="groupIds"
             value={ groupId }
             onChange={ onGroupIdChange } 
             onKeyPress={ onGroupIdKeyPress }
           />
+          <datalist id="groupIds">
+            { finished.map((download, i) => 
+              <option key={ i }>{ download.info.group_id }</option>
+            )}
+          </datalist>
           <InputGroup.Append>
             <SpinnerButton 
               variant="primary"
