@@ -1,22 +1,28 @@
 import React, { useContext } from "react";
 import { Button } from "react-bootstrap";
 import { DataContext } from "../../contexts";
-import { practiceData } from "../../datasets";
-import { api } from "../../api";
+import { practiceData } from "../../utils/datasets";
+import { api } from "../../utils/api";
 
 export const LoadExpression = () => {
   const [{ dataInfo }, dataDispatch] = useContext(DataContext);  
   
   const onLoadDataClick = async () => {
-    if (dataInfo.source === "practice") {
+    if (dataInfo.source.name === "practice") {
       const data = await api.loadPracticeData(practiceData.expressionData);
   
       dataDispatch({ type: "setExpressionData", data: data });      
     }
-    else if (dataInfo.source === "immcellfie") {
+    else if (dataInfo.source.name === "ImmCellFIE") {
       const data = await api.loadDataUrl(dataInfo.expressionInfo.url);
 
       dataDispatch({ type: "setExpressionData", data: data });   
+    }
+    else if (dataInfo.source.name === "ImmuneSpace") {
+      const data = await api.getImmuneSpaceExpressionData(dataInfo.source.downloadId);
+
+      // Make sure csv, not tsv
+      dataDispatch({ type: "setExpressionData", data: data.replace(/\t/g, ",") });
     }
   };
 

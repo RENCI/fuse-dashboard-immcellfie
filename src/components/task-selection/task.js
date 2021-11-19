@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { ListGroup, Row, Col, Button, Collapse, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { ChevronDown, ChevronUp, XLg } from "react-bootstrap-icons";
 import { TaskStatusIcon } from "../task-status-icon";
-import { getModel } from "../../models";
+import { getModel } from "../../utils/models";
 import "./task-selection.css";
 
 const { Item } = ListGroup;
@@ -45,10 +45,24 @@ export const Task = ({ task, onClick, onDeleteClick }) => {
 
   const summary = (
     <>
-      <small className="text-muted">
-        { created.toLocaleString() }
-      </small>
-      <div>{ organism }: { modelName }</div>
+      <Row>
+        <Col>
+          <small className="text-muted">
+            { created.toLocaleString() }
+            </small>
+        </Col>
+        <Col>
+          <small className="text-muted">
+            { organism }: { modelName }
+          </small>
+        </Col>
+      </Row>
+      <div>          
+        { task.download ? 
+          `ImmuneSpace: ${ task.download.info.group_id }` :
+          "uploaded data" 
+        }
+      </div>
     </>
   );
 

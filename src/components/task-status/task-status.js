@@ -2,18 +2,16 @@ import React, { useContext, useEffect, useReducer } from "react";
 import { Badge } from "react-bootstrap";
 import { DataContext, UserContext } from "../../contexts";
 import { TaskStatusIcon } from "../task-status-icon";
-import { api } from "../../api";
+import { api } from "../../utils/api";
+import { taskUtils } from "../../utils/task-utils";
+
+const { isActive } = taskUtils;
 
 // XXX: Should move this to colors.js and use in task-status-icon
 const statusColor = {
   submitting: "primary",
   queued: "info",
   started: "success"
-};
-     
-// XXX: Create a task utils file and move there
-const isActive = status => {
-  return status === "submitting" || status === "queued" || status === "started";
 };
 
 export const TaskStatus = () => {
@@ -44,8 +42,8 @@ export const TaskStatus = () => {
 
   // Check status and info
   useEffect(() => {
-    tasks.filter(task => isActive(task.status) && !taskTimers[task.id]).forEach(task => {
-      const id = task.id;
+    tasks.filter(task => isActive(task.status) && !taskTimers[task.id]).forEach(task => {     
+      const { id, isImmuneSpace } = task;
       const timer = setInterval(checkStatus, 1000);    
 
       taskTimersDispatch({ type: "add", id: id, timer: timer });
@@ -54,12 +52,12 @@ export const TaskStatus = () => {
 
       async function checkStatus() {
         if (!task.info.start_date || !task.info.end_date) {
-          const info = await api.getCellfieTaskInfo(id);
+          const info = await api.getCellfieTaskInfo(id, isImmuneSpace);
 
           userDispatch({ type: "setInfo", id: id, info: info });
         }
 
-        const status = await api.checkCellfieTaskStatus(id);
+        const status = await api.checkCellfieTaskStatus(id, isImmuneSpace);
 
         if (status === "finished") {
           clearInterval(timer);            
@@ -73,7 +71,7 @@ export const TaskStatus = () => {
             dataDispatch({ type: "setOutput", output: output });
                     
             // Load larger detail scoring asynchronously
-            api.getCellfieDetailScoring(id).then(result => {
+            api.getCellfieDetailScoring(id, isImmuneSpace).then(result => {
               dataDispatch({ type: "setDetailScoring", data: result });
             });
           }            

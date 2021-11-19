@@ -1,166 +1,52 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Card, Form, InputGroup, Alert, Row, Col } from "react-bootstrap";
+import { Card, Alert, Row, Col } from "react-bootstrap";
 import { DataContext } from "../../contexts";
-import { SpinnerButton } from "../spinner-button";
-import { FileSelect } from "../file-select";
 import { PhenotypeInfo } from "../phenotype-info";
 import { ExpressionInfo } from "../expression-info";
 import { CellfieLink, SubgroupsLink, ExpressionLink } from "../page-links";
-import { api } from "../../api";
-import { practiceData } from "../../datasets";
+import { errorUtils } from "../../utils/error-utils";
+import { LoadImmuneSpace } from "./load-immunespace";
+import { UploadData } from "./upload-data";
+import { LoadPractice } from "./load-practice";
+import { states } from "./states";
 
 const { Header, Body, Footer } = Card;
-const { Group, Control } = Form;
+const { getErrorMessage } = errorUtils;
 
-const states = {
-  normal: "normal",
-  submitting: "submitting",
-  uploading: "uploading",
-  loading: "loading"
-};
-
-export const DataSelection = () => {
-  const [
-    { dataInfo, phenotypeData, expressionData, numPhenotypeSubjects, numExpressionSubjects }, 
-    dataDispatch
-  ] = useContext(DataContext);
-  const [id, setId] = useState("");
+export const DataSelection = () => {  
+  const [{ dataInfo, phenotypeData, expressionData }] = useContext(DataContext);
   const [state, setState] = useState(states.normal);
   const [errorMessage, setErrorMessage] = useState();
-  const [phenotypeDataFile, setPhenotypeDataFile] = useState(null);
-  const [expressionDataFile, setExpressionDataFile] = useState(null);
 
   useEffect(() => {
-    if (dataInfo && dataInfo.source === "upload" && numPhenotypeSubjects !== numExpressionSubjects) {
-      setErrorMessage(`Number of subjects in phenotype data (${ numPhenotypeSubjects }) does not match number of subjets in expression data (${ numExpressionSubjects }). Please upload data with matching subject numbers.`);
+    if (dataInfo && dataInfo.source.name === "upload" && dataInfo.phenotypes.numSubjects !== dataInfo.expression.numSubjects) {
+      setErrorMessage(`Number of subjects in phenotype data (${ dataInfo.phenotypes.numSubjects }) does not match number of subjets in expression data (${ dataInfo.expression.numSubjects }). Please upload data with matching subject numbers.`);
     }
     else {
       setErrorMessage();
     }
-  }, [dataInfo, numPhenotypeSubjects, numExpressionSubjects])
+  }, [dataInfo]);
 
-  const getErrorMessage = error => {
-    if (error.response) {
-      // Client received response
-      console.log(error.response);
-
-      return <>Request failed</>;
-    } 
-    else if (error.request) {
-      // Client never received a response, or request never left
-      console.log(error.request);
-
-      return <>Request failed</>;
-    } 
-    else {
-      // Anything else
-      return <>Request failed</>;
-    }
+  const onError = error => {
+    setErrorMessage(getErrorMessage(error));
   };
 
-  const onIdChange = evt => {
-    setId(evt.target.value);
+  const onSetState = state => {
+    setState(state);
   };
 
-  const onIdKeyPress = evt => {
-    if (evt.key === "Enter") {
-      onSubmitClick();
-    }
-  };
+  const vline = <div style={{ flexGrow: 2, borderLeft: "1px solid #ddd" }} />;
 
-  const onSubmitClick = async () => {
-    setState(states.normal);
-    setErrorMessage();
-
-    dataDispatch({ type: "clearData" });
-
-    try {
-      const [phenotypeInfo, expressionInfo] = await api.getDataInfo(id);
-
-      dataDispatch({ 
-        type: "setDataInfo", 
-        source: "immcellfie",
-        phenotypeInfo: phenotypeInfo,
-        expressionInfo: expressionInfo
-      });
-
-      const phenotypeData = await api.loadDataUrl(phenotypeInfo.url);
-
-      dataDispatch({ type: "setPhenotypes", data: phenotypeData });
-    }
-    catch (error) {
-      console.log(error);
-
-      setErrorMessage(getErrorMessage(error));
-    }
-
-    setState(states.normal);
-  };
-
-  const onLoadPracticeClick = async () => {
-    setState(states.loading);
-    setErrorMessage();
-
-    dataDispatch({ type: "clearData" });
-
-    try {      
-      const expressionData = await api.loadPracticeData(practiceData.expressionData);
-      const phenotypeData = await api.loadPracticeData(practiceData.phenotypes);
-
-      dataDispatch({ type: "setDataInfo", source: "practice" });
-
-      // Set phenotype data first
-      dataDispatch({ type: "setPhenotypes", data: phenotypeData });
-      dataDispatch({ type: "setExpressionData", data: expressionData });
-    }
-    catch (error) {
-      console.log(error);
-
-      setErrorMessage(getErrorMessage(error));
-    }
-
-    setState(states.normal);
-  };
-
-  const onPhenotypeFileSelect = file => {
-    setPhenotypeDataFile(file);    
-  };
-
-  const onExpressionFileSelect = file => {
-    setExpressionDataFile(file);
-  };
-
-  const onUploadDataClick = async () => {
-    setState(states.uploading);
-    setErrorMessage();
-
-    try {
-      const expressionData = await api.loadFile(expressionDataFile);
-      const phenotypeData = phenotypeDataFile ? await api.loadFile(phenotypeDataFile) : null;
-
-      dataDispatch({ 
-        type: "setDataInfo", 
-        source: "upload",
-        phenotypeInfo: { name: phenotypeDataFile ? phenotypeDataFile.name : "Auto-generated" },
-        expressionInfo: { name: expressionDataFile.name }
-      });
-
-      // Set phenotype data first
-      if (phenotypeData) dataDispatch({ type: "setPhenotypes", data: phenotypeData });
-      dataDispatch({ type: "setExpressionData", data: expressionData });
-    }
-    catch (error) {
-      console.log(error);
-
-      setErrorMessage(getErrorMessage(error));
-    }
-
-    setState(states.normal);
-  };
-
-  const orText = <em className="small">OR</em>;
-
-  const disabled = state !== states.normal;
+  const separator = (
+    <div 
+      style={{ height: "100%" }} 
+      className="d-flex flex-column align-items-center flex-nowrap"
+    >
+      { vline }
+      <em className="small my-1">OR</em>
+      { vline }
+    </div>
+  );
 
   return (
     <Card>
@@ -170,70 +56,31 @@ export const DataSelection = () => {
       <Body>
         <Row>
           <Col>    
-            <h6>Load ImmuneSpace group ID</h6>
-            <Group>  
-              <InputGroup>
-                <InputGroup.Prepend>
-                  <SpinnerButton 
-                    variant="primary"
-                    disabled={ disabled || id === "" }
-                    spin={ state === "submitting" }
-                    onClick={ onSubmitClick }>
-                    Submit
-                  </SpinnerButton>
-                </InputGroup.Prepend>
-                <Control 
-                  type="text"
-                  value={ id }
-                  onChange={ onIdChange } 
-                  onKeyPress={ onIdKeyPress }
-                />
-              </InputGroup>
-            </Group>  
+            <LoadImmuneSpace 
+              state={ state }
+              onSetState={ onSetState }
+              onError={ onError }
+            />
           </Col>
           <Col sm="auto">
-            { orText }
+            { separator }
           </Col>
           <Col> 
-            <h6>Upload data</h6> 
-            <Group>
-              <FileSelect
-                defaultLabel="Required: select expression data"
-                onChange={ onExpressionFileSelect }
-              />
-            </Group> 
-            <Group>
-              <FileSelect
-                defaultLabel="Optional: select phenotype data"
-                onChange={ onPhenotypeFileSelect }
-              />
-            </Group> 
-            <Group>
-              <SpinnerButton
-                variant="outline-secondary"
-                disabled={ disabled || !expressionDataFile }
-                spin={ state === "uploading" }
-                block={ true }
-                onClick={ onUploadDataClick }
-              >
-                Upload
-              </SpinnerButton>              
-            </Group>
+            <UploadData
+              state={ state }
+              onSetState={ onSetState }
+              onError={ onError }
+            />
           </Col>
           <Col sm="auto">
-            { orText }
+            { separator }
           </Col>
           <Col>   
-            <h6>Load practice data</h6>
-            <SpinnerButton 
-              variant="outline-secondary"
-              disabled={ disabled }
-              spin={ state === "loading" }
-              block={ true }
-              onClick={ onLoadPracticeClick }
-            >
-              Load
-            </SpinnerButton>
+            <LoadPractice 
+              state={ state }
+              onSetState={ onSetState }
+              onError={ onError }
+            />
           </Col>
         </Row>
         { (phenotypeData || expressionData) && 
@@ -243,8 +90,8 @@ export const DataSelection = () => {
               <Col>
                 { 
                   <ExpressionInfo 
-                    source={ dataInfo.source }
-                    name={ dataInfo.expressionInfo.name }
+                    source={ dataInfo.source.name }
+                    name={ dataInfo.expression.name }
                     data={ expressionData } 
                   /> 
                 }
@@ -252,8 +99,8 @@ export const DataSelection = () => {
               <Col>
                 { phenotypeData && 
                   <PhenotypeInfo 
-                    source={ dataInfo.source }
-                    name={ dataInfo.phenotypeInfo.name } 
+                    source={ dataInfo.source.name }
+                    name={ dataInfo.phenotypes.name } 
                     data={ phenotypeData } 
                   /> 
                 }

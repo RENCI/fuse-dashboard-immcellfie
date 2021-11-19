@@ -14,7 +14,7 @@ import {
   enclosure, enclosureLogScale, enclosurePValue,
   voronoiTreemap, voronoiTreemapLogScale, voronoiTreemapPValue
 } from "../../vega-specs";
-import { sequential, diverging } from "../../colors";
+import { sequential, diverging } from "../../utils/colors";
 import { LoadingSpinner } from "../loading-spinner";
 import { SelectedList } from "../selected-list";
 import "./hierarchy-vis.css";

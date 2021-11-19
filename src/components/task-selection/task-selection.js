@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Card, ListGroup } from "react-bootstrap";
 import { DataContext, UserContext, ModelContext } from "../../contexts";
 import { Task } from "./task";
-import { api } from "../../api";
+import { api } from "../../utils/api";
 
 const { Header, Body } = Card;
 const { Item } = ListGroup;
@@ -22,26 +22,46 @@ export const TaskSelection = () => {
 
   const selectTask = async task => {
     try {
-      const id = task.id;
+      const { id, isImmuneSpace } = task;
 
       userDispatch({ type: "setActiveTask", id: id });
       modelDispatch({ type: "setParameters", parameters: task.parameters });
       dataDispatch({ type: "clearOutput" });
 
-      const phenotypes = await api.getCellfiePhenotypes(id);
-      const expressionData = await api.getCellfieExpressionData(id);
+      if (isImmuneSpace) {
+        dataDispatch({ 
+          type: "setDataInfo", 
+          source: { name: "ImmuneSpace", downloadId: task.download.id },
+          phenotypes: { name: task.download.info.group_id },
+          expression: { name: task.download.info.group_id }
+        });
+      }
+      else {
+        dataDispatch({ 
+          type: "setDataInfo", 
+          source: { name: "CellFIE" }
+        });
+      }
 
-      dataDispatch({ type: "setDataInfo", source: "cellfie" });
+      const phenotypes = isImmuneSpace ? 
+        await api.getImmuneSpacePhenotypes(task.info.immunespace_download_id) : 
+        await api.getCellfiePhenotypes(id);
+
       dataDispatch({ type: "setPhenotypes", data: phenotypes });
-      dataDispatch({ type: "setExpressionData", data: expressionData });
+
+      if (!isImmuneSpace) {
+        const expressionData = await api.getCellfieExpressionData(id);
+        
+        dataDispatch({ type: "setExpressionData", data: expressionData });
+      }
 
       if (task.status === "finished") {  
-        const output = await api.getCellfieOutput(id);
+        const output = await api.getCellfieOutput(id, isImmuneSpace);
 
         dataDispatch({ type: "setOutput", output: output });
 
         // Load larger detail scoring asynchronously
-        api.getCellfieDetailScoring(id).then(result => {
+        api.getCellfieDetailScoring(id, isImmuneSpace).then(result => {
           dataDispatch({ type: "setDetailScoring", data: result });
         });
       }

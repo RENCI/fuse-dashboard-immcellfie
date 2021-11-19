@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Row, Col, Card, Form, Button, ButtonGroup, InputGroup } from "react-bootstrap";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
 import { UserContext, DataContext, ModelContext } from "../../contexts";
-import { api } from "../../api";
+import { api } from "../../utils/api";
 
 const { Header, Body } = Card;
 const { Label, Group, Control } = Form;
@@ -10,7 +10,7 @@ const { Append } = InputGroup;
 
 export const ModelSelection = () => {
   const [{ email }, userDispatch] = useContext(UserContext);
-  const [{ rawExpressionData, expressionData, rawPhenotypeData }, dataDispatch] = useContext(DataContext);
+  const [{ dataInfo, rawExpressionData, rawPhenotypeData }, dataDispatch] = useContext(DataContext);
   const [{ organism, model, parameters }, modelDispatch] = useContext(ModelContext); 
 
   const thresholdType = parameters.find(({ name }) => name === "ThreshType"); 
@@ -31,36 +31,68 @@ export const ModelSelection = () => {
     modelDispatch({ type: "resetParameterValue", name: name });
   };
 
+  const getParameterObject = parameters => (
+    parameters.reduce((parameters, parameter) => {
+      parameters[parameter.name] = parameter.value;
+      return parameters; 
+    }, {})
+  );
+
   const onRunCellfieClick = async () => {
-    try {
-      const n = expressionData.length > 0 ? expressionData[0].values.length : 0;
+    if (dataInfo.source.name === "ImmuneSpace") {
+      try {
+        const n = dataInfo.phenotypes.numSubjects;
 
-      // Create blobs
-      const dataBlob = data => {
-        return new Blob([data], { type: "mimeString" });
-      };
+        // Run Cellfie
+        const id = await api.runImmuneSpaceCellfie(dataInfo.source.downloadId, n, model.value.value, getParameterObject(parameters));
 
-      const expressionBlob = dataBlob(rawExpressionData);
-      const phenotypesBlob = dataBlob(rawPhenotypeData);
+        console.log(id);
 
-      // Run Cellfie
-      const id = await api.runCellfie(email, expressionBlob, phenotypesBlob, n, model.value.value, parameters.reduce((parameters, parameter) => {
-        parameters[parameter.name] = parameter.value;
-        return parameters; 
-      }, {}));     
+        // Get task info
+        const params = await api.getImmuneSpaceCellfieTaskParameters(id);
+        const info = await api.getImmuneSpaceCellfieTaskInfo(id);
 
-      // Get task info
-      const params = await api.getCellfieTaskParameters(id);
-      const info = await api.getCellfieTaskInfo(id);
+        console.log(params);
+        console.log(info);
 
-      // Create task
-      userDispatch({ type: "addTask", id: id, status: "submitting", parameters: params, info: info });
-      userDispatch({ type: "setActiveTask", id: id });      
-      
-      dataDispatch({ type: "clearOutput" });
+        // Create task
+        userDispatch({ type: "addTask", id: id, status: "submitting", parameters: params, info: info });
+        userDispatch({ type: "setActiveTask", id: id });      
+        
+        dataDispatch({ type: "clearOutput" });
+      }
+      catch (error) {
+        console.log(error);
+      }
     }
-    catch (error) {
-      console.log(error);
+    else {
+      try {
+        const n = dataInfo.expression.numSubjects;
+
+        // Create blobs
+        const dataBlob = data => {
+          return new Blob([data], { type: "mimeString" });
+        };
+
+        const expressionBlob = dataBlob(rawExpressionData);
+        const phenotypesBlob = dataBlob(rawPhenotypeData);
+
+        // Run Cellfie
+        const id = await api.runCellfie(email, expressionBlob, phenotypesBlob, n, model.value.value, getParameterObject(parameters));     
+
+        // Get task info
+        const params = await api.getCellfieTaskParameters(id);
+        const info = await api.getCellfieTaskInfo(id);
+
+        // Create task
+        userDispatch({ type: "addTask", id: id, status: "submitting", parameters: params, info: info });
+        userDispatch({ type: "setActiveTask", id: id });      
+        
+        dataDispatch({ type: "clearOutput" });
+      }
+      catch (error) {
+        console.log(error);
+      }
     }
   };
 

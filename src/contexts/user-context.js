@@ -2,10 +2,10 @@ import React, { createContext, useReducer } from "react";
 
 const initialState = {
   email: "",
-  tasks: []
+  apiKey: "",
+  downloads: [],
+  tasks: [],
 };
-
-
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -14,6 +14,20 @@ const reducer = (state, action) => {
         ...state,
         email: action.email
       };
+
+    case "setApiKey": {
+      return {
+        ...state,
+        apiKey: action.apiKey
+      };
+    }
+
+    case "setDownloads": {
+      return {
+        ...state,
+        downloads: action.downloads
+      };
+    }
 
     case "setTasks":
       return {
@@ -62,6 +76,16 @@ const reducer = (state, action) => {
     case "setActiveTask": {
       const tasks = [...state.tasks];
       tasks.forEach(task => task.active = task.id === action.id);
+
+      return {
+        ...state,
+        tasks: tasks
+      };
+    }
+
+    case "clearActiveTask": {
+      const tasks = [...state.tasks];
+      tasks.forEach(task => task.active = false);
 
       return {
         ...state,

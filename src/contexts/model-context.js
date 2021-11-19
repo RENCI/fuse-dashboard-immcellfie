@@ -1,5 +1,5 @@
 import React, { createContext, useReducer } from "react";
-import { models, organisms, getModels } from "../models";
+import { models, organisms, getModels } from "../utils/models";
 
 const defaultOrganism = "human";
 

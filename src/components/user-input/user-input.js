@@ -1,12 +1,15 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
-import { Card, Form, InputGroup, Button, Row, Col } from "react-bootstrap";
+import { Card, Form, InputGroup, Button, Row, Col, Alert } from "react-bootstrap";
+import { ExclamationCircle } from "react-bootstrap-icons";
 import { UserContext, DataContext, ModelContext } from "../../contexts";
 import { LoadingSpinner } from "../loading-spinner";
 import { CellfieLink, InputLink } from "../page-links";
-import { api } from "../../api";
+import { api } from "../../utils/api";
+import { errorUtils } from "../../utils/error-utils";
 
 const { Header, Body, Footer } = Card;
 const { Group, Control, Text } = Form;
+const { getErrorMessage } = errorUtils;
 
 export const UserInput = () => {
   const [, dataDispatch  ] = useContext(DataContext);
@@ -15,6 +18,8 @@ export const UserInput = () => {
   const [emailValue, setEmailValue] = useState("");
   const [emailValid, setEmailValid] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [failedTasks, setFailedTasks] = useState([]);
+  const [errorMessage, setErrorMessage] = useState();
   const buttonRef = useRef();
 
   const validateEmail = email => {
@@ -44,13 +49,31 @@ export const UserInput = () => {
     evt.preventDefault();
 
     setLoading(true);
+    setFailedTasks([]);
 
     dataDispatch({ type: "clearData" });
 
     userDispatch({ type: "setEmail", email: emailValue });
 
     try {
-      const tasks = await api.getCellfieTasks(emailValue);
+      // Get ImmuneSpace downloads
+      const downloads = await api.getImmuneSpaceDownloads(emailValue);
+      
+      downloads.sort((a, b) => b.info.date_created - a.info.date_created);
+
+      userDispatch({ type: "setDownloads", downloads: downloads });
+
+      // If there are downloads, initialize set an api key
+      if (downloads.length > 0) {
+        userDispatch({ type: "setApiKey", apiKey: downloads[0].info.apikey })
+      }
+
+      const { tasks, failed } = await api.getTasks(emailValue);
+
+      // Add downloads to tasks
+      tasks.filter(task => task.isImmuneSpace).forEach(task => {
+        task.download = downloads.find(({ id }) => id === task.info.immunespace_download_id);
+      });
 
       userDispatch({ type: "setTasks", tasks: tasks });
 
@@ -60,34 +83,59 @@ export const UserInput = () => {
           return task.status !== "failed" && task.info.date_created > activeTask.info.date_created ? task : activeTask;
         });
 
-        const id = activeTask.id;
+        const { id, isImmuneSpace } = activeTask;
 
         userDispatch({ type: "setActiveTask", id: id });
         modelDispatch({ type: "setParameters", parameters: activeTask.parameters });
+        dataDispatch({ type: "clearOutput" });
 
-        const phenotypes = await api.getCellfiePhenotypes(id);
-        const expressionData = await api.getCellfieExpressionData(id);
+        if (isImmuneSpace) {
+          dataDispatch({ 
+            type: "setDataInfo", 
+            source: { name: "ImmuneSpace", downloadId: activeTask.download.id },
+            phenotypes: { name: activeTask.download.info.group_id },
+            expression: { name: activeTask.download.info.group_id }
+          });
+        }
+        else {
+          dataDispatch({ 
+            type: "setDataInfo", 
+            source: { name: "CellFIE" }
+          });
+        }
 
-        dataDispatch({ type: "setDataInfo", source: "cellfie" });
+        const phenotypes = isImmuneSpace ? 
+          await api.getImmuneSpacePhenotypes(activeTask.info.immunespace_download_id) : 
+          await api.getCellfiePhenotypes(id);
+
         dataDispatch({ type: "setPhenotypes", data: phenotypes });
-        dataDispatch({ type: "setExpressionData", data: expressionData });
+
+        if (!isImmuneSpace) {
+          const expressionData = await api.getCellfieExpressionData(id);
+          
+          dataDispatch({ type: "setExpressionData", data: expressionData });
+        }
 
         if (activeTask.status === "finished") {  
-          const output = await api.getCellfieOutput(id);
+          const output = await api.getCellfieOutput(id, isImmuneSpace);
 
           dataDispatch({ type: "setOutput", output: output });
 
           // Load larger detail scoring asynchronously
-          api.getCellfieDetailScoring(id).then(result => {
+          api.getCellfieDetailScoring(id, isImmuneSpace).then(result => {
             dataDispatch({ type: "setDetailScoring", data: result });
           });
         }
       }
 
       setLoading(false);
+      setFailedTasks(failed);
     }
     catch (error) {
       console.log(error);
+
+      setLoading(false);
+      setErrorMessage(getErrorMessage(error));
     }
   };
 
@@ -133,7 +181,11 @@ export const UserInput = () => {
       { email &&
         <Footer>
           <Row>
-            { loading ?
+            { errorMessage ?
+              <Col className="text-center">
+                <Alert variant="danger">{ errorMessage }</Alert>
+              </Col>            
+            : loading ?
               <Col className="text-center">
                 <LoadingSpinner />
               </Col>
@@ -154,6 +206,19 @@ export const UserInput = () => {
               </Col>
             }
           </Row>
+          { failedTasks.length > 0 &&
+            <Row>
+              <Col>
+                <hr />
+                { failedTasks.map(({ id }, i) => 
+                  <small key={ i } className="text-danger">
+                    <ExclamationCircle className="mb-1 mr-1"/>
+                    Loading task { id } failed.
+                  </small>
+                )}
+              </Col>
+            </Row>
+          }
         </Footer>
       }
     </Card>
