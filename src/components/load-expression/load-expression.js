@@ -22,7 +22,7 @@ export const LoadExpression = () => {
       const data = await api.getImmuneSpaceExpressionData(dataInfo.source.downloadId);
 
       // Make sure csv, not tsv
-      dataDispatch({ type: "setExpressionData", data: data.replace(/\t/g, ",") });
+      dataDispatch({ type: "setExpressionData", data: data });
     }
   };
 

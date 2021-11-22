@@ -1,9 +1,12 @@
 import React, { useContext } from "react";
+import { Form } from "react-bootstrap";
 import { UserContext, DataContext } from "../../contexts";
 import { SpinnerButton } from "../spinner-button";
 import { states } from "./states";
 import { api } from "../../utils/api";
 import { practiceData } from "../../utils/datasets";
+
+const { Group, Label } = Form;
 
 export const LoadPractice = ({ state, onSetState, onError }) => {
   const [, userDispatch] = useContext(UserContext);
@@ -38,8 +41,8 @@ export const LoadPractice = ({ state, onSetState, onError }) => {
   const disabled = state !== states.normal;
 
   return (  
-    <>
-      <h6>Load practice data</h6>
+    <Group>
+      <Label>Practice data</Label>
       <SpinnerButton 
         variant="outline-secondary"
         disabled={ disabled }
@@ -47,8 +50,8 @@ export const LoadPractice = ({ state, onSetState, onError }) => {
         block={ true }
         onClick={ onLoadPracticeClick }
       >
-        Load
+        Upload
       </SpinnerButton>
-    </>
+    </Group>
   );
 };           
