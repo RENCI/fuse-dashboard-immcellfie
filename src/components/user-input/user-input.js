@@ -145,10 +145,10 @@ export const UserInput = () => {
   };
 
   const failure = (id, type) => (
-    <small key={ id } className="text-danger">
+    <div key={ id } className="text-danger small">
       <ExclamationCircle className="mb-1 mr-1"/>
       Loading { type } { id } failed.
-    </small>
+    </div>
   );
 
   return (
