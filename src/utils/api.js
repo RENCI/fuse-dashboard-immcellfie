@@ -184,13 +184,29 @@ export const api = {
     const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }/immunespace/download/ids/${ email }`);
 
     const downloads = result.data.map(({ immunespace_download_id }) => ({ id: immunespace_download_id }));
+
+    const loaded = [];
+    const failed = [];
   
     for (const download of downloads) {
-      download.status = await checkTaskStatus(IMMUNESPACE_DOWNLOAD_PATH, download.id);
-      download.info = await getTaskInfo(IMMUNESPACE_DOWNLOAD_PATH, download.id);
+      try {
+        download.status = await checkTaskStatus(IMMUNESPACE_DOWNLOAD_PATH, download.id);
+        download.info = await getTaskInfo(IMMUNESPACE_DOWNLOAD_PATH, download.id);
+
+        loaded.push(download);
+      }
+      catch (error) {
+        console.log(error);
+        console.log(`Error loading download ${ download.id }. Removing from download list.`);
+
+        failed.push(download);
+      }
     }
   
-    return downloads;
+    return {
+      downloads: loaded,
+      failed: failed
+    };
   },
   checkImmunspaceDownloadStatus: async downloadId => await checkTaskStatus(IMMUNESPACE_DOWNLOAD_PATH, downloadId),
   getImmuneSpaceExpressionData: async downloadId => await resultStream(IMMUNESPACE_DOWNLOAD_PATH, downloadId, "geneBySampleMatrix"),

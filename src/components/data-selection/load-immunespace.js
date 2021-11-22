@@ -97,7 +97,7 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
   return (
     <>   
       <h6>
-        ImmuneSpace 
+        Load data from ImmuneSpace 
         <a 
           href="https://www.immunespace.org/" 
           target="_blank"

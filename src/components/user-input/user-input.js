@@ -18,6 +18,7 @@ export const UserInput = () => {
   const [emailValue, setEmailValue] = useState("");
   const [emailValid, setEmailValid] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [failedDownloads, setFailedDownloads] = useState([]);
   const [failedTasks, setFailedTasks] = useState([]);
   const [errorMessage, setErrorMessage] = useState();
   const buttonRef = useRef();
@@ -49,6 +50,8 @@ export const UserInput = () => {
     evt.preventDefault();
 
     setLoading(true);
+    setErrorMessage();
+    setFailedDownloads([]);
     setFailedTasks([]);
 
     dataDispatch({ type: "clearData" });
@@ -57,18 +60,19 @@ export const UserInput = () => {
 
     try {
       // Get ImmuneSpace downloads
-      const downloads = await api.getImmuneSpaceDownloads(emailValue);
+      const { downloads, failed: failedDownloads } = await api.getImmuneSpaceDownloads(emailValue);
       
       downloads.sort((a, b) => b.info.date_created - a.info.date_created);
 
       userDispatch({ type: "setDownloads", downloads: downloads });
 
-      // If there are downloads, initialize set an api key
+      // If there are downloads, set an api key
       if (downloads.length > 0) {
         userDispatch({ type: "setApiKey", apiKey: downloads[0].info.apikey })
       }
 
-      const { tasks, failed } = await api.getTasks(emailValue);
+      // Get tasks
+      const { tasks, failed: failedTasks } = await api.getTasks(emailValue);
 
       // Add downloads to tasks
       tasks.filter(task => task.isImmuneSpace).forEach(task => {
@@ -129,7 +133,8 @@ export const UserInput = () => {
       }
 
       setLoading(false);
-      setFailedTasks(failed);
+      setFailedDownloads(failedDownloads);
+      setFailedTasks(failedTasks);
     }
     catch (error) {
       console.log(error);
@@ -138,6 +143,13 @@ export const UserInput = () => {
       setErrorMessage(getErrorMessage(error));
     }
   };
+
+  const failure = (id, type) => (
+    <small key={ id } className="text-danger">
+      <ExclamationCircle className="mb-1 mr-1"/>
+      Loading { type } { id } failed.
+    </small>
+  );
 
   return (
     <Card>
@@ -206,16 +218,12 @@ export const UserInput = () => {
               </Col>
             }
           </Row>
-          { failedTasks.length > 0 &&
+          { (failedDownloads.length > 0 || failedTasks.length > 0) &&
             <Row>
               <Col>
                 <hr />
-                { failedTasks.map(({ id }, i) => 
-                  <small key={ i } className="text-danger">
-                    <ExclamationCircle className="mb-1 mr-1"/>
-                    Loading task { id } failed.
-                  </small>
-                )}
+                { failedDownloads.map(({ id }) => failure(id, "download")) }
+                { failedTasks.map(({ id }) => failure(id, "task")) }
               </Col>
             </Row>
           }

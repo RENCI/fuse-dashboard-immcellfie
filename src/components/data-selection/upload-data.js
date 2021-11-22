@@ -6,7 +6,7 @@ import { FileSelect } from "../file-select";
 import { states } from "./states";
 import { api } from "../../utils/api";
 
-const { Group } = Form;
+const { Group, Label } = Form;
 
 export const UploadData = ({ state, onSetState, onError }) => {
   const [, userDispatch] = useContext(UserContext);
@@ -57,7 +57,7 @@ export const UploadData = ({ state, onSetState, onError }) => {
 
   return (
     <>
-      <h6>Upload data</h6> 
+      <Label>Local files</Label> 
       <Group>
         <FileSelect
           defaultLabel="Required: select expression data"

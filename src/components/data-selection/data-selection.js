@@ -66,16 +66,13 @@ export const DataSelection = () => {
             { separator }
           </Col>
           <Col> 
+            <h6>Upload data</h6>
             <UploadData
               state={ state }
               onSetState={ onSetState }
               onError={ onError }
-            />
-          </Col>
-          <Col sm="auto">
-            { separator }
-          </Col>
-          <Col>   
+            /> 
+            <hr />
             <LoadPractice 
               state={ state }
               onSetState={ onSetState }
