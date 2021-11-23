@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Card, Alert, Row, Col } from "react-bootstrap";
 import { DataContext } from "../../contexts";
+import { LoadingSpinner } from "../loading-spinner";
 import { PhenotypeInfo } from "../phenotype-info";
 import { ExpressionInfo } from "../expression-info";
 import { CellfieLink, SubgroupsLink, ExpressionLink } from "../page-links";
@@ -80,6 +81,16 @@ export const DataSelection = () => {
             />
           </Col>
         </Row>
+        { state !== states.normal && 
+          <>
+            <hr />
+            <Row>
+              <Col className="text-center">
+                <LoadingSpinner />
+              </Col>
+            </Row>
+          </>
+        }
         { (phenotypeData || expressionData) && 
           <>
             <hr />
