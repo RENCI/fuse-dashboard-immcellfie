@@ -79,9 +79,9 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
       console.log(error);
 
       onError(error);
-    }
   
-    onSetState(states.normal);
+      onSetState(states.normal);
+    }
   };
 
   const disabled = state !== states.normal;

@@ -37,12 +37,15 @@ const reducer = (state, action) => {
 
     case "addTask": {
       const tasks = [...state.tasks];
-      tasks.push({ 
+      tasks.push({
         id: action.id, 
+        isImmuneSpace: action.isImmuneSpace,
         status: action.status,
         parameters: action.parameters, 
         info: action.info
       });
+
+      if (action.download) tasks[tasks.length -1].download = action.download;
 
       return {
         ...state,
