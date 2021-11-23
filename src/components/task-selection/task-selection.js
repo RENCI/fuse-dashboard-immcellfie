@@ -78,7 +78,7 @@ export const TaskSelection = () => {
   };
 
   const onDeleteClick = async task => {
-    const success = await api.deleteCellfieTask(task.id);
+    const success = await api.deleteCellfieTask(task.id, task.isImmuneSpace);
 
     if (success) {
       userDispatch({ type: "removeTask", id: task.id });

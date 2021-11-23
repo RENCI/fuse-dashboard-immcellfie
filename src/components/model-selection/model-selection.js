@@ -9,7 +9,7 @@ const { Label, Group, Control } = Form;
 const { Append } = InputGroup;
 
 export const ModelSelection = () => {
-  const [{ email }, userDispatch] = useContext(UserContext);
+  const [{ email, downloads }, userDispatch] = useContext(UserContext);
   const [{ dataInfo, rawExpressionData, rawPhenotypeData }, dataDispatch] = useContext(DataContext);
   const [{ organism, model, parameters }, modelDispatch] = useContext(ModelContext); 
 
@@ -42,21 +42,18 @@ export const ModelSelection = () => {
     if (dataInfo.source.name === "ImmuneSpace") {
       try {
         const n = dataInfo.phenotypes.numSubjects;
+        const downloadId = dataInfo.source.downloadId;
 
         // Run Cellfie
-        const id = await api.runImmuneSpaceCellfie(dataInfo.source.downloadId, n, model.value.value, getParameterObject(parameters));
-
-        console.log(id);
+        const id = await api.runImmuneSpaceCellfie(downloadId, n, model.value.value, getParameterObject(parameters));
 
         // Get task info
-        const params = await api.getImmuneSpaceCellfieTaskParameters(id);
-        const info = await api.getImmuneSpaceCellfieTaskInfo(id);
-
-        console.log(params);
-        console.log(info);
+        const params = await api.getCellfieTaskParameters(id, true);
+        const info = await api.getCellfieTaskInfo(id, true);
+        const download = downloads.find(({ id }) => id === downloadId);
 
         // Create task
-        userDispatch({ type: "addTask", id: id, status: "submitting", parameters: params, info: info });
+        userDispatch({ type: "addTask", id: id, isImmuneSpace: true, status: "submitting", parameters: params, info: info, download: download });
         userDispatch({ type: "setActiveTask", id: id });      
         
         dataDispatch({ type: "clearOutput" });
@@ -85,7 +82,7 @@ export const ModelSelection = () => {
         const info = await api.getCellfieTaskInfo(id);
 
         // Create task
-        userDispatch({ type: "addTask", id: id, status: "submitting", parameters: params, info: info });
+        userDispatch({ type: "addTask", id: id, isImmuneSpace: false, status: "submitting", parameters: params, info: info });
         userDispatch({ type: "setActiveTask", id: id });      
         
         dataDispatch({ type: "clearOutput" });
