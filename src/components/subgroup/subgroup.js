@@ -110,7 +110,7 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
         </Col>
         <Col>
           <div>
-            Count: { subgroup.subjects.length }
+            Count: { subgroup.samples.length }
           </div>
         </Col>
         <Col xs="auto">

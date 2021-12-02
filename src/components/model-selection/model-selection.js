@@ -41,7 +41,7 @@ export const ModelSelection = () => {
   const onRunCellfieClick = async () => {
     if (dataInfo.source.name === "ImmuneSpace") {
       try {
-        const n = dataInfo.phenotypes.numSubjects;
+        const n = dataInfo.phenotypes.numSamples;
         const downloadId = dataInfo.source.downloadId;
 
         // Run Cellfie
@@ -64,7 +64,7 @@ export const ModelSelection = () => {
     }
     else {
       try {
-        const n = dataInfo.expression.numSubjects;
+        const n = dataInfo.expression.numSamples;
 
         // Create blobs
         const dataBlob = data => {

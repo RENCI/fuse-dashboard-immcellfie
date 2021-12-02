@@ -48,9 +48,9 @@ export const SubgroupSelection = () => {
   const canCompare = subgroups.length > 1;
 
   const overlap = subgroup1 && subgroup2 ? 
-    subgroup2.subjects.reduce((count, subject) => {
-      if (subgroup1.subjects.find(({ participant_id }) => {
-        return participant_id === subject.participant_id;
+    subgroup2.samples.reduce((count, sample) => {
+      if (subgroup1.samples.find(({ index }) => {
+        return index === sample.index;
       })) {
         count++;
       }
@@ -59,8 +59,8 @@ export const SubgroupSelection = () => {
     }, 0) :
     null;
 
-  const subgroup1Contained = subgroup1 && subgroup1.subjects.length === overlap;
-  const subgroup2Contained = subgroup2 && subgroup2.subjects.length === overlap;
+  const subgroup1Contained = subgroup1 && subgroup1.samples.length === overlap;
+  const subgroup2Contained = subgroup2 && subgroup2.samples.length === overlap;
 
   return (
     <Card>

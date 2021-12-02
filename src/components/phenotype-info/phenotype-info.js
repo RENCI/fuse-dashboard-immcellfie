@@ -10,7 +10,7 @@ export const PhenotypeInfo = ({ source, name, data }) => {
           <u>Phenotype data loaded</u>
           <div><small>Source: { source }</small></div>
           <div><small>Name: { name }</small></div>
-          <div><small>{ data.length.toLocaleString() } rows (subjects)</small></div>
+          <div><small>{ data.length.toLocaleString() } rows (samples)</small></div>
           <div><small>{ data.columns.length.toLocaleString() } columns (dimensions)</small></div>
           <div className="ml-3 text-muted">
             <small>{ data.columns.join(", ") }</small>
