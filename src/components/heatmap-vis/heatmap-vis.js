@@ -34,14 +34,14 @@ export const HeatmapVis = ({ data, subgroups }) => {
     const getValues = subgroup => {
       return merge(data.filter(node => node.depth === depth).map(node => {
         const key = value === "score" ? "scores" + (subgroup + 1) : "activities" + (subgroup + 1);
-        const subjects = group(node.data[key], ({ index }) => index);
+        const samples = group(node.data[key], ({ index }) => index);
   
-        return Array.from(subjects).map(subject => {
+        return Array.from(samples).map(sample => {
           return {
             name: node.data.name,
             subgroup: subgroups[subgroup].name,
-            index: subject[0],
-            value: mean(subject[1], value => value.value)
+            index: sample[0],
+            value: mean(sample[1], value => value.value)
           };
         });
       }));

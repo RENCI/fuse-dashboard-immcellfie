@@ -20,7 +20,7 @@ const initialState = {
   // Info for current dataset (source, names, etc.)
   dataInfo: null,
 
-  // Phenotype data for each subject
+  // Phenotype data for each sample
   rawPhenotypeData: null,
   phenotypeData: null,
 
@@ -78,11 +78,11 @@ const parsePhenotypeDataRandomize = (data, n = 32) => {
   const result = [];
 
   for (let i = 0; i < n; i++) {
-    const subject = csv[random()];
+    const sample = csv[random()];
 
-    subject.index = i;
+    sample.index = i;
 
-    result.push({...subject});
+    result.push({...sample});
   }
 
   result.columns = csv.columns;
@@ -103,8 +103,8 @@ const initializePhenotypeData = (state, rawPhenotypeData) => {
   const phenotypeData = parsePhenotypeData(rawPhenotypeData);
   const phenotypes = createPhenotypes(phenotypeData);
 
-  // Create initial group with all subjects
-  const subgroups = [createSubgroup("All subjects", phenotypeData, phenotypes, [])];
+  // Create initial group with all samples
+  const subgroups = [createSubgroup("All samples", phenotypeData, phenotypes, [])];
 
   // Select this subgroup
   const selectedSubgroups = [subgroups[0].key, null];
@@ -113,7 +113,7 @@ const initializePhenotypeData = (state, rawPhenotypeData) => {
     ...state.dataInfo,
     phenotypes: {
       ...state.dataInfo.phenotypes, 
-      numSubjects: phenotypeData.length
+      numSamples: phenotypeData.length
     }
   };
 
@@ -131,7 +131,7 @@ const initializePhenotypeData = (state, rawPhenotypeData) => {
 const parsePhenotypeData = data => {
   const csv = csvParse(data);
 
-  csv.forEach((subject, i) => subject.index = i);
+  csv.forEach((sample, i) => sample.index = i);
 
   return csv;
 };
@@ -180,16 +180,16 @@ const getReactionScores = detailScoring => {
   return scores;
 };
 
-const setReactionScores = (subgroup, subjects, reactionScores) => {
+const setReactionScores = (subgroup, samples, reactionScores) => {
   if (!subgroup) return;
 
-  if (subjects.length === 0) {
+  if (samples.length === 0) {
     subgroup.reactionScores = null;
     return;
   }
 
   const scores = reactionScores.filter((scores, i) => {
-    return subjects.find(({ index }) => index === i);
+    return samples.find(({ index }) => index === i);
   });
 
   subgroup.reactionScores = Object.keys(scores[0]).reduce((aggregate, key) => {
@@ -267,7 +267,7 @@ const createHierarchy = output => {
 
       data[id] = {
         index: i,
-        name: "subject " + i,
+        name: "sample " + i,
         parent: parent,
         score: score,
         activity: task.activities[i]       
@@ -337,7 +337,7 @@ const createTree = hierarchy => {
 
 const getSubgroup = (key, subgroups) => key !== null ? subgroups.find(subgroup => subgroup.key === key) : null;
 
-const subgroupContains = (subgroup, index) => subgroup && subgroup.subjects.some(subject => subject.index === index);
+const subgroupContains = (subgroup, index) => subgroup && subgroup.samples.some(sample => sample.index === index);
 
 const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod, reactionScores) => {
   if (!tree) return;
@@ -346,9 +346,9 @@ const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod, reactionS
   const subgroup1 = getSubgroup(selectedSubgroups[0], subgroups);
   const subgroup2 = getSubgroup(selectedSubgroups[1], subgroups);
 
-  const getSubjects = (subgroup, other, which) => {
-    return !subgroup ? [] : subgroup.subjects.filter(({ index }) => { 
-      const conflict = () => other && other.subjects.find(subject => subject.index === index);
+  const getSamples = (subgroup, other, which) => {
+    return !subgroup ? [] : subgroup.samples.filter(({ index }) => { 
+      const conflict = () => other && other.samples.find(sample => sample.index === index);
 
       return overlapMethod === "both" ? true : 
         overlapMethod === "neither" && conflict() ? false :
@@ -358,17 +358,17 @@ const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod, reactionS
     });
   };
 
-  const subjects1 = getSubjects(subgroup1, subgroup2, "subgroup1");
-  const subjects2 = getSubjects(subgroup2, subgroup1, "subgroup2");
+  const samples1 = getSamples(subgroup1, subgroup2, "subgroup1");
+  const samples2 = getSamples(subgroup2, subgroup1, "subgroup2");
 
   // Set reaction scores for subgroups
   if (reactionScores) {
-    setReactionScores(subgroup1, subjects1, reactionScores);
-    setReactionScores(subgroup2, subjects2, reactionScores);
+    setReactionScores(subgroup1, samples1, reactionScores);
+    setReactionScores(subgroup2, samples2, reactionScores);
   }
 
   tree.each(node => {
-    // Check if it is a leaf node (single subject)
+    // Check if it is a leaf node (single sample)
     if (!node.data.allScores) {
       // Set default (not in a subgroup)
       node.data.score1 = "na";
@@ -396,8 +396,8 @@ const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod, reactionS
     }
 
     // Compute subgroup scores and activities
-    const processSubgroup = (subjects, which) => {
-      if (subjects.length === 0) {
+    const processSubgroup = (samples, which) => {
+      if (samples.length === 0) {
         node.data["scores" + which] = [];
         node.data["score" + which] = null;
         node.data["activities" + which] = [];
@@ -405,7 +405,7 @@ const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod, reactionS
       }
       else {
         const getValues = arrayName => {
-          return merge(subjects.map(({ index }) => {
+          return merge(samples.map(({ index }) => {
             return node.data[arrayName][index].map(value => {
               return {
                 value: value,
@@ -427,8 +427,8 @@ const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod, reactionS
       }
     }
 
-    processSubgroup(subjects1, 1);
-    processSubgroup(subjects2, 2);
+    processSubgroup(samples1, 1);
+    processSubgroup(samples2, 2);
 
     // Compute fold change and p value
     if (node.data.score1 !== null && node.data.score2 !== null) {
@@ -481,11 +481,11 @@ const getNewSubgroupName = subgroups => {
 const filterSubgroup = (subgroup, phenotypeData, phenotypes) => {
   const filters = Array.from(group(subgroup.filters, d => d.phenotype));
 
-  const subjects = phenotypeData.filter(subject => {
+  const samples = phenotypeData.filter(sample => {
     return filters.reduce((include, filter) => {
       return include && filter[1].reduce((include, value) => {
         const v = value.value + "";
-        return include || subject[value.phenotype] === v;
+        return include || sample[value.phenotype] === v;
       }, false);    
     }, true);
   });
@@ -496,9 +496,9 @@ const filterSubgroup = (subgroup, phenotypeData, phenotypes) => {
       values: phenotype.values.map(value => {
         return {
           ...value,
-          count: subjects.reduce((count, subject) => {
+          count: samples.reduce((count, sample) => {
             const v = value.value + "";
-            if (subject[phenotype.name] === v) count++;
+            if (sample[phenotype.name] === v) count++;
             return count;
           }, 0)
         }
@@ -506,7 +506,7 @@ const filterSubgroup = (subgroup, phenotypeData, phenotypes) => {
     };
   });
 
-  subgroup.subjects = subjects;
+  subgroup.samples = samples;
   subgroup.phenotypes = phenos;
 };
 
@@ -554,7 +554,7 @@ const reducer = (state, action) => {
         ...state.dataInfo,
         expression: {
           ...state.dataInfo.expression,
-          numSubjects: expressionData.length > 0 ? expressionData[0].values.length : 0
+          numSamples: expressionData.length > 0 ? expressionData[0].values.length : 0
         }
       };
 

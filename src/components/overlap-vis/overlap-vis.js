@@ -7,8 +7,8 @@ import { subgroupColors } from "../../utils/colors";
 const { color1, color2 } = subgroupColors;
 
 export const OverlapVis = ({ subgroup1, subgroup2, overlap, overlapMethod }) => {
-  const n1 = subgroup1.subjects.length;
-  const n2 = subgroup2.subjects.length;
+  const n1 = subgroup1.samples.length;
+  const n2 = subgroup2.samples.length;
 
   const x1 = 0;
   const x2 = n1 - overlap;

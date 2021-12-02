@@ -83,7 +83,7 @@ export const taskHeatmap = {
           stroke: { value: true },
           tooltip: [ 
             { field: "name", title: "name" },
-            { field: "index", title: "subject" },
+            { field: "index", title: "sample" },
             { field: "subgroup" },
             { field: "value" }
           ]

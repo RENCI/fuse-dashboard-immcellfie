@@ -65,7 +65,7 @@ export const expressionHeatmap = {
     {
       scale: "x",
       orient: "top",
-      title: "subjects"
+      title: "samples"
     },
     {
       scale: "y",
@@ -117,7 +117,7 @@ export const expressionHeatmap = {
             scale: "y",
             band: 1
           },
-          tooltip: { signal: "{ title: 'Value: ' + datum.value, 'Subject': datum.id, 'Gene': datum.gene }" }
+          tooltip: { signal: "{ title: 'Value: ' + datum.value, 'Sample': datum.id, 'Gene': datum.gene }" }
         }
       }
     }
