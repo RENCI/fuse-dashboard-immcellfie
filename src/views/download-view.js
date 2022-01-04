@@ -4,7 +4,7 @@ import { Download } from "react-bootstrap-icons";
 import { UserContext, DataContext } from "../contexts";
 import { ViewWrapper } from "../components/view-wrapper";
 import { DataMissing } from "../components/data-missing";
-import { HomeLink, CellfieLink, InputLink } from "../components/page-links";
+import { UserLink, CellfieLink, InputLink } from "../components/page-links";
 import { LoadExpression } from "../components/load-expression";
 import { useDownloadLink, useZipLink } from "../hooks";
 
@@ -56,7 +56,7 @@ export const DownloadView = () => {
   return (   
     <ViewWrapper>
       { !email ?
-        <DataMissing message="No user email selected" pageLink={ <HomeLink /> } />
+        <DataMissing message="No user email selected" pageLink={ <UserLink /> } />
       : !rawPhenotypeData ? 
         <DataMissing message="No data loaded" pageLink={ <InputLink /> } />      
       : 
@@ -66,7 +66,7 @@ export const DownloadView = () => {
           </Header>
           <Body>  
             <Row className="align-items-end">
-              <Col className="text-center">{ download(phenotypeLink, "phenotypes.csv", "Phenotype data", HomeLink, "No phenotype data") }</Col>
+              <Col className="text-center">{ download(phenotypeLink, "phenotypes.csv", "Phenotype data", UserLink, "No phenotype data") }</Col>
               <Col className="text-center">{ download(inputLink, "expression.csv", "Expression data", LoadExpression, "No expression data") }</Col>
               <Col className="text-center">{ download(outputLink, "cellfie_output.zip", "CellFIE output (zipped)", CellfieLink, "No CellFIE output") }</Col>
             </Row>

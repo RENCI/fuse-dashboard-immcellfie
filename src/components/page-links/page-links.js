@@ -1,7 +1,7 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
 import { Button } from "react-bootstrap";
-import { HouseDoor, FileEarmarkPlus, Diagram3, Calculator, Table } from "react-bootstrap-icons";
+import { PersonCircle, FileEarmarkPlus, Diagram3, Calculator, Table } from "react-bootstrap-icons";
 
 const PageLink = ({ text, icon, page }) => {
   const history = useHistory();
@@ -18,7 +18,7 @@ const PageLink = ({ text, icon, page }) => {
   );
 };
 
-export const HomeLink = () => <PageLink text="Home" icon={ <HouseDoor /> } page="" />;
+export const UserLink = () => <PageLink text="Select user" icon={ <PersonCircle /> } page="user" />;
 export const InputLink = () => <PageLink text="Select input data" icon={ <FileEarmarkPlus /> } page="input" />;
 export const CellfieLink = () => <PageLink text="CellFIE" icon={ <Calculator /> } page="cellfie" />;
 export const SubgroupsLink = () => <PageLink text="Create subgroups" icon={ <Diagram3 /> } page="subgroups" />;

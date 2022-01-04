@@ -1,7 +1,11 @@
 import React from "react";
+import { ViewWrapper } from "../components/view-wrapper";
+import { UserInput } from "../components/user-input";
 
 export const UserView = () => {
-  return (
-    <h3>User Profile</h3>
+  return (   
+    <ViewWrapper>
+      <UserInput />
+    </ViewWrapper>
   ); 
 };

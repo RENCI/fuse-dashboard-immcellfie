@@ -3,7 +3,7 @@ import { UserContext, DataContext } from "../contexts";
 import { ViewWrapper } from "../components/view-wrapper";
 import { DataGrouping } from "../components/data-grouping";
 import { DataMissing } from "../components/data-missing";
-import { HomeLink, InputLink } from "../components/page-links";
+import { UserLink, InputLink } from "../components/page-links";
 
 export const SubgroupView = () => {
   const [{ email }] = useContext(UserContext);
@@ -12,7 +12,7 @@ export const SubgroupView = () => {
   return (
     <ViewWrapper>
       { !email ?
-        <DataMissing message="No user email selected" pageLink={ <HomeLink /> } />
+        <DataMissing message="No user email selected" pageLink={ <UserLink /> } />
       : !phenotypeData ? 
         <DataMissing message="No data loaded" pageLink={ <InputLink /> } />
       : 

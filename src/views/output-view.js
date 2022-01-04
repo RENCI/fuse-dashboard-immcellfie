@@ -7,7 +7,7 @@ import { SubgroupSelection } from "../components/subgroup-selection";
 import { TaskSelection } from "../components/task-selection";
 import { CellfieOutput } from "../components/cellfie-output";
 import { DataMissing } from "../components/data-missing";
-import { HomeLink, InputLink } from "../components/page-links";
+import { UserLink, InputLink } from "../components/page-links";
 
 export const OutputView = () => {
   const [{ email, tasks }] = useContext(UserContext);
@@ -17,7 +17,7 @@ export const OutputView = () => {
     <>
       { !email ?
         <ViewWrapper>
-          <DataMissing message="No user email selected" pageLink={ <HomeLink /> } /> 
+          <DataMissing message="No user email selected" pageLink={ <UserLink /> } /> 
         </ViewWrapper>
       : !phenotypeData && tasks.length === 0 ? 
         <ViewWrapper> 
