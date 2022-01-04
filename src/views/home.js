@@ -1,5 +1,5 @@
 import React from "react";
-import { Card } from "react-bootstrap";
+import { Card, Figure, Row, Col } from "react-bootstrap";
 import { ViewWrapper } from "../components/view-wrapper";
 import { UserLink } from "../components/page-links";
 
@@ -91,19 +91,32 @@ export const Home = () => {
           About ImmCellFIE
         </Header>
         <Body>
-          <p>
-            Genome-scale network reconstructions are systematically organized and curated knowledgebases that quantitatively describe genotype-phenotype relationships [1,2].  Genome-scale models (GEMs) are mathematical representations of reconstructed networks that enable the simulation and prediction of pathway activity and flux, and ultimately phenotypic changes [3,4].  Complementary to traditional enrichment methods, these systems biology models provide quantitative and mechanistic insight into the output of pathways following molecular changes (e.g. differential gene expression).  Various methods enable one to analyze omics data in these models, including the popular approach of predicting cell growth and ​ metabolic fluxes using genome-scale metabolic networks [4,5]​. While these approaches yield a wealth of detailed insights into the mechanisms underlying complex biological processes, the reach of these approaches remains limited to those with a comprehensive background and specialized training in computational systems biology.
-          </p>
-          <p>
-            To extend the reach of powerful systems biology techniques, CellFIE (Cell Function InferencE) is an intermediate approach​ [6] that combines the detailed systems biology input/output approach with the simplicity of enrichment analysis. The CellFIE method involves generating a set of curated model-derived “metabolic tasks,”[7]​ which are precomputed sets of genes that together consume a metabolite at the start of a pathway and produce a final metabolic product of interest​.  Using CellFIE, one can overlay transcriptomic or proteomic data onto these precomputed gene modules to predict pathway usage for each metabolic task, thus providing phenotype-relevant interpretation of how changes in complex omics experiments modify cell or tissue metabolic function. The ImmCellFIE Portal makes CellFIE accessible to the broader immunology community and beyond by providing an easy-to-use and easy-to-extend webportal housing the CellFIE toolbox. ImmCellFIE integrates ImmPort data with other data sources enabling users to process and compare data using the CellFIE algorithm.  ImmCellFIE includes interactive visualization tools including heatmaps, treemaps, and Escher pathway visualizations to facilitate exploration and interpretability of CellFIE results.
-          </p>
-          <p>
-            <UserLink className="mb-3"/><span style={{ verticalAlign: "middle", marginLeft: "-.5em" }}>to begin.</span>
-          </p>
-          </Body><Footer>
-            <ol className="text-muted small">
-              { publications.map(publication) }
-            </ol>
+          <Row>
+            <Col xs={ 8 }>
+              <p>
+                Genome-scale network reconstructions are systematically organized and curated knowledgebases that quantitatively describe genotype-phenotype relationships [1,2].  Genome-scale models (GEMs) are mathematical representations of reconstructed networks that enable the simulation and prediction of pathway activity and flux, and ultimately phenotypic changes [3,4].  Complementary to traditional enrichment methods, these systems biology models provide quantitative and mechanistic insight into the output of pathways following molecular changes (e.g. differential gene expression).  Various methods enable one to analyze omics data in these models, including the popular approach of predicting cell growth and ​ metabolic fluxes using genome-scale metabolic networks [4,5]​. While these approaches yield a wealth of detailed insights into the mechanisms underlying complex biological processes, the reach of these approaches remains limited to those with a comprehensive background and specialized training in computational systems biology.
+              </p>
+              <p>
+                To extend the reach of powerful systems biology techniques, CellFIE (Cell Function InferencE) is an intermediate approach​ [6] that combines the detailed systems biology input/output approach with the simplicity of enrichment analysis. The CellFIE method involves generating a set of curated model-derived “metabolic tasks,”[7]​ which are precomputed sets of genes that together consume a metabolite at the start of a pathway and produce a final metabolic product of interest​.  Using CellFIE, one can overlay transcriptomic or proteomic data onto these precomputed gene modules to predict pathway usage for each metabolic task, thus providing phenotype-relevant interpretation of how changes in complex omics experiments modify cell or tissue metabolic function. The ImmCellFIE Portal makes CellFIE accessible to the broader immunology community and beyond by providing an easy-to-use and easy-to-extend webportal housing the CellFIE toolbox. ImmCellFIE integrates ImmPort data with other data sources enabling users to process and compare data using the CellFIE algorithm.  ImmCellFIE includes interactive visualization tools including heatmaps, treemaps, and Escher pathway visualizations to facilitate exploration and interpretability of CellFIE results.
+              </p>
+              <p>
+                <UserLink className="mb-3"/><span style={{ verticalAlign: "middle", marginLeft: "-.5em" }}>to begin.</span>
+              </p>
+            </Col>
+            <Col auto>
+              <Figure>
+                <Figure.Image src="TreeMap_small.png" />
+              </Figure>
+              <Figure>
+                <Figure.Image src="Escher_small.png" />
+              </Figure>
+            </Col>
+          </Row>
+        </Body>
+        <Footer>
+          <ol className="text-muted small">
+            { publications.map(publication) }
+          </ol>
         </Footer>
       </Card>
     </ViewWrapper>
