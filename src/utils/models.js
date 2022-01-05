@@ -1,8 +1,8 @@
 export const models = [
-  { organism: "human", name: "iHSA", value: "MT_iHsa.mat" },
-  { organism: "human", name: "recon v1", value: "MT_recon_1.mat" },
-  { organism: "human", name: "recon v2", value: "MT_recon_2.mat" },
   { organism: "human", name: "recon v2.2", value: "MT_recon_2_2_entrez.mat" },
+  { organism: "human", name: "recon v2", value: "MT_recon_2.mat" },
+  { organism: "human", name: "recon v1", value: "MT_recon_1.mat" },
+//  { organism: "human", name: "iHSA", value: "MT_iHsa.mat" },
   { organism: "mouse", name: "iMM1416", value: "MT_iMM1415.mat" },
 //  { organism: "mouse", name: "inesMouseModel" },
   { organism: "mouse", name: "quek", value: "MT_quek14.mat" },
