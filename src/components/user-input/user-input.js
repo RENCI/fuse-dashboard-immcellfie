@@ -164,16 +164,14 @@ export const UserInput = () => {
           <h6>Email address for CellFIE tasks</h6>
           <Group>  
             <InputGroup>
-              <InputGroup.Prepend>
-                <Button 
-                  ref={ buttonRef }
-                  variant="primary"                  
-                  type="submit"
-                  disabled={ !emailValid }
-                >
-                  Submit
-                </Button>
-              </InputGroup.Prepend>
+              <Button 
+                ref={ buttonRef }
+                variant="primary"                  
+                type="submit"
+                disabled={ !emailValid }
+              >
+                Submit
+              </Button>
               <Control 
                 type="email"
                 name="email"
@@ -182,11 +180,11 @@ export const UserInput = () => {
                 onChange={ onEmailChange } 
               />
             </InputGroup>
-              { !emailValid && 
-                <Text className="text-muted">
-                  Please enter a valid email address
-                </Text>
-              }
+            { !emailValid && 
+              <Text className="text-muted">
+                Please enter a valid email address
+              </Text>
+            }
           </Group>          
         </Form>
       </Body>

@@ -145,15 +145,13 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
               <option key={ i }>{ key }</option>
             )}
           </datalist>
-          <InputGroup.Append>
-            <Button 
-              variant="primary"
-              disabled={ disabled || inputApiKey === "" || inputApiKey === apiKey }
-              onClick={ onEnterApiKeyClick }
-            >
-              Enter
-            </Button>
-          </InputGroup.Append>
+          <Button 
+            variant="primary"
+            disabled={ disabled || inputApiKey === "" || inputApiKey === apiKey }
+            onClick={ onEnterApiKeyClick }
+          >
+            Enter
+          </Button>
         </InputGroup>
         <Form.Text className="text-muted">
           { apiKey ? <>Current: { apiKey }</> : <>No current API key</> } 
@@ -197,16 +195,14 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
               <option key={ i }>{ download.info.group_id }</option>
             )}
           </datalist>
-          <InputGroup.Append>
-            <SpinnerButton 
-              variant="primary"
-              disabled={ disabled || apiKey === "" || groupId === "" }
-              spin={ state === "submitting" }
-              onClick={ onSubmitGroupIdClick }
-            >
-              Submit
-            </SpinnerButton>
-          </InputGroup.Append>
+          <SpinnerButton 
+            variant="primary"
+            disabled={ disabled || apiKey === "" || groupId === "" }
+            spin={ state === "submitting" }
+            onClick={ onSubmitGroupIdClick }
+          >
+            Submit
+          </SpinnerButton>
         </InputGroup>
       </Group>  
     </>  

@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Card, Alert, Row, Col } from "react-bootstrap";
+import { Card, Alert, Row, Col, Accordion } from "react-bootstrap";
 import { DataContext } from "../../contexts";
 import { LoadingSpinner } from "../loading-spinner";
 import { PhenotypeInfo } from "../phenotype-info";
@@ -12,6 +12,7 @@ import { LoadPractice } from "./load-practice";
 import { states } from "./states";
 
 const { Header, Body, Footer } = Card;
+
 const { getErrorMessage } = errorUtils;
 
 export const DataSelection = () => {  
@@ -49,6 +50,30 @@ export const DataSelection = () => {
     </div>
   );
 
+  return (
+    <Card>
+      <Header as="h5">
+        Data Selection
+      </Header>
+      <Body>
+        <Accordion defaultActiveKey='immunespace'>
+          <Accordion.Item eventKey='immunespace'>
+            <Accordion.Header>
+              ImmuneSpace
+            </Accordion.Header>
+            <Accordion.Body> 
+              <LoadImmuneSpace 
+                state={ state }
+                onSetState={ onSetState }
+                onError={ onError }
+              />
+            </Accordion.Body>
+          </Accordion.Item>
+        </Accordion>
+      </Body>
+    </Card>
+  );
+/*
   return (
     <Card>
       <Header as="h5">
@@ -140,4 +165,5 @@ export const DataSelection = () => {
       }
     </Card>
   );
+*/  
 };           
