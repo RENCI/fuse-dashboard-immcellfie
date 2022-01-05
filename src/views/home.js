@@ -1,4 +1,4 @@
-import React from "react";
+
 import { Card, Figure, Row, Col } from "react-bootstrap";
 import { ViewWrapper } from "../components/view-wrapper";
 import { UserLink } from "../components/page-links";

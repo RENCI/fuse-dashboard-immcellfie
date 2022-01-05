@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { Card, Row, Col, Form } from "react-bootstrap";
 import { DataContext } from "../../contexts";
 import { SubgroupsLink } from "../page-links";

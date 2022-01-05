@@ -1,4 +1,4 @@
-import React, { useContext, useState, useMemo } from "react";
+import { useContext, useState, useMemo } from "react";
 import { Form, Row, Col } from "react-bootstrap";
 import { extent, min } from "d3-array";
 import { DataContext } from "../../contexts";

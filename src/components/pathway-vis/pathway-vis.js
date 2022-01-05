@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { Form, Row, Col, Card } from "react-bootstrap";
 import { DataContext } from "../../contexts";
 import { EscherWrapper } from "../escher-wrapper";

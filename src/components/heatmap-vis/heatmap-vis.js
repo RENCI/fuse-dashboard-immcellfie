@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Form, Row, Col } from "react-bootstrap";
 import { merge, group, mean } from "d3-array";
 import { VegaWrapper } from "../vega-wrapper";

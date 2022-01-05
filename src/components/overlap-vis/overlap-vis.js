@@ -1,4 +1,4 @@
-import React from "react";
+
 import { VegaWrapper } from "../vega-wrapper";
 import { ResizeWrapper } from "../resize-wrapper";
 import { barOverlap } from "../../vega-specs";

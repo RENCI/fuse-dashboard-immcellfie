@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import "./vega-tooltip.css";
 
 // Borrowed from https://github.com/vega/vega-tooltip/

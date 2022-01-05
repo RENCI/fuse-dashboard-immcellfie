@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { max, range } from "d3-array";
 import { Card, Form, Row, Col } from "react-bootstrap";
 import { UserContext, DataContext } from "../contexts";

@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import { Form, Row, Col, ToggleButtonGroup, ToggleButton } from "react-bootstrap";
 import { randomUniform, randomLcg } from "d3-random";
 import { range, extent, merge } from "d3-array";
