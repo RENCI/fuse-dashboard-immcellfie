@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useReducer } from "react";
-import { Badge } from "react-bootstrap";
+import { useContext, useEffect, useReducer } from "react";
 import { DataContext, UserContext } from "../../contexts";
 import { TaskStatusIcon } from "../task-status-icon";
 import { api } from "../../utils/api";

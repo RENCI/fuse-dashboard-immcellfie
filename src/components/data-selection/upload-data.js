@@ -6,7 +6,7 @@ import { FileSelect } from "../file-select";
 import { states } from "./states";
 import { api } from "../../utils/api";
 
-const { Group, Label } = Form;
+const { Group } = Form;
 
 export const UploadData = ({ state, onSetState, onError }) => {
   const [, userDispatch] = useContext(UserContext);
@@ -75,7 +75,6 @@ export const UploadData = ({ state, onSetState, onError }) => {
           variant="primary"
           disabled={ disabled || !expressionDataFile }
           spin={ state === "uploading" }
-          block={ true }
           onClick={ onUploadDataClick }
         >
           Upload

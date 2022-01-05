@@ -6,7 +6,7 @@ import { states } from "./states";
 import { api } from "../../utils/api";
 import { practiceData } from "../../utils/datasets";
 
-const { Group, Label } = Form;
+const { Group } = Form;
 
 export const LoadPractice = ({ state, onSetState, onError }) => {
   const [, userDispatch] = useContext(UserContext);
@@ -47,7 +47,6 @@ export const LoadPractice = ({ state, onSetState, onError }) => {
         variant="primary"
         disabled={ disabled }
         spin={ state === "loading" }
-        block={ true }
         onClick={ onLoadPracticeClick }
       >
         Load

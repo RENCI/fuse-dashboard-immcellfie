@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Form, Button, Row, Col } from "react-bootstrap";
+import { Button, Row, Col } from "react-bootstrap";
 import { ArrowCounterclockwise, XCircle } from "react-bootstrap-icons";
 import { group, ascending } from "d3-array";
 import { DataContext } from "../../contexts";
