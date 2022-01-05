@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> main
 import { Alert } from "react-bootstrap";
 import "./expression-info.css";
 
