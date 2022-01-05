@@ -19,7 +19,7 @@ import { LoadingSpinner } from "../loading-spinner";
 import { SelectedList } from "../selected-list";
 import "./hierarchy-vis.css";
 
-const { Group, Label, Control } = Form; 
+const { Group, Label, Control, Range } = Form; 
 
 const visualizations = [
   {
@@ -61,10 +61,10 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
 
   const hasVoronoi = tree.descendants()[0].polygon;
 
-  const onVisChange = evt => {
+  const onVisChange = value => {
     setLoading(true);
 
-    const vis = visualizations.find(({ name }) => name === evt.target.value);
+    const vis = visualizations.find(({ name }) => name === value);
 
     setVis(vis);
   };
@@ -173,20 +173,21 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
   return (
     <>
       <div className="mb-4">
-        <Row>
+        <Row className="mb-3">
           <Group as={ Col } controlId="visualizationButtons">
             <ToggleButtonGroup 
               type="radio"
               name="visButtons"
               value={ vis.name }
+              onChange={ onVisChange }
             >
               { visualizations.map(({ name, label }, i) => (
                 <ToggleButton 
                   key={ i }
+                  id={ `visButton_${ name }` }
                   type="radio"
                   variant="outline-primary"
                   value={ name }
-                  onChange={ onVisChange }
                 >
                   { label }
                 </ToggleButton>
@@ -194,13 +195,11 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
             </ToggleButtonGroup>
           </Group>
         </Row>
-        <Row>
+        <Row className="mb-3">
           <Group as={ Col } controlId="depthSlider">
             <Label size="sm">Depth: { depth }</Label>        
-            <Control 
+            <Range 
               size="sm"
-              className="mt-2"
-              type="range"
               min={ 1 }
               max={ subgroup === "comparison" ? 3 : 4 }         
               value={ depth }
