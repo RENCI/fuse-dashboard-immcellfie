@@ -42,6 +42,7 @@ export const LoadPractice = ({ state, onSetState, onError }) => {
 
   return (  
     <Group>
+      <h6>Load practice data</h6>
       <SpinnerButton 
         variant="outline-secondary"
         disabled={ disabled }
@@ -49,7 +50,7 @@ export const LoadPractice = ({ state, onSetState, onError }) => {
         block={ true }
         onClick={ onLoadPracticeClick }
       >
-        Upload
+        Load
       </SpinnerButton>
     </Group>
   );

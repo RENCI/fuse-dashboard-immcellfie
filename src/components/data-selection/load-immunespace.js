@@ -133,6 +133,13 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
           </OverlayTrigger>
         </Label>
         <InputGroup>
+          <Button 
+            variant="primary"
+            disabled={ disabled || inputApiKey === "" || inputApiKey === apiKey }
+            onClick={ onEnterApiKeyClick }
+          >
+            Enter
+          </Button>
           <Control 
             type="text"
             list="apiKeys"
@@ -145,13 +152,6 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
               <option key={ i }>{ key }</option>
             )}
           </datalist>
-          <Button 
-            variant="primary"
-            disabled={ disabled || inputApiKey === "" || inputApiKey === apiKey }
-            onClick={ onEnterApiKeyClick }
-          >
-            Enter
-          </Button>
         </InputGroup>
         <Form.Text className="text-muted">
           { apiKey ? <>Current: { apiKey }</> : <>No current API key</> } 
@@ -183,6 +183,14 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
           </OverlayTrigger>
         </Label>
         <InputGroup>
+          <SpinnerButton 
+            variant="primary"
+            disabled={ disabled || apiKey === "" || groupId === "" }
+            spin={ state === "submitting" }
+            onClick={ onSubmitGroupIdClick }
+          >
+            Submit
+          </SpinnerButton>
           <Control 
             type="text"
             list="groupIds"
@@ -195,14 +203,6 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
               <option key={ i }>{ download.info.group_id }</option>
             )}
           </datalist>
-          <SpinnerButton 
-            variant="primary"
-            disabled={ disabled || apiKey === "" || groupId === "" }
-            spin={ state === "submitting" }
-            onClick={ onSubmitGroupIdClick }
-          >
-            Submit
-          </SpinnerButton>
         </InputGroup>
       </Group>  
     </>  
