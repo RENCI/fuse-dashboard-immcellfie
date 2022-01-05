@@ -6,7 +6,6 @@ import { api } from "../../utils/api";
 
 const { Header, Body } = Card;
 const { Label, Group, Control } = Form;
-const { Append } = InputGroup;
 
 export const ModelSelection = () => {
   const [{ email, downloads }, userDispatch] = useContext(UserContext);
@@ -105,7 +104,7 @@ export const ModelSelection = () => {
   }).map((parameter, i) => {
       return (
         parameter.options ?
-          <Group key={ i } controlId={ parameter.name + "_select" }>
+          <Group key={ i } controlId={ parameter.name + "_select" } className="mb-3">
             <Label><small>{ parameter.label }</small></Label>
             <InputGroup size="sm">
               <Control 
@@ -117,18 +116,16 @@ export const ModelSelection = () => {
                   <option key={ i } value={ value }>{ name }</option>
                 ))}
               </Control>
-              <Append>
-                <Button 
-                  variant="outline-secondary"
-                  onClick={ () => onParameterReset(parameter.name) }
-                >
-                  <ArrowCounterclockwise className="d-flex align-items-center"/>
-                </Button>
-              </Append>
+              <Button 
+                variant="outline-secondary"
+                onClick={ () => onParameterReset(parameter.name) }
+              >
+                <ArrowCounterclockwise className="d-flex align-items-center"/>
+              </Button>
             </InputGroup>
           </Group>
         : parameter.range ?
-          <Group key={ i } controlId={ parameter.name + "_number" }>
+          <Group key={ i } controlId={ parameter.name + "_number" } className="mb-3">
             <Label><small>{ parameter.label }</small></Label>
             <InputGroup size="sm">
               <Control 
@@ -139,14 +136,12 @@ export const ModelSelection = () => {
                 value={ parameter.value }
                 onChange={ evt => onParameterChange(parameter.name, +evt.target.value) }
               />
-              <Append>
-                <Button 
-                  variant="outline-secondary"
-                  onClick={ () => onParameterReset(parameter.name) }
-                >
-                  <ArrowCounterclockwise className="d-flex align-items-center"/>
-                </Button>
-              </Append>
+              <Button 
+                variant="outline-secondary"
+                onClick={ () => onParameterReset(parameter.name) }
+              >
+                <ArrowCounterclockwise className="d-flex align-items-center"/>
+              </Button>
             </InputGroup>
           </Group>
         : null 
@@ -161,7 +156,7 @@ export const ModelSelection = () => {
       <Body>
         <Row>
           <Col>
-            <Group controlId="organism_select">
+            <Group controlId="organism_select" className="mb-3">
               <Label><h6>Organism</h6></Label>
               <Control 
                 as="select"
@@ -173,7 +168,7 @@ export const ModelSelection = () => {
                 ))}
               </Control>
             </Group>
-            <Group controlId="model_select">
+            <Group controlId="model_select" className="mb-3">
             <Label><h6>Model</h6></Label>
               <Control 
                 as="select"
@@ -187,7 +182,7 @@ export const ModelSelection = () => {
             </Group>
           </Col>
           <Col>
-            <Group controlId="threshold_type_select">
+            <Group controlId="threshold_type_select" className="mb-3">
               <Label><h6>{ thresholdType.name }</h6></Label>
               <Control 
                 as="select"
