@@ -7,7 +7,6 @@ export const SpinnerButton = ({ children, variant, disabled, spin, block = false
       <Button
         variant={ variant }
         disabled={ disabled }
-        block={ block }
         size={ size }
         onClick={ onClick }>
         { children }      

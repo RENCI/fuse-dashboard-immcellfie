@@ -206,10 +206,7 @@ export const ModelSelection = () => {
         <Row>
           <Col>
             <ButtonGroup style={{ width: "100%" }}>
-              <Button 
-                block
-                onClick={ onRunCellfieClick }
-              >
+              <Button onClick={ onRunCellfieClick }>
                 Run CellFIE
               </Button> 
             </ButtonGroup>
