@@ -57,15 +57,16 @@ export const UploadData = ({ state, onSetState, onError }) => {
 
   return (
     <> 
+      <h6>Upload files from your computer in CSV format</h6>
       <Group className="mb-3">
         <FileSelect
-          defaultLabel="Required: select expression data"
+          label="Required: expression data"
           onChange={ onExpressionFileSelect }
         />
       </Group> 
       <Group className="mb-3">
         <FileSelect
-          defaultLabel="Optional: select phenotype data"
+          label="Optional: phenotype data"
           onChange={ onPhenotypeFileSelect }
         />
       </Group> 

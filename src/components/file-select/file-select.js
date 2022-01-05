@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Form } from "react-bootstrap";
 
-const { Control } = Form;
+const { Control, Label } = Form;
 
-export const FileSelect = ({ defaultLabel, onChange }) => {
+export const FileSelect = ({ label, onChange }) => {
   const [file, setFile] = useState(null);
 
   const handleChange = evt => {
@@ -11,18 +11,18 @@ export const FileSelect = ({ defaultLabel, onChange }) => {
 
     setFile(file);
     onChange(file);
-  }
-
-  const label = file ? 
-    file.name :
-    <span className="text-muted">{ defaultLabel }</span>;
+  };
 
   return (
-    <Control
-      type="file"
-      label={ label }
-      custom        
-      onChange={ handleChange }
-    />
+    <>
+      <Label className="text-muted">{ label }</Label>
+      <Control
+        type="file"
+        label={ label }
+        placeholder="DLKJF"
+        custom        
+        onChange={ handleChange }
+      />
+    </>
   );
 };           
