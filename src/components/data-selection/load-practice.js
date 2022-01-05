@@ -44,7 +44,7 @@ export const LoadPractice = ({ state, onSetState, onError }) => {
     <Group>
       <h6>Load practice data</h6>
       <SpinnerButton 
-        variant="outline-secondary"
+        variant="primary"
         disabled={ disabled }
         spin={ state === "loading" }
         block={ true }

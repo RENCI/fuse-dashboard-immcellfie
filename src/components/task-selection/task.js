@@ -118,7 +118,7 @@ export const Task = ({ task, onClick, onDeleteClick }) => {
           </Button>
         </Col>      
         <Col>{ summary }</Col>
-        <Col xs="auto" className="text-right">
+        <Col xs="auto" className="text-end">
           <TaskStatusIcon task={ task } />
           { task.status !== "failed" && 
             <div className="text-muted small">

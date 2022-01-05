@@ -72,7 +72,7 @@ export const UploadData = ({ state, onSetState, onError }) => {
       </Group> 
       <Group>
         <SpinnerButton
-          variant="outline-secondary"
+          variant="primary"
           disabled={ disabled || !expressionDataFile }
           spin={ state === "uploading" }
           block={ true }
