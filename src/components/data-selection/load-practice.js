@@ -42,7 +42,6 @@ export const LoadPractice = ({ state, onSetState, onError }) => {
 
   return (  
     <Group>
-      <Label>Practice data</Label>
       <SpinnerButton 
         variant="outline-secondary"
         disabled={ disabled }

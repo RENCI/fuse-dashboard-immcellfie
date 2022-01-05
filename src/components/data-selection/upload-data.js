@@ -56,15 +56,14 @@ export const UploadData = ({ state, onSetState, onError }) => {
   const disabled = state !== states.normal;
 
   return (
-    <>
-      <Label>Local files</Label> 
-      <Group>
+    <> 
+      <Group className="mb-3">
         <FileSelect
           defaultLabel="Required: select expression data"
           onChange={ onExpressionFileSelect }
         />
       </Group> 
-      <Group>
+      <Group className="mb-3">
         <FileSelect
           defaultLabel="Optional: select phenotype data"
           onChange={ onPhenotypeFileSelect }
