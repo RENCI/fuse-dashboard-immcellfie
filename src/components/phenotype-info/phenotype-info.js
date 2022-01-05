@@ -1,4 +1,3 @@
-
 import { Alert } from "react-bootstrap";
 import "./phenotype-info.css";
 

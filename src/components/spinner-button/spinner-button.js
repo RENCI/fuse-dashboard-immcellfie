@@ -1,4 +1,3 @@
-
 import { Button, Spinner } from "react-bootstrap";
 
 export const SpinnerButton = ({ children, variant, disabled, spin, block = false, size, onClick }) => {

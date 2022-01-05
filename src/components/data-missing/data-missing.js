@@ -1,6 +1,3 @@
-
-
-
 export const DataMissing = ({ message, pageLink }) => {
   return (
     <div className="text-center">
