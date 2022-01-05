@@ -114,7 +114,7 @@ export const TaskStatus = () => {
         return (
           <span key={ status } className="me-2">
             <TaskStatusIcon task={{ status: status } } />
-            <Badge className={ "text-" + statusColor[status] }>{ count }</Badge>
+            <b className={ `text-${ statusColor[status] } small ms-1`}>{ count }</b>
           </span>
         );
       })}

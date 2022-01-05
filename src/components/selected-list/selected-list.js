@@ -6,7 +6,6 @@ import { DataContext } from "../../contexts";
 import { DetailVis } from "../detail-vis";
 
 const { Control } = Form;
-const { Append } = InputGroup;
 
 export const SelectedList = ({ nodes, subgroup, subgroupName }) => {
   const [, dataDispatch] = useContext(DataContext);
@@ -89,15 +88,13 @@ export const SelectedList = ({ nodes, subgroup, subgroupName }) => {
             <datalist id="selectOptions">
               { options }
             </datalist>
-            <Append>
-              <Button 
-                variant="outline-secondary"
-                disabled={ selected.length === 0 }
-                onClick={ onClearClick }
-              >
-                Clear
-              </Button>              
-            </Append>
+            <Button 
+              variant="outline-secondary"
+              disabled={ selected.length === 0 }
+              onClick={ onClearClick }
+            >
+              Clear
+            </Button> 
           </InputGroup>
         </Col>
         <Col xs="auto" className="me-2">

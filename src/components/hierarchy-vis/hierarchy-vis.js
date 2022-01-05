@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Form, Col, ToggleButtonGroup, ToggleButton } from "react-bootstrap";
+import { Form, Row, Col, ToggleButtonGroup, ToggleButton } from "react-bootstrap";
 import { randomUniform, randomLcg } from "d3-random";
 import { range, extent, merge } from "d3-array";
 import { line } from "d3-shape";
@@ -19,7 +19,7 @@ import { LoadingSpinner } from "../loading-spinner";
 import { SelectedList } from "../selected-list";
 import "./hierarchy-vis.css";
 
-const { Group, Label, Control, Row } = Form; 
+const { Group, Label, Control } = Form; 
 
 const visualizations = [
   {

@@ -1,12 +1,12 @@
 import React, { useState, useMemo } from "react";
-import { Form, Col } from "react-bootstrap";
+import { Form, Row, Col } from "react-bootstrap";
 import { merge, group, mean } from "d3-array";
 import { VegaWrapper } from "../vega-wrapper";
 import { taskHeatmap } from "../../vega-specs";
 import { sequential } from "../../utils/colors";
 import "./heatmap-vis.css";
 
-const { Group, Label, Control, Row } = Form; 
+const { Group, Label, Control } = Form; 
 
 export const HeatmapVis = ({ data, subgroups }) => {
   const [depth, setDepth] = useState(2);
