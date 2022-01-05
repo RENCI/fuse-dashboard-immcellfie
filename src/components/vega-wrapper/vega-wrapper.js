@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import vegaEmbed from "vega-embed";
 import { LoadingSpinner } from "../loading-spinner";

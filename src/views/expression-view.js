@@ -1,6 +1,6 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { max, range } from "d3-array";
-import { Card, Form, Col } from "react-bootstrap";
+import { Card, Form, Row, Col } from "react-bootstrap";
 import { UserContext, DataContext } from "../contexts";
 import { ViewWrapper } from "../components/view-wrapper";
 import { ResizeWrapper } from "../components/resize-wrapper";
@@ -12,7 +12,7 @@ import { UserLink, InputLink } from "../components/page-links";
 import { sequential } from "../utils/colors";
 
 const { Header, Body } = Card;
-const { Group, Label, Control, Row } = Form;
+const { Group, Label, Control } = Form;
 
 export const ExpressionView = () => {
   const [{ email }] = useContext(UserContext);
@@ -64,7 +64,7 @@ export const ExpressionView = () => {
             Expression Data
           </Header>
           <Body>        
-            <Row>
+            <Row className="mb-3">
               <Group as={ Col } controlId="sortBySelect">
                 <Label size="sm">Sort by</Label>
                 <Control

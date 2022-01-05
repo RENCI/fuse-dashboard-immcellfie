@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { Row, Col } from "react-bootstrap";
 import { UserContext, DataContext } from "../contexts";
 import { ViewWrapper } from "../components/view-wrapper";

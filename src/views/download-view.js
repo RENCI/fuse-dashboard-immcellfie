@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { Col, Card, Form, Button } from "react-bootstrap";
+import { useContext } from "react";
+import { Row, Col, Card, Button } from "react-bootstrap";
 import { Download } from "react-bootstrap-icons";
 import { UserContext, DataContext } from "../contexts";
 import { ViewWrapper } from "../components/view-wrapper";
@@ -9,7 +9,6 @@ import { LoadExpression } from "../components/load-expression";
 import { useDownloadLink, useZipLink } from "../hooks";
 
 const { Header, Body } = Card;
-const { Row } = Form;
 
 export const DownloadView = () => {
   const [{ email }] = useContext(UserContext);
@@ -40,7 +39,7 @@ export const DownloadView = () => {
             href={ link }
             download={ fileName }
           >
-            <Download className="mr-1" />
+            <Download className="me-1" />
             { text }
           </Button>
         : 

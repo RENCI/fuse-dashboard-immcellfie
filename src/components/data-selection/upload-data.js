@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import { useState, useContext } from "react";
 import { Form } from "react-bootstrap";
 import { UserContext, DataContext } from "../../contexts";
 import { SpinnerButton } from "../spinner-button";
@@ -6,7 +6,7 @@ import { FileSelect } from "../file-select";
 import { states } from "./states";
 import { api } from "../../utils/api";
 
-const { Group, Label } = Form;
+const { Group } = Form;
 
 export const UploadData = ({ state, onSetState, onError }) => {
   const [, userDispatch] = useContext(UserContext);
@@ -56,26 +56,25 @@ export const UploadData = ({ state, onSetState, onError }) => {
   const disabled = state !== states.normal;
 
   return (
-    <>
-      <Label>Local files</Label> 
-      <Group>
+    <> 
+      <h6>Upload files from your computer in CSV format</h6>
+      <Group className="mb-3">
         <FileSelect
-          defaultLabel="Required: select expression data"
+          label="Required: expression data"
           onChange={ onExpressionFileSelect }
         />
       </Group> 
-      <Group>
+      <Group className="mb-3">
         <FileSelect
-          defaultLabel="Optional: select phenotype data"
+          label="Optional: phenotype data"
           onChange={ onPhenotypeFileSelect }
         />
       </Group> 
       <Group>
         <SpinnerButton
-          variant="outline-secondary"
+          variant="primary"
           disabled={ disabled || !expressionDataFile }
           spin={ state === "uploading" }
-          block={ true }
           onClick={ onUploadDataClick }
         >
           Upload

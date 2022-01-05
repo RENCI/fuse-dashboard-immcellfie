@@ -1,4 +1,4 @@
-import React from "react";
+
 import { Spinner } from "react-bootstrap";
 
 export const LoadingSpinner = () => {
@@ -6,7 +6,7 @@ export const LoadingSpinner = () => {
     <>
       Loading 
       <Spinner 
-        className="ml-1"
+        className="ms-1"
         animation="border" 
         variant="info"
         size="sm" 

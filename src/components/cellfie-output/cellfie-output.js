@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { Tab, Card, Nav } from "react-bootstrap";
 import { UserContext, DataContext } from "../../contexts";
 import { HierarchyVis } from "../hierarchy-vis";
@@ -42,6 +42,7 @@ export const CellfieOutput = () => {
               activeKey={ tab }
               variant="tabs" 
               justify={ true }
+              style={{ cursor: "pointer" }}
             >
               <Item>
                 <Link eventKey="hierarchy">Hierarchy</Link>

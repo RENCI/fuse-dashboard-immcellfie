@@ -1,12 +1,12 @@
-import React, { useState, useMemo } from "react";
-import { Form, Col } from "react-bootstrap";
+import { useState, useMemo } from "react";
+import { Form, Row, Col } from "react-bootstrap";
 import { merge, group, mean } from "d3-array";
 import { VegaWrapper } from "../vega-wrapper";
 import { taskHeatmap } from "../../vega-specs";
 import { sequential } from "../../utils/colors";
 import "./heatmap-vis.css";
 
-const { Group, Label, Control, Row } = Form; 
+const { Group, Label, Control, Range } = Form; 
 
 export const HeatmapVis = ({ data, subgroups }) => {
   const [depth, setDepth] = useState(2);
@@ -56,10 +56,8 @@ export const HeatmapVis = ({ data, subgroups }) => {
         <Row>
           <Group as={ Col } controlId="depthSlider">
             <Label size="sm">Depth: { depth }</Label>        
-            <Control 
+            <Range 
               size="sm"
-              className="my-1"
-              type="range"
               min={ 1 }
               max={ 3 }         
               value={ depth }

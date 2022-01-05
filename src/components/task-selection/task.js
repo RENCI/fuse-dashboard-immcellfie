@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ListGroup, Row, Col, Button, Collapse, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { ChevronDown, ChevronUp, XLg } from "react-bootstrap-icons";
 import { TaskStatusIcon } from "../task-status-icon";
@@ -118,7 +118,7 @@ export const Task = ({ task, onClick, onDeleteClick }) => {
           </Button>
         </Col>      
         <Col>{ summary }</Col>
-        <Col xs="auto" className="text-right">
+        <Col xs="auto" className="text-end">
           <TaskStatusIcon task={ task } />
           { task.status !== "failed" && 
             <div className="text-muted small">

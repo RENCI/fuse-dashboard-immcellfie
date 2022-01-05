@@ -1,5 +1,5 @@
-import React, { useContext, useState, useMemo } from "react";
-import { Form, Col } from "react-bootstrap";
+import { useContext, useState, useMemo } from "react";
+import { Form, Row, Col } from "react-bootstrap";
 import { extent, min } from "d3-array";
 import { DataContext } from "../../contexts";
 import { ResizeWrapper } from "../resize-wrapper";
@@ -12,7 +12,7 @@ import { SelectedList } from "../selected-list";
 import { volcanoPlot } from "../../vega-specs";
 import "./volcano-vis.css";
 
-const { Group, Label, Control, Row } = Form; 
+const { Group, Label, Control, Range } = Form; 
 
 export const VolcanoVis = ({ data, subgroups }) => {
   const [, dataDispatch] = useContext(DataContext);
@@ -86,18 +86,16 @@ export const VolcanoVis = ({ data, subgroups }) => {
       { subgroups[1] === null ? 
         <>
           <WarningMessage message="Only one subgroup present" />
-          <div className="ml-3"><SubgroupsLink /></div>
+          <div className="ms-3"><SubgroupsLink /></div>
         </>
       :
         <>
           <div className="mb-4">
-            <Row>
+            <Row className="mb-3">
               <Group as={ Col } controlId="depthSlider">
                 <Label size="sm">Depth: { depth }</Label>        
-                <Control 
+                <Range 
                   size="sm"
-                  className="mt-2"
-                  type="range"
                   min={ 1 }
                   max={ 3 }         
                   value={ depth }

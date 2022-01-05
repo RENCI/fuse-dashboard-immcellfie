@@ -1,13 +1,11 @@
-import React, { useContext } from "react";
-import { Form, Button, Col } from "react-bootstrap";
+import { useContext } from "react";
+import { Button, Row, Col } from "react-bootstrap";
 import { ArrowCounterclockwise, XCircle } from "react-bootstrap-icons";
 import { group, ascending } from "d3-array";
 import { DataContext } from "../../contexts";
 import { LabelEdit } from "../label-edit";
 import { VegaWrapper } from "../vega-wrapper";
 import { phenotypeBarChart } from "../../vega-specs";
-
-const { Row } = Form;
 
 export const Subgroup = ({ all, subgroup, isNew }) => {
   const [, dataDispatch] = useContext(DataContext);
@@ -117,7 +115,7 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
           <Button 
             variant="outline-secondary" 
             size="sm"
-            className="mr-2"
+            className="me-2"
             style={{ visibility: !editable ? "hidden" : null }}
             onClick={ onResetClick }
           >

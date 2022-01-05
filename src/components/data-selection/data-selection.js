@@ -1,5 +1,5 @@
-import React, { useState, useContext, useEffect } from "react";
-import { Card, Alert, Row, Col } from "react-bootstrap";
+import { useState, useContext, useEffect } from "react";
+import { Card, Alert, Row, Col, Accordion } from "react-bootstrap";
 import { DataContext } from "../../contexts";
 import { LoadingSpinner } from "../loading-spinner";
 import { PhenotypeInfo } from "../phenotype-info";
@@ -12,6 +12,7 @@ import { LoadPractice } from "./load-practice";
 import { states } from "./states";
 
 const { Header, Body, Footer } = Card;
+
 const { getErrorMessage } = errorUtils;
 
 export const DataSelection = () => {  
@@ -36,91 +37,85 @@ export const DataSelection = () => {
     setState(state);
   };
 
-  const vline = <div style={{ flexGrow: 2, borderLeft: "1px solid #ddd" }} />;
-
-  const separator = (
-    <div 
-      style={{ height: "100%" }} 
-      className="d-flex flex-column align-items-center flex-nowrap"
-    >
-      { vline }
-      <em className="small my-1">OR</em>
-      { vline }
-    </div>
-  );
-
   return (
     <Card>
       <Header as="h5">
         Data Selection
       </Header>
       <Body>
-        <Row>
-          <Col>    
-            <LoadImmuneSpace 
-              state={ state }
-              onSetState={ onSetState }
-              onError={ onError }
-            />
-          </Col>
-          <Col sm="auto">
-            { separator }
-          </Col>
-          <Col> 
-            <h6>Upload data</h6>
-            <UploadData
-              state={ state }
-              onSetState={ onSetState }
-              onError={ onError }
-            /> 
-            <hr />
-            <LoadPractice 
-              state={ state }
-              onSetState={ onSetState }
-              onError={ onError }
-            />
-          </Col>
-        </Row>
+        <h6>Data source</h6>
+        <Accordion>
+          <Accordion.Item eventKey='immunespace'>
+            <Accordion.Header>
+              ImmuneSpace
+            </Accordion.Header>
+            <Accordion.Body> 
+              <LoadImmuneSpace 
+                state={ state }
+                onSetState={ onSetState }
+                onError={ onError }
+              />
+            </Accordion.Body>
+          </Accordion.Item>
+
+          <Accordion.Item eventKey='upload'>
+            <Accordion.Header>
+              Data upload
+            </Accordion.Header>
+            <Accordion.Body> 
+              <UploadData
+                state={ state }
+                onSetState={ onSetState }
+                onError={ onError }
+              /> 
+            </Accordion.Body>
+          </Accordion.Item>
+
+
+          <Accordion.Item eventKey='practice'>
+            <Accordion.Header>
+              Practice data
+            </Accordion.Header>
+            <Accordion.Body> 
+              <LoadPractice 
+                state={ state }
+                onSetState={ onSetState }
+                onError={ onError }
+              />
+            </Accordion.Body>
+          </Accordion.Item>
+        </Accordion>
         { state !== states.normal && 
-          <>
-            <hr />
-            <Row>
-              <Col className="text-center">
-                <LoadingSpinner />
-              </Col>
-            </Row>
-          </>
+          <Row className="mt-3">
+            <Col className="text-center">
+              <LoadingSpinner />
+            </Col>
+          </Row>
         }
         { (phenotypeData || expressionData) && 
-          <>
-            <hr />
-            <Row className="row-eq-height">
-              <Col>
-                { 
-                  <ExpressionInfo 
-                    source={ dataInfo.source.name }
-                    name={ dataInfo.expression.name }
-                    data={ expressionData } 
-                  /> 
-                }
-              </Col>
-              <Col>
-                { phenotypeData && 
-                  <PhenotypeInfo 
-                    source={ dataInfo.source.name }
-                    name={ dataInfo.phenotypes.name } 
-                    data={ phenotypeData } 
-                  /> 
-                }
-              </Col>
-            </Row>
-          </>
+          <Row className="row-eq-height mt-3">
+            <Col>
+              { 
+                <ExpressionInfo 
+                  source={ dataInfo.source.name }
+                  name={ dataInfo.expression.name }
+                  data={ expressionData } 
+                /> 
+              }
+            </Col>
+            <Col>
+              { phenotypeData && 
+                <PhenotypeInfo 
+                  source={ dataInfo.source.name }
+                  name={ dataInfo.phenotypes.name } 
+                  data={ phenotypeData } 
+                /> 
+              }
+            </Col>
+          </Row>
         }
         { errorMessage && 
-          <>
-            <hr />
-            <Alert variant="danger">{ errorMessage }</Alert> 
-          </>
+          <Alert className="mt-3" variant="danger">{ errorMessage }</Alert> 
         }
       </Body>
       { phenotypeData &&
@@ -139,5 +134,5 @@ export const DataSelection = () => {
         </Footer>
       }
     </Card>
-  );
+  );  
 };           

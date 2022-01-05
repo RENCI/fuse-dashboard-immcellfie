@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { Row, Col, Form, InputGroup, ButtonGroup, Button, ToggleButton } from "react-bootstrap";
 import { GraphUp, List } from "react-bootstrap-icons";
 import { X } from "react-bootstrap-icons";
@@ -6,7 +6,6 @@ import { DataContext } from "../../contexts";
 import { DetailVis } from "../detail-vis";
 
 const { Control } = Form;
-const { Append } = InputGroup;
 
 export const SelectedList = ({ nodes, subgroup, subgroupName }) => {
   const [, dataDispatch] = useContext(DataContext);
@@ -77,7 +76,7 @@ export const SelectedList = ({ nodes, subgroup, subgroupName }) => {
   return (
     <>
       <Row noGutters={ true }>
-        <Col xs="auto" className="mr-1">
+        <Col xs="auto" className="me-1">
           <InputGroup size="sm">
             <Control  
               list="selectOptions"
@@ -89,18 +88,16 @@ export const SelectedList = ({ nodes, subgroup, subgroupName }) => {
             <datalist id="selectOptions">
               { options }
             </datalist>
-            <Append>
-              <Button 
-                variant="outline-secondary"
-                disabled={ selected.length === 0 }
-                onClick={ onClearClick }
-              >
-                Clear
-              </Button>              
-            </Append>
+            <Button 
+              variant="outline-secondary"
+              disabled={ selected.length === 0 }
+              onClick={ onClearClick }
+            >
+              Clear
+            </Button> 
           </InputGroup>
         </Col>
-        <Col xs="auto" className="mr-2">
+        <Col xs="auto" className="me-2">
           <ButtonGroup toggle>
             <ToggleButton
               type="radio"

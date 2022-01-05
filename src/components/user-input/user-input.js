@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useRef } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { Card, Form, InputGroup, Button, Row, Col, Alert } from "react-bootstrap";
 import { ExclamationCircle } from "react-bootstrap-icons";
 import { UserContext, DataContext, ModelContext } from "../../contexts";
@@ -146,7 +146,7 @@ export const UserInput = () => {
 
   const failure = (id, type) => (
     <div key={ id } className="text-danger small">
-      <ExclamationCircle className="mb-1 mr-1"/>
+      <ExclamationCircle className="mb-1 me-1"/>
       Loading { type } { id } failed.
     </div>
   );
@@ -164,16 +164,14 @@ export const UserInput = () => {
           <h6>Email address for CellFIE tasks</h6>
           <Group>  
             <InputGroup>
-              <InputGroup.Prepend>
-                <Button 
-                  ref={ buttonRef }
-                  variant="primary"                  
-                  type="submit"
-                  disabled={ !emailValid }
-                >
-                  Submit
-                </Button>
-              </InputGroup.Prepend>
+              <Button 
+                ref={ buttonRef }
+                variant="primary"                  
+                type="submit"
+                disabled={ !emailValid }
+              >
+                Submit
+              </Button>
               <Control 
                 type="email"
                 name="email"
@@ -182,11 +180,11 @@ export const UserInput = () => {
                 onChange={ onEmailChange } 
               />
             </InputGroup>
-              { !emailValid && 
-                <Text className="text-muted">
-                  Please enter a valid email address
-                </Text>
-              }
+            { !emailValid && 
+              <Text className="text-muted">
+                Please enter a valid email address
+              </Text>
+            }
           </Group>          
         </Form>
       </Body>

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { Form } from "react-bootstrap";
 import { UserContext, DataContext } from "../../contexts";
 import { SpinnerButton } from "../spinner-button";
@@ -6,7 +6,7 @@ import { states } from "./states";
 import { api } from "../../utils/api";
 import { practiceData } from "../../utils/datasets";
 
-const { Group, Label } = Form;
+const { Group } = Form;
 
 export const LoadPractice = ({ state, onSetState, onError }) => {
   const [, userDispatch] = useContext(UserContext);
@@ -42,15 +42,14 @@ export const LoadPractice = ({ state, onSetState, onError }) => {
 
   return (  
     <Group>
-      <Label>Practice data</Label>
+      <h6>Load practice data</h6>
       <SpinnerButton 
-        variant="outline-secondary"
+        variant="primary"
         disabled={ disabled }
         spin={ state === "loading" }
-        block={ true }
         onClick={ onLoadPracticeClick }
       >
-        Upload
+        Load
       </SpinnerButton>
     </Group>
   );

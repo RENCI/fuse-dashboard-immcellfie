@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useReducer } from "react";
-import { Badge } from "react-bootstrap";
+import { useContext, useEffect, useReducer } from "react";
 import { DataContext, UserContext } from "../../contexts";
 import { TaskStatusIcon } from "../task-status-icon";
 import { api } from "../../utils/api";
@@ -112,9 +111,9 @@ export const TaskStatus = () => {
         const [status, count] = entry;
 
         return (
-          <span key={ status } className="mr-2">
+          <span key={ status } className="me-2">
             <TaskStatusIcon task={{ status: status } } />
-            <Badge className={ "text-" + statusColor[status] }>{ count }</Badge>
+            <b className={ `text-${ statusColor[status] } small ms-1`}>{ count }</b>
           </span>
         );
       })}

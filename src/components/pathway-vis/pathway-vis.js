@@ -1,11 +1,11 @@
-import React, { useContext, useState } from "react";
-import { Form, Col, Card } from "react-bootstrap";
+import { useContext, useState } from "react";
+import { Form, Row, Col, Card } from "react-bootstrap";
 import { DataContext } from "../../contexts";
 import { EscherWrapper } from "../escher-wrapper";
 import { LoadingSpinner } from "../loading-spinner";
 import "./pathway-vis.css";
 
-const { Group, Label, Control, Row } = Form; 
+const { Group, Label, Control } = Form; 
 const { Body } = Card;
 
 const path = "/data/escher/";

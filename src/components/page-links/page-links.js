@@ -12,7 +12,7 @@ const PageLink = ({ text, icon, page }) => {
       className="py-0"
       onClick={ () => history.push("/" + page) }
     >
-      { React.cloneElement(icon, { className: "mr-2 mb-1" }) }
+      { React.cloneElement(icon, { className: "me-2 mb-1" }) }
       { text }
     </Button>
   );

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { Button } from "react-bootstrap";
 import { DataContext } from "../../contexts";
 import { practiceData } from "../../utils/datasets";

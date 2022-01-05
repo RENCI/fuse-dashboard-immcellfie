@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Form, FormControl } from "react-bootstrap";
 import "./label-edit.css";
 

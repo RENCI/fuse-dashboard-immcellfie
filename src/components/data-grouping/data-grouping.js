@@ -1,8 +1,8 @@
-import React, { useContext, useState, useEffect} from "react";
+import { useContext, useState, useEffect} from "react";
 import { Row, Col, Card, Button, ListGroup, ListGroupItem } from "react-bootstrap";
 import { PlusCircle} from "react-bootstrap-icons";
 import { DataContext } from "../../contexts";
-import { Subgroup } from "../subgroup";
+import { Subgroup } from "./subgroup";
 import { CellfieLink } from "../page-links";
 
 const { Header, Footer } = Card;
@@ -44,11 +44,11 @@ export const DataGrouping = () => {
               variant="outline-primary"
               onClick={ onAddClick }
             >
-              <PlusCircle className="mb-1 mr-1" />
+              <PlusCircle className="mb-1 me-1" />
               Add subgroup
             </Button>
           </Col>
-          <Col className="text-right">
+          <Col className="text-end">
             <CellfieLink />
           </Col>
         </Row>

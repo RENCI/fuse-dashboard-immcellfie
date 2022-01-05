@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import { useState, useContext } from "react";
 import { Form, InputGroup, OverlayTrigger, Popover, Button } from "react-bootstrap";
 import { BoxArrowUpRight, QuestionCircle, PersonFill } from "react-bootstrap-icons";
 import { UserContext, DataContext } from "../../contexts";
@@ -103,18 +103,18 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <BoxArrowUpRight className="ml-1 mb-1" />
+          <BoxArrowUpRight className="ms-1 mb-1" />
         </a>
       </h6>
-      <Group>
+      <Group className="mb-3">
         <Label>
           API key 
           <OverlayTrigger
             placement="right"
             overlay={ 
               <Popover style={{ maxWidth: 500 }}>
-                <Popover.Title>An <b>API key</b> is necessary to access data from <b>ImmuneSpace</b></Popover.Title>
-                <Popover.Content>                        
+                <Popover.Header>An <b>API key</b> is necessary to access data from <b>ImmuneSpace</b></Popover.Header>
+                <Popover.Body>                        
                   <div>
                   In ImmuneSpace:
                   <ol>
@@ -125,14 +125,21 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
                     <li>Paste here</li>
                   </ol>
                   </div>
-                </Popover.Content>
+                </Popover.Body>
               </Popover>
             }
           >
-            <QuestionCircle className="ml-1 mb-1" />
+            <QuestionCircle className="ms-1 mb-1" />
           </OverlayTrigger>
         </Label>
         <InputGroup>
+          <Button 
+            variant="primary"
+            disabled={ disabled || inputApiKey === "" || inputApiKey === apiKey }
+            onClick={ onEnterApiKeyClick }
+          >
+            Enter
+          </Button>
           <Control 
             type="text"
             list="apiKeys"
@@ -145,15 +152,6 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
               <option key={ i }>{ key }</option>
             )}
           </datalist>
-          <InputGroup.Append>
-            <Button 
-              variant="primary"
-              disabled={ disabled || inputApiKey === "" || inputApiKey === apiKey }
-              onClick={ onEnterApiKeyClick }
-            >
-              Enter
-            </Button>
-          </InputGroup.Append>
         </InputGroup>
         <Form.Text className="text-muted">
           { apiKey ? <>Current: { apiKey }</> : <>No current API key</> } 
@@ -166,8 +164,8 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
             placement="right"
             overlay={ 
               <Popover style={{ maxWidth: 500 }}>
-                <Popover.Title>A <b>Group Label</b> is used to identify data from <b>ImmuneSpace</b></Popover.Title>
-                <Popover.Content>
+                <Popover.Header>A <b>Group Label</b> is used to identify data from <b>ImmuneSpace</b></Popover.Header>
+                <Popover.Body>
                   In Immunespace:
                   <ol>
                     <li>Create a group (e.g. by applying a filter)</li>
@@ -177,14 +175,22 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
                     <li><b>Save</b></li>
                     <li>Copy and paste the group label here</li>
                   </ol>
-                </Popover.Content>
+                </Popover.Body>
               </Popover>
             }
           >
-            <QuestionCircle className="ml-1 mb-1" />
+            <QuestionCircle className="ms-1 mb-1" />
           </OverlayTrigger>
         </Label>
         <InputGroup>
+          <SpinnerButton 
+            variant="primary"
+            disabled={ disabled || apiKey === "" || groupId === "" }
+            spin={ state === "submitting" }
+            onClick={ onSubmitGroupIdClick }
+          >
+            Submit
+          </SpinnerButton>
           <Control 
             type="text"
             list="groupIds"
@@ -197,16 +203,6 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
               <option key={ i }>{ download.info.group_id }</option>
             )}
           </datalist>
-          <InputGroup.Append>
-            <SpinnerButton 
-              variant="primary"
-              disabled={ disabled || apiKey === "" || groupId === "" }
-              spin={ state === "submitting" }
-              onClick={ onSubmitGroupIdClick }
-            >
-              Submit
-            </SpinnerButton>
-          </InputGroup.Append>
         </InputGroup>
       </Group>  
     </>  
