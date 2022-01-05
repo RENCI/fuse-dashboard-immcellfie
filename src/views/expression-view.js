@@ -8,7 +8,7 @@ import { VegaWrapper } from "../components/vega-wrapper";
 import { expressionHeatmap } from "../vega-specs";
 import { DataMissing } from "../components/data-missing";
 import { LoadExpression } from "../components/load-expression";
-import { HomeLink, InputLink } from "../components/page-links";
+import { UserLink, InputLink } from "../components/page-links";
 import { sequential } from "../utils/colors";
 
 const { Header, Body } = Card;
@@ -51,7 +51,7 @@ export const ExpressionView = () => {
   return (
     <ViewWrapper>
       { !email ?
-        <DataMissing message="No user email selected" pageLink={ <HomeLink /> } />
+        <DataMissing message="No user email selected" pageLink={ <UserLink /> } />
       : !phenotypeData ? 
         <DataMissing message="No data loaded" pageLink={ <InputLink /> } />
       : !expressionData ? 

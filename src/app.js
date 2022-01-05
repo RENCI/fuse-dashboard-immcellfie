@@ -4,6 +4,7 @@ import { Container, Navbar, Nav } from "react-bootstrap";
 import { QuestionCircle } from "react-bootstrap-icons";
 import { 
   Home, 
+  UserView,
   InputView, 
   SubgroupView,
   OutputView, 
@@ -22,19 +23,23 @@ export const App = () => {
       <Router>
         <Container fluid>
           <Navbar fixed="top" bg="dark" variant="dark" expand="md" className="mb-4">
-            <Navbar.Brand>
-              <img 
-                src="/txlogo-cropped-alpha-2.png" 
-                alt="translational science logo"
-                height="25px"
-                className="mr-2 align-text-top"              
-              />
-              <span className="align-text-bottom">ImmCellFIE Dashboard</span>
-            </Navbar.Brand>
+            <Nav>
+              <Nav.Link as={ NavLink } to="/">
+                <Navbar.Brand>
+                  <img 
+                    src="/txlogo-cropped-alpha-2.png" 
+                    alt="translational science logo"
+                    height="25px"
+                    className="mr-2 align-text-top"              
+                  />
+                  <span className="align-text-bottom">ImmCellFIE Dashboard</span>
+                </Navbar.Brand>
+              </Nav.Link>
+            </Nav>
             <Navbar.Toggle />
             <Navbar.Collapse>
               <Nav>
-                <Nav.Link as={ NavLink } exact to="/">Home</Nav.Link>
+                <Nav.Link as={ NavLink } to="/user">User</Nav.Link>
                 <Nav.Link as={ NavLink } to="/input">Input</Nav.Link>
                 <Nav.Link as={ NavLink } to="/cellfie">CellFIE</Nav.Link>
                 <Nav.Link as={ NavLink } to="/subgroups">Subgroups</Nav.Link>
@@ -58,6 +63,7 @@ export const App = () => {
           </Navbar>
           <Switch>
             <Route exact path="/"><Home /></Route>
+            <Route exact path="/user"><UserView /></Route>
             <Route exact path="/input"><InputView /></Route>
             <Route exact path="/cellfie"><OutputView /></Route>
             <Route exact path="/subgroups"><SubgroupView /></Route>s
