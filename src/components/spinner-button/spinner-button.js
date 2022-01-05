@@ -12,7 +12,7 @@ export const SpinnerButton = ({ children, variant, disabled, spin, block, size, 
       { children }      
       { spin && 
         <Spinner 
-          className="ml-1"
+          className="ms-1"
           animation="border" 
           size="sm" 
           as="span" 

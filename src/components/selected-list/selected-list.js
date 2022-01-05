@@ -77,7 +77,7 @@ export const SelectedList = ({ nodes, subgroup, subgroupName }) => {
   return (
     <>
       <Row noGutters={ true }>
-        <Col xs="auto" className="mr-1">
+        <Col xs="auto" className="me-1">
           <InputGroup size="sm">
             <Control  
               list="selectOptions"
@@ -100,7 +100,7 @@ export const SelectedList = ({ nodes, subgroup, subgroupName }) => {
             </Append>
           </InputGroup>
         </Col>
-        <Col xs="auto" className="mr-2">
+        <Col xs="auto" className="me-2">
           <ButtonGroup toggle>
             <ToggleButton
               type="radio"

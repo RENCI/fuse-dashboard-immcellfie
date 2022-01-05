@@ -86,7 +86,7 @@ export const VolcanoVis = ({ data, subgroups }) => {
       { subgroups[1] === null ? 
         <>
           <WarningMessage message="Only one subgroup present" />
-          <div className="ml-3"><SubgroupsLink /></div>
+          <div className="ms-3"><SubgroupsLink /></div>
         </>
       :
         <>

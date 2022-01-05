@@ -30,7 +30,7 @@ export const App = () => {
                     src="/txlogo-cropped-alpha-2.png" 
                     alt="translational science logo"
                     height="25px"
-                    className="mr-2 align-text-top"              
+                    className="me-2 align-text-top"              
                   />
                   <span className="align-text-bottom">ImmCellFIE Dashboard</span>
                 </Navbar.Brand>
@@ -46,8 +46,8 @@ export const App = () => {
                 <Nav.Link as={ NavLink } to="/expression-data">Expression data</Nav.Link>
                 <Nav.Link as={ NavLink } to="/downloads">Downloads</Nav.Link>
               </Nav>
-              <div className="ml-5"><EmailNav /></div>
-              <div className="ml-2"><TaskStatus /></div>
+              <div className="ms-5"><EmailNav /></div>
+              <div className="ms-2"><TaskStatus /></div>
             </Navbar.Collapse>
             <Navbar.Collapse className="justify-content-end">
               <Nav>

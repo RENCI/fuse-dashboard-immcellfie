@@ -40,7 +40,7 @@ export const DownloadView = () => {
             href={ link }
             download={ fileName }
           >
-            <Download className="mr-1" />
+            <Download className="me-1" />
             { text }
           </Button>
         : 

@@ -6,7 +6,7 @@ export const LoadingSpinner = () => {
     <>
       Loading 
       <Spinner 
-        className="ml-1"
+        className="ms-1"
         animation="border" 
         variant="info"
         size="sm" 

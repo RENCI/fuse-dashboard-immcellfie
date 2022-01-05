@@ -103,10 +103,10 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <BoxArrowUpRight className="ml-1 mb-1" />
+          <BoxArrowUpRight className="ms-1 mb-1" />
         </a>
       </h6>
-      <Group>
+      <Group className="mb-3">
         <Label>
           API key 
           <OverlayTrigger
@@ -129,7 +129,7 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
               </Popover>
             }
           >
-            <QuestionCircle className="ml-1 mb-1" />
+            <QuestionCircle className="ms-1 mb-1" />
           </OverlayTrigger>
         </Label>
         <InputGroup>
@@ -179,7 +179,7 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
               </Popover>
             }
           >
-            <QuestionCircle className="ml-1 mb-1" />
+            <QuestionCircle className="ms-1 mb-1" />
           </OverlayTrigger>
         </Label>
         <InputGroup>

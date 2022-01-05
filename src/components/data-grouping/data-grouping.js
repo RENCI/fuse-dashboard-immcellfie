@@ -44,7 +44,7 @@ export const DataGrouping = () => {
               variant="outline-primary"
               onClick={ onAddClick }
             >
-              <PlusCircle className="mb-1 mr-1" />
+              <PlusCircle className="mb-1 me-1" />
               Add subgroup
             </Button>
           </Col>

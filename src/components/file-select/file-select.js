@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Form } from "react-bootstrap";
 
-const { File } = Form;
+const { Control } = Form;
 
 export const FileSelect = ({ defaultLabel, onChange }) => {
   const [file, setFile] = useState(null);
@@ -18,7 +18,8 @@ export const FileSelect = ({ defaultLabel, onChange }) => {
     <span className="text-muted">{ defaultLabel }</span>;
 
   return (
-    <File
+    <Control
+      type="file"
       label={ label }
       custom        
       onChange={ handleChange }

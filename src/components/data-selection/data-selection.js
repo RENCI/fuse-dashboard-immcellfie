@@ -56,7 +56,7 @@ export const DataSelection = () => {
         Data Selection
       </Header>
       <Body>
-        <Accordion defaultActiveKey='immunespace'>
+        <Accordion defaultActiveKey='immunespace' className="mb-3">
           <Accordion.Item eventKey='immunespace'>
             <Accordion.Header>
               ImmuneSpace
@@ -69,8 +69,88 @@ export const DataSelection = () => {
               />
             </Accordion.Body>
           </Accordion.Item>
+
+          <Accordion.Item eventKey='upload'>
+            <Accordion.Header>
+              Upload data
+            </Accordion.Header>
+            <Accordion.Body> 
+              <UploadData
+                state={ state }
+                onSetState={ onSetState }
+                onError={ onError }
+              /> 
+            </Accordion.Body>
+          </Accordion.Item>
+
+
+          <Accordion.Item eventKey='practice'>
+            <Accordion.Header>
+              Practice data
+            </Accordion.Header>
+            <Accordion.Body> 
+              <LoadPractice 
+                state={ state }
+                onSetState={ onSetState }
+                onError={ onError }
+              />
+            </Accordion.Body>
+          </Accordion.Item>
         </Accordion>
+        { state !== states.normal && 
+          <>
+            <Row>
+              <Col className="text-center">
+                <LoadingSpinner />
+              </Col>
+            </Row>
+          </>
+        }
+        { (phenotypeData || expressionData) && 
+          <>
+            <Row className="row-eq-height">
+              <Col>
+                { 
+                  <ExpressionInfo 
+                    source={ dataInfo.source.name }
+                    name={ dataInfo.expression.name }
+                    data={ expressionData } 
+                  /> 
+                }
+              </Col>
+              <Col>
+                { phenotypeData && 
+                  <PhenotypeInfo 
+                    source={ dataInfo.source.name }
+                    name={ dataInfo.phenotypes.name } 
+                    data={ phenotypeData } 
+                  /> 
+                }
+              </Col>
+            </Row>
+          </>
+        }
+        { errorMessage && 
+          <>
+            <Alert variant="danger">{ errorMessage }</Alert> 
+          </>
+        }
       </Body>
+      { phenotypeData &&
+        <Footer>
+          <Row>
+            <Col className="text-center">
+              <CellfieLink />
+            </Col>
+            <Col className="text-center">
+              <SubgroupsLink />
+            </Col>
+            <Col className="text-center">
+              <ExpressionLink />
+            </Col>
+          </Row>
+        </Footer>
+      }
     </Card>
   );
 /*

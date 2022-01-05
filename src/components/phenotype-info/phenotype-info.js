@@ -12,7 +12,7 @@ export const PhenotypeInfo = ({ source, name, data }) => {
           <div><small>Name: { name }</small></div>
           <div><small>{ data.length.toLocaleString() } rows (samples)</small></div>
           <div><small>{ data.columns.length.toLocaleString() } columns (dimensions)</small></div>
-          <div className="ml-3 text-muted">
+          <div className="ms-3 text-muted">
             <small>{ data.columns.join(", ") }</small>
           </div>
         </>

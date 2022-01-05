@@ -117,7 +117,7 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
           <Button 
             variant="outline-secondary" 
             size="sm"
-            className="mr-2"
+            className="me-2"
             style={{ visibility: !editable ? "hidden" : null }}
             onClick={ onResetClick }
           >
