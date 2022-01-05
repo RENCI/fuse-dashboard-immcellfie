@@ -113,8 +113,8 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
             placement="right"
             overlay={ 
               <Popover style={{ maxWidth: 500 }}>
-                <Popover.Title>An <b>API key</b> is necessary to access data from <b>ImmuneSpace</b></Popover.Title>
-                <Popover.Content>                        
+                <Popover.Header>An <b>API key</b> is necessary to access data from <b>ImmuneSpace</b></Popover.Header>
+                <Popover.Body>                        
                   <div>
                   In ImmuneSpace:
                   <ol>
@@ -125,7 +125,7 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
                     <li>Paste here</li>
                   </ol>
                   </div>
-                </Popover.Content>
+                </Popover.Body>
               </Popover>
             }
           >
@@ -164,8 +164,8 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
             placement="right"
             overlay={ 
               <Popover style={{ maxWidth: 500 }}>
-                <Popover.Title>A <b>Group Label</b> is used to identify data from <b>ImmuneSpace</b></Popover.Title>
-                <Popover.Content>
+                <Popover.Header>A <b>Group Label</b> is used to identify data from <b>ImmuneSpace</b></Popover.Header>
+                <Popover.Body>
                   In Immunespace:
                   <ol>
                     <li>Create a group (e.g. by applying a filter)</li>
@@ -175,7 +175,7 @@ export const LoadImmuneSpace = ({ state, onSetState, onError }) => {
                     <li><b>Save</b></li>
                     <li>Copy and paste the group label here</li>
                   </ol>
-                </Popover.Content>
+                </Popover.Body>
               </Popover>
             }
           >
