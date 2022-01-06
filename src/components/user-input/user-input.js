@@ -13,7 +13,7 @@ const { getErrorMessage } = errorUtils;
 
 export const UserInput = () => {
   const [, dataDispatch  ] = useContext(DataContext);
-  const [{ email, tasks }, userDispatch  ] = useContext(UserContext);
+  const [{ email, tasks, downloads }, userDispatch  ] = useContext(UserContext);
   const [, modelDispatch] = useContext(ModelContext);
   const [emailValue, setEmailValue] = useState("");
   const [emailValid, setEmailValid] = useState(false);
@@ -199,22 +199,20 @@ export const UserInput = () => {
               <Col className="text-center">
                 <LoadingSpinner />
               </Col>
-            : tasks.length > 0 ? 
+            :  
               <>
+                { tasks.length > 0 && 
+                  <Col className="text-center">
+                    <CellfieLink />
+                    <div className="small text-muted">{ tasks.length } task{ tasks.length > 1 ? "s" : null } found for <b>{ email }</b></div> 
+                  </Col> 
+                }
                 <Col className="text-center">
-                  <CellfieLink />
-                  <div className="small text-muted">{ tasks.length } task{ tasks.length > 1 ? "s" : null } found for <b>{ email }</b></div> 
-                </Col>
-                <Col>
                   <InputLink />
+                  { downloads.length > 0 && <div className="small text-muted">{ downloads.length } download{ downloads.length > 0 ? "s" : null } found for <b>{ email }</b></div> }
                 </Col>
               </>
-            :               
-              <Col className="text-center">
-                <InputLink />
-                <div className="small text-muted">No current CellFIE tasks found for <b>{ email }</b></div>
-              </Col>
-            }
+            }     
           </Row>
           { (failedDownloads.length > 0 || failedTasks.length > 0) &&
             <Row>

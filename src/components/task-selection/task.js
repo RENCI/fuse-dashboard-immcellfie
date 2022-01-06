@@ -145,8 +145,8 @@ export const Task = ({ task, onClick, onDeleteClick }) => {
                 }
               >
                 <Button 
-                  size={ "sm"}
-                  variant={ "outline-danger" }
+                  size="sm"
+                  variant="outline-danger"
                   onClick={ onDeleteButtonClick }
                 >
                   <XLg className="mb-1" />
