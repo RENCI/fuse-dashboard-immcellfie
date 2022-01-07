@@ -56,7 +56,7 @@ export const UploadData = ({ state, onSetState, onError }) => {
   const dataImage = (label, description, src) => (
     <>
       <div>{ label }</div>
-      { description.concat("e.g.").map(d => <div className="text-muted small">{ d }</div>) }
+      { description.concat("e.g.").map((d, i) => <div key={ i } className="text-muted small">{ d }</div>) }
       <Image className="mt-1" src={ src } />
     </>
   );
@@ -69,12 +69,13 @@ export const UploadData = ({ state, onSetState, onError }) => {
       <hr />
       <Row>
         <Col>
-      { dataImage("Expression data:", ["1st column: gene id", "Subsequent columns: samples"], "ExpressionDataFormat.png") }
-      <FileSelect onChange={ onExpressionFileSelect } />
-      </Col>
-      <Col>
-      { dataImage("Phenotype data (optional):", ["1st row: headers", "Subsequent rows: samples"], "PhenotypeDataFormat.png") }
-      <FileSelect onChange={ onPhenotypeFileSelect } /></Col>
+          { dataImage("Expression data:", ["1st column: gene id", "Subsequent columns: samples"], "ExpressionDataFormat.png") }
+          <FileSelect onChange={ onExpressionFileSelect } />
+        </Col>
+        <Col>
+          { dataImage("Phenotype data (optional):", ["1st row: headers", "Subsequent rows: samples"], "PhenotypeDataFormat.png") }
+          <FileSelect onChange={ onPhenotypeFileSelect } />
+        </Col>
       </Row>
       <hr />
       <SpinnerButton
