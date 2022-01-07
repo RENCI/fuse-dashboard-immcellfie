@@ -1,13 +1,12 @@
 import { useState, useContext } from "react";
-import { Form, Figure } from "react-bootstrap";
+import { Figure } from "react-bootstrap";
 import { UserContext, DataContext } from "../../contexts";
 import { SpinnerButton } from "../spinner-button";
 import { FileSelect } from "../file-select";
 import { states } from "./states";
 import { api } from "../../utils/api";
 
-const { Group } = Form;
-const { Image, Caption } = Figure;
+const { Image } = Figure;
 
 export const UploadData = ({ state, onSetState, onError }) => {
   const [, userDispatch] = useContext(UserContext);

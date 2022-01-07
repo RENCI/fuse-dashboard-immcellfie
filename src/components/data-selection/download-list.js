@@ -1,6 +1,6 @@
 import { useContext } from "react";
-import { Table, Button, OverlayTrigger, Popover, Tooltip } from "react-bootstrap";
-import { QuestionCircle, XCircle, StarFill, Star } from "react-bootstrap-icons";
+import { Table, Button, OverlayTrigger, Popover } from "react-bootstrap";
+import { QuestionCircle, StarFill, Star } from "react-bootstrap-icons";
 import { DataContext, UserContext } from "../../contexts";
 import { TaskStatusIcon } from "../task-status-icon";
 import { states } from "./states";

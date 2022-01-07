@@ -84,17 +84,6 @@ export const TaskSelection = () => {
       userDispatch({ type: "removeTask", id: task.id });
       userDispatch({ type: "clearActiveTask" });
       dataDispatch({ type: "clearOutput" });
-      
-/*
-      // Set active task if necessary
-      if (task.active && tasks.length > 1) {
-        const activeTask = tasks.filter(({ id }) => id !== task.id).reduce((activeTask, task) => {
-          return task.status !== "failed" && task.info.date_created > activeTask.info.date_created ? task : activeTask;
-        });
-
-        selectTask(activeTask);
-      }
-      */
     }
     else {
       // XXX: Show message?

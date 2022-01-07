@@ -75,7 +75,7 @@ export const SelectedList = ({ nodes, subgroup, subgroupName }) => {
 
   return (
     <>
-      <Row noGutters={ true }>
+      <Row>
         <Col xs="auto" className="me-1">
           <InputGroup size="sm">
             <Control  

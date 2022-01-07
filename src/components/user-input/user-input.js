@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState, useRef } from "react";
 import { Card, Form, InputGroup, Button, Row, Col, Alert } from "react-bootstrap";
 import { ExclamationCircle } from "react-bootstrap-icons";
-import { UserContext, DataContext, ModelContext } from "../../contexts";
+import { UserContext, DataContext } from "../../contexts";
 import { LoadingSpinner } from "../loading-spinner";
 import { CellfieLink, InputLink } from "../page-links";
 import { api } from "../../utils/api";
@@ -14,7 +14,6 @@ const { getErrorMessage } = errorUtils;
 export const UserInput = () => {
   const [, dataDispatch  ] = useContext(DataContext);
   const [{ email, tasks, downloads }, userDispatch  ] = useContext(UserContext);
-  const [, modelDispatch] = useContext(ModelContext);
   const [emailValue, setEmailValue] = useState("");
   const [emailValid, setEmailValid] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -83,7 +82,7 @@ export const UserInput = () => {
       }
 
       userDispatch({ type: "setTasks", tasks: tasks });
-           
+
       setLoading(false);
       setFailedDownloads(failedDownloads);
       setFailedTasks(failedTasks);

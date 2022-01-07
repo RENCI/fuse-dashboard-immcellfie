@@ -104,7 +104,7 @@ export const Task = ({ task, onClick, onDeleteClick }) => {
     <Item  
       as="li"
       key={ task.id }
-      className={ task.active ? "task-active" : null }
+      className={ task.active ? "task-active border border-primary rounded" : null }
       onClick={ () => onClick(task) }
     >
       <Row className="d-flex align-items-center">  
