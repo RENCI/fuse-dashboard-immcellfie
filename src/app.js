@@ -38,7 +38,7 @@ export const App = () => {
             </Nav>
             <Navbar.Toggle />
             <Navbar.Collapse>
-              <Nav>
+              <Nav className="me-3">
                 <Nav.Link as={ NavLink } to="/user">User</Nav.Link>
                 <Nav.Link as={ NavLink } to="/input">Input</Nav.Link>
                 <Nav.Link as={ NavLink } to="/cellfie">CellFIE</Nav.Link>
@@ -49,7 +49,9 @@ export const App = () => {
               <EmailNav />
             </Navbar.Collapse>
             <Navbar.Collapse className="justify-content-end">
-              <TaskStatus />
+              <div className="me-3">
+                <TaskStatus />
+              </div>
               <Nav>
                 <Nav.Link 
                   href="https://github.com/RENCI/fuse-dashboard-immcellfie/wiki" 

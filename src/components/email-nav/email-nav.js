@@ -6,8 +6,6 @@ export const EmailNav = () => {
   const [{ email },] = useContext(UserContext);
   const [{ dataInfo },] = useContext(DataContext);
 
-  console.log(dataInfo);
-
   const name = dataInfo ?
     dataInfo.source.name === "ImmuneSpace" ? dataInfo.phenotypes.name :
     dataInfo.source.name === "upload" ? dataInfo.phenotypes.name :
@@ -15,7 +13,7 @@ export const EmailNav = () => {
 
   return (
     email && 
-    <div className="text-info small ms-3">
+    <div className="text-info small">
       <Row>
         <Col style={{ whiteSpace: "nowrap" }}>
           <div>User: <b>{ email }</b></div>
