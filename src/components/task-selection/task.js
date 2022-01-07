@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { ListGroup, Row, Col, Button, Collapse, OverlayTrigger, Tooltip } from "react-bootstrap";
-import { ChevronDown, ChevronUp, XLg } from "react-bootstrap-icons";
+import { ChevronDown, ChevronUp, XCircle } from "react-bootstrap-icons";
 import { TaskStatusIcon } from "../task-status-icon";
 import { getModel } from "../../utils/models";
 import "./task-selection.css";
@@ -149,7 +149,7 @@ export const Task = ({ task, onClick, onDeleteClick }) => {
                   variant="outline-danger"
                   onClick={ onDeleteButtonClick }
                 >
-                  <XLg className="mb-1" />
+                  <XCircle className="mb-1" />
                 </Button>                
               </OverlayTrigger>
             </Col>

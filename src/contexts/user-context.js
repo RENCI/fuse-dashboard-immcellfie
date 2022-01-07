@@ -29,6 +29,16 @@ const reducer = (state, action) => {
       };
     }
 
+    case "addDownload": {
+      const downloads = [...state.downloads];
+      downloads.unshift(action.download);
+
+      return {
+        ...state,
+        downloads: downloads
+      };
+    }
+
     case "setTasks":
       return {
         ...state,

@@ -192,6 +192,7 @@ export const api = {
       try {
         download.status = await checkTaskStatus(IMMUNESPACE_DOWNLOAD_PATH, download.id);
         download.info = await getTaskInfo(IMMUNESPACE_DOWNLOAD_PATH, download.id);
+        download.tasks = [];
 
         loaded.push(download);
       }
@@ -208,7 +209,8 @@ export const api = {
       failed: failed
     };
   },
-  checkImmunspaceDownloadStatus: async downloadId => await checkTaskStatus(IMMUNESPACE_DOWNLOAD_PATH, downloadId),
+  checkImmuneSpaceDownloadStatus: async downloadId => await checkTaskStatus(IMMUNESPACE_DOWNLOAD_PATH, downloadId),
+  getImmuneSpaceDownloadInfo: async downloadId => await getTaskInfo(IMMUNESPACE_DOWNLOAD_PATH, downloadId),
   getImmuneSpaceExpressionData: async downloadId => await resultStream(IMMUNESPACE_DOWNLOAD_PATH, downloadId, "geneBySampleMatrix"),
   getImmuneSpacePhenotypes: async downloadId => await resultStream(IMMUNESPACE_DOWNLOAD_PATH, downloadId, "phenoDataMatrix"),
 

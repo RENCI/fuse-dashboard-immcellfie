@@ -64,20 +64,23 @@ export const UserInput = () => {
       
       downloads.sort((a, b) => b.info.date_created - a.info.date_created);
 
+      // Get tasks
+      const { tasks, failed: failedTasks } = await api.getTasks(emailValue);
+
+      // Add downloads to tasks and vice versa
+      tasks.filter(task => task.isImmuneSpace).forEach(task => {
+        const download = downloads.find(({ id }) => id === task.info.immunespace_download_id);
+        task.download = download;
+        download.tasks.push(task);
+      });
+
+      // Dispatch
       userDispatch({ type: "setDownloads", downloads: downloads });
 
       // If there are downloads, set an api key
       if (downloads.length > 0) {
         userDispatch({ type: "setApiKey", apiKey: downloads[0].info.apikey })
       }
-
-      // Get tasks
-      const { tasks, failed: failedTasks } = await api.getTasks(emailValue);
-
-      // Add downloads to tasks
-      tasks.filter(task => task.isImmuneSpace).forEach(task => {
-        task.download = downloads.find(({ id }) => id === task.info.immunespace_download_id);
-      });
 
       userDispatch({ type: "setTasks", tasks: tasks });
 

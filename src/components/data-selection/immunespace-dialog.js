@@ -6,7 +6,7 @@ import { SpinnerButton } from "../spinner-button";
 import { states } from "./states";
 import { api } from "../../utils/api";
 
-const { Dialog, Header, Title, Body } = Modal;
+const { Header, Title, Body } = Modal;
 const { Group, Control, Label } = Form;
 
 export const ImmunespaceDialog = ({ state, onSetState, onError }) => {
@@ -61,10 +61,19 @@ export const ImmunespaceDialog = ({ state, onSetState, onError }) => {
       const timer = setInterval(checkStatus, 1000);
 
       async function checkStatus() {
-        const status = await api.checkImmunspaceDownloadStatus(downloadId);
+        const status = await api.checkImmuneSpaceDownloadStatus(downloadId);
 
         if (status === "finished") {
           clearInterval(timer);
+
+          const info = await api.getImmuneSpaceDownloadInfo(downloadId);
+
+          userDispatch({ type: "addDownload", download: {
+            id: downloadId,
+            status: status,
+            info: info,
+            tasks: []
+          }});
 
           const phenotypeData = await api.getImmuneSpacePhenotypes(downloadId);
 
@@ -80,8 +89,18 @@ export const ImmunespaceDialog = ({ state, onSetState, onError }) => {
           onSetState(states.normal);
         }
         else if (status === "failed") {
-          clearInterval(timer);
-          onSetState(states.normal);
+          clearInterval(timer);         
+          
+          const info = await api.getImmuneSpaceDownloadInfo(downloadId);
+
+          dataDispatch({ type: "addDownload", download: {
+            id: downloadId,
+            status: status,
+            info: info,
+            tasks: []
+          }});
+
+          onSetState(states.normal); 
         }
       };
     }
@@ -106,15 +125,17 @@ export const ImmunespaceDialog = ({ state, onSetState, onError }) => {
 
   return (
     <>
-      <Button 
-        size="sm" 
-        className="ms-1 mt-1" 
-        variant="outline-primary" 
-        onClick={ onShowClick }
-      >
-        <PlusCircle style={{ verticalAlign: "-.1em" }}/>
-      </Button>
-      <span className="align-middle ms-2">Load new data from ImmuneSpace</span>
+      <Group>
+        <Button 
+          size="sm" 
+          className="ms-1" 
+          variant="outline-primary" 
+          onClick={ onShowClick }
+        >
+          <PlusCircle style={{ verticalAlign: "-.1em" }}/>
+        </Button>
+        <Label className="ms-2">Load new data from ImmuneSpace</Label>
+      </Group>
 
       <Modal show={ show } onHide={ onHideClick }>
         <Header closeButton>
@@ -217,16 +238,10 @@ export const ImmunespaceDialog = ({ state, onSetState, onError }) => {
               </SpinnerButton>
               <Control 
                 type="text"
-                list="groupIds"
                 value={ groupId }
                 onChange={ onGroupIdChange } 
                 onKeyPress={ onGroupIdKeyPress }
               />
-              <datalist id="groupIds">
-                { finished.map((download, i) => 
-                  <option key={ i }>{ download.info.group_id }</option>
-                )}
-              </datalist>
             </InputGroup>
           </Group>  
         </Body>
