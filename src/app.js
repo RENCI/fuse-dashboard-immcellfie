@@ -1,3 +1,4 @@
+import React from "react";
 import { BrowserRouter as Router, Switch, Route, NavLink } from "react-router-dom";
 import { Container, Navbar, Nav } from "react-bootstrap";
 import { QuestionCircle } from "react-bootstrap-icons";
@@ -45,10 +46,10 @@ export const App = () => {
                 <Nav.Link as={ NavLink } to="/expression-data">Expression data</Nav.Link>
                 <Nav.Link as={ NavLink } to="/downloads">Downloads</Nav.Link>
               </Nav>
-              <div className="ms-5"><EmailNav /></div>
-              <div className="ms-2"><TaskStatus /></div>
+              <EmailNav />
             </Navbar.Collapse>
             <Navbar.Collapse className="justify-content-end">
+              <TaskStatus />
               <Nav>
                 <Nav.Link 
                   href="https://github.com/RENCI/fuse-dashboard-immcellfie/wiki" 
