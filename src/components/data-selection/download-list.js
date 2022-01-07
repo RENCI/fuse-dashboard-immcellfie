@@ -43,7 +43,9 @@ export const DownloadList = ({ state, onSetState, onError }) => {
   const columns = [    
     {
       name: "",
-      accessor: d => loaded(d) ? <StarFill style={{ verticalAlign: "-.1em" }} /> : <Star style={{ verticalAlign: "-.1em" }} />
+      accessor: d => loaded(d) ? 
+        <StarFill className="text-primary" style={{ verticalAlign: "-.1em" }} /> : 
+        <Star className="text-primary" style={{ verticalAlign: "-.1em" }} />
     },
     {
       name: "",
@@ -107,6 +109,7 @@ export const DownloadList = ({ state, onSetState, onError }) => {
           <TaskStatusIcon task={ task } />
       }
     },
+/*    
     {
       name: "",
       accessor: d => (
@@ -126,25 +129,28 @@ export const DownloadList = ({ state, onSetState, onError }) => {
         </OverlayTrigger>
       )
     }
+*/    
   ];
 
   return (
     <>
       { downloads.length > 0 &&
-        <Table size="sm" hover responsive striped className="align-middle">
-          <thead>        
-            <tr>
-              { columns.map((column, i) => <th key={ i }>{ column.name }</th>)}   
-            </tr>
-          </thead>
-          <tbody>
-            { downloads.map((download, i) => (
-              <tr key={ i }>
-                { columns.map((column, i) => <td key={ i }>{ column.accessor(download) }</td>)}
+        <div style={{ maxHeight: 235, overflow: "auto" }}>
+          <Table size="sm" hover responsive className="align-middle">
+            <thead>        
+              <tr>
+                { columns.map((column, i) => <th key={ i }>{ column.name }</th>)}   
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              { downloads.map((download, i) => (
+                <tr key={ i }>
+                  { columns.map((column, i) => <td key={ i }>{ column.accessor(download) }</td>)}
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </div>
       }
     </>
   );

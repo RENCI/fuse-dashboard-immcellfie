@@ -58,6 +58,17 @@ const getOutput = async (path, id) => {
 };
 
 // API helper functions
+const getDownload = async id => {
+  const status = await checkTaskStatus(IMMUNESPACE_DOWNLOAD_PATH, id);
+  const info = await getTaskInfo(IMMUNESPACE_DOWNLOAD_PATH, id);
+
+  return {
+    id: id,
+    status: status,
+    info: info,
+    tasks: []
+  };
+};
 
 const getTaskParameters = async (path, id) => {
   const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }${ path }/parameters/${ id }`);
@@ -183,24 +194,21 @@ export const api = {
   getImmuneSpaceDownloads: async email => {
     const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }/immunespace/download/ids/${ email }`);
 
-    const downloads = result.data.map(({ immunespace_download_id }) => ({ id: immunespace_download_id }));
+    const ids = result.data.map(d => d.immunespace_download_id);
 
     const loaded = [];
     const failed = [];
   
-    for (const download of downloads) {
+    for (const id of ids) {
       try {
-        download.status = await checkTaskStatus(IMMUNESPACE_DOWNLOAD_PATH, download.id);
-        download.info = await getTaskInfo(IMMUNESPACE_DOWNLOAD_PATH, download.id);
-        download.tasks = [];
-
+        const download = await getDownload(id);
         loaded.push(download);
       }
       catch (error) {
         console.log(error);
-        console.log(`Error loading download ${ download.id }. Removing from download list.`);
+        console.log(`Error loading download ${ id }. Removing from download list.`);
 
-        failed.push(download);
+        failed.push({ id: id });
       }
     }
   
@@ -209,8 +217,8 @@ export const api = {
       failed: failed
     };
   },
+  getImmuneSpaceDownload: async downloadId => await getDownload(downloadId),
   checkImmuneSpaceDownloadStatus: async downloadId => await checkTaskStatus(IMMUNESPACE_DOWNLOAD_PATH, downloadId),
-  getImmuneSpaceDownloadInfo: async downloadId => await getTaskInfo(IMMUNESPACE_DOWNLOAD_PATH, downloadId),
   getImmuneSpaceExpressionData: async downloadId => await resultStream(IMMUNESPACE_DOWNLOAD_PATH, downloadId, "geneBySampleMatrix"),
   getImmuneSpacePhenotypes: async downloadId => await resultStream(IMMUNESPACE_DOWNLOAD_PATH, downloadId, "phenoDataMatrix"),
 

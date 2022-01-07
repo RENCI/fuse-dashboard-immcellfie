@@ -4,7 +4,8 @@ import { ImmunespaceDialog } from "./immunespace-dialog";
 export const LoadImmuneSpace = props => { 
   return (
     <>   
-      <DownloadList {...props} />      
+      <DownloadList {...props} />     
+      <hr /> 
       <ImmunespaceDialog {...props} />
     </>  
   );
