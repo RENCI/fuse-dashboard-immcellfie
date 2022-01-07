@@ -94,6 +94,7 @@ export const TaskSelection = () => {
     }
     else {
       // XXX: Show message?
+      console.log("Couldn't delete task");
     };
   };
 

@@ -83,58 +83,7 @@ export const UserInput = () => {
       }
 
       userDispatch({ type: "setTasks", tasks: tasks });
-
-      // Set active task
-      if (tasks.length > 0) {
-        const activeTask = tasks.reduce((activeTask, task) => {
-          return task.status !== "failed" && task.info.date_created > activeTask.info.date_created ? task : activeTask;
-        });
-
-        const { id, isImmuneSpace } = activeTask;
-
-        userDispatch({ type: "setActiveTask", id: id });
-        modelDispatch({ type: "setParameters", parameters: activeTask.parameters });
-        dataDispatch({ type: "clearOutput" });
-
-        if (isImmuneSpace) {
-          dataDispatch({ 
-            type: "setDataInfo", 
-            source: { name: "ImmuneSpace", downloadId: activeTask.download.id },
-            phenotypes: { name: activeTask.download.info.group_id },
-            expression: { name: activeTask.download.info.group_id }
-          });
-        }
-        else {
-          dataDispatch({ 
-            type: "setDataInfo", 
-            source: { name: "CellFIE" }
-          });
-        }
-
-        const phenotypes = isImmuneSpace ? 
-          await api.getImmuneSpacePhenotypes(activeTask.info.immunespace_download_id) : 
-          await api.getCellfiePhenotypes(id);
-
-        dataDispatch({ type: "setPhenotypes", data: phenotypes });
-
-        if (!isImmuneSpace) {
-          const expressionData = await api.getCellfieExpressionData(id);
-          
-          dataDispatch({ type: "setExpressionData", data: expressionData });
-        }
-
-        if (activeTask.status === "finished") {  
-          const output = await api.getCellfieOutput(id, isImmuneSpace);
-
-          dataDispatch({ type: "setOutput", output: output });
-
-          // Load larger detail scoring asynchronously
-          api.getCellfieDetailScoring(id, isImmuneSpace).then(result => {
-            dataDispatch({ type: "setDetailScoring", data: result });
-          });
-        }
-      }
-
+           
       setLoading(false);
       setFailedDownloads(failedDownloads);
       setFailedTasks(failedTasks);
@@ -212,7 +161,7 @@ export const UserInput = () => {
                 }
                 <Col className="text-center">
                   <InputLink />
-                  { downloads.length > 0 && <div className="small text-muted">{ downloads.length } download{ downloads.length > 0 ? "s" : null } found for <b>{ email }</b></div> }
+                  { downloads.length > 0 && <div className="small text-muted">{ downloads.length } ImmuneSpace download{ downloads.length > 0 ? "s" : null } found for <b>{ email }</b></div> }
                 </Col>
               </>
             }     

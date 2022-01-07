@@ -128,33 +128,35 @@ export const Task = ({ task, onClick, onDeleteClick }) => {
         </Col>
       </Row>      
       <Collapse in={ expand }>
-        <div>
-          <Row className="mt-3 border-top pt-3">
-            <Col>
-              { objectDisplay(task.info) }              
-            </Col>
-            <Col>
-              { objectDisplay(task.parameters) }
-            </Col>
-            <Col xs="auto">
-              <OverlayTrigger
-                overlay={
-                  <Tooltip>
-                    Delete task
-                  </Tooltip>
-                }
+        <Row className="mt-3 border-top pt-3">
+          <Col>
+            <Row>
+              <Col>
+                { objectDisplay(task.info) }              
+              </Col>
+              <Col>
+                { objectDisplay(task.parameters) }
+              </Col>
+            </Row>
+          </Col>
+          <Col xs="auto">
+            <OverlayTrigger
+              overlay={
+                <Tooltip>
+                  Delete task
+                </Tooltip>
+              }
+            >
+              <Button 
+                size="sm"
+                variant="outline-danger"
+                onClick={ onDeleteButtonClick }
               >
-                <Button 
-                  size="sm"
-                  variant="outline-danger"
-                  onClick={ onDeleteButtonClick }
-                >
-                  <XCircle className="mb-1" />
-                </Button>                
-              </OverlayTrigger>
-            </Col>
-          </Row>
-        </div>
+                <XCircle className="mb-1" />
+              </Button>                
+            </OverlayTrigger>
+          </Col>
+        </Row>
       </Collapse>
     </Item>
   );
