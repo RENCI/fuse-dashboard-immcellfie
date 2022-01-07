@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { Figure } from "react-bootstrap";
+import { Row, Col, Figure } from "react-bootstrap";
 import { UserContext, DataContext } from "../../contexts";
 import { SpinnerButton } from "../spinner-button";
 import { FileSelect } from "../file-select";
@@ -67,11 +67,15 @@ export const UploadData = ({ state, onSetState, onError }) => {
     <> 
       <h6>Upload files from your computer in CSV format</h6>
       <hr />
+      <Row>
+        <Col>
       { dataImage("Expression data:", ["1st column: gene id", "Subsequent columns: samples"], "ExpressionDataFormat.png") }
       <FileSelect onChange={ onExpressionFileSelect } />
-      <hr />
+      </Col>
+      <Col>
       { dataImage("Phenotype data (optional):", ["1st row: headers", "Subsequent rows: samples"], "PhenotypeDataFormat.png") }
-      <FileSelect onChange={ onPhenotypeFileSelect } />
+      <FileSelect onChange={ onPhenotypeFileSelect } /></Col>
+      </Row>
       <hr />
       <SpinnerButton
         variant="primary"
