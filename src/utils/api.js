@@ -146,8 +146,8 @@ export const api = {
 
     return response.data;
   },
-  loadPracticeData: async name => {
-    const response = await axios.get(`${ process.env.REACT_APP_PRACTICE_DATA_ROOT }/${ name }`);
+  loadExampleData: async name => {
+    const response = await axios.get(`${ process.env.REACT_APP_EXAMPLE_DATA_ROOT }/${ name }`);
 
     return response.data;
   },
