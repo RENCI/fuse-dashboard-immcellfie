@@ -20,8 +20,8 @@ export const LoadExample = ({ state, onSetState, onError }) => {
     userDispatch({ type: "clearActiveTask" });
 
     try {      
-      const expressionData = await api.LoadExampleData(exampleData.expressionData);
-      const phenotypeData = await api.LoadExampleData(exampleData.phenotypes);
+      const expressionData = await api.loadExampleData(exampleData.expressionData);
+      const phenotypeData = await api.loadExampleData(exampleData.phenotypes);
 
       dataDispatch({ type: "setDataInfo", source: { name: "example" }});
 
