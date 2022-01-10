@@ -1,7 +1,8 @@
-import { useMemo } from "react";
+import { useContext, useMemo } from "react";
 import { Row, Col, Card, Button } from "react-bootstrap";
 import { X } from "react-bootstrap-icons";
 import { format } from "d3-format";
+import { ColorContext } from "../../contexts";
 import { VegaWrapper } from "../vega-wrapper";
 import { histogram, densityComparison, bar, barComparison } from "../../vega-specs";
 import "./detail-vis.css";
@@ -20,6 +21,8 @@ const compareValues = (value, key) => {
 };
 
 export const DetailVis = ({ data, subgroup, subgroupName, onCloseClick }) => {
+  const [{ subgroupColors }] = useContext(ColorContext);
+
   const isComparison = subgroup === "comparison";
 
   const score = data && (isComparison ? data.scoreFoldChange : data["score" + subgroup]);
@@ -37,6 +40,13 @@ export const DetailVis = ({ data, subgroup, subgroupName, onCloseClick }) => {
   const activitySpec = isComparison ? barComparison : bar;
 
   const subtitle = isComparison ? subgroupName[0] + " vs. " + subgroupName[1] : subgroupName;
+
+  const scoreParams = [{ name: "valueName", value: "score" }];
+
+  const activityParams = [{ name: "valueName", value: "activity" }];
+  if (isComparison) activityParams.push({ name: "scheme", value: "TEST" });
+  
+console.log(activityParams);
 
   return (
     <>
@@ -81,17 +91,13 @@ export const DetailVis = ({ data, subgroup, subgroupName, onCloseClick }) => {
                   spec={ scoreSpec }
                   data={ scores }
                   options={{ actions: false }}
-                  signals={[
-                    { name: "valueName", value: "score" }
-                  ]}
+                  signals={ scoreParams }
                 />
                 <VegaWrapper
                   spec={ activitySpec }
                   data={ activities }
                   options={{ actions: false }}
-                  signals={[
-                    { name: "valueName", value: "activity" }
-                  ]}
+                  signals={ activityParams }
                 />
               </div>
             : <div>No valid data</div> }

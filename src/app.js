@@ -11,7 +11,12 @@ import {
   ExpressionView,
   DownloadView
 } from "./views";
-import { UserProvider, DataProvider, ModelProvider } from "./contexts";
+import { 
+  UserProvider, 
+  DataProvider, 
+  ModelProvider,
+  ColorProvider
+ } from "./contexts";
 import { TaskStatus } from "./components/task-status";
 import { EmailNav } from "./components/email-nav";
 
@@ -20,6 +25,7 @@ export const App = () => {
     <UserProvider>
     <DataProvider>
     <ModelProvider>
+    <ColorProvider>
       <Router>
         <Container fluid>
           <Navbar fixed="top" bg="dark" variant="dark" expand="md" className="mb-4">
@@ -74,6 +80,7 @@ export const App = () => {
           </Switch>
         </Container>
       </Router>
+    </ColorProvider>
     </ModelProvider>
     </DataProvider>    
     </UserProvider>
