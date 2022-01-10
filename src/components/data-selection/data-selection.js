@@ -8,7 +8,7 @@ import { CellfieLink, SubgroupsLink, ExpressionLink } from "../page-links";
 import { errorUtils } from "../../utils/error-utils";
 import { LoadImmuneSpace } from "./load-immunespace";
 import { UploadData } from "./upload-data";
-import { LoadPractice } from "./load-practice";
+import { LoadExample } from "./load-example";
 import { states } from "./states";
 
 const { Header, Body, Footer } = Card;
@@ -72,12 +72,12 @@ export const DataSelection = () => {
           </Accordion.Item>
 
 
-          <Accordion.Item eventKey='practice'>
+          <Accordion.Item eventKey='example'>
             <Accordion.Header>
-              Practice data
+              Example data
             </Accordion.Header>
             <Accordion.Body> 
-              <LoadPractice 
+              <LoadExample 
                 state={ state }
                 onSetState={ onSetState }
                 onError={ onError }

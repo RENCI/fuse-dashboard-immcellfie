@@ -1,15 +1,15 @@
 import { useContext } from "react";
 import { Button } from "react-bootstrap";
 import { DataContext } from "../../contexts";
-import { practiceData } from "../../utils/datasets";
+import { exampleData } from "../../utils/datasets";
 import { api } from "../../utils/api";
 
 export const LoadExpression = () => {
   const [{ dataInfo }, dataDispatch] = useContext(DataContext);  
   
   const onLoadDataClick = async () => {
-    if (dataInfo.source.name === "practice") {
-      const data = await api.loadPracticeData(practiceData.expressionData);
+    if (dataInfo.source.name === "example") {
+      const data = await api.loadExampleData(exampleData.expressionData);
   
       dataDispatch({ type: "setExpressionData", data: data });      
     }

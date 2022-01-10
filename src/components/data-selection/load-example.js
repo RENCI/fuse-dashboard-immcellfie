@@ -4,15 +4,15 @@ import { UserContext, DataContext } from "../../contexts";
 import { SpinnerButton } from "../spinner-button";
 import { states } from "./states";
 import { api } from "../../utils/api";
-import { practiceData } from "../../utils/datasets";
+import { exampleData } from "../../utils/datasets";
 
 const { Group } = Form;
 
-export const LoadPractice = ({ state, onSetState, onError }) => {
+export const LoadExample = ({ state, onSetState, onError }) => {
   const [, userDispatch] = useContext(UserContext);
   const [, dataDispatch] = useContext(DataContext);
 
-  const onLoadPracticeClick = async () => {
+  const onLoadExampleClick = async () => {
     onSetState(states.loading);
     onError();
 
@@ -20,10 +20,10 @@ export const LoadPractice = ({ state, onSetState, onError }) => {
     userDispatch({ type: "clearActiveTask" });
 
     try {      
-      const expressionData = await api.loadPracticeData(practiceData.expressionData);
-      const phenotypeData = await api.loadPracticeData(practiceData.phenotypes);
+      const expressionData = await api.LoadExampleData(exampleData.expressionData);
+      const phenotypeData = await api.LoadExampleData(exampleData.phenotypes);
 
-      dataDispatch({ type: "setDataInfo", source: { name: "practice" }});
+      dataDispatch({ type: "setDataInfo", source: { name: "example" }});
 
       // Set phenotype data first
       dataDispatch({ type: "setPhenotypes", data: phenotypeData });
@@ -42,12 +42,12 @@ export const LoadPractice = ({ state, onSetState, onError }) => {
 
   return (  
     <Group>
-      <h6>Load practice data</h6>
+      <h6>Load example data</h6>
       <SpinnerButton 
         variant="primary"
         disabled={ disabled }
         spin={ state === "loading" }
-        onClick={ onLoadPracticeClick }
+        onClick={ onLoadExampleClick }
       >
         Load
       </SpinnerButton>
