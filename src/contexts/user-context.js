@@ -30,6 +30,10 @@ const reducer = (state, action) => {
     }
 
     case "addDownload": {
+      if (state.downloads.find(({ id }) => id === action.download.id)) {
+        return state;
+      }
+
       const downloads = [...state.downloads];
       downloads.unshift(action.download);
 

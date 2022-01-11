@@ -219,6 +219,7 @@ export const api = {
   },
   getImmuneSpaceDownload: async downloadId => await getDownload(downloadId),
   checkImmuneSpaceDownloadStatus: async downloadId => await checkTaskStatus(IMMUNESPACE_DOWNLOAD_PATH, downloadId),
+  getImmuneSpaceDownloadInfo: async downloadId => await getTaskInfo(IMMUNESPACE_DOWNLOAD_PATH, downloadId),
   getImmuneSpaceExpressionData: async downloadId => await resultStream(IMMUNESPACE_DOWNLOAD_PATH, downloadId, "geneBySampleMatrix"),
   getImmuneSpacePhenotypes: async downloadId => await resultStream(IMMUNESPACE_DOWNLOAD_PATH, downloadId, "phenoDataMatrix"),
 
