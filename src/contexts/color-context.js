@@ -39,11 +39,11 @@ const diverging = [
   }
 ];
 
-const getColorScale = (name, scales) => scales.find(({ scheme }) => scheme === name);
+const getColorScale = (scales, name) => scales.find(({ scheme }) => scheme === name);
 const getSubgroupColors = colorScale => {
   const scheme = vega.scheme(colorScale.scheme);
-
-  return [scheme(0.1), scheme(0.9)];
+  const colors = [scheme(0.1), scheme(0.9)];
+  return colorScale.reverse ? colors.reverse() : colors;
 }
 
 const initialState = {
@@ -65,11 +65,14 @@ const reducer = (state, action) => {
       }
       else {
         const scale = getColorScale(state.divergingScales, action.name);
+        const subgroupColors = getSubgroupColors(scale);
+
+        vega.scheme("subgroup", subgroupColors);
 
         return {
           ...state,
           divergingScale: scale,
-          subgroupColors: getSubgroupColors(scale)
+          subgroupColors: subgroupColors
         }
       }
 
@@ -84,7 +87,7 @@ export const ColorProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    vega.scheme("TEST", ["black", "gold"]);
+    vega.scheme("subgroup", getSubgroupColors(diverging[0]));
   }, []);
  
   return (

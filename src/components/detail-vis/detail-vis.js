@@ -1,8 +1,7 @@
-import { useContext, useMemo } from "react";
+import { useMemo } from "react";
 import { Row, Col, Card, Button } from "react-bootstrap";
 import { X } from "react-bootstrap-icons";
 import { format } from "d3-format";
-import { ColorContext } from "../../contexts";
 import { VegaWrapper } from "../vega-wrapper";
 import { histogram, densityComparison, bar, barComparison } from "../../vega-specs";
 import "./detail-vis.css";
@@ -21,8 +20,6 @@ const compareValues = (value, key) => {
 };
 
 export const DetailVis = ({ data, subgroup, subgroupName, onCloseClick }) => {
-  const [{ subgroupColors }] = useContext(ColorContext);
-
   const isComparison = subgroup === "comparison";
 
   const score = data && (isComparison ? data.scoreFoldChange : data["score" + subgroup]);
@@ -42,11 +39,12 @@ export const DetailVis = ({ data, subgroup, subgroupName, onCloseClick }) => {
   const subtitle = isComparison ? subgroupName[0] + " vs. " + subgroupName[1] : subgroupName;
 
   const scoreParams = [{ name: "valueName", value: "score" }];
-
   const activityParams = [{ name: "valueName", value: "activity" }];
-  if (isComparison) activityParams.push({ name: "scheme", value: "TEST" });
-  
-console.log(activityParams);
+
+  if (isComparison) {
+    scoreParams.push({ name: "scheme", value: "subgroup" });
+    activityParams.push({ name: "scheme", value: "subgroup" });
+  }
 
   return (
     <>

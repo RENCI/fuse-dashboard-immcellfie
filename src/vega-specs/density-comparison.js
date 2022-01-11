@@ -10,6 +10,10 @@ export const densityComparison = {
     {
       name: "valueName",
       value: "value"
+    },
+    {
+      name: "scheme",
+      value: "category10"
     }
   ],
   data: {
@@ -71,6 +75,7 @@ export const densityComparison = {
         color: {
           field: "subgroupName",
           type: "nominal",
+          scale: { scheme: { signal: "scheme" }},
           legend: { title: "subgroup" }
         },
         fillOpacity: { value: 0.5 }
