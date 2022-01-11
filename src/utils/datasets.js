@@ -1,4 +1,4 @@
-const practiceDatasets = {
+const exampleDatasets = {
   HPA_32: {
     phenotypes: "TestPhenotypes_32.csv",
     expressionData: "HPA.csv",
@@ -17,4 +17,4 @@ const practiceDatasets = {
   }
 };
 
-export const practiceData = {...practiceDatasets.HPA_32};
+export const exampleData = {...exampleDatasets.HPA_32};

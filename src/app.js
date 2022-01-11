@@ -1,3 +1,4 @@
+import React from "react";
 import { BrowserRouter as Router, Switch, Route, NavLink } from "react-router-dom";
 import { Container, Navbar, Nav } from "react-bootstrap";
 import { QuestionCircle } from "react-bootstrap-icons";
@@ -10,7 +11,12 @@ import {
   ExpressionView,
   DownloadView
 } from "./views";
-import { UserProvider, DataProvider, ModelProvider } from "./contexts";
+import { 
+  UserProvider, 
+  DataProvider, 
+  ModelProvider,
+  ColorProvider
+ } from "./contexts";
 import { TaskStatus } from "./components/task-status";
 import { EmailNav } from "./components/email-nav";
 
@@ -19,6 +25,7 @@ export const App = () => {
     <UserProvider>
     <DataProvider>
     <ModelProvider>
+    <ColorProvider>
       <Router>
         <Container fluid>
           <Navbar fixed="top" bg="dark" variant="dark" expand="md" className="mb-4">
@@ -37,7 +44,7 @@ export const App = () => {
             </Nav>
             <Navbar.Toggle />
             <Navbar.Collapse>
-              <Nav>
+              <Nav className="me-3">
                 <Nav.Link as={ NavLink } to="/user">User</Nav.Link>
                 <Nav.Link as={ NavLink } to="/input">Input</Nav.Link>
                 <Nav.Link as={ NavLink } to="/cellfie">CellFIE</Nav.Link>
@@ -45,10 +52,12 @@ export const App = () => {
                 <Nav.Link as={ NavLink } to="/expression-data">Expression data</Nav.Link>
                 <Nav.Link as={ NavLink } to="/downloads">Downloads</Nav.Link>
               </Nav>
-              <div className="ms-5"><EmailNav /></div>
-              <div className="ms-2"><TaskStatus /></div>
+              <EmailNav />
             </Navbar.Collapse>
             <Navbar.Collapse className="justify-content-end">
+              <div className="me-3">
+                <TaskStatus />
+              </div>
               <Nav>
                 <Nav.Link 
                   href="https://github.com/RENCI/fuse-dashboard-immcellfie/wiki" 
@@ -71,6 +80,7 @@ export const App = () => {
           </Switch>
         </Container>
       </Router>
+    </ColorProvider>
     </ModelProvider>
     </DataProvider>    
     </UserProvider>

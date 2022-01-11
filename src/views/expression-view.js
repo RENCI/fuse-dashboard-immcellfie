@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { max, range } from "d3-array";
 import { Card, Form, Row, Col } from "react-bootstrap";
-import { UserContext, DataContext } from "../contexts";
+import { UserContext, DataContext, ColorContext } from "../contexts";
 import { ViewWrapper } from "../components/view-wrapper";
 import { ResizeWrapper } from "../components/resize-wrapper";
 import { VegaWrapper } from "../components/vega-wrapper";
@@ -9,23 +9,26 @@ import { expressionHeatmap } from "../vega-specs";
 import { DataMissing } from "../components/data-missing";
 import { LoadExpression } from "../components/load-expression";
 import { UserLink, InputLink } from "../components/page-links";
-import { sequential } from "../utils/colors";
 
 const { Header, Body } = Card;
 const { Group, Label, Control } = Form;
 
 export const ExpressionView = () => {
   const [{ email }] = useContext(UserContext);
-  const [{ phenotypeData, expressionData, groups }] = useContext(DataContext);  
+  const [{ phenotypeData, expressionData, groups }] = useContext(DataContext); 
+  const [{ sequentialScales, sequentialScale }, colorDispatch] = useContext(ColorContext); 
   const [sortBy, setSortBy] = useState("median");
-  const [color, setColor] = useState(sequential[0]);
 
   const onSortByChange = evt => {
     setSortBy(evt.target.value);
   };
 
   const onColorMapChange = evt => {
-    setColor(sequential.find(({ scheme }) => scheme === evt.target.value));
+    colorDispatch({ 
+      type: "setColorScale", 
+      scaleType: "sequential", 
+      name: evt.target.value 
+    });
   };
 
   // Transform to work with vega heatmap
@@ -83,10 +86,10 @@ export const ExpressionView = () => {
                 <Control
                   size="sm"
                   as="select"
-                  value={ color.scheme }
+                  value={ sequentialScale.scheme }
                   onChange={ onColorMapChange }          
                 >
-                  { sequential.map(({ scheme, name }, i) => (
+                  { sequentialScales.map(({ scheme, name }, i) => (
                     <option key={ i } value={ scheme }>{ name }</option>
                   ))}
                 </Control>
@@ -98,7 +101,7 @@ export const ExpressionView = () => {
                 data={ heatmapData } 
                 signals={[
                   { name: "sortBy", value: sortBy },
-                  { name: "colorScheme", value: color.scheme },
+                  { name: "colorScheme", value: sequentialScale.scheme },
                   { name: "ticks", value: ticks },
                   { name: "numColumns", value: numColumns }
                 ]}

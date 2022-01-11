@@ -206,10 +206,21 @@ export const ModelSelection = () => {
         <Row>
           <Col>
             <ButtonGroup style={{ width: "100%" }}>
-              <Button onClick={ onRunCellfieClick }>
-                Run CellFIE
+              <Button 
+                disabled={ !dataInfo }
+                onClick={ onRunCellfieClick }
+              >
+                { !dataInfo ? 
+                  <>No input data</>
+                : <>Run CellFIE</>
+                }
               </Button> 
             </ButtonGroup>
+            { !dataInfo && 
+              <div className="text-center">
+                <Form.Text>Select task or load input data</Form.Text>
+              </div> 
+            }
           </Col>       
         </Row>
       </Body>

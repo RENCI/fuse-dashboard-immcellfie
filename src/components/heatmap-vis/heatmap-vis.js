@@ -1,18 +1,18 @@
-import { useState, useMemo } from "react";
+import { useContext, useState, useMemo } from "react";
 import { Form, Row, Col } from "react-bootstrap";
 import { merge, group, mean } from "d3-array";
+import { ColorContext } from "../../contexts";
 import { VegaWrapper } from "../vega-wrapper";
 import { taskHeatmap } from "../../vega-specs";
-import { sequential } from "../../utils/colors";
 import "./heatmap-vis.css";
 
 const { Group, Label, Control, Range } = Form; 
 
 export const HeatmapVis = ({ data, subgroups }) => {
+  const [{ sequentialScales, sequentialScale }, colorDispatch] = useContext(ColorContext);
   const [depth, setDepth] = useState(2);
   const [value, setValue] = useState("score");
   const [sortBy, setSortBy] = useState("mean");
-  const [color, setColor] = useState(sequential[0]);
 
   const onDepthChange = evt => {
     setDepth(+evt.target.value)
@@ -27,7 +27,11 @@ export const HeatmapVis = ({ data, subgroups }) => {
   };
 
   const onColorMapChange = evt => {
-    setColor(sequential.find(({ scheme }) => scheme === evt.target.value));
+    colorDispatch({ 
+      type: "setColorScale", 
+      scaleType: "sequential", 
+      name: evt.target.value 
+    });
   };
 
   const heatmapData = useMemo(() => {
@@ -94,10 +98,10 @@ export const HeatmapVis = ({ data, subgroups }) => {
             <Control
               size="sm"
               as="select"
-              value={ color.scheme }
+              value={ sequentialScale.scheme }
               onChange={ onColorMapChange }          
             >
-              { sequential.map(({ scheme, name }, i) => (
+              { sequentialScales.map(({ scheme, name }, i) => (
                 <option key={ i } value={ scheme }>{ name }</option>
               ))}
             </Control>
@@ -111,10 +115,10 @@ export const HeatmapVis = ({ data, subgroups }) => {
           signals={[
             { name: "value", value: value },
             { name: "sortBy", value: sortBy },
-            { name: "colorScheme", value: color.scheme },
-            { name: "reverseColors", value: color.reverse },
-            { name: "highlightColor", value: color.highlight },
-            { name: "inconclusiveColor", value: color.inconclusive }
+            { name: "colorScheme", value: sequentialScale.scheme },
+            { name: "reverseColors", value: sequentialScale.reverse },
+            { name: "highlightColor", value: sequentialScale.highlight },
+            { name: "inconclusiveColor", value: sequentialScale.inconclusive }
           ]}
         />
       </div>

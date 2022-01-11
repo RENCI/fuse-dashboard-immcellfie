@@ -1,6 +1,3 @@
-.task-active {
-  z-index: 3;
-  background: #f8f9fa !important;
-  border-color: black;
-  border-bottom-width: 2px !important;
+.task-active {  
+  border-width: 2px !important;
 }

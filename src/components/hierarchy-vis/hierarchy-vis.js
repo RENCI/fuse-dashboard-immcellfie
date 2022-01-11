@@ -3,7 +3,7 @@ import { Form, Row, Col, ToggleButtonGroup, ToggleButton } from "react-bootstrap
 import { randomUniform, randomLcg } from "d3-random";
 import { range, extent, merge } from "d3-array";
 import { line } from "d3-shape";
-import { DataContext } from "../../contexts";
+import { DataContext, ColorContext } from "../../contexts";
 import { voronoiTreemap as d3VoronoiTreemap } from "d3-voronoi-treemap";
 import { ResizeWrapper } from "../resize-wrapper";
 import { VegaWrapper } from "../vega-wrapper";
@@ -14,7 +14,6 @@ import {
   enclosure, enclosureLogScale, enclosurePValue,
   voronoiTreemap, voronoiTreemapLogScale, voronoiTreemapPValue
 } from "../../vega-specs";
-import { sequential, diverging } from "../../utils/colors";
 import { LoadingSpinner } from "../loading-spinner";
 import { SelectedList } from "../selected-list";
 import "./hierarchy-vis.css";
@@ -47,12 +46,14 @@ const visualizations = [
 
 export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
   const [, dataDispatch] = useContext(DataContext);
+  const [
+    { sequentialScales, divergingScales, sequentialScale, divergingScale }, 
+    colorDispatch
+  ] = useContext(ColorContext);
   const [loading, setLoading] = useState(true);
   const [depth, setDepth] = useState(1);
   const [subgroup, setSubgroup] = useState(subgroups[1] ? "comparison" : "1");
   const [value, setValue] = useState("score");
-  const [colors, setColors] = useState(subgroups[1] ? diverging : sequential);
-  const [color, setColor] = useState(subgroups[1] ? diverging[0] : sequential[0]);
   const [vis, setVis] = useState(visualizations[0]);
 
   const hasSubgroups = subgroups[1] !== null;
@@ -60,6 +61,9 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
   const isComparison = subgroup === "comparison";
 
   const hasVoronoi = tree.descendants()[0].polygon;
+
+  const colorScales = isComparison ? divergingScales : sequentialScales;
+  const colorScale = isComparison ? divergingScale : sequentialScale;
 
   const onVisChange = value => {
     setLoading(true);
@@ -73,12 +77,6 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
     const value = evt.target.value;
 
     setSubgroup(value);
-
-    const colors = value === "comparison" ? diverging : sequential; 
-
-    setColors(colors);
-
-    if (!colors.includes(color)) setColor(colors[0]);
   };
 
   const onValueChange = evt => {
@@ -88,7 +86,11 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
   };
 
   const onColorMapChange = evt => {
-    setColor(colors.find(({ scheme }) => scheme === evt.target.value));
+    colorDispatch({ 
+      type: "setColorScale", 
+      scaleType: isComparison ? "diverging" : "sequential", 
+      name: evt.target.value 
+    });
   };
 
   const onSelectNode = (evt, item) => {
@@ -236,10 +238,10 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
             <Control
               size="sm"
               as="select"
-              value={ color.scheme }
+              value={ colorScale.scheme }
               onChange={ onColorMapChange }          
             >
-              { colors.map(({ scheme, name }, i) => (
+              { colorScales.map(({ scheme, name }, i) => (
                 <option key={ i } value={ scheme }>{ name }</option>
               ))}
             </Control>
@@ -273,10 +275,10 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
                 { name: "value", value: valueField },
                 { name: "strokeField", value: strokeField },
                 { name: "legendTitle", value: legendTitle },
-                { name: "colorScheme", value: color.scheme },
-                { name: "reverseColors", value: color.reverse },
-                { name: "highlightColor", value: color.highlight },
-                { name: "inconclusiveColor", value: color.inconclusive },
+                { name: "colorScheme", value: colorScale.scheme },
+                { name: "reverseColors", value: colorScale.reverse },
+                { name: "highlightColor", value: colorScale.highlight },
+                { name: "inconclusiveColor", value: colorScale.inconclusive },
                 { name: "domain", value: domain }
               ]}
               eventListeners={[

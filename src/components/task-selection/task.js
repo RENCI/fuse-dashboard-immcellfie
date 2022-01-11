@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { ListGroup, Row, Col, Button, Collapse, OverlayTrigger, Tooltip } from "react-bootstrap";
-import { ChevronDown, ChevronUp, XLg } from "react-bootstrap-icons";
+import { ChevronDown, ChevronUp, XCircle } from "react-bootstrap-icons";
 import { TaskStatusIcon } from "../task-status-icon";
 import { getModel } from "../../utils/models";
 import "./task-selection.css";
@@ -104,7 +104,7 @@ export const Task = ({ task, onClick, onDeleteClick }) => {
     <Item  
       as="li"
       key={ task.id }
-      className={ task.active ? "task-active" : null }
+      className={ task.active ? "task-active border border-primary rounded" : null }
       onClick={ () => onClick(task) }
     >
       <Row className="d-flex align-items-center">  
@@ -128,33 +128,35 @@ export const Task = ({ task, onClick, onDeleteClick }) => {
         </Col>
       </Row>      
       <Collapse in={ expand }>
-        <div>
-          <Row className="mt-3 border-top pt-3">
-            <Col>
-              { objectDisplay(task.info) }              
-            </Col>
-            <Col>
-              { objectDisplay(task.parameters) }
-            </Col>
-            <Col xs="auto">
-              <OverlayTrigger
-                overlay={
-                  <Tooltip>
-                    Delete task
-                  </Tooltip>
-                }
+        <Row className="mt-3 border-top pt-3">
+          <Col>
+            <Row>
+              <Col>
+                { objectDisplay(task.info) }              
+              </Col>
+              <Col>
+                { objectDisplay(task.parameters) }
+              </Col>
+            </Row>
+          </Col>
+          <Col xs="auto">
+            <OverlayTrigger
+              overlay={
+                <Tooltip>
+                  Delete task
+                </Tooltip>
+              }
+            >
+              <Button 
+                size="sm"
+                variant="outline-danger"
+                onClick={ onDeleteButtonClick }
               >
-                <Button 
-                  size={ "sm"}
-                  variant={ "outline-danger" }
-                  onClick={ onDeleteButtonClick }
-                >
-                  <XLg className="mb-1" />
-                </Button>                
-              </OverlayTrigger>
-            </Col>
-          </Row>
-        </div>
+                <XCircle className="mb-1" />
+              </Button>                
+            </OverlayTrigger>
+          </Col>
+        </Row>
       </Collapse>
     </Item>
   );

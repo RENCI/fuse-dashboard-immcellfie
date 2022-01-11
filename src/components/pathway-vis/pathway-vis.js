@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useCallback } from "react";
 import { Form, Row, Col, Card } from "react-bootstrap";
 import { DataContext } from "../../contexts";
 import { EscherWrapper } from "../escher-wrapper";
@@ -56,9 +56,9 @@ export const PathwayVis = () => {
     setSubgroup(value);
   };
 
-  const onLoaded = () => {
+  const onLoaded = useCallback(() => {
     setLoading(false);
-  }
+  }, []);
 
   return (
     <>

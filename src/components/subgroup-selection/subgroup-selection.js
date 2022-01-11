@@ -1,18 +1,19 @@
 import { useContext } from "react";
 import { Card, Row, Col, Form } from "react-bootstrap";
-import { DataContext } from "../../contexts";
+import { DataContext, ColorContext } from "../../contexts";
 import { SubgroupsLink } from "../page-links";
 import { OverlapVis } from "../overlap-vis";
 import { WarningMessage } from "../warning-message";
-import { subgroupColors } from "../../utils/colors";
 import "./subgroup-selection.css";
 
 const { Header, Body } = Card;
 const { Group, Label, Control } = Form;
-const { color1, color2 } = subgroupColors;
 
 export const SubgroupSelection = () => {
   const [{ subgroups, selectedSubgroups, overlapMethod }, dataDispatch] = useContext(DataContext);
+  const [{ subgroupColors }] = useContext(ColorContext);
+
+  const [color1, color2] = subgroupColors;
 
   if (!subgroups) return null;
 

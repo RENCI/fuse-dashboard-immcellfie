@@ -1,12 +1,12 @@
 import { useState, useContext } from "react";
-import { Form } from "react-bootstrap";
+import { Row, Col, Figure } from "react-bootstrap";
 import { UserContext, DataContext } from "../../contexts";
 import { SpinnerButton } from "../spinner-button";
 import { FileSelect } from "../file-select";
 import { states } from "./states";
 import { api } from "../../utils/api";
 
-const { Group } = Form;
+const { Image } = Figure;
 
 export const UploadData = ({ state, onSetState, onError }) => {
   const [, userDispatch] = useContext(UserContext);
@@ -53,33 +53,39 @@ export const UploadData = ({ state, onSetState, onError }) => {
     onSetState(states.normal);
   };
 
+  const dataImage = (label, description, src) => (
+    <>
+      <div>{ label }</div>
+      { description.concat("e.g.").map((d, i) => <div key={ i } className="text-muted small">{ d }</div>) }
+      <Image className="mt-1" src={ src } />
+    </>
+  );
+
   const disabled = state !== states.normal;
 
   return (
     <> 
       <h6>Upload files from your computer in CSV format</h6>
-      <Group className="mb-3">
-        <FileSelect
-          label="Required: expression data"
-          onChange={ onExpressionFileSelect }
-        />
-      </Group> 
-      <Group className="mb-3">
-        <FileSelect
-          label="Optional: phenotype data"
-          onChange={ onPhenotypeFileSelect }
-        />
-      </Group> 
-      <Group>
-        <SpinnerButton
-          variant="primary"
-          disabled={ disabled || !expressionDataFile }
-          spin={ state === "uploading" }
-          onClick={ onUploadDataClick }
-        >
-          Upload
-        </SpinnerButton>              
-      </Group>
+      <hr />
+      <Row>
+        <Col>
+          { dataImage("Expression data:", ["1st column: gene id", "Subsequent columns: samples"], "ExpressionDataFormat.png") }
+          <FileSelect onChange={ onExpressionFileSelect } />
+        </Col>
+        <Col>
+          { dataImage("Phenotype data (optional):", ["1st row: headers", "Subsequent rows: samples"], "PhenotypeDataFormat.png") }
+          <FileSelect onChange={ onPhenotypeFileSelect } />
+        </Col>
+      </Row>
+      <hr />
+      <SpinnerButton
+        variant="primary"
+        disabled={ disabled || !expressionDataFile }
+        spin={ state === "uploading" }
+        onClick={ onUploadDataClick }
+      >
+        Upload
+      </SpinnerButton>  
     </>
   );
 };           

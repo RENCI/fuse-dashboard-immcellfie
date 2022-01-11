@@ -38,6 +38,14 @@ export const DetailVis = ({ data, subgroup, subgroupName, onCloseClick }) => {
 
   const subtitle = isComparison ? subgroupName[0] + " vs. " + subgroupName[1] : subgroupName;
 
+  const scoreParams = [{ name: "valueName", value: "score" }];
+  const activityParams = [{ name: "valueName", value: "activity" }];
+
+  if (isComparison) {
+    scoreParams.push({ name: "scheme", value: "subgroup" });
+    activityParams.push({ name: "scheme", value: "subgroup" });
+  }
+
   return (
     <>
       { data &&
@@ -81,17 +89,13 @@ export const DetailVis = ({ data, subgroup, subgroupName, onCloseClick }) => {
                   spec={ scoreSpec }
                   data={ scores }
                   options={{ actions: false }}
-                  signals={[
-                    { name: "valueName", value: "score" }
-                  ]}
+                  signals={ scoreParams }
                 />
                 <VegaWrapper
                   spec={ activitySpec }
                   data={ activities }
                   options={{ actions: false }}
-                  signals={[
-                    { name: "valueName", value: "activity" }
-                  ]}
+                  signals={ activityParams }
                 />
               </div>
             : <div>No valid data</div> }
