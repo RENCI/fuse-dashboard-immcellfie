@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { Row, Col, Form, InputGroup, ButtonGroup, Button, ToggleButton } from "react-bootstrap";
+import { Row, Col, Form, InputGroup, ToggleButtonGroup, Button, ToggleButton } from "react-bootstrap";
 import { GraphUp, List } from "react-bootstrap-icons";
 import { X } from "react-bootstrap-icons";
 import { DataContext } from "../../contexts";
@@ -98,28 +98,29 @@ export const SelectedList = ({ nodes, subgroup, subgroupName }) => {
           </InputGroup>
         </Col>
         <Col xs="auto" className="me-2">
-          <ButtonGroup toggle>
+          <ToggleButtonGroup 
+            type="radio" 
+            name="selectedModeButtons"
+            value={ mode }
+            onChange={ value => setMode(value) }
+          >
             <ToggleButton
-              type="radio"
+              id="listButton"
               variant="outline-secondary"
               value="list"
-              checked={ mode === "list" }
               className="d-flex align-items-center"
-              onClick={ () => setMode("list") }
             >
               { <List />  }
             </ToggleButton>
             <ToggleButton
-              type="radio"
+              id="detailButton"
               variant="outline-secondary"
               value="detail"
-              checked={ mode === "detail" }
               className="d-flex align-items-center"
-              onClick={ () => setMode("detail") }
             >
               { <GraphUp /> }
             </ToggleButton>
-          </ButtonGroup>
+          </ToggleButtonGroup>
         </Col>
         { mode === "list" &&
           <Col className="px-0">

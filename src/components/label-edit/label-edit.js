@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Form, FormControl } from "react-bootstrap";
-import "./label-edit.css";
+import styles from "./label-edit.module.css";
 
 const { Label } = Form;
 
@@ -48,7 +48,7 @@ export const LabelEdit = ({ subgroup, isNew, onChange }) => {
           onKeyPress={ onKeyPress }
         />
       : <Label
-          className={ "labelMode " + (canEdit ? "editable" : "") }
+          className={ styles.labelMode + (canEdit ? ` ${ styles.editable }` : "") }
           onClick={ onNameLabelClick }
         >
           { subgroup.name }

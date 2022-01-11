@@ -1,6 +1,7 @@
-.detailVis {  
+.card {  
   width: 300px;
 }
-.detailCloseButton {
+
+.close {
   margin-top: -1.5rem;
 }

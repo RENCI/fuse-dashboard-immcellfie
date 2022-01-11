@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import vegaEmbed from "vega-embed";
 import { LoadingSpinner } from "../loading-spinner";
-import "./vega-wrapper.css";
+import styles from "./vega-wrapper.module.css";
 
 export const VegaWrapper = ({ 
   width, height, options, spec, data, signals, eventListeners, tooltip, spinner 
@@ -132,7 +132,7 @@ export const VegaWrapper = ({
     <>
       <div 
         ref={ div }
-        className="wrapperDiv"
+        className={ styles.wrapperDiv }
         style={{ width: width, height: height }}
         onClick={ clearTooltip }
       >

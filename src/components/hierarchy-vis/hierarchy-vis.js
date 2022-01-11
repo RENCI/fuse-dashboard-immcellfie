@@ -16,7 +16,6 @@ import {
 } from "../../vega-specs";
 import { LoadingSpinner } from "../loading-spinner";
 import { SelectedList } from "../selected-list";
-import "./hierarchy-vis.css";
 
 const { Group, Label, Control, Range } = Form; 
 
@@ -187,7 +186,6 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
                 <ToggleButton 
                   key={ i }
                   id={ `visButton_${ name }` }
-                  type="radio"
                   variant="outline-primary"
                   value={ name }
                 >

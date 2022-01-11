@@ -5,6 +5,7 @@ import { UserContext, DataContext } from "../../contexts";
 import { SpinnerButton } from "../spinner-button";
 import { states } from "./states";
 import { api } from "../../utils/api";
+import style from "./immunespace-dialog.module.css";
 
 const { Header, Title, Body } = Modal;
 const { Group, Control, Label } = Form;
@@ -132,7 +133,7 @@ export const ImmunespaceDialog = ({ state, onSetState, onError }) => {
           variant="outline-primary" 
           onClick={ onShowClick }
         >
-          <PlusCircle style={{ verticalAlign: "-.1em" }}/>
+          <PlusCircle className="icon-offset" />
         </Button>
         <Label className="ms-2">Load new data from ImmuneSpace</Label>
       </Group>
@@ -157,7 +158,7 @@ export const ImmunespaceDialog = ({ state, onSetState, onError }) => {
               <OverlayTrigger
                 placement="right"
                 overlay={ 
-                  <Popover style={{ maxWidth: 500 }}>
+                  <Popover className={ style.popoverWidth }>
                     <Popover.Header>An <b>API key</b> is necessary to access data from <b>ImmuneSpace</b></Popover.Header>
                     <Popover.Body>                        
                       <div>
@@ -208,7 +209,7 @@ export const ImmunespaceDialog = ({ state, onSetState, onError }) => {
               <OverlayTrigger
                 placement="right"
                 overlay={ 
-                  <Popover style={{ maxWidth: 500 }}>
+                  <Popover className={ style.popoverWidth }>
                     <Popover.Header>A <b>Group Label</b> is used to identify data from <b>ImmuneSpace</b></Popover.Header>
                     <Popover.Body>
                       In Immunespace:

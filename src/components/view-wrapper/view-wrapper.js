@@ -1,8 +1,8 @@
-import "./view-wrapper.css";
+import styles from "./view-wrapper.module.css";
 
 export const ViewWrapper = ({ children }) => {
   return (
-    <div className="viewWrapper">
+    <div className={ styles.wrapper }>
       { children }
     </div>
   );

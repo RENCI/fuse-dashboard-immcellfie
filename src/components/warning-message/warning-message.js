@@ -1,5 +1,4 @@
 import { ExclamationTriangleFill } from "react-bootstrap-icons";
-import "./warning-message.css";
 
 export const WarningMessage = ({ message }) => {
   return (

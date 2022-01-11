@@ -5,6 +5,7 @@ import { DataContext, UserContext } from "../../contexts";
 import { TaskStatusIcon } from "../task-status-icon";
 import { states } from "./states";
 import { api } from "../../utils/api";
+import styles from "./download-list.module.css";
 
 export const DownloadList = ({ state, onSetState, onError }) => {   
   const [{ dataInfo }, dataDispatch  ] = useContext(DataContext);
@@ -38,18 +39,20 @@ export const DownloadList = ({ state, onSetState, onError }) => {
   };
 
   const disabled = state !== states.normal;
-  const loaded = download => dataInfo && dataInfo.source.downloadId === download.id
+  const loaded = download => dataInfo && dataInfo.source.downloadId === download.id;
+  const failed = download => download.info && download.info.status === "failed";
 
   const columns = [    
     {
       name: "",
-      accessor: d => loaded(d) ? 
-        <StarFill className="text-primary" style={{ verticalAlign: "-.1em" }} /> : 
-        <Star className="text-primary" style={{ verticalAlign: "-.1em" }} />
+      accessor: d => failed(d) ? null : loaded(d) ? 
+        <StarFill className="text-primary icon-offset" /> : 
+        <Star className="text-primary icon-offset" />
     },
     {
       name: "",
       accessor: d => (
+        failed(d) ? null :
         <Button 
           size="sm"
           disabled={ disabled || loaded(d) }
@@ -124,7 +127,7 @@ export const DownloadList = ({ state, onSetState, onError }) => {
             size="sm"
             variant="outline-danger"
           >
-            <XCircle style={{ verticalAlign: "-.1em" }} />
+            <XCircle />
           </Button>                
         </OverlayTrigger>
       )
@@ -135,8 +138,8 @@ export const DownloadList = ({ state, onSetState, onError }) => {
   return (
     <>
       { downloads.length > 0 &&
-        <div style={{ maxHeight: 235, overflow: "auto" }}>
-          <Table size="sm" hover responsive className="align-middle">
+        <div className={ styles.tableWrapper }>
+          <Table size="sm" hover className="align-middle">
             <thead>        
               <tr>
                 { columns.map((column, i) => <th key={ i }>{ column.name }</th>)}   

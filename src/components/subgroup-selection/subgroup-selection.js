@@ -4,7 +4,7 @@ import { DataContext, ColorContext } from "../../contexts";
 import { SubgroupsLink } from "../page-links";
 import { OverlapVis } from "../overlap-vis";
 import { WarningMessage } from "../warning-message";
-import "./subgroup-selection.css";
+import styles from "./subgroup-selection.module.css";
 
 const { Header, Body } = Card;
 const { Group, Label, Control } = Form;
@@ -99,7 +99,7 @@ export const SubgroupSelection = () => {
             >              
               { canCompare ? options(0) : <option value="none">None</option> }
             </Control>
-            <div className="subgroupIndicator" style={{ borderColor: color2 }}></div>
+            <div className={ styles.subgroupIndicator } style={{ borderColor: color2 }}></div>
           </Group>
         </Row>
         { subgroup2 &&

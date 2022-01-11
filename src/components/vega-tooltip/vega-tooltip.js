@@ -1,5 +1,4 @@
 import React, { useRef } from "react";
-import "./vega-tooltip.css";
 
 // Borrowed from https://github.com/vega/vega-tooltip/
 const calculatePosition = (event, tooltipBox, itemBox, offsetX, offsetY) => {

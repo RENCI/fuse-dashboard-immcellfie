@@ -42,7 +42,7 @@ export const CellfieOutput = () => {
               activeKey={ tab }
               variant="tabs" 
               justify={ true }
-              style={{ cursor: "pointer" }}
+              className="pointer"
             >
               <Item>
                 <Link eventKey="hierarchy">Hierarchy</Link>

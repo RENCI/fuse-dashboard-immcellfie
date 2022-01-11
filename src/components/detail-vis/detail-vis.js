@@ -4,7 +4,7 @@ import { X } from "react-bootstrap-icons";
 import { format } from "d3-format";
 import { VegaWrapper } from "../vega-wrapper";
 import { histogram, densityComparison, bar, barComparison } from "../../vega-specs";
-import "./detail-vis.css";
+import styles from "./detail-vis.module.css";
 
 const { Subtitle, Body, Footer } = Card;
 
@@ -49,7 +49,7 @@ export const DetailVis = ({ data, subgroup, subgroupName, onCloseClick }) => {
   return (
     <>
       { data &&
-        <Card className="detailVis">
+        <Card className={ styles.card }>
           <Body>
             <Row>
               <Col>
@@ -60,7 +60,7 @@ export const DetailVis = ({ data, subgroup, subgroupName, onCloseClick }) => {
                   <Button                  
                     variant="link"
                     size="xs"
-                    className="text-muted p-0 align-middle detailCloseButton"
+                    className={ `text-muted p-0 align-middle ${ styles.close }` }
                     onClick={ () => onCloseClick(data.name) }
                   >
                     <X />

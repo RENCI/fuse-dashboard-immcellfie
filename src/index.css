@@ -1,3 +1,11 @@
+.icon-offset {
+  vertical-align: -.1em;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
 .vegaTooltip {
   position: fixed;
   z-index: 1000;
