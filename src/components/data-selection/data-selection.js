@@ -10,7 +10,7 @@ import { LoadImmuneSpace } from "./load-immunespace";
 import { UploadData } from "./upload-data";
 import { LoadExample } from "./load-example";
 import { states } from "./states";
-import "./data-selection.css";
+import styles from "./data-selection.module.css";
 
 const { Header, Body, Footer } = Card;
 
@@ -50,7 +50,7 @@ export const DataSelection = () => {
             <Accordion.Header>
               ImmuneSpace
             </Accordion.Header>
-            <Accordion.Body>
+            <Accordion.Body className={ styles.accordionShadow }>
               <LoadImmuneSpace 
                 state={ state }
                 onSetState={ onSetState }
@@ -63,7 +63,7 @@ export const DataSelection = () => {
             <Accordion.Header>
               Data upload
             </Accordion.Header>
-            <Accordion.Body> 
+            <Accordion.Body className={ styles.accordionShadow }> 
               <UploadData
                 state={ state }
                 onSetState={ onSetState }
@@ -77,7 +77,7 @@ export const DataSelection = () => {
             <Accordion.Header>
               Example data
             </Accordion.Header>
-            <Accordion.Body> 
+            <Accordion.Body className={ styles.accordionShadow }> 
               <LoadExample 
                 state={ state }
                 onSetState={ onSetState }

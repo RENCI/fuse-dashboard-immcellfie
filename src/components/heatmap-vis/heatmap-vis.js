@@ -4,7 +4,7 @@ import { merge, group, mean } from "d3-array";
 import { ColorContext } from "../../contexts";
 import { VegaWrapper } from "../vega-wrapper";
 import { taskHeatmap } from "../../vega-specs";
-import "./heatmap-vis.css";
+import styles from "./heatmap-vis.module.css";
 
 const { Group, Label, Control, Range } = Form; 
 
@@ -108,7 +108,7 @@ export const HeatmapVis = ({ data, subgroups }) => {
           </Group>
         </Row>
       </div>
-      <div style={{ overflowX: "auto" }}>
+      <div className={ styles.outerDiv }>
         <VegaWrapper 
           spec={ taskHeatmap } 
           data={ heatmapData }             

@@ -16,7 +16,6 @@ import {
 } from "../../vega-specs";
 import { LoadingSpinner } from "../loading-spinner";
 import { SelectedList } from "../selected-list";
-import "./hierarchy-vis.css";
 
 const { Group, Label, Control, Range } = Form; 
 

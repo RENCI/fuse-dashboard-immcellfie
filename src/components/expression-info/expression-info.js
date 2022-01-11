@@ -1,12 +1,12 @@
 import { Alert } from "react-bootstrap";
-import "./expression-info.css";
+import styles from "./expression-info.module.css";
 
 export const ExpressionInfo = ({ source, name, data }) => {
   const numGenes = data ? data.length : 0;
   const numSamples = numGenes > 0 ? data[0].values.length : 0;
 
   return (
-    <Alert variant="primary" className="expressionInfo">
+    <Alert variant="primary" className={ styles.alert }>
       { data ? 
         <>
           <u>Expression data loaded</u>

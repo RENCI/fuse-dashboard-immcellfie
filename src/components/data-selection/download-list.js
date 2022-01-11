@@ -5,7 +5,6 @@ import { DataContext, UserContext } from "../../contexts";
 import { TaskStatusIcon } from "../task-status-icon";
 import { states } from "./states";
 import { api } from "../../utils/api";
-import "./download-list.css";
 
 export const DownloadList = ({ state, onSetState, onError }) => {   
   const [{ dataInfo }, dataDispatch  ] = useContext(DataContext);
@@ -46,8 +45,8 @@ export const DownloadList = ({ state, onSetState, onError }) => {
     {
       name: "",
       accessor: d => failed(d) ? null : loaded(d) ? 
-        <StarFill className="text-primary" /> : 
-        <Star className="text-primary" />
+        <StarFill className="text-primary icon-offset" /> : 
+        <Star className="text-primary icon-offset" />
     },
     {
       name: "",

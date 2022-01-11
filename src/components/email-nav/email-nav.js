@@ -15,14 +15,13 @@ export const EmailNav = () => {
     email && 
     <div className="text-info small">
       <Row>
-        <Col style={{ whiteSpace: "nowrap" }}>
-          <div>User: <b>{ email }</b></div>
+        <Col>
+          <div>User</div>
+          <div><b>{ email }</b></div>
         </Col>
-        <Col style={{ whiteSpace: "nowrap" }}>
-          { dataInfo && dataInfo.phenotypes ? 
-            <>Data: <b>{ name }</b></> : 
-            <>No data loaded</>
-          }
+        <Col>
+          <div>Data</div>
+          <div><b>{ name ? name : "None loaded" }</b></div>
         </Col>
       </Row>      
     </div>
