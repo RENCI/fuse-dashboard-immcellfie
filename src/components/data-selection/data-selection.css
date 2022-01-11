@@ -1,3 +1,5 @@
 .accordion-collapse > div {
-  box-shadow: 0px 0px 4px 4px #eaf1ff  inset;
+  box-shadow: 
+    2px -2px 2px 2px #eaf1ff inset, 
+    -2px -2px 2px 2px #eaf1ff inset;
 }
