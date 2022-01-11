@@ -43,6 +43,7 @@ const getColorScale = (scales, name) => scales.find(({ scheme }) => scheme === n
 const getSubgroupColors = colorScale => {
   const scheme = vega.scheme(colorScale.scheme);
   const colors = [scheme(0.1), scheme(0.9)];
+  
   return colorScale.reverse ? colors.reverse() : colors;
 }
 
