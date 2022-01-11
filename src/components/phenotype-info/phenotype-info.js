@@ -1,9 +1,9 @@
 import { Alert } from "react-bootstrap";
-import "./phenotype-info.css";
+import styles from "./phenotype-info.module.css";
 
 export const PhenotypeInfo = ({ source, name, data }) => {
   return (
-    <Alert variant="info" className="phenotypeInfo">
+    <Alert variant="info" className={ styles.alert }>
       { data ? 
         <>
           <u>Phenotype data loaded</u>

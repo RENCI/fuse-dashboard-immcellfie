@@ -3,7 +3,6 @@ import { ListGroup, Row, Col, Button, Collapse, OverlayTrigger, Tooltip } from "
 import { ChevronDown, ChevronUp, XCircle } from "react-bootstrap-icons";
 import { TaskStatusIcon } from "../task-status-icon";
 import { getModel } from "../../utils/models";
-import "./task-selection.css";
 
 const { Item } = ListGroup;
 

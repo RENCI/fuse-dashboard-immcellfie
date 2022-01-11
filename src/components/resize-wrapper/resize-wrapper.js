@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import PropTypes from "prop-types";
 import { useResize } from "../../hooks";
-import "./resize-wrapper.css";
+import styles from "./resize-wrapper.module.css";
 
 export const ResizeWrapper = ({ useWidth, useHeight, minWidth, aspectRatio, children }) => {
   const ref = useRef();
@@ -14,7 +14,7 @@ export const ResizeWrapper = ({ useWidth, useHeight, minWidth, aspectRatio, chil
   if (useHeight) props.height = aspectRatio ? w / aspectRatio : height;
 
   return (
-    <div ref={ ref } className="resizeWrapper">
+    <div ref={ ref } className={ styles.resizeWrapper }>
       { React.cloneElement(children, props) }
     </div>
   );
