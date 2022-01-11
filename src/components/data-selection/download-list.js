@@ -5,6 +5,7 @@ import { DataContext, UserContext } from "../../contexts";
 import { TaskStatusIcon } from "../task-status-icon";
 import { states } from "./states";
 import { api } from "../../utils/api";
+import styles from "./download-list.module.css";
 
 export const DownloadList = ({ state, onSetState, onError }) => {   
   const [{ dataInfo }, dataDispatch  ] = useContext(DataContext);
@@ -137,7 +138,7 @@ export const DownloadList = ({ state, onSetState, onError }) => {
   return (
     <>
       { downloads.length > 0 &&
-        <div className="tableWrapper">
+        <div className={ styles.tableWrapper }>
           <Table size="sm" hover className="align-middle">
             <thead>        
               <tr>
