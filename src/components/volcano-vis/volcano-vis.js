@@ -10,7 +10,6 @@ import { SubgroupsLink } from "../page-links";
 import { WarningMessage } from "../warning-message";
 import { SelectedList } from "../selected-list";
 import { volcanoPlot } from "../../vega-specs";
-import "./volcano-vis.css";
 
 const { Group, Label, Control, Range } = Form; 
 
