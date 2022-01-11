@@ -10,6 +10,7 @@ import { LoadImmuneSpace } from "./load-immunespace";
 import { UploadData } from "./upload-data";
 import { LoadExample } from "./load-example";
 import { states } from "./states";
+import "./data-selection.css";
 
 const { Header, Body, Footer } = Card;
 
@@ -49,7 +50,7 @@ export const DataSelection = () => {
             <Accordion.Header>
               ImmuneSpace
             </Accordion.Header>
-            <Accordion.Body> 
+            <Accordion.Body>
               <LoadImmuneSpace 
                 state={ state }
                 onSetState={ onSetState }
