@@ -5,6 +5,7 @@ import { DataContext, UserContext } from "../../contexts";
 import { TaskStatusIcon } from "../task-status-icon";
 import { states } from "./states";
 import { api } from "../../utils/api";
+import "./download-list.css";
 
 export const DownloadList = ({ state, onSetState, onError }) => {   
   const [{ dataInfo }, dataDispatch  ] = useContext(DataContext);
@@ -45,8 +46,8 @@ export const DownloadList = ({ state, onSetState, onError }) => {
     {
       name: "",
       accessor: d => failed(d) ? null : loaded(d) ? 
-        <StarFill className="text-primary" style={{ verticalAlign: "-.1em" }} /> : 
-        <Star className="text-primary" style={{ verticalAlign: "-.1em" }} />
+        <StarFill className="text-primary" /> : 
+        <Star className="text-primary" />
     },
     {
       name: "",
@@ -126,7 +127,7 @@ export const DownloadList = ({ state, onSetState, onError }) => {
             size="sm"
             variant="outline-danger"
           >
-            <XCircle style={{ verticalAlign: "-.1em" }} />
+            <XCircle />
           </Button>                
         </OverlayTrigger>
       )
@@ -137,8 +138,8 @@ export const DownloadList = ({ state, onSetState, onError }) => {
   return (
     <>
       { downloads.length > 0 &&
-        <div style={{ maxHeight: 235, overflow: "auto" }}>
-          <Table size="sm" hover responsive className="align-middle">
+        <div className="tableWrapper">
+          <Table size="sm" hover className="align-middle">
             <thead>        
               <tr>
                 { columns.map((column, i) => <th key={ i }>{ column.name }</th>)}   

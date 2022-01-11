@@ -7,6 +7,7 @@ import { VolcanoVis } from "../volcano-vis";
 import { PathwayVis } from "../pathway-vis";
 import { LoadingSpinner } from "../loading-spinner";
 import { useLocalStorage } from "../../hooks";
+import "./cellfie-output.css";
 
 const { Header, Title, Body } = Card;
 const { Item, Link } = Nav;
@@ -42,7 +43,6 @@ export const CellfieOutput = () => {
               activeKey={ tab }
               variant="tabs" 
               justify={ true }
-              style={{ cursor: "pointer" }}
             >
               <Item>
                 <Link eventKey="hierarchy">Hierarchy</Link>
