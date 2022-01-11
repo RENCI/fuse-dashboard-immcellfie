@@ -38,18 +38,20 @@ export const DownloadList = ({ state, onSetState, onError }) => {
   };
 
   const disabled = state !== states.normal;
-  const loaded = download => dataInfo && dataInfo.source.downloadId === download.id
+  const loaded = download => dataInfo && dataInfo.source.downloadId === download.id;
+  const failed = download => download.info && download.info.status === "failed";
 
   const columns = [    
     {
       name: "",
-      accessor: d => loaded(d) ? 
+      accessor: d => failed(d) ? null : loaded(d) ? 
         <StarFill className="text-primary" style={{ verticalAlign: "-.1em" }} /> : 
         <Star className="text-primary" style={{ verticalAlign: "-.1em" }} />
     },
     {
       name: "",
       accessor: d => (
+        failed(d) ? null :
         <Button 
           size="sm"
           disabled={ disabled || loaded(d) }

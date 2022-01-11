@@ -187,7 +187,6 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
                 <ToggleButton 
                   key={ i }
                   id={ `visButton_${ name }` }
-                  type="radio"
                   variant="outline-primary"
                   value={ name }
                 >
