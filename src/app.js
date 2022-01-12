@@ -18,7 +18,7 @@ import {
   ColorProvider
  } from "./contexts";
 import { TaskStatus } from "./components/task-status";
-import { EmailNav } from "./components/email-nav";
+import { InfoNav } from "./components/info-nav";
 
 export const App = () => { 
   return (
@@ -52,7 +52,7 @@ export const App = () => {
                 <Nav.Link as={ NavLink } to="/expression-data">Expression data</Nav.Link>
                 <Nav.Link as={ NavLink } to="/downloads">Downloads</Nav.Link>
               </Nav>
-              <EmailNav />
+              <InfoNav />
             </Navbar.Collapse>
             <Navbar.Collapse className="justify-content-end">
               <div className="me-3">

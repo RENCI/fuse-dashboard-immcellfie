@@ -1,4 +1,4 @@
-import { createContext, useReducer } from "react";
+import React, { createContext, useReducer } from "react";
 import { csvParseRows, csvParse } from "d3-dsv";
 import { stratify } from "d3-hierarchy";
 import { merge, mean, group } from "d3-array";
@@ -94,9 +94,7 @@ const parsePhenotypeDataRandomize = (data, n = 32) => {
 const createPhenotypeData = expressionData => {
   if (expressionData.length === 0) return "";
 
-  return expressionData[0].values.reduce(string => {
-    return string + "auto\n";
-  }, "Auto\n");
+  return "ID\n" + expressionData[0].values.map((value, i) => i).join("\n");
 };
 
 const initializePhenotypeData = (state, rawPhenotypeData) => {
@@ -551,9 +549,9 @@ const reducer = (state, action) => {
       }
 
       const dataInfo = {
-        ...state.dataInfo,
+        ...newState.dataInfo,
         expression: {
-          ...state.dataInfo.expression,
+          ...newState.dataInfo.expression,
           numSamples: expressionData.length > 0 ? expressionData[0].values.length : 0
         }
       };

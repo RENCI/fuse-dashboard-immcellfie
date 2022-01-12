@@ -6,13 +6,17 @@
   cursor: pointer;
 }
 
-.vegaTooltip {
+.vega-tooltip {
   position: fixed;
   z-index: 1000;
   pointer-events: none;  
   width: 300px;
 }
 
-.vegaTooltip .card {
+.vega-tooltip .card {
   background: rgba(255, 255, 255, 0.95);
+}
+
+.no-wrap {
+  white-space: nowrap;
 }

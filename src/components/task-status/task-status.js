@@ -111,7 +111,7 @@ export const TaskStatus = () => {
         const [status, count] = entry;
 
         return (
-          <span key={ status } className="me-2" style={{ whiteSpace: "nowrap" }}>
+          <span key={ status } className="me-2 no-wrap">
             <TaskStatusIcon task={{ status: status } } />
             <b className={ `text-${ statusColor[status] } small ms-1`}>{ count }</b>
           </span>
