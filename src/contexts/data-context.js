@@ -615,6 +615,33 @@ const reducer = (state, action) => {
         reactionScores: null
       };
 
+    case "createSubgroups": {
+      const subgroups = [...state.subgroups];
+
+      action.phenotype.values.forEach(value => {
+        const subgroup = createSubgroup(
+          value,
+          state.phenotypeData,
+          state.phenotypes,
+          state.subgroups
+        );
+
+        subgroups.push(subgroup);
+      });
+
+      //const selectedSubgroups = state.selectedSubgroups[1] === null ?
+      //  [state.selectedSubgroups[0], newSubgroups[0].key] : state.selectedSubgroups;
+      const selectedSubgroups = [...state.selectedSubgroups]      ;
+
+      updateTree(state.tree, subgroups, selectedSubgroups, state.overlapMethod, state.reactionScores);
+
+      return {
+        ...state,
+        subgroups: subgroups,
+        selectedSubgroups: selectedSubgroups
+      }
+    }
+
     case "addSubgroup": {
       const subgroup = createSubgroup(
         getNewSubgroupName(state.subgroups), 
