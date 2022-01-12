@@ -72,13 +72,15 @@ export const Home = () => {
       <>{ publication.info }. </>
       <>{ publication.year }. </>
       { publication.doi && 
-        <a 
-          className="text-muted"
-          href={ `https://doi.org/${ publication.doi }` } 
-          target="_blank" rel="noopener noreferrer"
-        >
-          { publication.doi }
-        </a> 
+        <span className="no-wrap">
+          doi: <a 
+            className="text-muted"
+            href={ `https://doi.org/${ publication.doi }` } 
+            target="_blank" rel="noopener noreferrer"
+          >
+            { publication.doi }
+          </a> 
+        </span>
       }
     </li>
   );

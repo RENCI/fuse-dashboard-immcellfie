@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { Row, Col } from "react-bootstrap";
 import { UserContext, DataContext } from "../../contexts";
 
-export const EmailNav = () => {
+export const InfoNav = () => {
   const [{ email },] = useContext(UserContext);
   const [{ dataInfo },] = useContext(DataContext);
 
@@ -20,7 +20,7 @@ export const EmailNav = () => {
           <div><b>{ email }</b></div>
         </Col>
         <Col>
-          <div>Data</div>
+          <div>Input data</div>
           <div><b>{ name ? name : "None loaded" }</b></div>
         </Col>
       </Row>      

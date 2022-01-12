@@ -45,7 +45,7 @@ export const VegaTooltip = ({ handler, event, item, value, children }) => {
   return (
     <div
       ref={div}
-      className="vegaTooltip shadow"
+      className="vega-tooltip shadow"
       style={{
         visibility: div.current && value && rect.height > 0 ? "visible" : "hidden",
         top: y + "px",

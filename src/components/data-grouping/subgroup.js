@@ -6,6 +6,7 @@ import { DataContext } from "../../contexts";
 import { LabelEdit } from "../label-edit";
 import { VegaWrapper } from "../vega-wrapper";
 import { phenotypeBarChart } from "../../vega-specs";
+import styles from "./subgroup.module.css";
 
 export const Subgroup = ({ all, subgroup, isNew }) => {
   const [, dataDispatch] = useContext(DataContext);
@@ -75,23 +76,25 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
       <Col 
         key={ i } 
         className="text-center"
-        xs={ 12 } sm={ 6 } md={ 4 } lg={ 4 } xl={ 2 }
+        xs="auto"
       >
         <small>{ nameLabel(phenotype.name) }</small>
-        <VegaWrapper
-          options={{
-            actions: false,
-            renderer: "svg"
-          }}
-          spec={ phenotypeBarChart }
-          data={ data }            
-          signals={[
-            { name: "interactive", value: editable },
-            { name: "numeric", value: phenotype.numeric }
-          ]}
-          eventListeners={ editable ? [{ type: "click", callback: evt => onValueSelect(phenotype.name, evt) }] : [] }
-          spinner={ false }
-        />
+        <div className={ styles.subgroupWrapper }>
+          <VegaWrapper
+            options={{
+              actions: false,
+              renderer: "svg"
+            }}
+            spec={ phenotypeBarChart }
+            data={ data }            
+            signals={[
+              { name: "interactive", value: editable },
+              { name: "numeric", value: phenotype.numeric }
+            ]}
+            eventListeners={ editable ? [{ type: "click", callback: evt => onValueSelect(phenotype.name, evt) }] : [] }
+            spinner={ false }
+          />
+        </div>
       </Col>
     );    
   });
