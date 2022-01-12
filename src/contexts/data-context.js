@@ -92,9 +92,8 @@ const parsePhenotypeDataRandomize = (data, n = 32) => {
 */
 
 const createPhenotypeData = expressionData => {
-  if (expressionData.length === 0) return "";
-
-  return "ID\n" + expressionData[0].values.map((value, i) => i).join("\n");
+  return expressionData.length === 0 ? "" :
+    "ID\n" + expressionData[0].values.map((value, i) => i).join("\n");
 };
 
 const initializePhenotypeData = (state, rawPhenotypeData) => {
@@ -568,10 +567,13 @@ const reducer = (state, action) => {
       return initializePhenotypeData(state, action.data);
 
     case "setOutput": {
+      if (!state.subgroups || !state.selectedSubgroups) return state;
+
       const output = combineOutput(action.output.taskInfo, action.output.score, action.output.scoreBinary);
       const hierarchy = createHierarchy(output);
       const tree = createTree(hierarchy);
       const reactionScores = null;
+
       updateTree(tree, state.subgroups, state.selectedSubgroups, state.overlapMethod, reactionScores);
 
       return {

@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Card, ListGroup } from "react-bootstrap";
 import { DataContext, UserContext, ModelContext } from "../../contexts";
 import { Task } from "./task";
@@ -19,8 +19,11 @@ export const TaskSelection = () => {
   const [, dataDispatch  ] = useContext(DataContext);
   const [{ email, tasks }, userDispatch  ] = useContext(UserContext);
   const [, modelDispatch] = useContext(ModelContext);
+  const [loading, setLoading] = useState(false);
 
   const selectTask = async task => {
+    setLoading(true);
+
     try {
       const { id, isImmuneSpace } = task;
 
@@ -69,10 +72,12 @@ export const TaskSelection = () => {
     catch (error) {
       console.log(error);
     }
+
+    setLoading(false);
   };
 
   const onTaskClick = async task => {
-    if (task.active) return;
+    if (task.active || loading) return;
 
     selectTask(task);
   };
