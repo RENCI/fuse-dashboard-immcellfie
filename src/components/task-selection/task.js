@@ -3,6 +3,7 @@ import { ListGroup, Row, Col, Button, Collapse, OverlayTrigger, Tooltip } from "
 import { ChevronDown, ChevronUp, XCircle } from "react-bootstrap-icons";
 import { TaskStatusIcon } from "../task-status-icon";
 import { getModel } from "../../utils/models";
+import styles from "./task.module.css";
 
 const { Item } = ListGroup;
 
@@ -103,7 +104,7 @@ export const Task = ({ task, onClick, onDeleteClick }) => {
     <Item  
       as="li"
       key={ task.id }
-      className={ task.active ? "task-active border border-primary rounded" : null }
+      className={ task.active ? `${ styles.active } border-primary rounded` : null }
       onClick={ () => onClick(task) }
     >
       <Row className="d-flex align-items-center">  

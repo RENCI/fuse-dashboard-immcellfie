@@ -2,3 +2,7 @@
   max-height: 235px;
   overflow: auto;
 }
+
+.active {
+  border-width: 2px 0px !important;
+}

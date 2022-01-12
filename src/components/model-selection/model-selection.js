@@ -175,8 +175,8 @@ export const ModelSelection = () => {
                 value={ model.value.value }
                 onChange={ onModelChange }
               >
-                { model.options.map(({ name, value }, i) => (
-                  <option key={ i } value={ value }>{ name }</option>
+                { model.options.map(({ name, value, disabled }, i) => (
+                  <option key={ i } value={ value } disabled={ disabled }>{ name }</option>
                 ))}
               </Control>
             </Group>
