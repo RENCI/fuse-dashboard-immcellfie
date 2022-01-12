@@ -85,7 +85,7 @@ export const SubgroupSelection = () => {
             >
               { options(1) }
             </Control>
-            <div className="subgroupIndicator" style={{ borderColor: color1 }}></div>
+            <div className={ styles.subgroupIndicator } style={{ borderColor: color1 }}></div>
           </Group>
           <Group as={ Col } xs="auto" className="mt-1">
             vs.
