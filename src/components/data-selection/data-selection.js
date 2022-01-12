@@ -23,8 +23,6 @@ export const DataSelection = () => {
 
   useEffect(() => {
     if (dataInfo && dataInfo.source.name === "upload" && dataInfo.phenotypes.numSamples !== dataInfo.expression.numSamples) {
-      console.log(dataInfo);
-
       setErrorMessage(`Number of samples in phenotype data (${ dataInfo.phenotypes.numSamples }) does not match number of subjects in expression data (${ dataInfo.expression.numSamples }). Please upload data with matching sample numbers.`);
     }
     else {
