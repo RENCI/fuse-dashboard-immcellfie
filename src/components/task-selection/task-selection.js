@@ -112,7 +112,7 @@ export const TaskSelection = () => {
         Select CellFIE Task
       </Header>
       <Body>
-        <ListGroup variant="flush" as="ul">
+        <ListGroup variant="flush" as="ul" className="pointer">
           { taskDisplays }
         </ListGroup>
       </Body>
