@@ -1,6 +1,6 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Table, Button, OverlayTrigger, Popover } from "react-bootstrap";
-import { QuestionCircle, StarFill, Star } from "react-bootstrap-icons";
+import { QuestionCircle } from "react-bootstrap-icons";
 import { DataContext, UserContext } from "../../contexts";
 import { TaskStatusIcon } from "../task-status-icon";
 import { states } from "./states";
@@ -10,6 +10,7 @@ import styles from "./download-list.module.css";
 export const DownloadList = ({ state, onSetState, onError }) => {   
   const [{ dataInfo }, dataDispatch  ] = useContext(DataContext);
   const [{ downloads }, userDispatch] = useContext(UserContext);
+  const [sortColumn, setSortColumn] = useState(null);
 
   const onLoadClick = async download => {
     onSetState(states.loading);
@@ -41,14 +42,10 @@ export const DownloadList = ({ state, onSetState, onError }) => {
   const disabled = state !== states.normal;
   const loaded = download => dataInfo && dataInfo.source.downloadId === download.id;
   const failed = download => download.info && download.info.status === "failed";
+  const status = download => download.info && download.info.status === "failed" ? "failed" : download.status;
+  const statusValue = status => status === "failed" ? 0 : 1;
 
   const columns = [    
-    {
-      name: "",
-      accessor: d => failed(d) ? null : loaded(d) ? 
-        <StarFill className="text-primary icon-offset" /> : 
-        <Star className="text-primary icon-offset" />
-    },
     {
       name: "",
       accessor: d => (
@@ -64,11 +61,13 @@ export const DownloadList = ({ state, onSetState, onError }) => {
     },
     { 
       name: "Group label",
-      accessor: d => d.info ? d.info.group_id : null
+      accessor: d => d.info ? d.info.group_id : null,
+      sort: (a, b) => a.info && b.info ? a.info.group_id.localeCompare(b.info.group_id) : a.info ? -1 : b.info ? 1 : 0
     },
     { 
       name: "Download ID",
-      accessor: d => d.id
+      accessor: d => d.id,
+      sort: (a, b) => a.id.localeCompare(b.id)
     },  
   /*  
     { 
@@ -78,15 +77,18 @@ export const DownloadList = ({ state, onSetState, onError }) => {
   */    
     { 
       name: "Start",
-      accessor: d => d.info ? d.info.start_date.toLocaleString() : null
+      accessor: d => d.info ? d.info.start_date.toLocaleString() : null,
+      sort: (a, b) => a.info && b.info ? b.info.start_date - a.info.start_date : a.info ? -1 : b.info ? 1 : 0
     },  
     { 
       name: "End",
-      accessor: d => d.info ? d.info.end_date.toLocaleString() : null
+      accessor: d => d.info ? d.info.end_date.toLocaleString() : null,
+      sort: (a, b) => a.info && b.info ? b.info.end_date - a.info.end_date : a.info ? -1 : b.info ? 1 : 0
     },
     {
       name: "CellFIE tasks",
-      accessor: d => d.tasks.length
+      accessor: d => d.tasks.length,
+      sort: (a, b) => b.tasks.length - a.tasks.length
     },
     { 
       name: "Status",
@@ -110,7 +112,8 @@ export const DownloadList = ({ state, onSetState, onError }) => {
           </>
         :
           <TaskStatusIcon task={ task } />
-      }
+      },
+      sort: (a, b) => statusValue(status(b)) - statusValue(status(a))
     },
 /*    
     {
@@ -142,12 +145,20 @@ export const DownloadList = ({ state, onSetState, onError }) => {
           <Table size="sm" hover className="align-middle">
             <thead>        
               <tr>
-                { columns.map((column, i) => <th key={ i }>{ column.name }</th>)}   
+                { columns.map((column, i) => (
+                  <th 
+                    key={ i } 
+                    className={ column.name.length > 0 ? "pointer" : null }
+                    onClick={ () => setSortColumn(column) }
+                  >
+                    { column.name }
+                  </th>
+                ))}   
               </tr>
             </thead>
             <tbody>
-              { downloads.map((download, i) => (
-                <tr key={ i }>
+              { downloads.slice().sort(sortColumn ? sortColumn.sort : undefined).map((download, i) => (
+                <tr key={ i } className={ loaded(download) ? `${ styles.active } border-primary rounded` : null }>
                   { columns.map((column, i) => <td key={ i }>{ column.accessor(download) }</td>)}
                 </tr>
               ))}
