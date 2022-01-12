@@ -3,7 +3,7 @@ import styles from "./phenotype-info.module.css";
 
 export const PhenotypeInfo = ({ source, name, data }) => {
   return (
-    <Alert variant="info" className={ styles.alert }>
+    <Alert variant="primary" className={ styles.alert }>
       { data ? 
         <>
           <u>Phenotype data loaded</u>
