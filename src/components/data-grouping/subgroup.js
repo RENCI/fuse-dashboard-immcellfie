@@ -99,7 +99,7 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
             spinner={ false }
           />
         </div>
-        { !editable && 
+        { (!editable && phenotype.values.length > 1) &&
           <div className="mt-auto">
             <OverlayTrigger
               placement="top"
