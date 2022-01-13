@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Button, Row, Col } from "react-bootstrap";
+import { Button, Row, Col, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { ArrowCounterclockwise, XCircle, Diagram3 } from "react-bootstrap-icons";
 import { group, ascending } from "d3-array";
 import { DataContext } from "../../contexts";
@@ -101,13 +101,20 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
         </div>
         { !editable && 
           <div className="mt-auto">
-            <Button
-              size="sm"
-              variant="outline-secondary"
-              onClick={ () => onCreateSubgroups(phenotype) }
+            <OverlayTrigger
+              placement="top"
+              overlay={ 
+                <Tooltip>Create subgroups</Tooltip>
+              }
             >
-              <Diagram3 className="icon-offset" />
-            </Button>
+              <Button
+                size="sm"
+                variant="outline-secondary"
+                onClick={ () => onCreateSubgroups(phenotype) }
+              >
+                <Diagram3 className="icon-offset" />
+              </Button>
+            </OverlayTrigger>
           </div> 
         }
       </Col>
@@ -115,7 +122,7 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
   });
 
   return (
-    <div>
+    <>
       <Row className="align-items-center">
         <Col>
           <LabelEdit     
@@ -159,6 +166,6 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
           </small>
         </Col>
       </Row>
-    </div>
+    </>
   );
 };           
