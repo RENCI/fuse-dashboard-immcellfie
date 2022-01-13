@@ -617,21 +617,24 @@ const reducer = (state, action) => {
 
     case "createSubgroups": {
       const subgroups = [...state.subgroups];
+      const newSubgroups = [];
 
-      action.phenotype.values.forEach(value => {
+      action.phenotype.values.forEach(({ value }) => {
         const subgroup = createSubgroup(
           value,
           state.phenotypeData,
           state.phenotypes,
-          state.subgroups
+          subgroups
         );
 
+        subgroup.filters.push({ phenotype: action.phenotype.name, value: value });
+        filterSubgroup(subgroup, state.phenotypeData, state.phenotypes);
+
         subgroups.push(subgroup);
+        newSubgroups.push(subgroup);
       });
 
-      //const selectedSubgroups = state.selectedSubgroups[1] === null ?
-      //  [state.selectedSubgroups[0], newSubgroups[0].key] : state.selectedSubgroups;
-      const selectedSubgroups = [...state.selectedSubgroups]      ;
+      const selectedSubgroups = [newSubgroups[0].key, newSubgroups.length > 1 ? newSubgroups[1].key : null];
 
       updateTree(state.tree, subgroups, selectedSubgroups, state.overlapMethod, state.reactionScores);
 
