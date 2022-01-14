@@ -1,6 +1,6 @@
 import { useContext } from "react";
-import { Button, Row, Col } from "react-bootstrap";
-import { ArrowCounterclockwise, XCircle } from "react-bootstrap-icons";
+import { Button, Row, Col, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { ArrowCounterclockwise, XCircle, Diagram3 } from "react-bootstrap-icons";
 import { group, ascending } from "d3-array";
 import { DataContext } from "../../contexts";
 import { LabelEdit } from "../label-edit";
@@ -12,6 +12,10 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
   const [, dataDispatch] = useContext(DataContext);
 
   const editable = subgroup.key > 0;
+
+  const onCreateSubgroups = phenotype => {
+    dataDispatch({ type: "createSubgroups", phenotype: phenotype });
+  };
 
   const onNameChange = name => {
     dataDispatch({ type: "setSubgroupName", key: subgroup.key, name: name });
@@ -75,7 +79,7 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
     return (
       <Col 
         key={ i } 
-        className="text-center"
+        className="text-center d-flex flex-column"
         xs="auto"
       >
         <small>{ nameLabel(phenotype.name) }</small>
@@ -95,12 +99,30 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
             spinner={ false }
           />
         </div>
+        { (!editable && phenotype.values.length > 1) &&
+          <div className="mt-auto">
+            <OverlayTrigger
+              placement="top"
+              overlay={ 
+                <Tooltip>Create subgroups</Tooltip>
+              }
+            >
+              <Button
+                size="sm"
+                variant="outline-secondary"
+                onClick={ () => onCreateSubgroups(phenotype) }
+              >
+                <Diagram3 className="icon-offset" />
+              </Button>
+            </OverlayTrigger>
+          </div> 
+        }
       </Col>
     );    
   });
 
   return (
-    <div>
+    <>
       <Row className="align-items-center">
         <Col>
           <LabelEdit     
@@ -144,6 +166,6 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
           </small>
         </Col>
       </Row>
-    </div>
+    </>
   );
 };           
