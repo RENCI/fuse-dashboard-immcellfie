@@ -44,6 +44,8 @@ export const DownloadList = ({ state, onSetState, onError }) => {
   const failed = download => download.info && download.info.status === "failed";
   const status = download => download.info && download.info.status === "failed" ? "failed" : download.status;
   const statusValue = status => status === "failed" ? 0 : 1;
+  const hasStart = download => download.info && download.info.start_date !== null;
+  const hasEnd = download => download.info && download.info.end_date !== null;
 
   const columns = [    
     {
@@ -77,13 +79,13 @@ export const DownloadList = ({ state, onSetState, onError }) => {
   */    
     { 
       name: "Start",
-      accessor: d => d.info ? d.info.start_date.toLocaleString() : null,
-      sort: (a, b) => a.info && b.info ? b.info.start_date - a.info.start_date : a.info ? -1 : b.info ? 1 : 0
+      accessor: d => hasStart(d) ? d.info.start_date.toLocaleString() : null,
+      sort: (a, b) => hasStart(a) && hasStart(b) ? b.info.start_date - a.info.start_date : hasStart(a) ? -1 : hasStart(b) ? 1 : 0
     },  
     { 
       name: "End",
-      accessor: d => d.info ? d.info.end_date.toLocaleString() : null,
-      sort: (a, b) => a.info && b.info ? b.info.end_date - a.info.end_date : a.info ? -1 : b.info ? 1 : 0
+      accessor: d => hasEnd(d) ? d.info.end_date.toLocaleString() : null,
+      sort: (a, b) => hasEnd(a) && hasEnd(b) ? b.info.end_date - a.info.end_date : hasEnd(a) ? -1 : hasEnd(b) ? 1 : 0
     },
     {
       name: "CellFIE tasks",
