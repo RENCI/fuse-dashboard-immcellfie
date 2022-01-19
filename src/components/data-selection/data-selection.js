@@ -61,7 +61,7 @@ export const DataSelection = () => {
 
           <Accordion.Item eventKey='upload'>
             <Accordion.Header>
-              Data upload
+              Local file upload
             </Accordion.Header>
             <Accordion.Body className={ styles.accordionShadow }> 
               <UploadData

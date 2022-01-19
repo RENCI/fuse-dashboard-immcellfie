@@ -62,12 +62,12 @@ export const CellfieOutput = () => {
         <Body>
           { !activeTask ? 
             <>
-              <div>No active task</div>
+              <div>No active run</div>
               <small className="text-muted"> - no output data - </small>
             </>
           : activeTask.status !== "finished" ? 
             <>
-              <div>Task { activeTask.status }</div>
+              <div>Run { activeTask.status }</div>
               <small className="text-muted"> - no output data - </small>
             </>
           : !hierarchy ? 

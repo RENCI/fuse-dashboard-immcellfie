@@ -67,7 +67,7 @@ export const DownloadList = ({ state, onSetState, onError }) => {
       sort: (a, b) => a.info && b.info ? a.info.group_id.localeCompare(b.info.group_id) : a.info ? -1 : b.info ? 1 : 0
     },
     { 
-      name: "Download ID",
+      name: "Dataset ID",
       accessor: d => d.id,
       sort: (a, b) => a.id.localeCompare(b.id)
     },  
@@ -88,7 +88,7 @@ export const DownloadList = ({ state, onSetState, onError }) => {
       sort: (a, b) => hasEnd(a) && hasEnd(b) ? b.info.end_date - a.info.end_date : hasEnd(a) ? -1 : hasEnd(b) ? 1 : 0
     },
     {
-      name: "CellFIE tasks",
+      name: "CellFIE runs",
       accessor: d => d.tasks.length,
       sort: (a, b) => b.tasks.length - a.tasks.length
     },

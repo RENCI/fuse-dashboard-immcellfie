@@ -60,7 +60,7 @@ export const Task = ({ task, onClick, onDeleteClick }) => {
       <div>          
         { task.download ? 
           `ImmuneSpace: ${ task.download.info.group_id }` :
-          "uploaded data" 
+          "uploaded or practice data" 
         }
       </div>
     </>
