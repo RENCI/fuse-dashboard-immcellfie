@@ -1,10 +1,11 @@
 import { useContext } from "react";
-import { Tab, Card, Nav } from "react-bootstrap";
+import { Tab, Card, Row, Col, Nav } from "react-bootstrap";
 import { UserContext, DataContext } from "../../contexts";
 import { HierarchyVis } from "../hierarchy-vis";
 import { HeatmapVis } from "../heatmap-vis";
 import { VolcanoVis } from "../volcano-vis";
 import { PathwayVis } from "../pathway-vis";
+import { OutputDownload } from "./output-download";
 import { LoadingSpinner } from "../loading-spinner";
 import { useLocalStorage } from "../../hooks";
 
@@ -36,7 +37,14 @@ export const CellfieOutput = () => {
         onSelect={ onSelect }
       >
         <Header>
-          <Title>CellFIE Output Visualizations</Title>
+          <Row>
+            <Col>
+              <Title>CellFIE Run Results</Title>
+            </Col>
+            <Col xs="auto">
+              <OutputDownload />
+            </Col>
+          </Row>
           { hierarchy && 
             <Nav 
               activeKey={ tab }
