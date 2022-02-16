@@ -12,7 +12,7 @@ export const ExpressionInfo = ({ source, name, data }) => {
           <u>Expression data loaded</u>
           <div><small>Source: { source }</small></div>
           <div><small>Name: { name }</small></div>
-          <div><small>{ numGenes.toLocaleString() } rows (genes)</small></div>
+          <div><small>{ numGenes.toLocaleString() } rows (Entrez genes)</small></div>
           <div><small>{ numSamples.toLocaleString() } columns (samples)</small></div>
         </>
       : <>
