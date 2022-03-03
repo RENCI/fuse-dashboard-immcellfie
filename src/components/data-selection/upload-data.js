@@ -69,7 +69,7 @@ export const UploadData = ({ state, onSetState, onError }) => {
       <hr />
       <Row>
         <Col>
-          { dataImage("Expression data:", ["1st column: gene id", "Subsequent columns: samples"], "ExpressionDataFormat.png") }
+          { dataImage("Expression data:", ["1st column: Entrez gene id", "Subsequent columns: samples"], "ExpressionDataFormat.png") }
           <FileSelect onChange={ onExpressionFileSelect } />
         </Col>
         <Col>
