@@ -20,7 +20,7 @@ export const InfoNav = () => {
           <div><b>{ email }</b></div>
         </Col>
         <Col>
-          <div>Input data</div>
+          <div>Input dataset</div>
           <div><b>{ name ? name : "None loaded" }</b></div>
         </Col>
       </Row>      

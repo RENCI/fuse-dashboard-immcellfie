@@ -19,7 +19,7 @@ const PageLink = ({ text, icon, page }) => {
 };
 
 export const UserLink = () => <PageLink text="Select user" icon={ <PersonCircle /> } page="user" />;
-export const InputLink = () => <PageLink text="Select input data" icon={ <Files /> } page="input" />;
+export const InputLink = () => <PageLink text="Select input dataset" icon={ <Files /> } page="input" />;
 export const CellfieLink = () => <PageLink text="CellFIE" icon={ <Calculator /> } page="cellfie" />;
 export const SubgroupsLink = () => <PageLink text="Create subgroups" icon={ <Diagram3 /> } page="subgroups" />;
 export const ExpressionLink = () => <PageLink text="View expression data" icon={ <Table /> } page="expression-data" />;

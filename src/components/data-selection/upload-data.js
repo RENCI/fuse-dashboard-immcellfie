@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { Row, Col, Figure } from "react-bootstrap";
+import { Row, Col, Figure, Alert } from "react-bootstrap";
 import { UserContext, DataContext } from "../../contexts";
 import { SpinnerButton } from "../spinner-button";
 import { FileSelect } from "../file-select";
@@ -66,7 +66,14 @@ export const UploadData = ({ state, onSetState, onError }) => {
   return (
     <> 
       <h6>Upload files from your computer in CSV format</h6>
-      <hr />
+      <Alert variant='danger'>
+        <Alert.Heading>Disclaimer</Alert.Heading>
+        <ul>
+          <li>Uploaded data will be publicly available to other ImmCellFIE users.</li>
+          <li>Please ensure that no Protected Health Information (PHI) are uploaded. </li>
+          <li>Also take care with uploading unpublished data.</li>
+        </ul>
+      </Alert>
       <Row>
         <Col>
           { dataImage("Expression data:", ["1st column: Entrez gene id", "Subsequent columns: samples"], "ExpressionDataFormat.png") }

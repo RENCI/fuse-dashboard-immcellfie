@@ -8,8 +8,7 @@ import {
   InputView, 
   SubgroupView,
   OutputView, 
-  ExpressionView,
-  DownloadView
+  ExpressionView
 } from "./views";
 import { 
   UserProvider, 
@@ -50,7 +49,6 @@ export const App = () => {
                 <Nav.Link as={ NavLink } to="/cellfie">CellFIE</Nav.Link>
                 <Nav.Link as={ NavLink } to="/subgroups">Subgroups</Nav.Link>
                 <Nav.Link as={ NavLink } to="/expression-data">Expression data</Nav.Link>
-                <Nav.Link as={ NavLink } to="/downloads">Downloads</Nav.Link>
               </Nav>
               <InfoNav />
             </Navbar.Collapse>
@@ -76,7 +74,6 @@ export const App = () => {
             <Route exact path="/cellfie"><OutputView /></Route>
             <Route exact path="/subgroups"><SubgroupView /></Route>s
             <Route exact path="/expression-data"><ExpressionView /></Route>
-            <Route exact path="/downloads"><DownloadView /></Route>
           </Switch>
         </Container>
       </Router>

@@ -135,13 +135,13 @@ export const ImmunespaceDialog = ({ state, onSetState, onError }) => {
         >
           <PlusCircle className="icon-offset" />
         </Button>
-        <Label className="ms-2">Load new data from ImmuneSpace</Label>
+        <Label className="ms-2">Retrieve new data from ImmuneSpace</Label>
       </Group>
 
       <Modal show={ show } onHide={ onHideClick }>
         <Header closeButton>
           <Title>
-            <span className="align-middle">Load new data from ImmuneSpace</span>
+            <span className="align-middle">Retrieve new data from ImmuneSpace</span>
             <a 
               href="https://www.immunespace.org/" 
               target="_blank"

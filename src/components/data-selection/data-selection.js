@@ -41,7 +41,7 @@ export const DataSelection = () => {
   return (
     <Card>
       <Header as="h5">
-        Data Selection
+        Input Dataset Selection
       </Header>
       <Body>
         <h6>Data source</h6>
@@ -61,7 +61,7 @@ export const DataSelection = () => {
 
           <Accordion.Item eventKey='upload'>
             <Accordion.Header>
-              Data upload
+              Local file upload
             </Accordion.Header>
             <Accordion.Body className={ styles.accordionShadow }> 
               <UploadData
@@ -95,6 +95,7 @@ export const DataSelection = () => {
         }
         { (phenotypeData || expressionData) && 
           <Row className="row-eq-height mt-3">
+            <h6>Loaded dataset</h6>
             <Col>
               { 
                 <ExpressionInfo 

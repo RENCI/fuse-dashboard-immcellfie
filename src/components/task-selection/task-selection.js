@@ -114,7 +114,7 @@ export const TaskSelection = () => {
   return (
     <Card>
       <Header as="h5">
-        Select CellFIE Task
+        Select CellFIE Run
       </Header>
       <Body>
         <ListGroup variant="flush" as="ul" className="pointer">
