@@ -17,7 +17,7 @@ const sortOrder = {
 
 export const TaskSelection = () => {
   const [, dataDispatch  ] = useContext(DataContext);
-  const [{ email, tasks }, userDispatch  ] = useContext(UserContext);
+  const [{ user, tasks }, userDispatch  ] = useContext(UserContext);
   const [, modelDispatch] = useContext(ModelContext);
   const [loading, setLoading] = useState(false);
 
@@ -97,7 +97,7 @@ export const TaskSelection = () => {
   };
 
   const taskDisplays = tasks.length === 0 ? 
-    <Item><span>No current CellFIE tasks found for <b>{ email }</b></span></Item> :
+    <Item><span>No current CellFIE tasks found for <b>{ user }</b></span></Item> :
     tasks.sort((a, b) => {
       return a.status === b.status ? 
         b.info.date_created - a.info.date_created :

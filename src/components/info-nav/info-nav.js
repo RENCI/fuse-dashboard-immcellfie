@@ -3,7 +3,7 @@ import { Row, Col } from "react-bootstrap";
 import { UserContext, DataContext } from "../../contexts";
 
 export const InfoNav = () => {
-  const [{ email },] = useContext(UserContext);
+  const [{ user },] = useContext(UserContext);
   const [{ dataInfo },] = useContext(DataContext);
 
   const name = dataInfo ?
@@ -12,12 +12,12 @@ export const InfoNav = () => {
     dataInfo.source.name : null;
 
   return (
-    email && 
+    user && 
     <div className="text-info small">
       <Row>
         <Col>
           <div>User</div>
-          <div><b>{ email }</b></div>
+          <div><b>{ user }</b></div>
         </Col>
         <Col>
           <div>Input dataset</div>

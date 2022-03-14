@@ -1,18 +1,18 @@
 import { createContext, useReducer } from "react";
 
 const initialState = {
-  email: "",
+  user: "",
   apiKey: "",
   downloads: [],
-  tasks: [],
+  tasks: []
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "setEmail": 
+    case "setUser": 
       return {
         ...state,
-        email: action.email
+        user: action.user
       };
 
     case "setApiKey": {

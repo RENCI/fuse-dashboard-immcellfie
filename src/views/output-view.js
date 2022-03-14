@@ -10,14 +10,14 @@ import { DataMissing } from "../components/data-missing";
 import { UserLink, InputLink } from "../components/page-links";
 
 export const OutputView = () => {
-  const [{ email, tasks }] = useContext(UserContext);
+  const [{ user, tasks }] = useContext(UserContext);
   const [{ phenotypeData }] = useContext(DataContext);
   
   return (
     <>
-      { !email ?
+      { !user ?
         <ViewWrapper>
-          <DataMissing message="No user email selected" pageLink={ <UserLink /> } /> 
+          <DataMissing message="No user user selected" pageLink={ <UserLink /> } /> 
         </ViewWrapper>
       : !phenotypeData && tasks.length === 0 ? 
         <ViewWrapper> 

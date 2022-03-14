@@ -11,7 +11,7 @@ import { useDownloadLink, useZipLink } from "../hooks";
 const { Header, Body } = Card;
 
 export const DownloadView = () => {
-  const [{ email }] = useContext(UserContext);
+  const [{ user }] = useContext(UserContext);
   const [{ rawPhenotypeData, rawExpressionData, rawOutput }] = useContext(DataContext);
   const phenotypeLink = useDownloadLink(rawPhenotypeData);
   const inputLink = useDownloadLink(rawExpressionData);
@@ -54,8 +54,8 @@ export const DownloadView = () => {
 
   return (   
     <ViewWrapper>
-      { !email ?
-        <DataMissing message="No user email selected" pageLink={ <UserLink /> } />
+      { !user ?
+        <DataMissing message="No user user selected" pageLink={ <UserLink /> } />
       : !rawPhenotypeData ? 
         <DataMissing message="No data loaded" pageLink={ <InputLink /> } />      
       : 

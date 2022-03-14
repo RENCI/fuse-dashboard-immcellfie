@@ -97,8 +97,8 @@ const getTaskInfo = async (path, id) => {
   return info;
 };
 
-const getTasks = async (path, email) => {
-  const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }${ path }/task_ids/${ email }`);
+const getTasks = async (path, user) => {
+  const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }${ path }/task_ids/${ user }`);
 
   const tasks = result.data.map(({ task_id }) => ({ id: task_id }));
 
@@ -154,7 +154,7 @@ export const api = {
 
   // Generic Cellfie API (e.g. for uploaded data)
 
-  runCellfie: async (email, expressionData, phenotypeData, sampleNumber, model, parameters) => {   
+  runCellfie: async (user, expressionData, phenotypeData, sampleNumber, model, parameters) => {   
     // Set data and parameters as form data
     const formData = new FormData();
     formData.append("expression_data", expressionData);
@@ -169,7 +169,7 @@ export const api = {
       formData,
       { 
         headers: { "Content-Type": "multipart/form-data" },
-        params: { "email": email }
+        params: { "user": user }
       }
     );
 
@@ -180,10 +180,10 @@ export const api = {
 
   // ImmuneSpace download API
 
-  getImmuneSpaceDownloadId: async (email, groupId, apiKey) => {
+  getImmuneSpaceDownloadId: async (user, groupId, apiKey) => {
     const result = await axios.post(`${ process.env.REACT_APP_API_ROOT }/immunespace/download`, null, {
       params: {
-        email: email,
+        user: user,
         group: groupId,
         apikey: apiKey
       }
@@ -191,8 +191,8 @@ export const api = {
 
     return result.data.immunespace_download_id;
   },
-  getImmuneSpaceDownloads: async email => {
-    const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }/immunespace/download/ids/${ email }`);
+  getImmuneSpaceDownloads: async user => {
+    const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }/immunespace/download/ids/${ user }`);
 
     const ids = result.data.map(d => d.immunespace_download_id);
 
@@ -247,10 +247,10 @@ export const api = {
   
   // Combined API
 
-  getTasks: async email => {
+  getTasks: async user => {
     const results = await Promise.all([
-      getTasks(CELLFIE_PATH, email),
-      getTasks(IMMUNESPACE_CELLFIE_PATH, email)
+      getTasks(CELLFIE_PATH, user),
+      getTasks(IMMUNESPACE_CELLFIE_PATH, user)
     ]);
 
     return {

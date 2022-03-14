@@ -6,13 +6,13 @@ import { DataMissing } from "../components/data-missing";
 import { UserLink, InputLink } from "../components/page-links";
 
 export const SubgroupView = () => {
-  const [{ email }] = useContext(UserContext);
+  const [{ user }] = useContext(UserContext);
   const [{ phenotypeData }] = useContext(DataContext);
 
   return (
     <ViewWrapper>
-      { !email ?
-        <DataMissing message="No user email selected" pageLink={ <UserLink /> } />
+      { !user ?
+        <DataMissing message="No user user selected" pageLink={ <UserLink /> } />
       : !phenotypeData ? 
         <DataMissing message="No data loaded" pageLink={ <InputLink /> } />
       : 

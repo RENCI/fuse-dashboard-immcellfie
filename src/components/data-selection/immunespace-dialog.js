@@ -11,7 +11,7 @@ const { Header, Title, Body } = Modal;
 const { Group, Control, Label } = Form;
 
 export const ImmunespaceDialog = ({ state, onSetState, onError }) => {
-  const [{ email, apiKey, downloads }, userDispatch] = useContext(UserContext);
+  const [{ user, apiKey, downloads }, userDispatch] = useContext(UserContext);
   const [, dataDispatch] = useContext(DataContext);
   const [show, setShow] = useState(false);
   const [inputApiKey, setInputApiKey] = useState(apiKey);
@@ -57,7 +57,7 @@ export const ImmunespaceDialog = ({ state, onSetState, onError }) => {
     userDispatch({ type: "clearActiveTask" });
 
     try {
-      const downloadId = await api.getImmuneSpaceDownloadId(email, groupId, apiKey);
+      const downloadId = await api.getImmuneSpaceDownloadId(user, groupId, apiKey);
 
       const timer = setInterval(checkStatus, 1000);
 

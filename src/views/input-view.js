@@ -6,13 +6,13 @@ import { DataMissing } from "../components/data-missing";
 import { UserLink } from "../components/page-links";
 
 export const InputView = () => {
-  const [{ email }] = useContext(UserContext);
+  const [{ user }] = useContext(UserContext);
   
   return (   
     <>
-      { !email ?
+      { !user ?
         <ViewWrapper>
-          <DataMissing message="No user email selected" pageLink={ <UserLink /> } />
+          <DataMissing message="No user user selected" pageLink={ <UserLink /> } />
         </ViewWrapper>
       :
         <ViewWrapper>

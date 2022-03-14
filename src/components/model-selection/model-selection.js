@@ -8,7 +8,7 @@ const { Header, Body } = Card;
 const { Label, Group, Control } = Form;
 
 export const ModelSelection = () => {
-  const [{ email, downloads }, userDispatch] = useContext(UserContext);
+  const [{ user, downloads }, userDispatch] = useContext(UserContext);
   const [{ dataInfo, rawExpressionData, rawPhenotypeData }, dataDispatch] = useContext(DataContext);
   const [{ organism, model, parameters }, modelDispatch] = useContext(ModelContext); 
 
@@ -74,7 +74,7 @@ export const ModelSelection = () => {
         const phenotypesBlob = dataBlob(rawPhenotypeData);
 
         // Run Cellfie
-        const id = await api.runCellfie(email, expressionBlob, phenotypesBlob, n, model.value.value, getParameterObject(parameters));     
+        const id = await api.runCellfie(user, expressionBlob, phenotypesBlob, n, model.value.value, getParameterObject(parameters));     
 
         // Get task info
         const params = await api.getCellfieTaskParameters(id);

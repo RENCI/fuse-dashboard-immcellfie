@@ -14,7 +14,7 @@ const { Header, Body } = Card;
 const { Group, Label, Control } = Form;
 
 export const ExpressionView = () => {
-  const [{ email }] = useContext(UserContext);
+  const [{ user }] = useContext(UserContext);
   const [{ phenotypeData, expressionData, groups }] = useContext(DataContext); 
   const [{ sequentialScales, sequentialScale }, colorDispatch] = useContext(ColorContext); 
   const [sortBy, setSortBy] = useState("median");
@@ -53,8 +53,8 @@ export const ExpressionView = () => {
 
   return (
     <ViewWrapper>
-      { !email ?
-        <DataMissing message="No user email selected" pageLink={ <UserLink /> } />
+      { !user ?
+        <DataMissing message="No user user selected" pageLink={ <UserLink /> } />
       : !phenotypeData ? 
         <DataMissing message="No data loaded" pageLink={ <InputLink /> } />
       : !expressionData ? 

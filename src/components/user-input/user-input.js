@@ -8,39 +8,29 @@ import { api } from "../../utils/api";
 import { errorUtils } from "../../utils/error-utils";
 
 const { Header, Body, Footer } = Card;
-const { Group, Control, Text } = Form;
+const { Group, Control } = Form;
 const { getErrorMessage } = errorUtils;
 
 export const UserInput = () => {
   const [, dataDispatch  ] = useContext(DataContext);
-  const [{ email, tasks, downloads }, userDispatch  ] = useContext(UserContext);
-  const [emailValue, setEmailValue] = useState("");
-  const [emailValid, setEmailValid] = useState(false);
+  const [{ user, tasks, downloads }, userDispatch  ] = useContext(UserContext);
+  const [userValue, setUserValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [failedDownloads, setFailedDownloads] = useState([]);
   const [failedTasks, setFailedTasks] = useState([]);
   const [errorMessage, setErrorMessage] = useState();
   const buttonRef = useRef();
 
-  const validateEmail = email => {
-    // Taken from: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/email#validation
-    const regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;      
-
-    return regex.test(email);
-  };
-
   useEffect(() => {
-    setEmailValue(email);
-    setEmailValid(validateEmail(email));
-  }, [email]);
+    setUserValue(user);
+  }, [user]);
 
-  const onEmailChange = evt => {
-    setEmailValue(evt.target.value);
-    setEmailValid(validateEmail(evt.target.value));
+  const onUserChange = evt => {
+    setUserValue(evt.target.value);
   };
 
   const onKeyPress = evt => {
-    if (emailValid && evt.key === "Enter") {
+    if (evt.key === "Enter") {
       buttonRef.current.click();
     }
   };
@@ -55,16 +45,16 @@ export const UserInput = () => {
 
     dataDispatch({ type: "clearData" });
 
-    userDispatch({ type: "setEmail", email: emailValue });
+    userDispatch({ type: "setUser", user: userValue });
 
     try {
       // Get ImmuneSpace downloads
-      const { downloads, failed: failedDownloads } = await api.getImmuneSpaceDownloads(emailValue);
+      const { downloads, failed: failedDownloads } = await api.getImmuneSpaceDownloads(userValue);
       
       downloads.sort((a, b) => b.info.date_created - a.info.date_created);
 
       // Get tasks
-      const { tasks, failed: failedTasks } = await api.getTasks(emailValue);
+      const { tasks, failed: failedTasks } = await api.getTasks(userValue);
 
       // Add downloads to tasks and vice versa
       tasks.filter(task => task.isImmuneSpace).forEach(task => {
@@ -105,41 +95,34 @@ export const UserInput = () => {
   return (
     <Card>
       <Header as="h5">
-        User Email
+        User Name
       </Header>
       <Body>
         <Form 
           onSubmit={ onSubmit }
           onKeyPress={ onKeyPress }
         >
-          <h6>Email address for CellFIE tasks</h6>
+          <h6>Input new or existing user name</h6>
           <Group>  
             <InputGroup>
               <Button 
                 ref={ buttonRef }
                 variant="primary"                  
                 type="submit"
-                disabled={ !emailValid }
               >
                 Submit
               </Button>
               <Control 
-                type="email"
-                name="email"
-                placeholder="Enter email"
-                value={ emailValue }
-                onChange={ onEmailChange } 
+                name="user"
+                placeholder="Enter user name"
+                value={ userValue }
+                onChange={ onUserChange } 
               />
             </InputGroup>
-            { !emailValid && 
-              <Text className="text-muted">
-                Please enter a valid email address
-              </Text>
-            }
           </Group>          
         </Form>
       </Body>
-      { email &&
+      { user &&
         <Footer>
           <Row>
             { errorMessage ?
@@ -155,12 +138,12 @@ export const UserInput = () => {
                 { tasks.length > 0 && 
                   <Col className="text-center">
                     <CellfieLink />
-                    <div className="small text-muted">{ tasks.length } task{ tasks.length > 1 ? "s" : null } found for <b>{ email }</b></div> 
+                    <div className="small text-muted">{ tasks.length } task{ tasks.length > 1 ? "s" : null } found for <b>{ user }</b></div> 
                   </Col> 
                 }
                 <Col className="text-center">
                   <InputLink />
-                  { downloads.length > 0 && <div className="small text-muted">{ downloads.length } ImmuneSpace download{ downloads.length > 0 ? "s" : null } found for <b>{ email }</b></div> }
+                  { downloads.length > 0 && <div className="small text-muted">{ downloads.length } ImmuneSpace download{ downloads.length > 0 ? "s" : null } found for <b>{ user }</b></div> }
                 </Col>
               </>
             }     
