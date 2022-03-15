@@ -139,10 +139,25 @@ const deleteTask = async (path, id) => {
 
 export const api = {
 
+  // User
+  addUser: async user => {
+    console.log(user);
+
+    const response = await axios.post(`${ process.env.REACT_APP_FUSE_AGENT_API }/submitters/add`, null, {
+      params: {
+        submitter_id: user
+      }
+    });
+
+    console.log(response);
+  },
+
   // General file loading
 
   loadFile: async file => {
     const response = await axios.get(window.URL.createObjectURL(file));
+
+    console.log(response.data);
 
     return response.data;
   },
