@@ -8,13 +8,21 @@ import { api } from "../../utils/api";
 import { errorUtils } from "../../utils/error-utils";
 
 const { Header, Body, Footer } = Card;
-const { Group, Control } = Form;
+const { Group, Control, Text } = Form;
 const { getErrorMessage } = errorUtils;
+
+const validateEmail = email => {
+  // Taken from: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/email#validation
+  const regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;      
+
+  return regex.test(email);
+};
 
 export const UserInput = () => {
   const [, dataDispatch  ] = useContext(DataContext);
   const [{ user, tasks, downloads }, userDispatch  ] = useContext(UserContext);
   const [userValue, setUserValue] = useState("");
+  const [validEmail, setValidEmail] = useState(false);
   const [loading, setLoading] = useState(false);
   const [failedDownloads, setFailedDownloads] = useState([]);
   const [failedTasks, setFailedTasks] = useState([]);
@@ -23,14 +31,17 @@ export const UserInput = () => {
 
   useEffect(() => {
     setUserValue(user);
+    setValidEmail(validateEmail(user));
   }, [user]);
 
   const onUserChange = evt => {
-    setUserValue(evt.target.value);
+    const value = evt.target.value;
+    setUserValue(value);
+    setValidEmail(validateEmail(value));
   };
 
   const onKeyPress = evt => {
-    if (evt.key === "Enter") {
+    if (validEmail && evt.key === "Enter") {
       buttonRef.current.click();
     }
   };
@@ -119,6 +130,11 @@ export const UserInput = () => {
                 onChange={ onUserChange } 
               />
             </InputGroup>
+            { !validEmail && 
+              <Text className="text-muted">
+                User name must be a valid email address
+              </Text>
+            }
           </Group>          
         </Form>
       </Body>
