@@ -134,6 +134,11 @@ const reducer = (state, action) => {
       };
     }
 
+    case "clearUser":
+      return {
+        ...initialState
+      };
+
     default: 
       throw new Error("Invalid user context action: " + action.type);
   }

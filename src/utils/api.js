@@ -141,15 +141,18 @@ export const api = {
 
   // User
   addUser: async user => {
-    console.log(user);
-
     const response = await axios.post(`${ process.env.REACT_APP_FUSE_AGENT_API }/submitters/add`, null, {
       params: {
         submitter_id: user
       }
     });
 
-    console.log(response);
+    //return response.data;
+
+    return {
+      name: user,
+      status: 'found'
+    }
   },
 
   // General file loading

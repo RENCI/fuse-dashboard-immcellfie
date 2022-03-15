@@ -14,10 +14,12 @@ import {
   UserProvider, 
   DataProvider, 
   ModelProvider,
-  ColorProvider
+  ColorProvider,
+  ErrorProvider
  } from "./contexts";
 import { TaskStatus } from "./components/task-status";
 import { InfoNav } from "./components/info-nav";
+import { ErrorMessage } from "./components/error-message";
 
 export const App = () => { 
   return (
@@ -25,6 +27,7 @@ export const App = () => {
     <DataProvider>
     <ModelProvider>
     <ColorProvider>
+    <ErrorProvider>
       <Router>
         <Container fluid>
           <Navbar fixed="top" bg="dark" variant="dark" expand="md" className="mb-4">
@@ -75,8 +78,10 @@ export const App = () => {
             <Route exact path="/subgroups"><SubgroupView /></Route>s
             <Route exact path="/expression-data"><ExpressionView /></Route>
           </Switch>
+          <ErrorMessage />
         </Container>
       </Router>
+    </ErrorProvider>
     </ColorProvider>
     </ModelProvider>
     </DataProvider>    

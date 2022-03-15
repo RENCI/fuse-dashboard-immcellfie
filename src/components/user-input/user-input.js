@@ -1,15 +1,13 @@
 import { useContext, useEffect, useState, useRef } from "react";
 import { Card, Form, InputGroup, Button, Row, Col, Alert } from "react-bootstrap";
 import { ExclamationCircle } from "react-bootstrap-icons";
-import { UserContext, DataContext } from "../../contexts";
+import { UserContext, DataContext, ErrorContext } from "../../contexts";
 import { LoadingSpinner } from "../loading-spinner";
 import { CellfieLink, InputLink } from "../page-links";
 import { api } from "../../utils/api";
-import { errorUtils } from "../../utils/error-utils";
 
 const { Header, Body, Footer } = Card;
 const { Group, Control, Text } = Form;
-const { getErrorMessage } = errorUtils;
 
 const validateEmail = email => {
   // Taken from: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/email#validation
@@ -19,14 +17,15 @@ const validateEmail = email => {
 };
 
 export const UserInput = () => {
-  const [, dataDispatch  ] = useContext(DataContext);
-  const [{ user, tasks, downloads }, userDispatch  ] = useContext(UserContext);
+  const [, dataDispatch] = useContext(DataContext);
+  const [{ user, tasks, downloads }, userDispatch] = useContext(UserContext);
+  const [, errorDispatch] = useContext(ErrorContext);
   const [userValue, setUserValue] = useState("");
   const [validEmail, setValidEmail] = useState(false);
+  const [userStatus, setUserStatus] = useState(null);
   const [loading, setLoading] = useState(false);
   const [failedDownloads, setFailedDownloads] = useState([]);
   const [failedTasks, setFailedTasks] = useState([]);
-  const [errorMessage, setErrorMessage] = useState();
   const buttonRef = useRef();
 
   useEffect(() => {
@@ -50,15 +49,21 @@ export const UserInput = () => {
     evt.preventDefault();
 
     setLoading(true);
-    setErrorMessage();
     setFailedDownloads([]);
     setFailedTasks([]);
 
+    userDispatch({ type: "clearUser" });
     dataDispatch({ type: "clearData" });
 
-    userDispatch({ type: "setUser", user: userValue });
-
     try {
+      // Add user if needed
+      const info = await api.addUser(userValue);
+
+      console.log(info);
+
+      userDispatch({ type: "setUser", user: info.name });
+      setUserStatus(info.status);
+/*      
       // Get ImmuneSpace downloads
       const { downloads, failed: failedDownloads } = await api.getImmuneSpaceDownloads(userValue);
       
@@ -87,12 +92,13 @@ export const UserInput = () => {
       setLoading(false);
       setFailedDownloads(failedDownloads);
       setFailedTasks(failedTasks);
+*/      
     }
     catch (error) {
       console.log(error);
 
       setLoading(false);
-      setErrorMessage(getErrorMessage(error));
+      errorDispatch({ type: "setError", error: error });
     }
   };
 
@@ -120,6 +126,7 @@ export const UserInput = () => {
                 ref={ buttonRef }
                 variant="primary"                  
                 type="submit"
+                disabled={ !validEmail }
               >
                 Submit
               </Button>
@@ -135,17 +142,22 @@ export const UserInput = () => {
                 User name must be a valid email address
               </Text>
             }
+            { userStatus && 
+              <Text className="text-muted">
+                { userStatus === 'found' ? 
+                  <>Found existing user { user }</>
+                :
+                  <>Added new user { user }</>
+                }
+              </Text>
+            }
           </Group>          
         </Form>
       </Body>
       { user &&
         <Footer>
           <Row>
-            { errorMessage ?
-              <Col className="text-center">
-                <Alert variant="danger">{ errorMessage }</Alert>
-              </Col>            
-            : loading ?
+            { loading ?
               <Col className="text-center">
                 <LoadingSpinner />
               </Col>
