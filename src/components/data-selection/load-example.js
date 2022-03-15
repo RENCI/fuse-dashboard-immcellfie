@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { Form } from "react-bootstrap";
-import { UserContext, DataContext } from "../../contexts";
+import { UserContext, DataContext, ErrorContext } from "../../contexts";
 import { SpinnerButton } from "../spinner-button";
 import { states } from "./states";
 import { api } from "../../utils/api";
@@ -8,13 +8,13 @@ import { exampleData } from "../../utils/datasets";
 
 const { Group } = Form;
 
-export const LoadExample = ({ state, onSetState, onError }) => {
+export const LoadExample = ({ state, onSetState }) => {
   const [, userDispatch] = useContext(UserContext);
   const [, dataDispatch] = useContext(DataContext);
+  const [, errorDispatch] = useContext(ErrorContext);
 
   const onLoadExampleClick = async () => {
     onSetState(states.loading);
-    onError();
 
     dataDispatch({ type: "clearData" });
     userDispatch({ type: "clearActiveTask" });
@@ -32,7 +32,7 @@ export const LoadExample = ({ state, onSetState, onError }) => {
     catch (error) {
       console.log(error);
 
-      onError(error);
+      errorDispatch({ type: "setError", error: error });
     }
 
     onSetState(states.normal);

@@ -1,20 +1,20 @@
 import { useContext, useState } from "react";
 import { Table, Button, OverlayTrigger, Popover } from "react-bootstrap";
 import { QuestionCircle } from "react-bootstrap-icons";
-import { DataContext, UserContext } from "../../contexts";
+import { DataContext, UserContext, ErrorContext } from "../../contexts";
 import { TaskStatusIcon } from "../task-status-icon";
 import { states } from "./states";
 import { api } from "../../utils/api";
 import styles from "./download-list.module.css";
 
-export const DownloadList = ({ state, onSetState, onError }) => {   
+export const DownloadList = ({ state, onSetState }) => {   
   const [{ dataInfo }, dataDispatch  ] = useContext(DataContext);
   const [{ downloads }, userDispatch] = useContext(UserContext);
+  const [, errorDispatch] = useContext(ErrorContext);
   const [sortColumn, setSortColumn] = useState(null);
 
   const onLoadClick = async download => {
     onSetState(states.loading);
-    onError();
 
     userDispatch({ type: "clearActiveTask" });
     dataDispatch({ type: "clearOutput" });
@@ -35,7 +35,7 @@ export const DownloadList = ({ state, onSetState, onError }) => {
     catch (error) {
       console.log(error);
 
-      onError(error);
+      errorDispatch({ type: "setError", error: error});
     }
   };
 

@@ -1,6 +1,6 @@
 import { useState, useContext } from "react";
 import { Row, Col, Figure, Alert } from "react-bootstrap";
-import { UserContext, DataContext } from "../../contexts";
+import { UserContext, DataContext, ErrorContext } from "../../contexts";
 import { SpinnerButton } from "../spinner-button";
 import { FileSelect } from "../file-select";
 import { states } from "./states";
@@ -8,9 +8,10 @@ import { api } from "../../utils/api";
 
 const { Image } = Figure;
 
-export const UploadData = ({ state, onSetState, onError }) => {
+export const UploadData = ({ state, onSetState }) => {
   const [, userDispatch] = useContext(UserContext);
   const [, dataDispatch] = useContext(DataContext);
+  const [, errorDispatch] = useContext(ErrorContext);
   const [phenotypeDataFile, setPhenotypeDataFile] = useState(null);
   const [expressionDataFile, setExpressionDataFile] = useState(null);
 
@@ -24,7 +25,6 @@ export const UploadData = ({ state, onSetState, onError }) => {
 
   const onUploadDataClick = async () => {
     onSetState(states.uploading);
-    onError();
 
     dataDispatch({ type: "clearData" });
     userDispatch({ type: "clearActiveTask" });
@@ -47,7 +47,7 @@ export const UploadData = ({ state, onSetState, onError }) => {
     catch (error) {
       console.log(error);
 
-      onError(error);
+      errorDispatch({ type: "setError", error: error });
     }
 
     onSetState(states.normal);

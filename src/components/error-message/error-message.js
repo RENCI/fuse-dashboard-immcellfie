@@ -5,6 +5,14 @@ import { ErrorContext } from '../../contexts';
 
 const { Header, Title, Body, Footer } = Modal;
 
+const getErrorMessage = error => {
+  return !error ? null :
+    (typeof error === 'string' || error instanceof String) ? error :
+    error.message ? error.message.split(`\n`).map((s, i) => <p key={ i }>{ s }</p>) :
+    JSON.stringify(error, Object.getOwnPropertyNames(error));
+    //error.toString();
+};
+
 export const ErrorMessage = () => {
   const [{ error }, dispatch] = useContext(ErrorContext);
 
@@ -12,10 +20,7 @@ export const ErrorMessage = () => {
     dispatch({ type: "clearError" });
   };
   
-  const text = !error ? null :
-    (typeof error === 'string' || error instanceof String) ? error :
-    error.message ? error.message.split(`\n`).map((s, i) => <p key={ i }>{ s }</p>) :
-    JSON.stringify(error, Object.getOwnPropertyNames(error));
+  const text = getErrorMessage(error);
 
   return (
     <Modal             

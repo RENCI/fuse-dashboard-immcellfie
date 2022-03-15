@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect } from "react";
 import { Card, Alert, Row, Col, Accordion } from "react-bootstrap";
-import { DataContext } from "../../contexts";
+import { DataContext, ErrorContext } from "../../contexts";
 import { LoadingSpinner } from "../loading-spinner";
 import { PhenotypeInfo } from "../phenotype-info";
 import { ExpressionInfo } from "../expression-info";
@@ -18,21 +18,18 @@ const { getErrorMessage } = errorUtils;
 
 export const DataSelection = () => {  
   const [{ dataInfo, phenotypeData, expressionData }] = useContext(DataContext);
+  const [, errorDispatch] = useContext(ErrorContext);
   const [state, setState] = useState(states.normal);
   const [errorMessage, setErrorMessage] = useState();
 
   useEffect(() => {
     if (dataInfo && dataInfo.source.name === "upload" && dataInfo.phenotypes.numSamples !== dataInfo.expression.numSamples) {
-      setErrorMessage(`Number of samples in phenotype data (${ dataInfo.phenotypes.numSamples }) does not match number of subjects in expression data (${ dataInfo.expression.numSamples }). Please upload data with matching sample numbers.`);
-    }
-    else {
-      setErrorMessage();
+      errorDispatch({ 
+        type: "setError", 
+        error: `Number of samples in phenotype data (${ dataInfo.phenotypes.numSamples }) does not match number of subjects in expression data (${ dataInfo.expression.numSamples }). Please upload data with matching sample numbers.`
+      });
     }
   }, [dataInfo]);
-
-  const onError = error => {
-    setErrorMessage(getErrorMessage(error));
-  };
 
   const onSetState = state => {
     setState(state);
@@ -54,7 +51,6 @@ export const DataSelection = () => {
               <LoadImmuneSpace 
                 state={ state }
                 onSetState={ onSetState }
-                onError={ onError }
               />
             </Accordion.Body>
           </Accordion.Item>
@@ -67,7 +63,6 @@ export const DataSelection = () => {
               <UploadData
                 state={ state }
                 onSetState={ onSetState }
-                onError={ onError }
               /> 
             </Accordion.Body>
           </Accordion.Item>
@@ -81,7 +76,6 @@ export const DataSelection = () => {
               <LoadExample 
                 state={ state }
                 onSetState={ onSetState }
-                onError={ onError }
               />
             </Accordion.Body>
           </Accordion.Item>

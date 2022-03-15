@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { Modal, Form, InputGroup, OverlayTrigger, Popover, Button } from "react-bootstrap";
 import { PlusCircle, BoxArrowUpRight, QuestionCircle, PersonFill } from "react-bootstrap-icons";
-import { UserContext, DataContext } from "../../contexts";
+import { UserContext, DataContext, ErrorContext } from "../../contexts";
 import { SpinnerButton } from "../spinner-button";
 import { states } from "./states";
 import { api } from "../../utils/api";
@@ -10,9 +10,10 @@ import style from "./immunespace-dialog.module.css";
 const { Header, Title, Body } = Modal;
 const { Group, Control, Label } = Form;
 
-export const ImmunespaceDialog = ({ state, onSetState, onError }) => {
+export const ImmunespaceDialog = ({ state, onSetState }) => {
   const [{ user, apiKey, downloads }, userDispatch] = useContext(UserContext);
   const [, dataDispatch] = useContext(DataContext);
+  const [, errorDispatch] = useContext(ErrorContext);
   const [show, setShow] = useState(false);
   const [inputApiKey, setInputApiKey] = useState(apiKey);
   const [groupId, setGroupId] = useState("");
@@ -51,7 +52,6 @@ export const ImmunespaceDialog = ({ state, onSetState, onError }) => {
 
   const onSubmitGroupIdClick = async () => {
     onSetState(states.submitting);
-    onError();
 
     dataDispatch({ type: "clearData" });
     userDispatch({ type: "clearActiveTask" });
@@ -107,10 +107,10 @@ export const ImmunespaceDialog = ({ state, onSetState, onError }) => {
     }
     catch (error) {
       console.log(error);
-
-      onError(error);
   
       onSetState(states.normal);
+
+      errorDispatch({ type: "setError", error: error });
     }
   };
 
