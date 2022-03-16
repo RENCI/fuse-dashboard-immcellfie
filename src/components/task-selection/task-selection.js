@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { Card, ListGroup } from "react-bootstrap";
-import { DataContext, UserContext, ModelContext } from "../../contexts";
+import { DataContext, UserContext, ModelContext, ErrorContext } from "../../contexts";
 import { Task } from "./task";
 import { api } from "../../utils/api";
 
@@ -19,6 +19,7 @@ export const TaskSelection = () => {
   const [, dataDispatch  ] = useContext(DataContext);
   const [{ user, tasks }, userDispatch  ] = useContext(UserContext);
   const [, modelDispatch] = useContext(ModelContext);
+  const [, errorDispatch] = useContext(ErrorContext);
   const [loading, setLoading] = useState(false);
 
   const selectTask = async task => {
