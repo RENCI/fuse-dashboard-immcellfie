@@ -17,6 +17,9 @@ const timeSort = {
 };
 
 const initialState = {
+  // Current dataset
+  dataset: null,
+
   // Info for current dataset (source, names, etc.)
   dataInfo: null,
 
@@ -537,6 +540,12 @@ const reducer = (state, action) => {
         dataInfo: info
       };
     }
+
+    case "setDataset":
+      return {
+        ...initialState,
+        dataset: action.dataset
+      };
 
     case "setExpressionData":
       const expressionData = parseExpressionData(action.data);

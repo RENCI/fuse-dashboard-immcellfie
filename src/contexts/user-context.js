@@ -4,6 +4,7 @@ const initialState = {
   user: "",
   apiKey: "",
   downloads: [],
+  datasets: [],
   tasks: []
 };
 
@@ -21,6 +22,13 @@ const reducer = (state, action) => {
         apiKey: action.apiKey
       };
     }
+
+    case "setDatasets": {
+      return {
+        ...state,
+        datasets: action.datasets
+      }
+    };
 
     case "setDownloads": {
       return {

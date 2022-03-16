@@ -166,6 +166,8 @@ export const api = {
     for (const object of response.data) {
       const response = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API}/objects/${ object.object_id }`);
 
+      console.log(response);
+
       const { agent, provider } = response.data;
 
       if (!agent || !provider) continue;
@@ -202,7 +204,9 @@ export const api = {
       }
 
       if (Object.keys(dataset).length > 0) {
-        dataset.status = agent.status;
+        dataset.status = agent.agent_status;
+        dataset.provider = agent.parameters.service_id;
+        dataset.id = agent.service_object_id;
         dataset.createdTime = new Date(agent.created_time);
         dataset.finishedTime = finishedTime;
         dataset.description = agent.parameters.description;
@@ -216,6 +220,12 @@ export const api = {
     datasets.sort((a, b) => b.finishedTime - a.finishedTime);
 
     return datasets;
+  },
+
+  getData: async url => {
+    const response = await axios.get(url);
+
+    console.log(response);
   },
 
   // General file loading

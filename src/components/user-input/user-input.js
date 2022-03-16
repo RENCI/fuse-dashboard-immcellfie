@@ -63,6 +63,11 @@ export const UserInput = () => {
       const datasets = await api.getDatasets(user);
 
       console.log(datasets);
+
+      // Dispatch
+      userDispatch({ type: "setDatasets", datasets: datasets });
+
+      setLoading(false);
 /*      
       // Get ImmuneSpace downloads
       const { downloads, failed: failedDownloads } = await api.getImmuneSpaceDownloads(userValue);

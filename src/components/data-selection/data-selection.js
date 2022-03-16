@@ -6,6 +6,7 @@ import { PhenotypeInfo } from "../phenotype-info";
 import { ExpressionInfo } from "../expression-info";
 import { CellfieLink, SubgroupsLink, ExpressionLink } from "../page-links";
 import { errorUtils } from "../../utils/error-utils";
+import { DatasetList } from './dataset-list';
 import { LoadImmuneSpace } from "./load-immunespace";
 import { UploadData } from "./upload-data";
 import { LoadExample } from "./load-example";
@@ -35,6 +36,20 @@ export const DataSelection = () => {
     setState(state);
   };
 
+  return (
+    <Card>
+      <Header as="h5">
+        Input Dataset Selection
+      </Header>
+      <Body>
+        <DatasetList 
+          state={ state } 
+          onSetState={ onSetState } 
+        />
+      </Body>
+    </Card>
+  );
+/*
   return (
     <Card>
       <Header as="h5">
@@ -131,4 +146,5 @@ export const DataSelection = () => {
       }
     </Card>
   );  
+/*/  
 };           
