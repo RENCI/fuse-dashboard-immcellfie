@@ -71,6 +71,8 @@ export const TaskSelection = () => {
     }
     catch (error) {
       console.log(error);
+
+      errorDispatch({ type: "setError", error: error });
     }
 
     setLoading(false);

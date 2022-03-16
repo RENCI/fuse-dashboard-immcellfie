@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Row, Col, Card, Form, Button, ButtonGroup, InputGroup } from "react-bootstrap";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
-import { UserContext, DataContext, ModelContext } from "../../contexts";
+import { UserContext, DataContext, ModelContext, ErrorContext } from "../../contexts";
 import { api } from "../../utils/api";
 
 const { Header, Body } = Card;
@@ -11,6 +11,7 @@ export const ModelSelection = () => {
   const [{ user, downloads }, userDispatch] = useContext(UserContext);
   const [{ dataInfo, rawExpressionData, rawPhenotypeData }, dataDispatch] = useContext(DataContext);
   const [{ organism, model, parameters }, modelDispatch] = useContext(ModelContext); 
+  const [, errorDispatch] = useContext(ErrorContext);
 
   const thresholdType = parameters.find(({ name }) => name === "ThreshType"); 
 
@@ -59,6 +60,8 @@ export const ModelSelection = () => {
       }
       catch (error) {
         console.log(error);
+
+        errorDispatch({ type: "setError", error: error });
       }
     }
     else {
@@ -88,6 +91,8 @@ export const ModelSelection = () => {
       }
       catch (error) {
         console.log(error);
+
+        errorDispatch({ type: "setError", error: error });
       }
     }
   };
