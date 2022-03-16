@@ -37,7 +37,7 @@ export const DatasetList = ({ state, onSetState }) => {
   const getAnalyses = d => 0;
   const getStatus = d => d.status;
 
-  const columns = [    
+  const columns = [  
     {
       name: "",
       accessor: d => (
@@ -62,7 +62,7 @@ export const DatasetList = ({ state, onSetState }) => {
       sort: (a, b) => getName(a).localeCompare(getName(b))
     },
     { 
-      name: "Dataset ID",
+      name: "ID",
       accessor: getId,
       sort: (a, b) => getId(a).localeCompare(getId(b))
     },  

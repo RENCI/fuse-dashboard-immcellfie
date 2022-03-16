@@ -46,7 +46,30 @@ export const DataSelection = () => {
           state={ state } 
           onSetState={ onSetState } 
         />
+        <Row className="text-center">
+          <Col>
+            <LoadImmuneSpace />
+          </Col>
+          <Col>
+            <UploadData />
+          </Col>
+        </Row>
       </Body>
+      { phenotypeData &&
+        <Footer>
+          <Row className="text-center">
+            <Col>
+              <CellfieLink />
+            </Col>
+            <Col>
+              <SubgroupsLink />
+            </Col>
+            <Col>
+              <ExpressionLink />
+            </Col>
+          </Row>
+        </Footer>
+      }
     </Card>
   );
 /*
