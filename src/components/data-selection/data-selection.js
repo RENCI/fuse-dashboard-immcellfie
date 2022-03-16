@@ -46,7 +46,7 @@ export const DataSelection = () => {
           state={ state } 
           onSetState={ onSetState } 
         />
-        <Row className="text-center">
+        <Row className="text-center mt-2">
           <Col>
             <LoadImmuneSpace />
           </Col>

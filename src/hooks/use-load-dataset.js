@@ -16,9 +16,18 @@ export const useLoadDataset = ()  => {
         const properties = await api.getData(dataset);
 
         console.log(properties);
+
+        // XXX: DataInfo should be removed
+        dataDispatch({
+          type: "setDataInfo",
+          source: "upload"          
+        });
+
+        /// XXX: Change phenotypes to properties
+        dataDispatch({ type: "setPhenotypes", data: properties });                
       }
       else {
-
+        // XXX: Phenotype data is optional
       }
     }
     catch (error) {

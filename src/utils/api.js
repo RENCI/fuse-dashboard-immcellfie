@@ -224,10 +224,9 @@ export const api = {
 
   getData: async (dataset, type = 'properties') => {
     const urlResponse = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API}/objects/url/${ dataset.id }/type/filetype-dataset-${ type }`);
-    const dataResponse = await axios.get(urlResponse.data.url.replace("fuse-provider-upload", "dev-immcellfie.edc.renci.org"));
+    const dataResponse = await axios.get(urlResponse.data.url.replace("fuse-provider-upload:8000", "dev-immcellfie.edc.renci.org:8083"));
 
-    console.log(urlResponse);
-    console.log(dataResponse);
+    return dataResponse.data;
   },
 
   // General file loading
