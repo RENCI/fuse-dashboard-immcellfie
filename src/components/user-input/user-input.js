@@ -35,8 +35,9 @@ export const UserInput = () => {
 
   const onUserChange = evt => {
     const value = evt.target.value;
-    setUserValue(value);
+    setUserValue(value);    
     setValidEmail(validateEmail(value));
+    setUserStatus(null);
   };
 
   const onKeyPress = evt => {
@@ -57,12 +58,12 @@ export const UserInput = () => {
 
     try {
       // Add user if needed
-      const info = await api.addUser(userValue);
+      const { submitter_id, submitter_status } = await api.addUser(userValue);
 
-      console.log(info);
+      console.log(submitter_id, submitter_status);      
 
-      userDispatch({ type: "setUser", user: info.name });
-      setUserStatus(info.status);
+      userDispatch({ type: "setUser", user: submitter_id });
+      setUserStatus(submitter_status);
 /*      
       // Get ImmuneSpace downloads
       const { downloads, failed: failedDownloads } = await api.getImmuneSpaceDownloads(userValue);
@@ -144,7 +145,7 @@ export const UserInput = () => {
             }
             { userStatus && 
               <Text className="text-muted">
-                { userStatus === 'found' ? 
+                { userStatus === "existed" ? 
                   <>Found existing user { user }</>
                 :
                   <>Added new user { user }</>

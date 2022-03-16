@@ -147,12 +147,11 @@ export const api = {
       }
     });
 
-    //return response.data;
-
-    return {
-      name: user,
-      status: 'found'
+    if (response.submitter_status === "unknown") {
+      throw "Submitting user name failed";
     }
+
+    return response.data;
   },
 
   // General file loading
