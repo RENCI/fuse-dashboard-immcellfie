@@ -147,11 +147,75 @@ export const api = {
       }
     });
 
-    if (response.submitter_status === "unknown") {
-      throw "Submitting user name failed";
+    if (response.data.submitter_action_status === "unknown") {
+      throw new Error("Submitting user name failed");
     }
 
-    return response.data;
+    return {
+      user: response.data.submitter_id,
+      status: response.data.submitter_action_status
+    };
+  },
+
+  // Dataset objects
+
+  getDatasets: async user => {
+    const response = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API }/objects/search/${ user }`);
+
+    let datasets = [];
+    for (const object of response.data) {
+      const response = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API}/objects/${ object.object_id }`);
+
+      const { agent, provider } = response.data;
+
+      if (!agent || !provider) continue;
+
+      const dataset = {};
+      let finishedTime = -1;
+
+      const updateTime = file => {
+        const time = new Date(file.updated_time);
+        if (!finishedTime || time > finishedTime) finishedTime = time;
+      };
+
+      for (const key in provider) {
+        const file = provider[key];        
+
+        switch (key) {
+          case "filetype-dataset-expression":
+            dataset.expressionFile = file;
+            updateTime(file);
+            break;
+          
+          case "filetype-dataset-properties":
+            dataset.propertiesFile = file;
+            updateTime(file);
+            break;
+
+          case "filetype-dataset-archive":
+            console.log(`${ key } not yet supported`);
+            break;
+
+          default:
+            console.log(`Unknown filetype ${ key }`);            
+        }
+      }
+
+      if (Object.keys(dataset).length > 0) {
+        dataset.status = agent.status;
+        dataset.createdTime = new Date(agent.created_time);
+        dataset.finishedTime = finishedTime;
+        dataset.description = agent.parameters.description;
+        dataset.apiKey = agent.parameters.apikey;
+        dataset.accessionId = agent.parameters.accession_id;
+
+        datasets.push(dataset);
+      }
+    }
+
+    datasets.sort((a, b) => b.finishedTime - a.finishedTime);
+
+    return datasets;
   },
 
   // General file loading

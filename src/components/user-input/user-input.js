@@ -40,12 +40,6 @@ export const UserInput = () => {
     setUserStatus(null);
   };
 
-  const onKeyPress = evt => {
-    if (validEmail && evt.key === "Enter") {
-      buttonRef.current.click();
-    }
-  };
-
   const onSubmit = async evt => {
     evt.preventDefault();
 
@@ -58,12 +52,17 @@ export const UserInput = () => {
 
     try {
       // Add user if needed
-      const { submitter_id, submitter_status } = await api.addUser(userValue);
+      const { user, status } = await api.addUser(userValue);    
+      
+      console.log(user, status);
 
-      console.log(submitter_id, submitter_status);      
+      userDispatch({ type: "setUser", user: user });
+      setUserStatus(status);
 
-      userDispatch({ type: "setUser", user: submitter_id });
-      setUserStatus(submitter_status);
+      // Get datasets
+      const datasets = await api.getDatasets(user);
+
+      console.log(datasets);
 /*      
       // Get ImmuneSpace downloads
       const { downloads, failed: failedDownloads } = await api.getImmuneSpaceDownloads(userValue);
@@ -116,10 +115,7 @@ export const UserInput = () => {
         User Name
       </Header>
       <Body>
-        <Form 
-          onSubmit={ onSubmit }
-          onKeyPress={ onKeyPress }
-        >
+        <Form onSubmit={ onSubmit }>
           <h6>Input new or existing user name</h6>
           <Group>  
             <InputGroup>
@@ -146,9 +142,9 @@ export const UserInput = () => {
             { userStatus && 
               <Text className="text-muted">
                 { userStatus === "existed" ? 
-                  <>Found existing user { user }</>
+                  <>Found existing user <b>{ user }</b></>
                 :
-                  <>Added new user { user }</>
+                  <>Added new user <b>{ user }</b></>
                 }
               </Text>
             }
