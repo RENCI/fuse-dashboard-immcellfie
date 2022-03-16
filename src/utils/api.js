@@ -206,7 +206,7 @@ export const api = {
       if (Object.keys(dataset).length > 0) {
         dataset.status = agent.agent_status;
         dataset.provider = agent.parameters.service_id;
-        dataset.id = agent.service_object_id;
+        dataset.id = agent.object_id;
         dataset.createdTime = new Date(agent.created_time);
         dataset.finishedTime = finishedTime;
         dataset.description = agent.parameters.description;
@@ -222,10 +222,12 @@ export const api = {
     return datasets;
   },
 
-  getData: async url => {
-    const response = await axios.get(url);
+  getData: async (dataset, type = 'properties') => {
+    const urlResponse = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API}/objects/url/${ dataset.id }/type/filetype-dataset-${ type }`);
+    const dataResponse = await axios.get(urlResponse.data.url.replace("fuse-provider-upload", "dev-immcellfie.edc.renci.org"));
 
-    console.log(response);
+    console.log(urlResponse);
+    console.log(dataResponse);
   },
 
   // General file loading

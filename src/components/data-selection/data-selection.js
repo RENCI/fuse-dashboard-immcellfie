@@ -53,6 +53,9 @@ export const DataSelection = () => {
           <Col>
             <UploadData />
           </Col>
+          <Col>
+            <LoadExample />
+          </Col>
         </Row>
       </Body>
       { phenotypeData &&

@@ -13,7 +13,7 @@ export const useLoadDataset = ()  => {
       dataDispatch({ type: "setDataset", dataset: dataset });
 
       if (dataset.propertiesFile) {
-        const properties = await api.getData(dataset.propertiesFile.self_uri[0]);
+        const properties = await api.getData(dataset);
 
         console.log(properties);
       }
