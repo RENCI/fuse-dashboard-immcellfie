@@ -9,21 +9,13 @@ export const useLoadDataset = ()  => {
   return async dataset => {
     try {
       //userDispatch({ type: "clearActiveTask" });
-      dataDispatch({ type: "clearOutput" });
-      dataDispatch({ type: "setDataset", dataset: dataset });
+      dataDispatch({ type: "clearData" });
 
       if (dataset.propertiesFile) {
         const properties = await api.getData(dataset);
 
-        console.log(properties);
-
-        // XXX: DataInfo should be removed
-        dataDispatch({
-          type: "setDataInfo",
-          source: "upload"          
-        });
-
         /// XXX: Change phenotypes to properties
+        dataDispatch({ type: "setDataset", dataset: dataset });
         dataDispatch({ type: "setPhenotypes", data: properties });                
       }
       else {

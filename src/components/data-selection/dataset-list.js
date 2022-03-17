@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { Table, Button, OverlayTrigger, Popover } from "react-bootstrap";
 import { QuestionCircle } from "react-bootstrap-icons";
-import { UserContext, ErrorContext } from "../../contexts";
+import { UserContext, DataContext, ErrorContext } from "../../contexts";
 import { TaskStatusIcon } from "../task-status-icon";
 import { states } from "./states";
 import { api } from "../../utils/api";
@@ -10,6 +10,7 @@ import styles from "./dataset-list.module.css";
 
 export const DatasetList = ({ state, onSetState }) => {
   const [{ datasets }, userDispatch] = useContext(UserContext);
+  const [{ dataset }] = useContext(DataContext);
   const [, errorDispatch] = useContext(ErrorContext);
   const [sortColumn, setSortColumn] = useState(null);
   const loadDataset = useLoadDataset();
@@ -17,16 +18,22 @@ export const DatasetList = ({ state, onSetState }) => {
   const onLoadClick = async dataset => {
     onSetState(states.loading);
 
-    loadDataset(dataset);
+    try {
+      loadDataset(dataset);
 
-    onSetState(state.normal);
+      onSetState(states.normal);
+    }
+    catch (error) {
+      onSetState(states.normal);
+    }
   };
 
   console.log(datasets);
+  console.log(dataset);
 
   const disabled = state !== states.normal;
-  const loaded = () => false; //download => dataInfo && dataInfo.source.downloadId === download.id;
-  const failed = download => download.status === "failed";
+  const loaded = d => d === dataset;
+  const failed = dataset => dataset.status === "failed";
   const statusValue = status => status === "failed" ? 0 : 1;
 
   const getSource = d => d.provider.replace("fuse-provider-", "");

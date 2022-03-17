@@ -223,11 +223,7 @@ export const api = {
   },
 
   getData: async (dataset, type = 'properties') => {
-
-    console.log("LDKJF:LDSKJF");
-
     const urlResponse = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API}/objects/url/${ dataset.id }/type/filetype-dataset-${ type }`);
-    //const dataResponse = await axios.get(urlResponse.data.url.replace("fuse-provider-upload:8000", "dev-immcellfie.edc.renci.org:8083"));
     const dataResponse = await axios.get(urlResponse.data.url);
 
     return dataResponse.data;

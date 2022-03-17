@@ -20,9 +20,6 @@ const initialState = {
   // Current dataset
   dataset: null,
 
-  // Info for current dataset (source, names, etc.)
-  dataInfo: null,
-
   // Phenotype data for each sample
   rawPhenotypeData: null,
   phenotypeData: null,
@@ -109,17 +106,8 @@ const initializePhenotypeData = (state, rawPhenotypeData) => {
   // Select this subgroup
   const selectedSubgroups = [subgroups[0].key, null];
 
-  const dataInfo = {
-    ...state.dataInfo,
-    phenotypes: {
-      ...state.dataInfo.phenotypes, 
-      numSamples: phenotypeData.length
-    }
-  };
-
   return {
     ...state,
-    dataInfo: dataInfo,
     rawPhenotypeData: rawPhenotypeData,
     phenotypeData: phenotypeData,
     phenotypes: phenotypes,
@@ -528,19 +516,6 @@ const keyIndex = (key, subgroups) => {
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "setDataInfo": {
-      const info = {
-        source: action.source,
-        phenotypes: action.phenotypes ? action.phenotypes : { name: "phenotypes" },       
-        expression: action.expression ? action.expression : { name: "expression data" }
-      };
-
-      return {
-        ...initialState,
-        dataInfo: info
-      };
-    }
-
     case "setDataset":
       return {
         ...initialState,
@@ -556,17 +531,8 @@ const reducer = (state, action) => {
         newState = initializePhenotypeData(newState, createPhenotypeData(expressionData));
       }
 
-      const dataInfo = {
-        ...newState.dataInfo,
-        expression: {
-          ...newState.dataInfo.expression,
-          numSamples: expressionData.length > 0 ? expressionData[0].values.length : 0
-        }
-      };
-
       return {
         ...newState,
-        dataInfo: dataInfo,
         expressionFile: action.file,
         rawExpressionData: action.data,
         expressionData: parseExpressionData(action.data)
