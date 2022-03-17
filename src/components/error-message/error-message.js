@@ -5,12 +5,29 @@ import { ErrorContext } from '../../contexts';
 
 const { Header, Title, Body, Footer } = Modal;
 
+const isString = s => (typeof s === 'string' || s instanceof String);
+
+const splitString = s => s.split(`\n`).map((s, i) => <p key={ i }>{ s }</p>);
+
 const getErrorMessage = error => {
-  return !error ? null :
-    (typeof error === 'string' || error instanceof String) ? error :
-    error.message ? error.message.split(`\n`).map((s, i) => <p key={ i }>{ s }</p>) :
-    JSON.stringify(error, Object.getOwnPropertyNames(error));
-    //error.toString();
+  if (!error) {
+    return null;
+  }
+  else if (isString(error)) {
+    return error;
+  }
+  else {
+    return (
+      <>
+        { isString(error.message) && 
+          <><b>message:</b>{ splitString(error.message) }</> 
+        }
+        { isString(error.description) &&
+          <><b>description:</b>{ splitString(error.description) }</> 
+        }
+      </>
+    );
+  }
 };
 
 export const ErrorMessage = () => {
@@ -32,7 +49,7 @@ export const ErrorMessage = () => {
         className="text-danger"
       >
         <Title>
-          <ExclamationCircleFill /> Error
+          <ExclamationCircleFill /> { error && error.name ? error.name : 'Error' }
         </Title>
       </Header>  
       <Body>        
