@@ -16,26 +16,23 @@ const reducer = (state, action) => {
         user: action.user
       };
 
-    case "setApiKey": {
+    case "setApiKey":
       return {
         ...state,
         apiKey: action.apiKey
       };
-    }
 
-    case "setDatasets": {
+    case "setDatasets":
       return {
         ...state,
         datasets: action.datasets
-      }
-    };
+      };;
 
-    case "setDownloads": {
+    case "setDownloads":
       return {
         ...state,
         downloads: action.downloads
       };
-    }
 
     case "addDownload": {
       if (state.downloads.find(({ id }) => id === action.download.id)) {

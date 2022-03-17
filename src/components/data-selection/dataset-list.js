@@ -1,17 +1,15 @@
 import { useContext, useState } from "react";
-import { Table, Button, OverlayTrigger, Popover } from "react-bootstrap";
-import { QuestionCircle } from "react-bootstrap-icons";
-import { UserContext, DataContext, ErrorContext } from "contexts";
+import { Table, Button } from "react-bootstrap";
+import { UserContext, DataContext } from "contexts";
 import { TaskStatusIcon } from "components/task-status-icon";
 import { states } from "./states";
-import { api } from "utils/api";
+import { getName } from "utils/dataset";
 import { useLoadDataset } from "hooks";
 import styles from "./dataset-list.module.css";
 
 export const DatasetList = ({ state, onSetState }) => {
-  const [{ datasets }, userDispatch] = useContext(UserContext);
+  const [{ datasets }] = useContext(UserContext);
   const [{ dataset }] = useContext(DataContext);
-  const [, errorDispatch] = useContext(ErrorContext);
   const [sortColumn, setSortColumn] = useState(null);
   const loadDataset = useLoadDataset();
 
@@ -28,17 +26,13 @@ export const DatasetList = ({ state, onSetState }) => {
     }
   };
 
-  console.log(datasets);
-  console.log(dataset);
-
   const disabled = state !== states.normal;
   const loaded = d => d === dataset;
   const failed = dataset => dataset.status === "failed";
   const statusValue = status => status === "failed" ? 0 : 1;
 
   const getSource = d => d.provider.replace("fuse-provider-", "");
-  const getName = d => d.accessionId ? d.accessionId : d.description ? d.description : 'NA';
-  const getId = d => d.id;
+  const getDescription = d => d.description;
   const getStart = d => d.createdTime.toLocaleString();
   const getEnd = d => d.finishedTime.toLocaleString();
   const getAnalyses = d => 0;
@@ -69,9 +63,9 @@ export const DatasetList = ({ state, onSetState }) => {
       sort: (a, b) => getName(a).localeCompare(getName(b))
     },
     { 
-      name: "ID",
-      accessor: getId,
-      sort: (a, b) => getId(a).localeCompare(getId(b))
+      name: "Description",
+      accessor: getDescription,
+      sort: (a, b) => getDescription(a).localeCompare(getDescription(b))
     },  
     { 
       name: "Start",
@@ -86,12 +80,35 @@ export const DatasetList = ({ state, onSetState }) => {
     {
       name: "Analyses",
       accessor: getAnalyses,
-      sort: (a, b) => getAnalyses(b) - getAnalyses(a)
+      sort: (a, b) => getAnalyses(b) - getAnalyses(a),
+      classes: "text-center"
     },
     { 
       name: "Status",
-      accessor: getStatus,
-      sort: (a, b) => statusValue(getStatus(b)) - statusValue(getStatus(a))
+      accessor: d => {
+        // XXX: Currently not receiving any error message. Revisit if this becomes available.
+        /*        
+        return !failed(d) ?
+          <>
+            <TaskStatusIcon task={ d } />
+            <OverlayTrigger
+              placement="left"
+              overlay={ 
+                <Popover>
+                  <Popover.Header>Error message</Popover.Header>
+                  <Popover.Body>{ d.stderr }</Popover.Body>
+                </Popover>
+              }
+            >
+              <QuestionCircle className="ms-2 text-secondary" />
+            </OverlayTrigger>
+          </>
+        :
+        */
+        return <TaskStatusIcon task={ d } />
+      },
+      sort: (a, b) => statusValue(getStatus(b)) - statusValue(getStatus(a)),
+      classes: "text-center"
     } 
   ];
 
@@ -105,7 +122,7 @@ export const DatasetList = ({ state, onSetState }) => {
                 { columns.map((column, i) => (
                   <th 
                     key={ i } 
-                    className={ column.name.length > 0 ? "pointer" : null }
+                    className={ column.classes + (column.name.length > 0 ? " pointer" : null) }
                     onClick={ () => setSortColumn(column) }
                   >
                     { column.name }
@@ -115,8 +132,18 @@ export const DatasetList = ({ state, onSetState }) => {
             </thead>
             <tbody>
               { datasets.slice().sort(sortColumn ? sortColumn.sort : undefined).map((download, i) => (
-                <tr key={ i } className={ loaded(download) ? `${ styles.active } border-primary rounded` : null }>
-                  { columns.map((column, i) => <td key={ i }>{ column.accessor(download) }</td>)}
+                <tr 
+                  key={ i } 
+                  className={ loaded(download) ? `${ styles.active } border-primary rounded` : null }
+                >
+                  { columns.map((column, i) => (
+                    <td 
+                      key={ i } 
+                      className={ column.classes }
+                    >
+                      { column.accessor(download) }
+                    </td>
+                  ))}
                 </tr>
               ))}
             </tbody>
