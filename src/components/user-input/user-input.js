@@ -53,8 +53,6 @@ export const UserInput = () => {
     try {
       // Add user if needed
       const { user, status } = await api.addUser(userValue);    
-      
-      console.log(user, status);
 
       userDispatch({ type: "setUser", user: user });
       setUserStatus(status);

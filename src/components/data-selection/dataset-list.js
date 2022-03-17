@@ -122,7 +122,10 @@ export const DatasetList = ({ state, onSetState }) => {
                 { columns.map((column, i) => (
                   <th 
                     key={ i } 
-                    className={ column.classes + (column.name.length > 0 ? " pointer" : null) }
+                    className={ 
+                      (column.classes ? column.classes : null) + 
+                      (column.name.length > 0 ? " pointer" : null) 
+                    }
                     onClick={ () => setSortColumn(column) }
                   >
                     { column.name }
