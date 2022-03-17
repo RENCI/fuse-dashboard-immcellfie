@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { ListGroup, Row, Col, Button, Collapse, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { ChevronDown, ChevronUp, XCircle } from "react-bootstrap-icons";
-import { TaskStatusIcon } from "../task-status-icon";
-import { getModel } from "../../utils/models";
+import { TaskStatusIcon } from "components/task-status-icon";
+import { getModel } from "utils/models";
 import styles from "./task.module.css";
 
 const { Item } = ListGroup;

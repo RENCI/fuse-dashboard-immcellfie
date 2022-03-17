@@ -1,13 +1,13 @@
 import { useContext } from "react";
 import { Tab, Card, Row, Col, Nav } from "react-bootstrap";
-import { UserContext, DataContext } from "../../contexts";
-import { HierarchyVis } from "../hierarchy-vis";
-import { HeatmapVis } from "../heatmap-vis";
-import { VolcanoVis } from "../volcano-vis";
-import { PathwayVis } from "../pathway-vis";
+import { UserContext, DataContext } from "contexts";
+import { HierarchyVis } from "components/hierarchy-vis";
+import { HeatmapVis } from "components/heatmap-vis";
+import { VolcanoVis } from "components/volcano-vis";
+import { PathwayVis } from "components/pathway-vis";
 import { OutputDownload } from "./output-download";
-import { LoadingSpinner } from "../loading-spinner";
-import { useLocalStorage } from "../../hooks";
+import { LoadingSpinner } from "components/loading-spinner";
+import { useLocalStorage } from "hooks";
 
 const { Header, Title, Body } = Card;
 const { Item, Link } = Nav;

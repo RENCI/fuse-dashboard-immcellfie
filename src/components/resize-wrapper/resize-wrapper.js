@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import PropTypes from "prop-types";
-import { useResize } from "../../hooks";
+import { useResize } from "hooks";
 import styles from "./resize-wrapper.module.css";
 
 export const ResizeWrapper = ({ useWidth, useHeight, minWidth, aspectRatio, children }) => {

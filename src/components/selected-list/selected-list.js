@@ -2,8 +2,8 @@ import { useContext, useState } from "react";
 import { Row, Col, Form, InputGroup, ToggleButtonGroup, Button, ToggleButton } from "react-bootstrap";
 import { GraphUp, List } from "react-bootstrap-icons";
 import { X } from "react-bootstrap-icons";
-import { DataContext } from "../../contexts";
-import { DetailVis } from "../detail-vis";
+import { DataContext } from "contexts";
+import { DetailVis } from "components/detail-vis";
 
 const { Control } = Form;
 

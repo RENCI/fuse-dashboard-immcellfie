@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { Card, Row, Col, Stack } from "react-bootstrap";
-import { DataContext } from "../../contexts";
-import { CellfieLink, SubgroupsLink, ExpressionLink } from "../page-links";
+import { DataContext } from "contexts";
+import { CellfieLink, SubgroupsLink, ExpressionLink } from "components/page-links";
 import { DatasetList } from './dataset-list';
 import { LoadImmuneSpace } from "./load-immunespace";
 import { UploadData } from "./upload-data";

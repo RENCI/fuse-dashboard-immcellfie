@@ -1,8 +1,8 @@
 import { useContext, useEffect, useReducer } from "react";
-import { DataContext, UserContext } from "../../contexts";
-import { TaskStatusIcon } from "../task-status-icon";
-import { api } from "../../utils/api";
-import { taskUtils } from "../../utils/task-utils";
+import { DataContext, UserContext } from "contexts";
+import { TaskStatusIcon } from "components/task-status-icon";
+import { api } from "utils/api";
+import { taskUtils } from "utils/task-utils";
 
 const { isActive } = taskUtils;
 

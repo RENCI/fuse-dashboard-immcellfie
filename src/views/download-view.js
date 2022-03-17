@@ -1,12 +1,12 @@
 import { useContext } from "react";
 import { Row, Col, Card, Button } from "react-bootstrap";
 import { Download } from "react-bootstrap-icons";
-import { UserContext, DataContext } from "../contexts";
-import { ViewWrapper } from "../components/view-wrapper";
-import { DataMissing } from "../components/data-missing";
-import { UserLink, CellfieLink, InputLink } from "../components/page-links";
-import { LoadExpression } from "../components/load-expression";
-import { useDownloadLink, useZipLink } from "../hooks";
+import { UserContext, DataContext } from "contexts";
+import { ViewWrapper } from "components/view-wrapper";
+import { DataMissing } from "components/data-missing";
+import { UserLink, CellfieLink, InputLink } from "components/page-links";
+import { LoadExpression } from "components/load-expression";
+import { useDownloadLink, useZipLink } from "hooks";
 
 const { Header, Body } = Card;
 

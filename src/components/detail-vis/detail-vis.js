@@ -2,8 +2,8 @@ import { useMemo } from "react";
 import { Row, Col, Card, Button } from "react-bootstrap";
 import { X } from "react-bootstrap-icons";
 import { format } from "d3-format";
-import { VegaWrapper } from "../vega-wrapper";
-import { histogram, densityComparison, bar, barComparison } from "../../vega-specs";
+import { VegaWrapper } from "components/vega-wrapper";
+import { histogram, densityComparison, bar, barComparison } from "vega-specs";
 import styles from "./detail-vis.module.css";
 
 const { Subtitle, Body, Footer } = Card;

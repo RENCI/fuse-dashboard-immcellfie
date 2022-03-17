@@ -1,11 +1,11 @@
 import { useState, useContext } from "react";
 import { Modal, ListGroup, Figure, Alert } from "react-bootstrap";
-import { UserContext, DataContext, ErrorContext } from "../../contexts";
-import { SpinnerButton } from "../spinner-button";
+import { UserContext, DataContext, ErrorContext } from "contexts";
+import { SpinnerButton } from "components/spinner-button";
 import { LoadNewButton } from "./load-new-button";
-import { FileSelect } from "../file-select";
+import { FileSelect } from "components/file-select";
 import { states } from "./states";
-import { api } from "../../utils/api";
+import { api } from "utils/api";
 
 const { Header, Title, Body } = Modal;
 const { Image } = Figure;

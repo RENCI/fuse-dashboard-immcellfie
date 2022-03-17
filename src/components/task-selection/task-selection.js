@@ -1,8 +1,8 @@
 import { useContext, useState } from "react";
 import { Card, ListGroup } from "react-bootstrap";
-import { DataContext, UserContext, ModelContext, ErrorContext } from "../../contexts";
+import { DataContext, UserContext, ModelContext, ErrorContext } from "contexts";
 import { Task } from "./task";
-import { api } from "../../utils/api";
+import { api } from "utils/api";
 
 const { Header, Body } = Card;
 const { Item } = ListGroup;

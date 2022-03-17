@@ -1,11 +1,11 @@
 import { useContext, useState } from "react";
 import { Table, Button, OverlayTrigger, Popover } from "react-bootstrap";
 import { QuestionCircle } from "react-bootstrap-icons";
-import { UserContext, DataContext, ErrorContext } from "../../contexts";
-import { TaskStatusIcon } from "../task-status-icon";
+import { UserContext, DataContext, ErrorContext } from "contexts";
+import { TaskStatusIcon } from "components/task-status-icon";
 import { states } from "./states";
-import { api } from "../../utils/api";
-import { useLoadDataset } from "../../hooks";
+import { api } from "utils/api";
+import { useLoadDataset } from "hooks";
 import styles from "./dataset-list.module.css";
 
 export const DatasetList = ({ state, onSetState }) => {

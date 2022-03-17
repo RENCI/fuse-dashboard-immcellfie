@@ -1,6 +1,6 @@
 import { useContext } from "react";
-import { DataContext, ErrorContext } from "../contexts";
-import { api } from "../utils/api";
+import { DataContext, ErrorContext } from "contexts";
+import { api } from "utils/api";
 
 export const useLoadDataset = ()  => {
   const [, dataDispatch] = useContext(DataContext);

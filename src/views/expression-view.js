@@ -1,14 +1,14 @@
 import { useContext, useState } from "react";
 import { max, range } from "d3-array";
 import { Card, Form, Row, Col } from "react-bootstrap";
-import { UserContext, DataContext, ColorContext } from "../contexts";
-import { ViewWrapper } from "../components/view-wrapper";
-import { ResizeWrapper } from "../components/resize-wrapper";
-import { VegaWrapper } from "../components/vega-wrapper";
-import { expressionHeatmap } from "../vega-specs";
-import { DataMissing } from "../components/data-missing";
-import { LoadExpression } from "../components/load-expression";
-import { UserLink, InputLink } from "../components/page-links";
+import { UserContext, DataContext, ColorContext } from "contexts";
+import { ViewWrapper } from "components/view-wrapper";
+import { ResizeWrapper } from "components/resize-wrapper";
+import { VegaWrapper } from "components/vega-wrapper";
+import { expressionHeatmap } from "vega-specs";
+import { DataMissing } from "components/data-missing";
+import { LoadExpression } from "components/load-expression";
+import { UserLink, InputLink } from "components/page-links";
 
 const { Header, Body } = Card;
 const { Group, Label, Control } = Form;

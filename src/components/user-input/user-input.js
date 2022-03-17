@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState, useRef } from "react";
 import { Card, Form, InputGroup, Button, Row, Col } from "react-bootstrap";
 import { ExclamationCircle } from "react-bootstrap-icons";
-import { UserContext, DataContext, ErrorContext } from "../../contexts";
-import { LoadingSpinner } from "../loading-spinner";
-import { CellfieLink, InputLink } from "../page-links";
-import { api } from "../../utils/api";
+import { UserContext, DataContext, ErrorContext } from "contexts";
+import { LoadingSpinner } from "components/loading-spinner";
+import { CellfieLink, InputLink } from "components/page-links";
+import { api } from "utils/api";
 
 const { Header, Body, Footer } = Card;
 const { Group, Control, Text } = Form;

@@ -2,10 +2,10 @@ import { useContext } from "react";
 import { Button, Row, Col, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { ArrowCounterclockwise, XCircle, Diagram3 } from "react-bootstrap-icons";
 import { group, ascending } from "d3-array";
-import { DataContext } from "../../contexts";
-import { LabelEdit } from "../label-edit";
-import { VegaWrapper } from "../vega-wrapper";
-import { phenotypeBarChart } from "../../vega-specs";
+import { DataContext } from "contexts";
+import { LabelEdit } from "components/label-edit";
+import { VegaWrapper } from "components/vega-wrapper";
+import { phenotypeBarChart } from "vega-specs";
 import styles from "./subgroup.module.css";
 
 export const Subgroup = ({ all, subgroup, isNew }) => {

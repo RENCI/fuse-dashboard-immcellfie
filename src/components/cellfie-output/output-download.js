@@ -1,8 +1,8 @@
 import { useContext } from "react";
 import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { Download } from "react-bootstrap-icons";
-import { DataContext } from "../../contexts";
-import { useZipLink } from "../../hooks";
+import { DataContext } from "contexts";
+import { useZipLink } from "hooks";
 
 export const OutputDownload = () => {
   const [{ rawOutput }] = useContext(DataContext);

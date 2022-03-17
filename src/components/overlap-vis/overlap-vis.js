@@ -1,8 +1,8 @@
 import { useContext } from "react";
-import { ColorContext } from "../../contexts";
-import { VegaWrapper } from "../vega-wrapper";
-import { ResizeWrapper } from "../resize-wrapper";
-import { barOverlap } from "../../vega-specs";
+import { ColorContext } from "contexts";
+import { VegaWrapper } from "components/vega-wrapper";
+import { ResizeWrapper } from "components/resize-wrapper";
+import { barOverlap } from "vega-specs";
 
 export const OverlapVis = ({ subgroup1, subgroup2, overlap, overlapMethod }) => {
   const [{ subgroupColors }] = useContext(ColorContext);

@@ -1,13 +1,13 @@
 import { useContext } from "react";
 import { Row, Col } from "react-bootstrap";
-import { UserContext, DataContext } from "../contexts";
-import { ViewWrapper } from "../components/view-wrapper";
-import { ModelSelection } from "../components/model-selection";
-import { SubgroupSelection } from "../components/subgroup-selection";
-import { TaskSelection } from "../components/task-selection";
-import { CellfieOutput } from "../components/cellfie-output";
-import { DataMissing } from "../components/data-missing";
-import { UserLink, InputLink } from "../components/page-links";
+import { UserContext, DataContext } from "contexts";
+import { ViewWrapper } from "components/view-wrapper";
+import { ModelSelection } from "components/model-selection";
+import { SubgroupSelection } from "components/subgroup-selection";
+import { TaskSelection } from "components/task-selection";
+import { CellfieOutput } from "components/cellfie-output";
+import { DataMissing } from "components/data-missing";
+import { UserLink, InputLink } from "components/page-links";
 
 export const OutputView = () => {
   const [{ user, tasks }] = useContext(UserContext);

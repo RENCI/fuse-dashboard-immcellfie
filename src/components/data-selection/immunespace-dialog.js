@@ -1,17 +1,16 @@
 import { useState, useContext } from "react";
 import { Modal, Form, InputGroup, OverlayTrigger, Popover, Button } from "react-bootstrap";
-import { BoxArrowUpRight, QuestionCircle, PersonFill } from "react-bootstrap-icons";
+import { PlusCircle, BoxArrowUpRight, QuestionCircle, PersonFill } from "react-bootstrap-icons";
 import { UserContext, DataContext, ErrorContext } from "contexts";
 import { SpinnerButton } from "components/spinner-button";
-import { LoadNewButton } from "./load-new-button";
 import { states } from "./states";
 import { api } from "utils/api";
-import style from "./load-immunespace.module.css";
+import style from "./immunespace-dialog.module.css";
 
 const { Header, Title, Body } = Modal;
 const { Group, Control, Label } = Form;
 
-export const LoadImmuneSpace = ({ state, onSetState }) => {
+export const ImmunespaceDialog = ({ state, onSetState }) => {
   const [{ user, apiKey, downloads }, userDispatch] = useContext(UserContext);
   const [, dataDispatch] = useContext(DataContext);
   const [, errorDispatch] = useContext(ErrorContext);
@@ -25,7 +24,7 @@ export const LoadImmuneSpace = ({ state, onSetState }) => {
 
   const onHideClick = () => {
     setShow(false);
-  };
+  }
 
   const onApiKeyChange = evt => {
     setInputApiKey(evt.target.value);
@@ -127,10 +126,17 @@ export const LoadImmuneSpace = ({ state, onSetState }) => {
 
   return (
     <>
-      <LoadNewButton 
-        text='Retrieve data from ImmuneSpace'
-        onClick={ onShowClick }
-      />
+      <Group>
+        <Button 
+          size="sm" 
+          className="ms-1" 
+          variant="outline-primary" 
+          onClick={ onShowClick }
+        >
+          <PlusCircle className="icon-offset" />
+        </Button>
+        <Label className="ms-2">Retrieve new data from ImmuneSpace</Label>
+      </Group>
 
       <Modal show={ show } onHide={ onHideClick }>
         <Header closeButton>

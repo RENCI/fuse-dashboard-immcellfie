@@ -1,6 +1,6 @@
 import { Card, Figure, Row, Col } from "react-bootstrap";
-import { ViewWrapper } from "../components/view-wrapper";
-import { UserLink } from "../components/page-links";
+import { ViewWrapper } from "components/view-wrapper";
+import { UserLink } from "components/page-links";
 
 const { Header, Body, Footer } = Card;
 

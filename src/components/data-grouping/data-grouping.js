@@ -1,9 +1,9 @@
 import { useContext, useState, useEffect} from "react";
 import { Row, Col, Card, Button, ListGroup, ListGroupItem } from "react-bootstrap";
 import { PlusCircle} from "react-bootstrap-icons";
-import { DataContext } from "../../contexts";
+import { DataContext } from "contexts";
 import { Subgroup } from "./subgroup";
-import { CellfieLink } from "../page-links";
+import { CellfieLink } from "components/page-links";
 
 const { Header, Footer } = Card;
 

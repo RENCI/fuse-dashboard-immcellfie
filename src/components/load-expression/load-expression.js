@@ -1,8 +1,8 @@
 import { useContext } from "react";
 import { Button } from "react-bootstrap";
-import { DataContext } from "../../contexts";
-import { exampleData } from "../../utils/datasets";
-import { api } from "../../utils/api";
+import { DataContext } from "contexts";
+import { exampleData } from "utils/datasets";
+import { api } from "utils/api";
 
 export const LoadExpression = () => {
   const [{ dataInfo }, dataDispatch] = useContext(DataContext);  
