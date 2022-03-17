@@ -232,12 +232,24 @@ export const api = {
     return dataResponse.data;
   },
 
+  uploadData: async (service, user, expressionFile, propertiesFile, description) => {
+    // Set data and parameters as form data
+    const formData = new FormData();
+    formData.append("optional_file_expressionMatrix", expressionFile);
+    if (propertiesFile) formData.append("optional_file_samplePropertiesMatrix", propertiesFile);
+    formData.append("service_id", service);
+    formData.append("submitter_id", user);
+    if (description) formData.append("description", description);
+
+    const response = await axios.post(`${ process.env.REACT_APP_FUSE_AGENT_API}/objects/load`, formData);
+
+    console.log(response);
+  },
+
   // General file loading
 
   loadFile: async file => {
     const response = await axios.get(window.URL.createObjectURL(file));
-
-    console.log(response.data);
 
     return response.data;
   },

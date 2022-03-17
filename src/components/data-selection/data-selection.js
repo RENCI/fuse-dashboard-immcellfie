@@ -28,8 +28,14 @@ export const DataSelection = () => {
           onSetState={ onSetState } 
         />
         <Stack gap={ 2 }>
-          <LoadImmuneSpace />
-          <UploadData />
+          <LoadImmuneSpace 
+            state={ state } 
+            onSetState={ onSetState }
+          />
+          <UploadData 
+            state={ state } 
+            onSetState={ onSetState }
+          />
         </Stack>
       </Body>
       { phenotypeData &&

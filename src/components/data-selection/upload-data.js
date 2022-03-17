@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { Modal, ListGroup, Figure, Alert } from "react-bootstrap";
+import { Modal, ListGroup, Figure, Alert, Form } from "react-bootstrap";
 import { UserContext, DataContext, ErrorContext } from "contexts";
 import { SpinnerButton } from "components/spinner-button";
 import { LoadNewButton } from "./load-new-button";
@@ -9,42 +9,57 @@ import { api } from "utils/api";
 
 const { Header, Title, Body } = Modal;
 const { Image } = Figure;
+const { Control } = Form;
 
 export const UploadData = ({ state, onSetState }) => {
-  const [, userDispatch] = useContext(UserContext);
+  const [{ user }, userDispatch] = useContext(UserContext);
   const [, dataDispatch] = useContext(DataContext);
   const [, errorDispatch] = useContext(ErrorContext);
   const [show, setShow] = useState(false);
-  const [phenotypeDataFile, setPhenotypeDataFile] = useState(null);
-  const [expressionDataFile, setExpressionDataFile] = useState(null);
+  const [propertiesFile, setPropertiesFile] = useState(null);
+  const [expressionFile, setExpressionFile] = useState(null);
+  const [description, setDescription] = useState("");
 
-  const onPhenotypeFileSelect = file => {
-    setPhenotypeDataFile(file);    
+  const onPropertiesFileSelect = file => {
+    setPropertiesFile(file);    
   };
 
   const onExpressionFileSelect = file => {
-    setExpressionDataFile(file);
+    setExpressionFile(file);
+  };
+
+  const onDescriptionChange = evt => {
+    setDescription(evt.target.value);
   };
 
   const onUploadDataClick = async () => {
+    try {
+      api.uploadData("fuse-provider-upload", user, expressionFile, propertiesFile, description);
+    }
+    catch (error) {
+      console.log(error);
+
+      errorDispatch({ type: "setError", error: error });
+    }
+/*    
     onSetState(states.uploading);
 
     dataDispatch({ type: "clearData" });
     userDispatch({ type: "clearActiveTask" });
 
     try {
-      const expressionData = await api.loadFile(expressionDataFile);
-      const phenotypeData = phenotypeDataFile ? await api.loadFile(phenotypeDataFile) : null;
+      const expressionData = await api.loadFile(expressionFile);
+      const propertiesData = propertiesFile ? await api.loadFile(propertiesFile) : null;
 
       dataDispatch({ 
         type: "setDataInfo", 
         source: { name: "upload" },
-        phenotypes: { name: phenotypeDataFile ? phenotypeDataFile.name : "Auto-generated" },
-        expression: { name: expressionDataFile.name }
+        propertiess: { name: propertiesFile ? propertiesFile.name : "Auto-generated" },
+        expression: { name: expressionFile.name }
       });
 
-      // Set phenotype data first
-      if (phenotypeData) dataDispatch({ type: "setPhenotypes", data: phenotypeData });
+      // Set properties data first
+      if (propertiesData) dataDispatch({ type: "setPropertiess", data: propertiesData });
       dataDispatch({ type: "setExpressionData", data: expressionData });
     }
     catch (error) {
@@ -54,11 +69,12 @@ export const UploadData = ({ state, onSetState }) => {
     }
 
     onSetState(states.normal);
+*/    
   };
 
   const dataImage = (label, description, src) => (
     <>
-      <div>{ label }</div>
+      <h6>{ label }</h6>
       { description.concat("e.g.").map((d, i) => <div key={ i } className="text-muted small">{ d }</div>) }
       <Image className="mt-1" src={ src } />
     </>
@@ -96,18 +112,25 @@ export const UploadData = ({ state, onSetState }) => {
           </Alert>
           <ListGroup variant="flush">
             <ListGroup.Item>
-              { dataImage("Expression data:", ["1st column: Entrez gene id", "Subsequent columns: samples"], "ExpressionDataFormat.png") }
+              { dataImage("Expression data (required):", ["1st column: Entrez gene id", "Subsequent columns: samples"], "ExpressionDataFormat.png") }
               <FileSelect onChange={ onExpressionFileSelect } />
             </ListGroup.Item>
             <ListGroup.Item>
-              { dataImage("Phenotype data (optional):", ["1st row: headers", "Subsequent rows: samples"], "PhenotypeDataFormat.png") }
-              <FileSelect onChange={ onPhenotypeFileSelect } />
+              { dataImage("Properties data (optional):", ["1st row: headers", "Subsequent rows: samples"], "PhenotypeDataFormat.png") }
+              <FileSelect onChange={ onPropertiesFileSelect } />
+            </ListGroup.Item>
+            <ListGroup.Item>
+              <h6>Description (optional):</h6>
+              <Control 
+                value={ description }
+                onChange={ onDescriptionChange }
+              />
             </ListGroup.Item>
           </ListGroup>
           <hr />
           <SpinnerButton
             variant="primary"
-            disabled={ disabled || !expressionDataFile }
+            disabled={ disabled || !expressionFile }
             spin={ state === "uploading" }
             onClick={ onUploadDataClick }
           >
