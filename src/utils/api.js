@@ -211,7 +211,7 @@ export const api = {
         dataset.provider = agent.parameters.service_id;
         dataset.id = agent.object_id;
         dataset.createdTime = new Date(agent.created_time);
-        dataset.finishedTime = finishedTime;
+        dataset.finishedTime = finishedTime === -1 ? null : finishedTime;
         dataset.description = agent.parameters.description;
         dataset.apiKey = agent.parameters.apikey;
         dataset.accessionId = agent.parameters.accession_id;

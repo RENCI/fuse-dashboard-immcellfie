@@ -34,7 +34,7 @@ export const DatasetList = ({ state, onSetState }) => {
   const getSource = d => d.provider.replace("fuse-provider-", "");
   const getDescription = d => d.description;
   const getStart = d => d.createdTime.toLocaleString();
-  const getEnd = d => d.finishedTime.toLocaleString();
+  const getEnd = d => d.finishedTime ? d.finishedTime.toLocaleString() : null;
   const getAnalyses = d => 0;
   const getStatus = d => d.status;
 
