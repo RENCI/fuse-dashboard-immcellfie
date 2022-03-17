@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { Card, Row, Col } from "react-bootstrap";
+import { Card, Row, Col, Stack } from "react-bootstrap";
 import { DataContext } from "../../contexts";
 import { CellfieLink, SubgroupsLink, ExpressionLink } from "../page-links";
 import { DatasetList } from './dataset-list';
@@ -27,14 +27,10 @@ export const DataSelection = () => {
           state={ state } 
           onSetState={ onSetState } 
         />
-        <Row className="text-center mt-2">
-          <Col>
-            <LoadImmuneSpace />
-          </Col>
-          <Col>
-            <UploadData />
-          </Col>
-        </Row>
+        <Stack gap={ 2 } className="col-md-5">
+          <LoadImmuneSpace />
+          <UploadData />
+        </Stack>
       </Body>
       { phenotypeData &&
         <Footer>
