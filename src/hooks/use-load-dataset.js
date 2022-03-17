@@ -11,7 +11,7 @@ export const useLoadDataset = ()  => {
       //userDispatch({ type: "clearActiveTask" });
       dataDispatch({ type: "clearData" });
 
-      if (dataset.propertiesFile) {
+      if (dataset.files.properties) {
         const properties = await api.getData(dataset);
 
         /// XXX: Change phenotypes to properties

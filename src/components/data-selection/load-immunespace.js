@@ -6,7 +6,7 @@ import { SpinnerButton } from "../spinner-button";
 import { LoadNewButton } from "./load-new-button";
 import { states } from "./states";
 import { api } from "../../utils/api";
-import style from "./immunespace-dialog.module.css";
+import style from "./load-immunespace.module.css";
 
 const { Header, Title, Body } = Modal;
 const { Group, Control, Label } = Form;

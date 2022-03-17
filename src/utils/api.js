@@ -172,7 +172,10 @@ export const api = {
 
       if (!agent || !provider) continue;
 
-      const dataset = {};
+      const dataset = {
+        files: {}
+      };
+
       let finishedTime = -1;
 
       const updateTime = file => {
@@ -185,17 +188,17 @@ export const api = {
 
         switch (key) {
           case "filetype-dataset-expression":
-            dataset.expressionFile = file;
+            dataset.files.expression = file;
             updateTime(file);
             break;
           
           case "filetype-dataset-properties":
-            dataset.propertiesFile = file;
+            dataset.files.properties = file;
             updateTime(file);
             break;
 
           case "filetype-dataset-archive":
-            console.log(`${ key } not yet supported`);
+            dataset.files.archive = file;
             break;
 
           default:

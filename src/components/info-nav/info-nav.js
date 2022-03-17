@@ -1,15 +1,13 @@
 import { useContext } from "react";
 import { Row, Col } from "react-bootstrap";
 import { UserContext, DataContext } from "../../contexts";
+import { getName } from "../../utils/dataset";
 
 export const InfoNav = () => {
   const [{ user },] = useContext(UserContext);
-  const [{ dataInfo },] = useContext(DataContext);
+  const [{ dataset },] = useContext(DataContext);
 
-  const name = dataInfo ?
-    dataInfo.source.name === "ImmuneSpace" ? dataInfo.phenotypes.name :
-    dataInfo.source.name === "upload" ? dataInfo.phenotypes.name :
-    dataInfo.source.name : null;
+  const name = dataset ? getName(dataset) : "None loaded";
 
   return (
     user && 
@@ -21,7 +19,7 @@ export const InfoNav = () => {
         </Col>
         <Col>
           <div>Input dataset</div>
-          <div><b>{ name ? name : "None loaded" }</b></div>
+          <div><b>{ name }</b></div>
         </Col>
       </Row>      
     </div>

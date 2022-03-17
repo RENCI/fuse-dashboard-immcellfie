@@ -27,7 +27,7 @@ export const DataSelection = () => {
           state={ state } 
           onSetState={ onSetState } 
         />
-        <Stack gap={ 2 } className="col-md-5">
+        <Stack gap={ 2 }>
           <LoadImmuneSpace />
           <UploadData />
         </Stack>
