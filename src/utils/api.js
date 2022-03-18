@@ -58,6 +58,61 @@ const getOutput = async (path, id) => {
 };
 
 // API helper functions
+
+const getDataset = async id => {
+  const response = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API}/objects/${ id }`);
+
+  const { agent, provider } = response.data;
+
+  if (!agent || !provider) return null;
+
+  const dataset = {};
+
+  let finishedTime = -1;
+
+  const updateTime = file => {
+    const time = new Date(file.updated_time);
+    if (!finishedTime || time > finishedTime) finishedTime = time;
+  };
+
+  const files = {};
+  for (const key in provider) {
+    const file = provider[key];        
+
+    switch (key) {
+      case "filetype-dataset-expression":
+        files.expression = file;
+        updateTime(file);
+        break;
+      
+      case "filetype-dataset-properties":
+        files.properties = file;
+        updateTime(file);
+        break;
+
+      case "filetype-dataset-archive":
+        files.archive = file;
+        break;
+
+      default:
+        console.log(`Unknown filetype ${ key }`);            
+    }
+  }    
+
+  if (Object.keys(files).length > 0) dataset.files = files;
+
+  dataset.status = agent.agent_status;
+  dataset.provider = agent.parameters.service_id;
+  dataset.id = agent.object_id;
+  dataset.createdTime = new Date(agent.created_time);
+  dataset.finishedTime = finishedTime === -1 ? null : finishedTime;
+  dataset.description = agent.parameters.description;
+  dataset.apiKey = agent.parameters.apikey;
+  dataset.accessionId = agent.parameters.accession_id;
+
+  return dataset;
+};
+
 const getDownload = async id => {
   const status = await checkTaskStatus(IMMUNESPACE_DOWNLOAD_PATH, id);
   const info = await getTaskInfo(IMMUNESPACE_DOWNLOAD_PATH, id);
@@ -159,68 +214,35 @@ export const api = {
 
   // Dataset objects
 
+  getDataset: id => {
+    const dataset =  getDataset(id);
+
+    if (!dataset) throw new Error(`Error loading object ${ id }`);
+
+    return dataset;
+  },
+
   getDatasets: async user => {
     const response = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API }/objects/search/${ user }`);
 
     let datasets = [];
+    let failed = [];
     for (const object of response.data) {
-      const response = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API}/objects/${ object.object_id }`);
+      const id = object.object_id;
+      const dataset = await getDataset(id);
 
-      console.log(response);
-
-      const { agent, provider } = response.data;
-
-      if (!agent || !provider) continue;
-
-      const dataset = {
-        files: {}
-      };
-
-      let finishedTime = -1;
-
-      const updateTime = file => {
-        const time = new Date(file.updated_time);
-        if (!finishedTime || time > finishedTime) finishedTime = time;
-      };
-
-      for (const key in provider) {
-        const file = provider[key];        
-
-        switch (key) {
-          case "filetype-dataset-expression":
-            dataset.files.expression = file;
-            updateTime(file);
-            break;
-          
-          case "filetype-dataset-properties":
-            dataset.files.properties = file;
-            updateTime(file);
-            break;
-
-          case "filetype-dataset-archive":
-            dataset.files.archive = file;
-            break;
-
-          default:
-            console.log(`Unknown filetype ${ key }`);            
-        }
-      }
-
-      if (Object.keys(dataset).length > 0) {
-        dataset.status = agent.agent_status;
-        dataset.provider = agent.parameters.service_id;
-        dataset.id = agent.object_id;
-        dataset.createdTime = new Date(agent.created_time);
-        dataset.finishedTime = finishedTime === -1 ? null : finishedTime;
-        dataset.description = agent.parameters.description;
-        dataset.apiKey = agent.parameters.apikey;
-        dataset.accessionId = agent.parameters.accession_id;
-
+      if (dataset) {
         datasets.push(dataset);
+      }
+      else {
+        failed.push(id);
       }
     }
 
     datasets.sort((a, b) => b.finishedTime - a.finishedTime);
+
+    // XXX: Do something more with this
+    if (failed.length > 0) console.log("Failed:", failed);
 
     return datasets;
   },
@@ -243,7 +265,7 @@ export const api = {
 
     const response = await axios.post(`${ process.env.REACT_APP_FUSE_AGENT_API}/objects/load`, formData);
 
-    console.log(response);
+    return response.data.object_id;
   },
 
   // General file loading

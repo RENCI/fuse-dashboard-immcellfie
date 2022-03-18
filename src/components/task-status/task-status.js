@@ -2,9 +2,13 @@ import { useContext, useEffect, useReducer } from "react";
 import { DataContext, UserContext } from "contexts";
 import { TaskStatusIcon } from "components/task-status-icon";
 import { api } from "utils/api";
-import { taskUtils } from "utils/task-utils";
+//import { taskUtils } from "utils/task-utils";
 
-const { isActive } = taskUtils;
+//const { isActive } = taskUtils;
+
+const isActive = status  => {
+  return status === "submitting" || status === "queued" || status === "started";
+};
 
 // XXX: Should move this to colors.js and use in task-status-icon
 const statusColor = {

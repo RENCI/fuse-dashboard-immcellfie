@@ -3,9 +3,31 @@ import { Table, Button } from "react-bootstrap";
 import { UserContext, DataContext } from "contexts";
 import { TaskStatusIcon } from "components/task-status-icon";
 import { states } from "./states";
-import { getName } from "utils/dataset";
+import { getName } from "utils/dataset-utils";
 import { useLoadDataset } from "hooks";
 import styles from "./dataset-list.module.css";
+
+const statusOrder = [
+  "pending",
+  "submitting",
+  "queued",
+  "started",
+  "finished",
+  "failed"
+].reduce((order, status, i) => { 
+  order[status] = i;
+  return order;
+}, {});
+
+const failed = d => d.status === "failed";
+const hasData = d => d.files;
+
+const getSource = d => d.provider.replace("fuse-provider-", "");
+const getDescription = d => d.description;
+const getStart = d => d.createdTime.toLocaleString();
+const getEnd = d => d.finishedTime ? d.finishedTime.toLocaleString() : null;
+const getAnalyses = d => 0;
+const getStatus = d => d.status;
 
 export const DatasetList = ({ state, onSetState }) => {
   const [{ datasets }] = useContext(UserContext);
@@ -26,23 +48,16 @@ export const DatasetList = ({ state, onSetState }) => {
     }
   };
 
-  const disabled = state !== states.normal;
   const loaded = d => d === dataset;
-  const failed = dataset => dataset.status === "failed";
-  const statusValue = status => status === "failed" ? 0 : 1;
+  const disabled = state !== states.normal;
 
-  const getSource = d => d.provider.replace("fuse-provider-", "");
-  const getDescription = d => d.description;
-  const getStart = d => d.createdTime.toLocaleString();
-  const getEnd = d => d.finishedTime ? d.finishedTime.toLocaleString() : null;
-  const getAnalyses = d => 0;
-  const getStatus = d => d.status;
+  console.log(datasets);
 
   const columns = [  
     {
       name: "",
       accessor: d => (
-        failed(d) ? null :
+        !hasData(d) || failed(d) ? null :
         <Button 
           size="sm"
           disabled={ disabled || loaded(d) }
@@ -65,12 +80,21 @@ export const DatasetList = ({ state, onSetState }) => {
     { 
       name: "Description",
       accessor: getDescription,
-      sort: (a, b) => getDescription(a).localeCompare(getDescription(b))
+      sort: (a, b) => {
+        const da = getDescription(a);
+        const db = getDescription(b);
+        return !da && !db ? 0 : !da ? 1 : !db ? -1 : 
+          getDescription(a).localeCompare(getDescription(b));
+      }
     },  
     { 
       name: "Start",
       accessor: getStart,
-      sort: (a, b) => getStart(b) - getStart(a)
+      sort: (a, b) => {
+        console.log(getStart(a), getStart(b));
+        console.log(getStart(a) > getStart(b));
+        return getStart(b) - getStart(a);
+      }
     },  
     { 
       name: "End",
@@ -107,7 +131,7 @@ export const DatasetList = ({ state, onSetState }) => {
         */
         return <TaskStatusIcon task={ d } />
       },
-      sort: (a, b) => statusValue(getStatus(b)) - statusValue(getStatus(a)),
+      sort: (a, b) => statusOrder[getStatus(a)] - statusOrder[getStatus(b)],
       classes: "text-center"
     } 
   ];

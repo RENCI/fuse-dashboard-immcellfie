@@ -9,17 +9,18 @@ import {
   SubgroupView,
   OutputView, 
   ExpressionView
-} from "./views";
+} from "views";
 import { 
   UserProvider, 
   DataProvider, 
   ModelProvider,
   ColorProvider,
   ErrorProvider
- } from "./contexts";
-import { TaskStatus } from "./components/task-status";
-import { InfoNav } from "./components/info-nav";
-import { ErrorMessage } from "./components/error-message";
+} from "contexts";
+import { DatasetMonitor } from "components/dataset-monitor";
+import { TaskStatus } from "components/task-status";
+import { InfoNav } from "components/info-nav";
+import { ErrorMessage } from "components/error-message";
 
 export const App = () => { 
   return (
@@ -81,6 +82,7 @@ export const App = () => {
           <ErrorMessage />
         </Container>
       </Router>
+      <DatasetMonitor />
     </ErrorProvider>
     </ColorProvider>
     </ModelProvider>

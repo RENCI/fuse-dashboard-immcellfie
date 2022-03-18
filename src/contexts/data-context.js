@@ -1,4 +1,4 @@
-import React, { createContext, useReducer } from "react";
+import { createContext, useReducer } from "react";
 import { csvParseRows, csvParse } from "d3-dsv";
 import { stratify } from "d3-hierarchy";
 import { merge, mean, group } from "d3-array";

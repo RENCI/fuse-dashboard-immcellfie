@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Row, Col } from "react-bootstrap";
 import { UserContext, DataContext } from "contexts";
-import { getName } from "utils/dataset";
+import { getName } from "utils/dataset-utils";
 
 export const InfoNav = () => {
   const [{ user },] = useContext(UserContext);

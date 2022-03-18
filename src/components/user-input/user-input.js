@@ -60,8 +60,6 @@ export const UserInput = () => {
       // Get datasets
       const datasets = await api.getDatasets(user);
 
-      console.log(datasets);
-
       // Dispatch
       userDispatch({ type: "setDatasets", datasets: datasets });
 

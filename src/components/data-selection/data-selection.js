@@ -27,6 +27,7 @@ export const DataSelection = () => {
           state={ state } 
           onSetState={ onSetState } 
         />
+        <hr />
         <Stack gap={ 2 }>
           <LoadImmuneSpace 
             state={ state } 

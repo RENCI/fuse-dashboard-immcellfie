@@ -1,6 +1,6 @@
 import { useState, useContext } from "react";
 import { Modal, ListGroup, Figure, Alert, Form } from "react-bootstrap";
-import { UserContext, DataContext, ErrorContext } from "contexts";
+import { UserContext, DataContext, LoadingContext, ErrorContext } from "contexts";
 import { SpinnerButton } from "components/spinner-button";
 import { LoadNewButton } from "./load-new-button";
 import { FileSelect } from "components/file-select";
@@ -16,8 +16,8 @@ export const UploadData = ({ state, onSetState }) => {
   const [, dataDispatch] = useContext(DataContext);
   const [, errorDispatch] = useContext(ErrorContext);
   const [show, setShow] = useState(false);
-  const [propertiesFile, setPropertiesFile] = useState(null);
   const [expressionFile, setExpressionFile] = useState(null);
+  const [propertiesFile, setPropertiesFile] = useState(null);
   const [description, setDescription] = useState("");
 
   const onPropertiesFileSelect = file => {
@@ -33,14 +33,22 @@ export const UploadData = ({ state, onSetState }) => {
   };
 
   const onUploadDataClick = async () => {
-    try {
-      api.uploadData("fuse-provider-upload", user, expressionFile, propertiesFile, description);
-    }
-    catch (error) {
-      console.log(error);
+    userDispatch({ 
+      type: "addDataset", 
+      dataset: {
+        provider: "fuse-provider-upload",
+        user,
+        expressionFile,
+        propertiesFile,
+        description,
+        createdTime: new Date()
+      }
+    });
 
-      errorDispatch({ type: "setError", error: error });
-    }
+    setExpressionFile(null);
+    setPropertiesFile(null);
+    setDescription("");
+    setShow(false);
 /*    
     onSetState(states.uploading);
 

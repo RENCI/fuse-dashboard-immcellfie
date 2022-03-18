@@ -2,7 +2,9 @@ import { OverlayTrigger, Tooltip, Spinner } from "react-bootstrap";
 import { CheckCircle, ExclamationCircle } from "react-bootstrap-icons";
 
 export const TaskStatusIcon = ({ task }) => {
-  const variant = task.status === "submitting" ? "primary" :
+  const variant = 
+    task.status === "pending" ? "warning" :
+    task.status === "submitting" ? "primary" :
     task.status === "queued" ? "info" :
     task.status === "started" ? "success" :    
     "secondary";

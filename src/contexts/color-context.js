@@ -45,7 +45,7 @@ const getSubgroupColors = colorScale => {
   const colors = [scheme(0.1), scheme(0.9)];
   
   return colorScale.reverse ? colors.reverse() : colors;
-}
+};
 
 const initialState = {
   sequentialScales: sequential,

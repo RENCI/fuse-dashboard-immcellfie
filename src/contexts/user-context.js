@@ -8,6 +8,11 @@ const initialState = {
   tasks: []
 };
 
+const getId = datasets => {
+  const pending = datasets.filter(({ status }) => status === "pending");
+  return pending.length === 0 ? 0 : Math.min(...pending.map(({ id }) => id));
+};
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "setUser": 
@@ -26,7 +31,34 @@ const reducer = (state, action) => {
       return {
         ...state,
         datasets: action.datasets
-      };;
+      };
+
+    case "addDataset":     
+      return {
+        ...state,
+        datasets: [
+          {            
+            id: getId(state.datasets), 
+            status: "pending",
+            ...action.dataset
+          },
+          ...state.datasets
+        ]
+      };
+
+    case "updateDataset": {
+      const index = state.datasets.findIndex(({ id }) => id === action.id);
+
+      if (index === -1) return state;
+
+      const datasets = [...state.datasets];
+      datasets[index] = action.dataset;
+
+      return {
+        ...state,
+        datasets: datasets
+      };
+    }      
 
     case "setDownloads":
       return {
