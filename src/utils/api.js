@@ -71,7 +71,7 @@ const getDataset = async id => {
   let finishedTime = -1;
 
   const updateTime = file => {
-    const time = new Date(file.updated_time);
+    const time = new Date(file.updated_time + "z");
     if (!finishedTime || time > finishedTime) finishedTime = time;
   };
 
@@ -104,7 +104,7 @@ const getDataset = async id => {
   dataset.status = agent.agent_status;
   dataset.provider = agent.parameters.service_id;
   dataset.id = agent.object_id;
-  dataset.createdTime = new Date(agent.created_time);
+  dataset.createdTime = new Date(agent.created_time + "z");
   dataset.finishedTime = finishedTime === -1 ? null : finishedTime;
   dataset.description = agent.parameters.description;
   dataset.apiKey = agent.parameters.apikey;

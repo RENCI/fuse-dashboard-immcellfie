@@ -52,8 +52,6 @@ export const DatasetList = () => {
   const loaded = d => d === dataset;
   const disabled = state !== states.normal;
 
-  console.log(datasets);
-
   const columns = [  
     {
       name: "",
