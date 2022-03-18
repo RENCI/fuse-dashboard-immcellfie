@@ -20,7 +20,7 @@ const statusOrder = [
 }, {});
 
 const failed = d => d.status === "failed";
-const hasData = d => d.files;
+const hasData = d => d.status === "finished" && d.files;
 
 const getSource = d => d.provider.replace("fuse-provider-", "");
 const getDescription = d => d.description;
@@ -56,7 +56,7 @@ export const DatasetList = () => {
     {
       name: "",
       accessor: d => (
-        !hasData(d) || failed(d) ? null :
+        (hasData(d) && !failed(d)) &&
         <Button 
           size="sm"
           disabled={ disabled || loaded(d) }

@@ -19,8 +19,8 @@ export const DatasetMonitor = () => {
           const id = await api.uploadData(
             info.provider,
             info.user,
-            info.expressionFile,
-            info.propertiesFile,
+            info.files.expressionFile,
+            info.files.propertiesFile,
             info.description
           );
 

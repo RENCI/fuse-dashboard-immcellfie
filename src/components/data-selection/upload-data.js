@@ -29,13 +29,18 @@ export const UploadData = () => {
   };
 
   const onUploadDataClick = async () => {
+    console.log(expressionFile, propertiesFile);
+
+    const files = {};
+    if (expressionFile) files.expressionFile = expressionFile;
+    if (propertiesFile) files.propertiesFile = propertiesFile;
+
     userDispatch({ 
       type: "addDataset", 
       dataset: {
         provider: "fuse-provider-upload",
         user,
-        expressionFile,
-        propertiesFile,
+        files: files,
         description,
         createdTime: new Date()
       }
