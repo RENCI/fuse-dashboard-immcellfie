@@ -32,7 +32,7 @@ const getStatus = d => d.status;
 export const DatasetList = () => {
   const [{ datasets }] = useContext(UserContext);
   const [{ dataset }] = useContext(DataContext);
-  const [state, setState] = useContext(states.normal);
+  const [state, setState] = useState(states.normal);
   const [sortColumn, setSortColumn] = useState(null);
   const loadDataset = useLoadDataset();
 
