@@ -1,20 +1,16 @@
 import { useState, useContext } from "react";
 import { Modal, ListGroup, Figure, Alert, Form } from "react-bootstrap";
-import { UserContext, DataContext, LoadingContext, ErrorContext } from "contexts";
+import { UserContext } from "contexts";
 import { SpinnerButton } from "components/spinner-button";
 import { LoadNewButton } from "./load-new-button";
 import { FileSelect } from "components/file-select";
-import { states } from "./states";
-import { api } from "utils/api";
 
 const { Header, Title, Body } = Modal;
 const { Image } = Figure;
 const { Control } = Form;
 
-export const UploadData = ({ state, onSetState }) => {
+export const UploadData = () => {
   const [{ user }, userDispatch] = useContext(UserContext);
-  const [, dataDispatch] = useContext(DataContext);
-  const [, errorDispatch] = useContext(ErrorContext);
   const [show, setShow] = useState(false);
   const [expressionFile, setExpressionFile] = useState(null);
   const [propertiesFile, setPropertiesFile] = useState(null);
@@ -48,36 +44,7 @@ export const UploadData = ({ state, onSetState }) => {
     setExpressionFile(null);
     setPropertiesFile(null);
     setDescription("");
-    setShow(false);
-/*    
-    onSetState(states.uploading);
-
-    dataDispatch({ type: "clearData" });
-    userDispatch({ type: "clearActiveTask" });
-
-    try {
-      const expressionData = await api.loadFile(expressionFile);
-      const propertiesData = propertiesFile ? await api.loadFile(propertiesFile) : null;
-
-      dataDispatch({ 
-        type: "setDataInfo", 
-        source: { name: "upload" },
-        propertiess: { name: propertiesFile ? propertiesFile.name : "Auto-generated" },
-        expression: { name: expressionFile.name }
-      });
-
-      // Set properties data first
-      if (propertiesData) dataDispatch({ type: "setPropertiess", data: propertiesData });
-      dataDispatch({ type: "setExpressionData", data: expressionData });
-    }
-    catch (error) {
-      console.log(error);
-
-      errorDispatch({ type: "setError", error: error });
-    }
-
-    onSetState(states.normal);
-*/    
+    setShow(false);   
   };
 
   const dataImage = (label, description, src) => (
@@ -87,8 +54,6 @@ export const UploadData = ({ state, onSetState }) => {
       <Image className="mt-1" src={ src } />
     </>
   );
-
-  const disabled = state !== states.normal;
 
   const onShowClick = () => {
     setShow(true);
@@ -138,8 +103,7 @@ export const UploadData = ({ state, onSetState }) => {
           <hr />
           <SpinnerButton
             variant="primary"
-            disabled={ disabled || !expressionFile }
-            spin={ state === "uploading" }
+            disabled={ !expressionFile }
             onClick={ onUploadDataClick }
           >
             Upload

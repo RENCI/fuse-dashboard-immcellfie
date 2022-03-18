@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useContext } from "react";
 import { Card, Row, Col, Stack } from "react-bootstrap";
 import { DataContext } from "contexts";
 import { CellfieLink, SubgroupsLink, ExpressionLink } from "components/page-links";
@@ -11,11 +11,6 @@ const { Header, Body, Footer } = Card;
 
 export const DataSelection = () => {  
   const [{ phenotypeData }] = useContext(DataContext);
-  const [state, setState] = useState(states.normal);
-
-  const onSetState = state => {
-    setState(state);
-  };
 
   return (
     <Card>
@@ -23,20 +18,11 @@ export const DataSelection = () => {
         Input Dataset Selection
       </Header>
       <Body>
-        <DatasetList 
-          state={ state } 
-          onSetState={ onSetState } 
-        />
+        <DatasetList />
         <hr />
         <Stack gap={ 2 }>
-          <LoadImmuneSpace 
-            state={ state } 
-            onSetState={ onSetState }
-          />
-          <UploadData 
-            state={ state } 
-            onSetState={ onSetState }
-          />
+          <LoadImmuneSpace />
+          <UploadData />
         </Stack>
       </Body>
       { phenotypeData &&

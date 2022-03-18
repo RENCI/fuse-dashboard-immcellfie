@@ -11,7 +11,7 @@ import style from "./load-immunespace.module.css";
 const { Header, Title, Body } = Modal;
 const { Group, Control, Label } = Form;
 
-export const LoadImmuneSpace = ({ state, onSetState }) => {
+export const LoadImmuneSpace = () => {
   const [{ user, apiKey, downloads }, userDispatch] = useContext(UserContext);
   const [, dataDispatch] = useContext(DataContext);
   const [, errorDispatch] = useContext(ErrorContext);
@@ -52,7 +52,7 @@ export const LoadImmuneSpace = ({ state, onSetState }) => {
   };
 
   const onSubmitGroupIdClick = async () => {
-    onSetState(states.submitting);
+    //onSetState(states.submitting);
 
     dataDispatch({ type: "clearData" });
     userDispatch({ type: "clearActiveTask" });
@@ -88,7 +88,7 @@ export const LoadImmuneSpace = ({ state, onSetState }) => {
     
           dataDispatch({ type: "setPhenotypes", data: phenotypeData });
 
-          onSetState(states.normal);
+          //onSetState(states.normal);
         }
         else if (status === "failed") {
           clearInterval(timer);         
@@ -102,20 +102,21 @@ export const LoadImmuneSpace = ({ state, onSetState }) => {
             tasks: []
           }});
 
-          onSetState(states.normal); 
+          //onSetState(states.normal); 
         }
       };
     }
     catch (error) {
       console.log(error);
   
-      onSetState(states.normal);
+      //onSetState(states.normal);
 
       errorDispatch({ type: "setError", error: error });
     }
   };
 
-  const disabled = state !== states.normal;
+  //const disabled = state !== states.normal;
+  const disabled = false;
 
   const finished = downloads.filter(({ status }) => status === "finished");
 
@@ -226,7 +227,7 @@ export const LoadImmuneSpace = ({ state, onSetState }) => {
               <SpinnerButton 
                 variant="primary"
                 disabled={ disabled || apiKey === "" || groupId === "" }
-                spin={ state === "submitting" }
+                spin={ false }//state === "submitting" }
                 onClick={ onSubmitGroupIdClick }
               >
                 Submit

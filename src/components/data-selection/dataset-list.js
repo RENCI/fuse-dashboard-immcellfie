@@ -29,22 +29,23 @@ const getEnd = d => d.finishedTime ? d.finishedTime.toLocaleString() : null;
 const getAnalyses = d => 0;
 const getStatus = d => d.status;
 
-export const DatasetList = ({ state, onSetState }) => {
+export const DatasetList = () => {
   const [{ datasets }] = useContext(UserContext);
   const [{ dataset }] = useContext(DataContext);
+  const [state, setState] = useContext(states.normal);
   const [sortColumn, setSortColumn] = useState(null);
   const loadDataset = useLoadDataset();
 
   const onLoadClick = async dataset => {
-    onSetState(states.loading);
+    setState(states.loading);
 
     try {
       loadDataset(dataset);
 
-      onSetState(states.normal);
+      setState(states.normal);
     }
     catch (error) {
-      onSetState(states.normal);
+      setState(states.normal);
     }
   };
 
