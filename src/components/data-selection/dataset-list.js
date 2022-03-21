@@ -24,6 +24,9 @@ const failed = d => d.status === "failed";
 const hasData = d => d.status === "finished" && d.files;
 
 const getSource = d => d.provider.replace("fuse-provider-", "");
+const getIdentifier = d => d.accessionId ? d.accessionId : 
+  d.files ? Object.values(d.files).map(file => file.name).join(", ") :
+  "";
 const getDescription = d => d.description;
 //const getStart = d => d.createdTime.toLocaleString();
 const getFinished = d => d.finishedTime ? d.finishedTime.toLocaleString() : null;
@@ -89,9 +92,9 @@ export const DatasetList = () => {
       sort: (a, b) => getSource(a).localeCompare(getSource(b))
     },
     { 
-      name: "Name",
-      accessor: getName,
-      sort: (a, b) => getName(a).localeCompare(getName(b))
+      name: "Identifier",
+      accessor: getIdentifier,
+      sort: (a, b) => getIdentifier(a).localeCompare(getIdentifier(b))
     },
     { 
       name: "Description",

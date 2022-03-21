@@ -29,9 +29,7 @@ export const App = () => {
     <ModelProvider>
     <ColorProvider>
     <ErrorProvider>
-      <Router>
-        <Container fluid>
-          <Navbar fixed="top" bg="dark" variant="dark" expand="md" className="mb-4">
+      <Router><Navbar bg="dark" variant="dark" expand="md" className="mb-3">
             <Nav>
               <Nav.Link as={ NavLink } to="/">
                 <Navbar.Brand>
@@ -71,6 +69,8 @@ export const App = () => {
               </Nav>
             </Navbar.Collapse>
           </Navbar>
+        <Container fluid>
+          
           <Switch>
             <Route exact path="/"><Home /></Route>
             <Route exact path="/user"><UserView /></Route>

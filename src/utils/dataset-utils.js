@@ -1,5 +1,6 @@
-export const getName = ({ accessionId, files }) => {
+export const getName = ({ accessionId, description, files }) => {
   return accessionId ? accessionId : 
+  description ? description :
   files ? Object.values(files).map(file => file.name).join(", ") :
   "";
 };
