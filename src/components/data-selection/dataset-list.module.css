@@ -7,3 +7,16 @@
   border-width: 2px 0px !important;
   background: #eef7ff;
 }
+
+.datasetRow:hover {
+  background-color: #ececec;
+}
+
+.detailsRow {
+  background-color: #fafafa;
+}
+
+.detailsRow pre {
+  max-height: 200px !important;
+  overflow-y: auto;
+}

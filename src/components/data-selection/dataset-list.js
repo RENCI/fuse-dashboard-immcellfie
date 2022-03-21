@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { Table, Button } from "react-bootstrap";
 import { UserContext, DataContext } from "contexts";
 import { TaskStatusIcon } from "components/task-status-icon";
+import { DatasetRow } from "./dataset-row";
 import { states } from "./states";
 import { getName } from "utils/dataset-utils";
 import { useLoadDataset } from "hooks";
@@ -24,8 +25,20 @@ const hasData = d => d.status === "finished" && d.files;
 
 const getSource = d => d.provider.replace("fuse-provider-", "");
 const getDescription = d => d.description;
-const getStart = d => d.createdTime.toLocaleString();
-const getEnd = d => d.finishedTime ? d.finishedTime.toLocaleString() : null;
+//const getStart = d => d.createdTime.toLocaleString();
+const getFinished = d => d.finishedTime ? d.finishedTime.toLocaleString() : null;
+const getFinishedDisplay = d => {
+  if (!d.finishedTime) return d.status;
+
+  const now = new Date();
+  const date = d.finishedTime;
+
+  return date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth() ? 
+    date.getDate() === now.getDate() ? `Today, ${ date.toLocaleTimeString() }` : 
+    date.getDate() === now.getDate() - 1 ? `Yesterday, ${ date.toLocaleTimeString() }` : 
+    d.finishedTime.toLocaleString() : 
+    d.finishedTime.toLocaleString();
+};
 const getAnalyses = d => 0;
 const getStatus = d => d.status;
 
@@ -56,14 +69,18 @@ export const DatasetList = () => {
     {
       name: "",
       accessor: d => (
-        (hasData(d) && !failed(d)) &&
-        <Button 
-          size="sm"
-          disabled={ disabled || loaded(d) }
-          onClick={ () => onLoadClick(d) }
-        >
-          Load
-        </Button>
+        <div style={{ visibility: (hasData(d) && !failed(d)) ? "visible" : "hidden" }}>
+          <Button 
+            size="sm"
+            disabled={ disabled || loaded(d) }
+            onClick={ evt => {
+              evt.stopPropagation();
+              onLoadClick(d);
+            }}
+          >
+            Load
+          </Button>
+        </div>
       )
     },
     { 
@@ -86,6 +103,7 @@ export const DatasetList = () => {
           getDescription(a).localeCompare(getDescription(b));
       }
     },  
+/*    
     { 
       name: "Start",
       accessor: getStart,
@@ -95,10 +113,11 @@ export const DatasetList = () => {
         return getStart(b) - getStart(a);
       }
     },  
+*/    
     { 
-      name: "End",
-      accessor: getEnd,
-      sort: (a, b) => getEnd(b) - getEnd(a)
+      name: "Finished",
+      accessor: getFinishedDisplay,
+      sort: (a, b) => getFinished(b) - getFinished(a)
     },
     {
       name: "Analyses",
@@ -139,7 +158,7 @@ export const DatasetList = () => {
     <>
       { datasets.length > 0 &&
         <div className={ styles.tableWrapper }>
-          <Table size="sm" hover className="align-middle small">
+          <Table size="sm" className="align-middle small">
             <thead>        
               <tr>
                 { columns.map((column, i) => (
@@ -157,21 +176,14 @@ export const DatasetList = () => {
               </tr>
             </thead>
             <tbody>
-              { datasets.slice().sort(sortColumn ? sortColumn.sort : undefined).map((download, i) => (
-                <tr 
-                  key={ i } 
-                  className={ loaded(download) ? `${ styles.active } border-primary rounded` : null }
-                >
-                  { columns.map((column, i) => (
-                    <td 
-                      key={ i } 
-                      className={ column.classes }
-                    >
-                      { column.accessor(download) }
-                    </td>
-                  ))}
-                </tr>
-              ))}
+              { datasets.slice().sort(sortColumn ? sortColumn.sort : undefined).map((dataset, i) => (
+                <DatasetRow 
+                  key={ i }
+                  dataset={ dataset } 
+                  loaded={ loaded(dataset) }
+                  columns={ columns } 
+                />
+              )) }
             </tbody>
           </Table>
         </div>
