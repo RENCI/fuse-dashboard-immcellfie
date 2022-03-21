@@ -56,7 +56,7 @@ export const taskHeatmap = {
               field: "value",
               order: "descending"
             },
-            title: "task phenotype"
+            title: "task properties"
           },
           x: {
             field: "index", 

@@ -14,11 +14,11 @@ export const useLoadDataset = ()  => {
       if (dataset.files.properties) {
         const properties = await api.getData(dataset);        
 
-        /// XXX: Change phenotypes to properties
-        dataDispatch({ type: "setPhenotypes", data: properties });                
+        /// XXX: Change properties to properties
+        dataDispatch({ type: "setproperties", data: properties });                
       }
       else {
-        dataDispatch({ type: "setEmptyPhenotypes" });   
+        dataDispatch({ type: "setEmptyproperties" });   
       }
     }
     catch (error) {

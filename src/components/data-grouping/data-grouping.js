@@ -8,7 +8,7 @@ import { CellfieLink } from "components/page-links";
 const { Header, Body, Footer } = Card;
 
 export const DataGrouping = () => {
-  const [{ phenotypes, subgroups }, dataDispatch] = useContext(DataContext);
+  const [{ properties, subgroups }, dataDispatch] = useContext(DataContext);
   const [newAdded, setNewAdded] = useState(false);  
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export const DataGrouping = () => {
       <Header as="h5">
         Data Grouping
       </Header>
-      { phenotypes.length === 0 ? 
+      { properties.length === 0 ? 
       <Body>
         <>No properties data loaded for creating subgroups</>
         </Body>

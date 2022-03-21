@@ -9,7 +9,7 @@ const { Label, Group, Control } = Form;
 
 export const ModelSelection = () => {
   const [{ user, downloads }, userDispatch] = useContext(UserContext);
-  const [{ dataInfo, rawExpressionData, rawPhenotypeData }, dataDispatch] = useContext(DataContext);
+  const [{ dataInfo, rawExpressionData, rawPropertiesData }, dataDispatch] = useContext(DataContext);
   const [{ organism, model, parameters }, modelDispatch] = useContext(ModelContext); 
   const [, errorDispatch] = useContext(ErrorContext);
 
@@ -41,7 +41,7 @@ export const ModelSelection = () => {
   const onRunCellfieClick = async () => {
     if (dataInfo.source.name === "ImmuneSpace") {
       try {
-        const n = dataInfo.phenotypes.numSamples;
+        const n = dataInfo.properties.numSamples;
         const downloadId = dataInfo.source.downloadId;
 
         // Run Cellfie
@@ -74,10 +74,10 @@ export const ModelSelection = () => {
         };
 
         const expressionBlob = dataBlob(rawExpressionData);
-        const phenotypesBlob = dataBlob(rawPhenotypeData);
+        const propertiesBlob = dataBlob(rawPropertiesData);
 
         // Run Cellfie
-        const id = await api.runCellfie(user, expressionBlob, phenotypesBlob, n, model.value.value, getParameterObject(parameters));     
+        const id = await api.runCellfie(user, expressionBlob, propertiesBlob, n, model.value.value, getParameterObject(parameters));     
 
         // Get task info
         const params = await api.getCellfieTaskParameters(id);

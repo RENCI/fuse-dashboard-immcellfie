@@ -1,12 +1,12 @@
 import { Alert } from "react-bootstrap";
-import styles from "./phenotype-info.module.css";
+import styles from "./properties-info.module.css";
 
-export const PhenotypeInfo = ({ source, name, data }) => {
+export const PropertiesInfo = ({ source, name, data }) => {
   return (
     <Alert variant="primary" className={ styles.alert }>
       { data ? 
         <>
-          <u>Phenotype data loaded</u>
+          <u>Properties data loaded</u>
           <div><small>Source: { source }</small></div>
           <div><small>Name: { name }</small></div>
           <div><small>{ data.length.toLocaleString() } rows (samples)</small></div>
@@ -17,7 +17,7 @@ export const PhenotypeInfo = ({ source, name, data }) => {
         </>
       :
         <>
-          No phenotype data
+          No properties data
         </>
       }
     </Alert>

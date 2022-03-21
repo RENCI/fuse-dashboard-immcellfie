@@ -283,11 +283,11 @@ export const api = {
 
   // Generic Cellfie API (e.g. for uploaded data)
 
-  runCellfie: async (user, expressionData, phenotypeData, sampleNumber, model, parameters) => {   
+  runCellfie: async (user, expressionData, propertiesData, sampleNumber, model, parameters) => {   
     // Set data and parameters as form data
     const formData = new FormData();
     formData.append("expression_data", expressionData);
-    formData.append("phenotype_data", phenotypeData);
+    formData.append("properties_data", propertiesData);
     formData.append("SampleNumber", sampleNumber);
     formData.append("Ref", model);
     Object.entries(parameters).forEach(([key, value]) => formData.append(key, value));
@@ -305,7 +305,7 @@ export const api = {
     return result.data.task_id;    
   }, 
   getCellfieExpressionData: async id => await resultStream(CELLFIE_PATH, id, "geneBySampleMatrix"),
-  getCellfiePhenotypes: async id => await resultStream(CELLFIE_PATH, id, "phenoDataMatrix"),
+  getCellfieproperties: async id => await resultStream(CELLFIE_PATH, id, "phenoDataMatrix"),
 
   // ImmuneSpace download API
 
@@ -350,7 +350,7 @@ export const api = {
   checkImmuneSpaceDownloadStatus: async downloadId => await checkTaskStatus(IMMUNESPACE_DOWNLOAD_PATH, downloadId),
   getImmuneSpaceDownloadInfo: async downloadId => await getTaskInfo(IMMUNESPACE_DOWNLOAD_PATH, downloadId),
   getImmuneSpaceExpressionData: async downloadId => await resultStream(IMMUNESPACE_DOWNLOAD_PATH, downloadId, "geneBySampleMatrix"),
-  getImmuneSpacePhenotypes: async downloadId => await resultStream(IMMUNESPACE_DOWNLOAD_PATH, downloadId, "phenoDataMatrix"),
+  getImmuneSpaceproperties: async downloadId => await resultStream(IMMUNESPACE_DOWNLOAD_PATH, downloadId, "phenoDataMatrix"),
 
   // ImmuneSpace Cellfie API
 

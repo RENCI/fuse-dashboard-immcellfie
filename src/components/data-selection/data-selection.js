@@ -9,7 +9,7 @@ import { UploadData } from "./upload-data";
 const { Header, Body, Footer } = Card;
 
 export const DataSelection = () => {  
-  const [{ phenotypeData }] = useContext(DataContext);
+  const [{ propertiesData }] = useContext(DataContext);
 
   return (
     <>
@@ -20,7 +20,7 @@ export const DataSelection = () => {
         <Body>
           <DatasetList />
         </Body>
-        { phenotypeData &&
+        { propertiesData &&
           <Footer>
             <Row className="text-center">
               <Col>

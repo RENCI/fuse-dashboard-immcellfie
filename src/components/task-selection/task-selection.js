@@ -36,7 +36,7 @@ export const TaskSelection = () => {
         dataDispatch({ 
           type: "setDataInfo", 
           source: { name: "ImmuneSpace", downloadId: task.download.id },
-          phenotypes: { name: task.download.info.group_id },
+          properties: { name: task.download.info.group_id },
           expression: { name: task.download.info.group_id }
         });
       }
@@ -47,11 +47,11 @@ export const TaskSelection = () => {
         });
       }
 
-      const phenotypes = isImmuneSpace ? 
-        await api.getImmuneSpacePhenotypes(task.info.immunespace_download_id) : 
-        await api.getCellfiePhenotypes(id);
+      const properties = isImmuneSpace ? 
+        await api.getImmuneSpaceproperties(task.info.immunespace_download_id) : 
+        await api.getCellfieproperties(id);
 
-      dataDispatch({ type: "setPhenotypes", data: phenotypes });
+      dataDispatch({ type: "setproperties", data: properties });
 
       if (!isImmuneSpace) {
         const expressionData = await api.getCellfieExpressionData(id);

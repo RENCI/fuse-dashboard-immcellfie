@@ -1,4 +1,4 @@
-export const phenotypeBarChart = {
+export const propertiesBarChart = {
   $schema: "https://vega.github.io/schema/vega-lite/v4.json",
   width: { step: 20 },
   height: 100,

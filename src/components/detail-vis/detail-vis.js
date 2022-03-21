@@ -100,10 +100,10 @@ export const DetailVis = ({ data, subgroup, subgroupName, onCloseClick }) => {
               </div>
             : <div>No valid data</div> }
           </Body>
-          { data.phenotype.length > 1 &&
+          { data.properties.length > 1 &&
             <Footer>
               <small>
-                { data.phenotype.map((level, i) => (
+                { data.properties.map((level, i) => (
                   <div key={ i } style={{ marginLeft: i + "em" }}>
                     { level }
                   </div>

@@ -94,7 +94,7 @@ export const UploadData = () => {
               <FileSelect onChange={ onExpressionFileSelect } />
             </ListGroup.Item>
             <ListGroup.Item>
-              { dataImage("Properties data (optional):", ["1st row: headers", "Subsequent rows: samples"], "PhenotypeDataFormat.png") }
+              { dataImage("Properties data (optional):", ["1st row: headers", "Subsequent rows: samples"], "PropertiesDataFormat.png") }
               <FileSelect onChange={ onPropertiesFileSelect } />
             </ListGroup.Item>
             <ListGroup.Item>

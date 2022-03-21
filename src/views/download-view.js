@@ -12,8 +12,8 @@ const { Header, Body } = Card;
 
 export const DownloadView = () => {
   const [{ user }] = useContext(UserContext);
-  const [{ rawPhenotypeData, rawExpressionData, rawOutput }] = useContext(DataContext);
-  const phenotypeLink = useDownloadLink(rawPhenotypeData);
+  const [{ rawPropertiesData, rawExpressionData, rawOutput }] = useContext(DataContext);
+  const propertiesLink = useDownloadLink(rawPropertiesData);
   const inputLink = useDownloadLink(rawExpressionData);
   const outputLink = useZipLink([
     { data: rawOutput && rawOutput.taskInfo , fileName: "taskInfo.csv" },
@@ -22,7 +22,7 @@ export const DownloadView = () => {
     { data: rawOutput && rawOutput.detailScoring, fileName: "detailScoring.csv" }
   ]);
   const allLink = useZipLink([
-    { data: rawPhenotypeData, fileName: "phenotypes.csv" },
+    { data: rawPropertiesData, fileName: "properties.csv" },
     { data: rawExpressionData, fileName: "expression.csv" },
     { data: rawOutput && rawOutput.taskInfo , fileName: "taskInfo.csv" },
     { data: rawOutput && rawOutput.score, fileName: "score.csv" },
@@ -56,7 +56,7 @@ export const DownloadView = () => {
     <ViewWrapper>
       { !user ?
         <DataMissing message="No user user selected" pageLink={ <UserLink /> } />
-      : !rawPhenotypeData ? 
+      : !rawPropertiesData ? 
         <DataMissing message="No data loaded" pageLink={ <InputLink /> } />      
       : 
         <Card>
@@ -65,7 +65,7 @@ export const DownloadView = () => {
           </Header>
           <Body>  
             <Row className="align-items-end">
-              <Col className="text-center">{ download(phenotypeLink, "phenotypes.csv", "Phenotype data", UserLink, "No phenotype data") }</Col>
+              <Col className="text-center">{ download(propertiesLink, "properties.csv", "Properties data", UserLink, "No properties data") }</Col>
               <Col className="text-center">{ download(inputLink, "expression.csv", "Expression data", LoadExpression, "No expression data") }</Col>
               <Col className="text-center">{ download(outputLink, "cellfie_output.zip", "CellFIE output (zipped)", CellfieLink, "No CellFIE output") }</Col>
             </Row>

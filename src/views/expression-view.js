@@ -15,7 +15,7 @@ const { Group, Label, Control } = Form;
 
 export const ExpressionView = () => {
   const [{ user }] = useContext(UserContext);
-  const [{ phenotypeData, expressionData, groups }] = useContext(DataContext); 
+  const [{ propertiesData, expressionData, groups }] = useContext(DataContext); 
   const [{ sequentialScales, sequentialScale }, colorDispatch] = useContext(ColorContext); 
   const [sortBy, setSortBy] = useState("median");
 
@@ -55,7 +55,7 @@ export const ExpressionView = () => {
     <ViewWrapper>
       { !user ?
         <DataMissing message="No user user selected" pageLink={ <UserLink /> } />
-      : !phenotypeData ? 
+      : !propertiesData ? 
         <DataMissing message="No data loaded" pageLink={ <InputLink /> } />
       : !expressionData ? 
           <div className="text-center">

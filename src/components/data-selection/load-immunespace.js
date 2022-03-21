@@ -77,16 +77,16 @@ export const LoadImmuneSpace = () => {
             tasks: []
           }});
 
-          const phenotypeData = await api.getImmuneSpacePhenotypes(downloadId);
+          const propertiesData = await api.getImmuneSpaceproperties(downloadId);
 
           dataDispatch({ 
             type: "setDataInfo", 
             source: { name: "ImmuneSpace", downloadId: downloadId },
-            phenotypes: { name: groupId },
+            properties: { name: groupId },
             expression: { name: groupId }
           });
     
-          dataDispatch({ type: "setPhenotypes", data: phenotypeData });
+          dataDispatch({ type: "setproperties", data: propertiesData });
 
           //onSetState(states.normal);
         }

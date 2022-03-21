@@ -1,6 +1,6 @@
 const exampleDatasets = {
   HPA_32: {
-    phenotypes: "TestPhenotypes_32.csv",
+    properties: "Testproperties_32.csv",
     expressionData: "HPA.csv",
     taskInfo: "HPA_taskInfo.csv",
     score: "HPA_score.csv",
@@ -8,7 +8,7 @@ const exampleDatasets = {
     detailScoring: "detailScoring.csv"
   },
   cellfie_3: {
-    phenotypes: "TestPhenotypes_3.csv",
+    properties: "Testproperties_3.csv",
     expressionData: "dataTest.csv",
     taskInfo: "dataRecon22_global_percentile.taskInfo.csv",
     score: "dataRecon22_global_percentile.score.csv",

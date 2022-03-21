@@ -7,13 +7,13 @@ import { UserLink, InputLink } from "components/page-links";
 
 export const SubgroupView = () => {
   const [{ user }] = useContext(UserContext);
-  const [{ phenotypeData }] = useContext(DataContext);
+  const [{ propertiesData }] = useContext(DataContext);
 
   return (
     <ViewWrapper>
       { !user ?
         <DataMissing message="No user user selected" pageLink={ <UserLink /> } />
-      : !phenotypeData ? 
+      : !propertiesData ? 
         <DataMissing message="No data loaded" pageLink={ <InputLink /> } />
       : 
         <DataGrouping />

@@ -11,7 +11,7 @@ import { UserLink, InputLink } from "components/page-links";
 
 export const OutputView = () => {
   const [{ user, tasks }] = useContext(UserContext);
-  const [{ phenotypeData, phenotypes }] = useContext(DataContext);
+  const [{ propertiesData, properties }] = useContext(DataContext);
   
   return (
     <>
@@ -19,7 +19,7 @@ export const OutputView = () => {
         <ViewWrapper>
           <DataMissing message="No user user selected" pageLink={ <UserLink /> } /> 
         </ViewWrapper>
-      : !phenotypeData && tasks.length === 0 ? 
+      : !propertiesData && tasks.length === 0 ? 
         <ViewWrapper> 
           <DataMissing message="No data loaded and no CellFIE tasks" pageLink={ <InputLink /> } /> 
         </ViewWrapper>
@@ -27,7 +27,7 @@ export const OutputView = () => {
         <Row>
           <Col xs={ 12 } xl={ 4 }>
             <ModelSelection />     
-            { phenotypes.length > 0 &&
+            { properties.length > 0 &&
               <div className="mt-4">
                 <SubgroupSelection />  
               </div> 
