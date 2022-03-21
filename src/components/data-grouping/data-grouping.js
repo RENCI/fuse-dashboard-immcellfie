@@ -11,9 +11,6 @@ export const DataGrouping = () => {
   const [{ phenotypes, subgroups }, dataDispatch] = useContext(DataContext);
   const [newAdded, setNewAdded] = useState(false);  
 
-  console.log(phenotypes);
-  console.log(subgroups);
-
   useEffect(() => {
     setNewAdded(false);
   }, []);
