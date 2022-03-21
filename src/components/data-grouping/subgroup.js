@@ -104,16 +104,19 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
             <OverlayTrigger
               placement="top"
               overlay={ 
-                <Tooltip>Create subgroups</Tooltip>
+                <Tooltip>Split into subgroups</Tooltip>
               }
             >
-              <Button
-                size="sm"
-                variant="outline-secondary"
-                onClick={ () => onCreateSubgroups(phenotype) }
-              >
-                <Diagram3 className="icon-offset" />
-              </Button>
+              <div className="d-grid px-4">
+                <Button
+                  size="sm"
+                  variant="outline-secondary"
+
+                  onClick={ () => onCreateSubgroups(phenotype) }
+                >
+                  <Diagram3 className="icon-offset" />
+                </Button>
+              </div>
             </OverlayTrigger>
           </div> 
         }
