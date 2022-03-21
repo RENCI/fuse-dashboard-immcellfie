@@ -11,7 +11,7 @@ import { UserLink, InputLink } from "components/page-links";
 
 export const OutputView = () => {
   const [{ user, tasks }] = useContext(UserContext);
-  const [{ phenotypeData }] = useContext(DataContext);
+  const [{ phenotypeData, phenotypes }] = useContext(DataContext);
   
   return (
     <>
@@ -26,10 +26,12 @@ export const OutputView = () => {
       :
         <Row>
           <Col xs={ 12 } xl={ 4 }>
-            <ModelSelection />         
-            <div className="mt-4">
-              <SubgroupSelection />  
-            </div>               
+            <ModelSelection />     
+            { phenotypes.length > 0 &&
+              <div className="mt-4">
+                <SubgroupSelection />  
+              </div> 
+            }                  
             <div className="mt-4">
               <TaskSelection />  
             </div>   

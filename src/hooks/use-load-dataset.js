@@ -9,17 +9,16 @@ export const useLoadDataset = ()  => {
   return async dataset => {
     try {
       //userDispatch({ type: "clearActiveTask" });
-      dataDispatch({ type: "clearData" });
+      dataDispatch({ type: "setDataset", dataset: dataset });
 
       if (dataset.files.properties) {
-        const properties = await api.getData(dataset);
+        const properties = await api.getData(dataset);        
 
         /// XXX: Change phenotypes to properties
-        dataDispatch({ type: "setDataset", dataset: dataset });
         dataDispatch({ type: "setPhenotypes", data: properties });                
       }
       else {
-        // XXX: Phenotype data is optional
+        dataDispatch({ type: "setEmptyPhenotypes" });   
       }
     }
     catch (error) {

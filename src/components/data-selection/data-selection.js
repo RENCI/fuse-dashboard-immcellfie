@@ -5,12 +5,13 @@ import { CellfieLink, SubgroupsLink, ExpressionLink } from "components/page-link
 import { DatasetList } from './dataset-list';
 import { LoadImmuneSpace } from "./load-immunespace";
 import { UploadData } from "./upload-data";
-import { states } from "./states";
 
 const { Header, Body, Footer } = Card;
 
 export const DataSelection = () => {  
   const [{ phenotypeData }] = useContext(DataContext);
+
+  console.log(phenotypeData);
 
   return (
     <Card>

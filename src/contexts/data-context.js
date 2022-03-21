@@ -538,6 +538,9 @@ const reducer = (state, action) => {
         expressionData: parseExpressionData(action.data)
       };
 
+    case "setEmptyPhenotypes":
+      return initializePhenotypeData(state, "");
+
     case "setPhenotypes":
       return initializePhenotypeData(state, action.data);
 
