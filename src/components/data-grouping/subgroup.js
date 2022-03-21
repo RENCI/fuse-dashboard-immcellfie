@@ -111,7 +111,6 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
                 <Button
                   size="sm"
                   variant="outline-secondary"
-
                   onClick={ () => onCreateSubgroups(phenotype) }
                 >
                   <Diagram3 className="icon-offset" />
