@@ -21,18 +21,19 @@ const statusOrder = [
   return order;
 }, {});
 
+const missingIndicator = "—";
+
 const failed = d => d.status === "failed";
 const hasData = d => d.status === "finished" && d.files;
 
 const getSource = d => d.provider.replace("fuse-provider-", "");
 const getIdentifier = d => d.accessionId ? d.accessionId : 
   d.files ? Object.values(d.files).map(file => file.name).join(", ") :
-  "";
-const getDescription = d => d.description;
-//const getStart = d => d.createdTime.toLocaleString();
+  missingIndicator;
+const getDescription = d => d.description ? d.description : missingIndicator;
 const getFinished = d => d.finishedTime ? d.finishedTime.toLocaleString() : null;
 const getFinishedDisplay = d => {
-  if (!d.finishedTime) return d.status;
+  if (!d.finishedTime) return missingIndicator;
 
   const now = new Date();
   const date = d.finishedTime;
@@ -76,7 +77,8 @@ export const DatasetList = () => {
     // XXX: Check return and update datasets
   };
 
-  const loaded = d => d === dataset;
+  const isLoaded = d => d === dataset;
+  const isLoading = d => d === loading;
   const disabled = loading !== null;
 
   const columns = [  
@@ -86,8 +88,8 @@ export const DatasetList = () => {
         <div style={{ visibility: (hasData(d) && !failed(d)) ? "visible" : "hidden" }}>
           <SpinnerButton 
             size="sm"
-            disabled={ disabled || loaded(d) }
-            spin={ d === loading }
+            disabled={ disabled || isLoaded(d) }
+            spin={ isLoading(d) }
             replace={ true }
             onClick={ evt => {
               evt.stopPropagation();
@@ -118,18 +120,7 @@ export const DatasetList = () => {
         return !da && !db ? 0 : !da ? 1 : !db ? -1 : 
           getDescription(a).localeCompare(getDescription(b));
       }
-    },  
-/*    
-    { 
-      name: "Start",
-      accessor: getStart,
-      sort: (a, b) => {
-        console.log(getStart(a), getStart(b));
-        console.log(getStart(a) > getStart(b));
-        return getStart(b) - getStart(a);
-      }
-    },  
-*/    
+    },    
     { 
       name: "Finished",
       accessor: getFinishedDisplay,
@@ -218,7 +209,7 @@ export const DatasetList = () => {
                 <DatasetRow 
                   key={ i }
                   dataset={ dataset } 
-                  loaded={ loaded(dataset) }
+                  loaded={ isLoaded(dataset) }
                   columns={ columns } 
                 />
               )) }
