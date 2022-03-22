@@ -538,10 +538,10 @@ const reducer = (state, action) => {
         expressionData: parseExpressionData(action.data)
       };
 
-    case "setEmptyproperties":
+    case "setEmptyProperties":
       return initializePropertiesData(state, "");
 
-    case "setproperties":
+    case "setProperties":
       return initializePropertiesData(state, action.data);
 
     case "setOutput": {

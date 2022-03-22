@@ -14,17 +14,18 @@ export const useLoadDataset = ()  => {
       if (dataset.files.properties) {
         const properties = await api.getData(dataset);        
 
-        /// XXX: Change properties to properties
-        dataDispatch({ type: "setproperties", data: properties });                
+        dataDispatch({ type: "setProperties", data: properties });      
       }
       else {
-        dataDispatch({ type: "setEmptyproperties" });   
+        dataDispatch({ type: "setEmptyProperties" });   
       }
     }
     catch (error) {
       console.log(error);
 
+      dataDispatch({ type: "clearData" });
+
       errorDispatch({ type: "setError", error: error });
-    }      
+    }
   };
 };

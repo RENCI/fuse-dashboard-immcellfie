@@ -1,5 +1,7 @@
 import axios from "axios";
 
+const inputDataType = "class_dataset_expression";
+
 // Paths for services
 const CELLFIE_PATH = "/cellfie";
 const IMMUNESPACE_DOWNLOAD_PATH = "/immunespace/download";
@@ -77,20 +79,20 @@ const getDataset = async id => {
 
   const files = {};
   for (const key in provider) {
-    const file = provider[key];        
+    const file = provider[key];
 
-    switch (key) {
-      case "filetype-dataset-expression":
+    switch (file.file_type) {
+      case "filetype_dataset_expression":
         files.expression = file;
         updateTime(file);
         break;
       
-      case "filetype-dataset-properties":
+      case "filetype_dataset_properties":
         files.properties = file;
         updateTime(file);
         break;
 
-      case "filetype-dataset-archive":
+      case "filetype_dataset_archive":
         files.archive = file;
         break;
 
@@ -247,8 +249,8 @@ export const api = {
     console.log(response);
   },
 
-  getData: async (dataset, type = 'properties') => {
-    const urlResponse = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API}/objects/url/${ dataset.id }/type/filetype-dataset-${ type }`);
+  getData: async (dataset, type = "properties") => {
+    const urlResponse = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API}/objects/url/${ dataset.id }/type/filetype_dataset_${ type }`);
     const dataResponse = await axios.get(urlResponse.data.url);
 
     return dataResponse.data;
@@ -257,10 +259,11 @@ export const api = {
   uploadData: async (service, user, expressionFile, propertiesFile, description) => {
     // Set data and parameters as form data
     const formData = new FormData();
-    formData.append("optional_file_expressionMatrix", expressionFile);
-    if (propertiesFile) formData.append("optional_file_samplePropertiesMatrix", propertiesFile);
+    formData.append("optional_file_expression", expressionFile);
+    if (propertiesFile) formData.append("optional_file_properties", propertiesFile);
     formData.append("service_id", service);
     formData.append("submitter_id", user);
+    formData.append("data_type", inputDataType);
     if (description) formData.append("description", description);
 
     const response = await axios.post(`${ process.env.REACT_APP_FUSE_AGENT_API}/objects/load`, formData);

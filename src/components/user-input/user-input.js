@@ -68,7 +68,7 @@ export const UserInput = () => {
       if (failed.length > 0) {
         errorDispatch({ type: "setError", error: (
           <>
-            Failed to load datasets:
+            Failed to load { failed.length } dataset{ failed.length > 1 && "s" }:
             <pre>
               { JSON.stringify(failed, null, 2) }
             </pre>

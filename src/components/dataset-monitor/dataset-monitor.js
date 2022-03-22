@@ -64,7 +64,7 @@ export const DatasetMonitor = () => {
 
     loadPending();
     checkStatus();
-  }, [datasets, userDispatch]);
+  }, [datasets, userDispatch, errorDispatch]);
 
   useEffect(() => {
     return () => clearTimeout(timer.current);

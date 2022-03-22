@@ -4,7 +4,6 @@ import { BoxArrowUpRight, QuestionCircle, PersonFill } from "react-bootstrap-ico
 import { UserContext, DataContext, ErrorContext } from "contexts";
 import { SpinnerButton } from "components/spinner-button";
 import { LoadNewButton } from "./load-new-button";
-import { states } from "./states";
 import { api } from "utils/api";
 import style from "./load-immunespace.module.css";
 
@@ -86,7 +85,7 @@ export const LoadImmuneSpace = () => {
             expression: { name: groupId }
           });
     
-          dataDispatch({ type: "setproperties", data: propertiesData });
+          dataDispatch({ type: "setProperties", data: propertiesData });
 
           //onSetState(states.normal);
         }

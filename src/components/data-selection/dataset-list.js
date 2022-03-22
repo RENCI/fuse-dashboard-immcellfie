@@ -3,10 +3,10 @@ import { Table, Button } from "react-bootstrap";
 import { XCircle } from "react-bootstrap-icons";
 import { UserContext, DataContext } from "contexts";
 import { TaskStatusIcon } from "components/task-status-icon";
+import { SpinnerButton } from "components/spinner-button";
 import { DatasetRow } from "./dataset-row";
-import { states } from "./states";
 import { useLoadDataset } from "hooks";
-import { api } from "utils/api";
+//import { api } from "utils/api";
 import styles from "./dataset-list.module.css";
 
 const statusOrder = [
@@ -49,20 +49,20 @@ const getStatus = d => d.status;
 export const DatasetList = () => {
   const [{ datasets }] = useContext(UserContext);
   const [{ dataset }, dataDispatch] = useContext(DataContext);
-  const [state, setState] = useState(states.normal);
+  const [loading, setLoading] = useState(null);
   const [sortColumn, setSortColumn] = useState(null);
   const loadDataset = useLoadDataset();
 
   const onLoadClick = async dataset => {
-    setState(states.loading);
+    setLoading(dataset);
 
     try {
-      loadDataset(dataset);
+      await loadDataset(dataset);
 
-      setState(states.normal);
+      setLoading(null);
     }
     catch (error) {
-      setState(states.normal);
+      setLoading(null);      
     }
   };
 
@@ -71,27 +71,31 @@ export const DatasetList = () => {
       dataDispatch({ type: "clearData" });
     }
 
-    api.deleteDataset(deleteDataset.id);
+    // const success = api.deleteDataset(deleteDataset.id);
+
+    // XXX: Check return and update datasets
   };
 
   const loaded = d => d === dataset;
-  const disabled = state !== states.normal;
+  const disabled = loading !== null;
 
   const columns = [  
     {
       name: "",
       accessor: d => (
         <div style={{ visibility: (hasData(d) && !failed(d)) ? "visible" : "hidden" }}>
-          <Button 
+          <SpinnerButton 
             size="sm"
             disabled={ disabled || loaded(d) }
+            spin={ d === loading }
+            replace={ true }
             onClick={ evt => {
               evt.stopPropagation();
               onLoadClick(d);
             }}
           >
             Load
-          </Button>
+          </SpinnerButton>
         </div>
       )
     },

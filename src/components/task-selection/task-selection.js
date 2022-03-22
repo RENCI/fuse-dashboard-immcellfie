@@ -51,7 +51,7 @@ export const TaskSelection = () => {
         await api.getImmuneSpaceproperties(task.info.immunespace_download_id) : 
         await api.getCellfieproperties(id);
 
-      dataDispatch({ type: "setproperties", data: properties });
+      dataDispatch({ type: "setProperties", data: properties });
 
       if (!isImmuneSpace) {
         const expressionData = await api.getCellfieExpressionData(id);
