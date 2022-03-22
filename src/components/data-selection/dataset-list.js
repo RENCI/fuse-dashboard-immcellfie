@@ -1,11 +1,12 @@
 import { useContext, useState } from "react";
 import { Table, Button } from "react-bootstrap";
+import { XCircle } from "react-bootstrap-icons";
 import { UserContext, DataContext } from "contexts";
 import { TaskStatusIcon } from "components/task-status-icon";
 import { DatasetRow } from "./dataset-row";
 import { states } from "./states";
-import { getName } from "utils/dataset-utils";
 import { useLoadDataset } from "hooks";
+import { api } from "utils/api";
 import styles from "./dataset-list.module.css";
 
 const statusOrder = [
@@ -47,7 +48,7 @@ const getStatus = d => d.status;
 
 export const DatasetList = () => {
   const [{ datasets }] = useContext(UserContext);
-  const [{ dataset }] = useContext(DataContext);
+  const [{ dataset }, dataDispatch] = useContext(DataContext);
   const [state, setState] = useState(states.normal);
   const [sortColumn, setSortColumn] = useState(null);
   const loadDataset = useLoadDataset();
@@ -63,6 +64,14 @@ export const DatasetList = () => {
     catch (error) {
       setState(states.normal);
     }
+  };
+
+  const onDeleteClick = async deleteDataset => {
+    if (deleteDataset === dataset) {
+      dataDispatch({ type: "clearData" });
+    }
+
+    api.deleteDataset(deleteDataset.id);
   };
 
   const loaded = d => d === dataset;
@@ -156,6 +165,28 @@ export const DatasetList = () => {
       classes: "text-center"
     } 
   ];
+
+  if (process.env.NODE_ENV === 'development') {
+    columns.push({
+      name: "Delete",
+      accessor: d => (
+        <div style={{ visibility: d.status === "finished" }}>
+          <Button 
+            size="sm"
+            variant="outline-danger"
+            disabled={ disabled }
+            onClick={ evt => {
+              evt.stopPropagation();
+              onDeleteClick(d);
+            }}
+          >
+            <XCircle className="icon-offset" />
+          </Button>
+        </div>
+      ),
+      classes: "text-center"
+    });
+  }
 
   return (
     <>

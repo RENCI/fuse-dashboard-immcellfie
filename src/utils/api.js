@@ -64,7 +64,7 @@ const getDataset = async id => {
 
   const { agent, provider } = response.data;
 
-  if (!agent || !provider) return null;
+  if (!agent || !provider) throw new Error(`Error loading object ${ id }`);
 
   const dataset = {};
 
@@ -214,13 +214,7 @@ export const api = {
 
   // Dataset objects
 
-  getDataset: id => {
-    const dataset =  getDataset(id);
-
-    if (!dataset) throw new Error(`Error loading object ${ id }`);
-
-    return dataset;
-  },
+  getDataset: getDataset,
 
   getDatasets: async user => {
     const response = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API }/objects/search/${ user }`);
@@ -229,22 +223,28 @@ export const api = {
     let failed = [];
     for (const object of response.data) {
       const id = object.object_id;
-      const dataset = await getDataset(id);
 
-      if (dataset) {
+      try {
+        const dataset = await getDataset(id);
+
         datasets.push(dataset);
       }
-      else {
+      catch (error) {
+        console.log(error);
+
         failed.push(id);
       }
     }
 
     datasets.sort((a, b) => b.finishedTime - a.finishedTime);
 
-    // XXX: Do something more with this
-    if (failed.length > 0) console.log("Failed:", failed);
+    return [datasets, failed];
+  },
 
-    return datasets;
+  deleteDataset: async id => {
+    const response = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API}/delete/${ id }`);
+
+    console.log(response);
   },
 
   getData: async (dataset, type = 'properties') => {

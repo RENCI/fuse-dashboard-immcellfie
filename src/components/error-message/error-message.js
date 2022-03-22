@@ -16,7 +16,7 @@ const getErrorMessage = error => {
   else if (isString(error)) {
     return error;
   }
-  else {
+  else if (error instanceof Error) {
     return (
       <>
         { isString(error.message) && 
@@ -27,6 +27,9 @@ const getErrorMessage = error => {
         }
       </>
     );
+  }
+  else {
+    return error;
   }
 };
 

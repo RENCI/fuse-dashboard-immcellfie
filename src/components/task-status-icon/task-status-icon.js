@@ -19,8 +19,8 @@ export const TaskStatusIcon = ({ task }) => {
       }
     >
       {
-        task.status === "finished" ? <CheckCircle className="text-success" /> :
-        task.status === "failed" ? <ExclamationCircle className="text-danger" /> :
+        task.status === "finished" ? <CheckCircle className="icon-offset text-success" /> :
+        task.status === "failed" ? <ExclamationCircle className="icon-offset text-danger" /> :
         <Spinner animation="border" size="sm" variant={ variant } />
       }
     </OverlayTrigger>

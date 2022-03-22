@@ -58,12 +58,23 @@ export const UserInput = () => {
       setUserStatus(status);
 
       // Get datasets
-      const datasets = await api.getDatasets(user);
+      const [datasets, failed] = await api.getDatasets(user);
 
       // Dispatch
       userDispatch({ type: "setDatasets", datasets: datasets });
 
       setLoading(false);
+
+      if (failed.length > 0) {
+        errorDispatch({ type: "setError", error: (
+          <>
+            Failed to load datasets:
+            <pre>
+              { JSON.stringify(failed, null, 2) }
+            </pre>
+          </>
+        )});
+      }
 /*      
       // Get ImmuneSpace downloads
       const { downloads, failed: failedDownloads } = await api.getImmuneSpaceDownloads(userValue);
