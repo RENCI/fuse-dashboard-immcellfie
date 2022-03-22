@@ -29,8 +29,6 @@ export const UploadData = () => {
   };
 
   const onUploadDataClick = async () => {
-    console.log(expressionFile, propertiesFile);
-
     const files = {};
     if (expressionFile) files.expressionFile = expressionFile;
     if (propertiesFile) files.propertiesFile = propertiesFile;

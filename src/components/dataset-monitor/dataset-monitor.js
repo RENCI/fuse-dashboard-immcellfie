@@ -1,5 +1,5 @@
-import { useContext, useEffect, useReducer, useRef } from "react";
-import { LoadingContext, DataContext, UserContext } from "contexts";
+import { useContext, useEffect, useRef } from "react";
+import { UserContext, ErrorContext } from "contexts";
 import { api } from "utils/api";
 import { isActive } from "utils/dataset-utils";
 
@@ -7,6 +7,7 @@ const getActive = datasets => datasets.filter(isActive);
 
 export const DatasetMonitor = () => {
   const [{ datasets }, userDispatch] = useContext(UserContext);
+  const [, errorDispatch] = useContext(ErrorContext);
   const timer = useRef(-1);
 
   useEffect(() => {
@@ -15,21 +16,30 @@ export const DatasetMonitor = () => {
       const pending = datasets.filter(({ status }) => status === "pending");
 
       for (const info of pending) {
-        if (info.provider === "fuse-provider-upload") {
-          const id = await api.uploadData(
-            info.provider,
-            info.user,
-            info.files.expressionFile,
-            info.files.propertiesFile,
-            info.description
-          );
+        try {
+          if (info.provider === "fuse-provider-upload") {          
+            const id = await api.uploadData(
+              info.provider,
+              info.user,
+              info.files.expressionFile,
+              info.files.propertiesFile,
+              info.description
+            );
 
-          const dataset = await api.getDataset(id);
-          
-          userDispatch({ type: "updateDataset", id: info.id, dataset: dataset });
-        }
-        // XXX: Add checks for other services
-      }    
+            const dataset = await api.getDataset(id);
+            
+            userDispatch({ type: "updateDataset", id: info.id, dataset: dataset });
+          }
+          // XXX: Add checks for other services
+        }  
+        catch (error) {
+          console.log(error);
+
+          userDispatch({ type: "removeDataset", id: info.id });
+
+          errorDispatch({ type: "setError", error: error });
+        }  
+      }
     };
 
     const checkStatus = () => {

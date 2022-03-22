@@ -58,7 +58,21 @@ const reducer = (state, action) => {
         ...state,
         datasets: datasets
       };
-    }      
+    }   
+    
+    case "removeDataset": {
+      const index = state.datasets.findIndex(({ id }) => id === action.id);
+
+      if (index === -1) return state;
+
+      const datasets = [...state.datasets];
+      datasets.splice(index, 1);
+
+      return {
+        ...state,
+        datasets: datasets
+      }
+    }
 
     case "setDownloads":
       return {
