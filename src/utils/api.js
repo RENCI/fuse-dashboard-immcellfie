@@ -104,6 +104,7 @@ const getDataset = async id => {
   if (Object.keys(files).length > 0) dataset.files = files;
 
   dataset.status = agent.agent_status;
+  dataset.detail = agent.detail;
   dataset.provider = agent.parameters.service_id;
   dataset.id = agent.object_id;
   dataset.createdTime = new Date(agent.created_time + "z");

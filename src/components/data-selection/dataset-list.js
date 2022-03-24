@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
-import { Table, Button } from "react-bootstrap";
-import { XCircle } from "react-bootstrap-icons";
+import { Table, Button, OverlayTrigger, Popover } from "react-bootstrap";
+import { XCircle, QuestionCircle } from "react-bootstrap-icons";
 import { UserContext, DataContext } from "contexts";
 import { TaskStatusIcon } from "components/task-status-icon";
 import { SpinnerButton } from "components/spinner-button";
@@ -134,10 +134,8 @@ export const DatasetList = () => {
     },
     { 
       name: "Status",
-      accessor: d => {
-        // XXX: Currently not receiving any error message. Revisit if this becomes available.
-        /*        
-        return !failed(d) ?
+      accessor: d => {        
+        return failed(d) && d.detail ?
           <>
             <TaskStatusIcon task={ d } />
             <OverlayTrigger
@@ -145,16 +143,15 @@ export const DatasetList = () => {
               overlay={ 
                 <Popover>
                   <Popover.Header>Error message</Popover.Header>
-                  <Popover.Body>{ d.stderr }</Popover.Body>
+                  <Popover.Body>{ d.detail }</Popover.Body>
                 </Popover>
               }
             >
-              <QuestionCircle className="ms-2 text-secondary" />
+              <QuestionCircle className="ms-1 icon-offset text-secondary" />
             </OverlayTrigger>
           </>
         :
-        */
-        return <TaskStatusIcon task={ d } />
+          <TaskStatusIcon task={ d } />
       },
       sort: (a, b) => statusOrder[getStatus(a)] - statusOrder[getStatus(b)],
       classes: "text-center"
