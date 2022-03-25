@@ -9,6 +9,8 @@ import { useLoadDataset } from "hooks";
 //import { api } from "utils/api";
 import styles from "./dataset-list.module.css";
 
+const providerString = "fuse-provider";
+
 const statusOrder = [
   "pending",
   "submitting",
@@ -26,9 +28,13 @@ const missingIndicator = "—";
 const failed = d => d.status === "failed";
 const hasData = d => d.status === "finished" && d.files;
 
-const getSource = d => d.provider.replace("fuse-provider-", "");
+const getType = d => 
+  d.provider.includes("fuse-provider") ? "input" : 
+  d.provider.includes("fuse-tool") ? "result" : 
+  "unknown";
+const getSource = d => d.provider.replace("fuse-provider-", "").replace("fuse-tool-", "");
 const getIdentifier = d => d.accessionId ? d.accessionId : 
-  d.files ? Object.values(d.files).map(file => file.name).join(", ") :
+  (getType(d) === "input" && d.files) ? Object.values(d.files).map(file => file.name).join(", ") :
   missingIndicator;
 const getDescription = d => d.description ? d.description : missingIndicator;
 const getFinished = d => d.finishedTime ? d.finishedTime.toLocaleString() : null;
@@ -55,15 +61,33 @@ export const DatasetList = () => {
   const loadDataset = useLoadDataset();
 
   const onLoadClick = async dataset => {
-    setLoading(dataset);
+    if (getType(dataset) === "result") {
+      const input = datasets.find(({ id }) => id === dataset.parameters.dataset);
 
-    try {
-      await loadDataset(dataset);
+      if (!input) return;
 
-      setLoading(null);
+      setLoading(input);
+
+      try {
+        await loadDataset(input);
+  
+        setLoading(null);
+      }
+      catch (error) {
+        setLoading(null);      
+      }
     }
-    catch (error) {
-      setLoading(null);      
+    else {
+      setLoading(dataset);
+
+      try {
+        await loadDataset(dataset);
+  
+        setLoading(null);
+      }
+      catch (error) {
+        setLoading(null);      
+      }
     }
   };
 
@@ -100,6 +124,11 @@ export const DatasetList = () => {
           </SpinnerButton>
         </div>
       )
+    },
+    { 
+      name: "getType",
+      accessor: getType,
+      sort: (a, b) => getType(a).localeCompare(getType(b))
     },
     { 
       name: "Source",
@@ -180,9 +209,12 @@ export const DatasetList = () => {
     });
   }
 
+  const inputDatasets = datasets.filter(({ provider }) => provider.includes(providerString));
+  inputDatasets.sort(sortColumn ? sortColumn.sort : undefined);
+
   return (
     <>
-      { datasets.length > 0 &&
+      { inputDatasets.length > 0 &&
         <div className={ styles.tableWrapper }>
           <Table size="sm" className="align-middle small">
             <thead>        

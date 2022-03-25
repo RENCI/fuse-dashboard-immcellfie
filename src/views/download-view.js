@@ -55,7 +55,7 @@ export const DownloadView = () => {
   return (   
     <ViewWrapper>
       { !user ?
-        <DataMissing message="No user user selected" pageLink={ <UserLink /> } />
+        <DataMissing message="No user selected" pageLink={ <UserLink /> } />
       : !rawPropertiesData ? 
         <DataMissing message="No data loaded" pageLink={ <InputLink /> } />      
       : 

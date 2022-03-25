@@ -12,7 +12,7 @@ export const InputView = () => {
     <>
       { !user ?
         <ViewWrapper>
-          <DataMissing message="No user user selected" pageLink={ <UserLink /> } />
+          <DataMissing message="No user selected" pageLink={ <UserLink /> } />
         </ViewWrapper>
       :
         <ViewWrapper>

@@ -17,7 +17,7 @@ export const OutputView = () => {
     <>
       { !user ?
         <ViewWrapper>
-          <DataMissing message="No user user selected" pageLink={ <UserLink /> } /> 
+          <DataMissing message="No user selected" pageLink={ <UserLink /> } /> 
         </ViewWrapper>
       : !propertiesData && tasks.length === 0 ? 
         <ViewWrapper> 

@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Switch, Route, NavLink } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, NavLink, Redirect } from "react-router-dom";
 import { Container, Navbar, Nav } from "react-bootstrap";
 import { QuestionCircle } from "react-bootstrap-icons";
 import { 
@@ -7,15 +7,15 @@ import {
   UserView,
   InputView, 
   SubgroupView,
-  OutputView, 
-  ExpressionView
+  OutputView
 } from "views";
-import { 
+import {
+  ErrorProvider,
+  ConfigProvider,
   UserProvider, 
   DataProvider, 
   ModelProvider,
-  ColorProvider,
-  ErrorProvider
+  ColorProvider
 } from "contexts";
 import { DatasetMonitor } from "components/dataset-monitor";
 import { TaskStatus } from "components/task-status";
@@ -24,11 +24,12 @@ import { ErrorMessage } from "components/error-message";
 
 export const App = () => { 
   return (
+    <ErrorProvider>
+    <ConfigProvider>
     <UserProvider>
     <DataProvider>
     <ModelProvider>
     <ColorProvider>
-    <ErrorProvider>
       <Router><Navbar bg="dark" variant="dark" expand="md" className="mb-3">
             <Nav>
               <Nav.Link as={ NavLink } to="/">
@@ -47,10 +48,9 @@ export const App = () => {
             <Navbar.Collapse>
               <Nav className="me-3">
                 <Nav.Link as={ NavLink } to="/user">User</Nav.Link>
-                <Nav.Link as={ NavLink } to="/input">Input</Nav.Link>
-                <Nav.Link as={ NavLink } to="/cellfie">CellFIE</Nav.Link>
+                <Nav.Link as={ NavLink } to="/data">Data</Nav.Link>
+                <Nav.Link as={ NavLink } to="/analyze">Analyze</Nav.Link>
                 <Nav.Link as={ NavLink } to="/subgroups">Subgroups</Nav.Link>
-                <Nav.Link as={ NavLink } to="/expression-data">Expression data</Nav.Link>
               </Nav>
               <InfoNav />
             </Navbar.Collapse>
@@ -74,19 +74,20 @@ export const App = () => {
           <Switch>
             <Route exact path="/"><Home /></Route>
             <Route exact path="/user"><UserView /></Route>
-            <Route exact path="/input"><InputView /></Route>
-            <Route exact path="/cellfie"><OutputView /></Route>
-            <Route exact path="/subgroups"><SubgroupView /></Route>s
-            <Route exact path="/expression-data"><ExpressionView /></Route>
+            <Route exact path="/data"><InputView /></Route>
+            <Route exact path="/analyze"><OutputView /></Route>
+            <Route exact path="/subgroups"><SubgroupView /></Route>
+            <Redirect to="/" />
           </Switch>
           <ErrorMessage />
         </Container>
       </Router>
       <DatasetMonitor />
-    </ErrorProvider>
     </ColorProvider>
     </ModelProvider>
     </DataProvider>    
     </UserProvider>
+    </ConfigProvider>
+    </ErrorProvider>
   ); 
 };

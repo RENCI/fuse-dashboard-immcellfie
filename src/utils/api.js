@@ -64,6 +64,8 @@ const getOutput = async (path, id) => {
 const getDataset = async id => {
   const response = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API}/objects/${ id }`);
 
+  console.log(response);
+
   const { agent, provider } = response.data;
 
   if (!agent || !provider) throw new Error(`Error loading object ${ id }`);
@@ -96,6 +98,10 @@ const getDataset = async id => {
         files.archive = file;
         break;
 
+      case "filetype_results_PCATable":
+        files.pcaTable = file;
+        break;
+
       default:
         console.log(`Unknown filetype ${ key }`);            
     }
@@ -105,6 +111,7 @@ const getDataset = async id => {
 
   dataset.status = agent.agent_status;
   dataset.detail = agent.detail;
+  dataset.parameters = agent.parameters;
   dataset.provider = agent.parameters.service_id;
   dataset.id = agent.object_id;
   dataset.createdTime = new Date(agent.created_time + "z");
@@ -196,6 +203,20 @@ const deleteTask = async (path, id) => {
 // Exported API functions
 
 export const api = {
+
+  // System config
+
+  getProviders: async () => {
+    const response = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API }/services/providers`);
+
+    return response.data;
+  },
+
+  getTools: async () => {
+    const response = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API }/services/tools`);
+
+    return response.data;
+  },
 
   // User
   addUser: async user => {

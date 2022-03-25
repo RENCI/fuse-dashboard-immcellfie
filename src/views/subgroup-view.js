@@ -12,7 +12,7 @@ export const SubgroupView = () => {
   return (
     <ViewWrapper>
       { !user ?
-        <DataMissing message="No user user selected" pageLink={ <UserLink /> } />
+        <DataMissing message="No user selected" pageLink={ <UserLink /> } />
       : !propertiesData ? 
         <DataMissing message="No data loaded" pageLink={ <InputLink /> } />
       : 
