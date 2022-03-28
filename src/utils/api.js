@@ -82,16 +82,15 @@ const getDataset = async id => {
   const files = {};
   for (const key in provider) {
     const file = provider[key];
+    updateTime(file);
 
     switch (file.file_type) {
       case "filetype_dataset_expression":
         files.expression = file;
-        updateTime(file);
         break;
       
       case "filetype_dataset_properties":
         files.properties = file;
-        updateTime(file);
         break;
 
       case "filetype_dataset_archive":
