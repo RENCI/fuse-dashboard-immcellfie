@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { Table, Button, OverlayTrigger, Popover } from "react-bootstrap";
+import { Table, Button, OverlayTrigger, Popover, Badge } from "react-bootstrap";
 import { XCircle, QuestionCircle } from "react-bootstrap-icons";
 import { UserContext, DataContext } from "contexts";
 import { TaskStatusIcon } from "components/task-status-icon";
@@ -35,6 +35,21 @@ const getIdentifier = d => d.accessionId ? d.accessionId :
   missingIndicator;
 const getDescription = d => d.description ? d.description : missingIndicator;
 const getFinished = d => d.finishedTime ? d.finishedTime.toLocaleString() : null;
+const getStatus = d => d.status;
+
+const getTypeDisplay = d => (
+  <Badge 
+    className={ getType(d) === "result" ? "ms-3" : null }    
+    bg={ 
+      getType(d) === "input" ? "info" : 
+      getType(d) === "result" ? "warning" : 
+      "secondary"
+    }
+  >
+    { getType(d) }
+  </Badge>
+);
+
 const getFinishedDisplay = d => {
   if (!d.finishedTime) return missingIndicator;
 
@@ -47,8 +62,6 @@ const getFinishedDisplay = d => {
     d.finishedTime.toLocaleString() : 
     d.finishedTime.toLocaleString();
 };
-const getAnalyses = d => 0;
-const getStatus = d => d.status;
 
 export const DatasetList = () => {
   const [{ datasets }] = useContext(UserContext);
@@ -103,28 +116,9 @@ export const DatasetList = () => {
   const disabled = loading !== null;
 
   const columns = [  
-    {
-      name: "",
-      accessor: d => (
-        <div style={{ visibility: (hasData(d) && !failed(d)) ? "visible" : "hidden" }}>
-          <SpinnerButton 
-            size="sm"
-            disabled={ disabled || isLoaded(d) }
-            spin={ isLoading(d) }
-            replace={ true }
-            onClick={ evt => {
-              evt.stopPropagation();
-              onLoadClick(d);
-            }}
-          >
-            Load
-          </SpinnerButton>
-        </div>
-      )
-    },
     { 
       name: "Type",
-      accessor: getType,
+      accessor: getTypeDisplay,
       sort: (a, b) => getType(a).localeCompare(getType(b))
     },
     { 
@@ -152,12 +146,6 @@ export const DatasetList = () => {
       accessor: getFinishedDisplay,
       sort: (a, b) => getFinished(b) - getFinished(a)
     },
-    {
-      name: "Analyses",
-      accessor: getAnalyses,
-      sort: (a, b) => getAnalyses(b) - getAnalyses(a),
-      classes: "text-center"
-    },
     { 
       name: "Status",
       accessor: d => {        
@@ -181,12 +169,32 @@ export const DatasetList = () => {
       },
       sort: (a, b) => statusOrder[getStatus(a)] - statusOrder[getStatus(b)],
       classes: "text-center"
-    } 
+    },
+    {
+      name: "",
+      accessor: d => (
+        <div style={{ visibility: (hasData(d) && !failed(d)) ? "visible" : "hidden" }}>
+          <SpinnerButton 
+            size="sm"
+            disabled={ disabled || isLoaded(d) }
+            spin={ isLoading(d) }
+            replace={ true }
+            onClick={ evt => {
+              evt.stopPropagation();
+              onLoadClick(d);
+            }}
+          >
+            Load
+          </SpinnerButton>
+        </div>
+      ),
+      classes: "text-center"
+    }
   ];
 
   if (process.env.NODE_ENV === 'development') {
     columns.push({
-      name: "Delete",
+      name: "",
       accessor: d => (
         <div style={{ visibility: d.status === "finished" }}>
           <Button 
@@ -206,12 +214,11 @@ export const DatasetList = () => {
     });
   }
 
-  const inputDatasets = datasets.filter(({ provider }) => provider.includes(providerString));
-  inputDatasets.sort(sortColumn ? sortColumn.sort : undefined);
+  const inputs = datasets.filter(({ type }) => type === "input");
 
   return (
     <>
-      { inputDatasets.length > 0 &&
+      { inputs.length > 0 &&
         <div className={ styles.tableWrapper }>
           <Table size="sm" className="align-middle small">
             <thead>        
@@ -231,14 +238,17 @@ export const DatasetList = () => {
               </tr>
             </thead>
             <tbody>
-              { datasets.slice().sort(sortColumn ? sortColumn.sort : undefined).map((dataset, i) => (
-                <DatasetRow 
-                  key={ i }
-                  dataset={ dataset } 
-                  loaded={ isLoaded(dataset) }
-                  columns={ columns } 
-                />
-              )) }
+              { inputs.sort(sortColumn ? sortColumn.sort : undefined).map((dataset) => {
+                const results = dataset.results.slice().sort(sortColumn ? sortColumn.sort : undefined);
+                return [dataset, ...results].map((dataset, i) => (
+                  <DatasetRow 
+                    key={ i }
+                    dataset={ dataset } 
+                    loaded={ isLoaded(dataset) }
+                    columns={ columns } 
+                  />
+                ));
+              })}
             </tbody>
           </Table>
         </div>

@@ -5,7 +5,14 @@
 
 .active {
   border-width: 2px 0px !important;
-  background: #eef7ff;
+}
+
+.input {
+  background: #edfcff;
+}
+
+.result {
+  background: #ffffee;
 }
 
 .datasetRow:hover {

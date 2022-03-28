@@ -26,7 +26,14 @@ export const DatasetRow = ({ dataset, loaded, columns }) => {
   };
 
   let classes = styles.datasetRow;
-  if (loaded) classes += ` ${ styles.active } border-primary rounded`;
+
+  if (loaded) {
+    classes += ` ${ styles.active } rounded`;
+
+    if (dataset.type === "input") classes += ` ${ styles.input } border-info`;
+    else if (dataset.type === "result") classes += ` ${ styles.result } border-warning`;
+  }
+  
 
   return (
     <>
