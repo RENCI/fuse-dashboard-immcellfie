@@ -15,9 +15,6 @@ export const InfoNav = () => {
     return name ? name : "no name";
   };
 
-
-  console.log(name(dataset));
-
   return (
     user && 
     <div className="text-info small">
