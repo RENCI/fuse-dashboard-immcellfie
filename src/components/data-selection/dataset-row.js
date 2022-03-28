@@ -2,6 +2,20 @@ import {  useState } from "react";
 import { Collapse } from "react-bootstrap";
 import styles from "./dataset-list.module.css";
 
+// Replace circular references
+function replacer(key, value) {
+  switch (key) {
+    case "input":
+      return value.id;
+
+    case "results":
+      return value.map(({ id }) => id);
+
+    default:
+      return value;
+  }
+}
+
 export const DatasetRow = ({ dataset, loaded, columns }) => {
   const [showDetails, setShowDetails] = useState(false);
 
@@ -37,7 +51,7 @@ export const DatasetRow = ({ dataset, loaded, columns }) => {
         <tr className={ styles.detailsRow }>
           <td colSpan="100%">
             <pre>
-              { JSON.stringify(dataset, null, 2) }
+              { JSON.stringify(dataset, replacer, 2) }
             </pre>
           </td>
         </tr>

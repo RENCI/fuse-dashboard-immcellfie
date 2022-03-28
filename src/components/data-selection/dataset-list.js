@@ -28,10 +28,7 @@ const missingIndicator = "—";
 const failed = d => d.status === "failed";
 const hasData = d => d.status === "finished" && d.files;
 
-const getType = d => 
-  d.provider.includes("fuse-provider") ? "input" : 
-  d.provider.includes("fuse-tool") ? "result" : 
-  "unknown";
+const getType = d => d.type;
 const getSource = d => d.provider.replace("fuse-provider-", "").replace("fuse-tool-", "");
 const getIdentifier = d => d.accessionId ? d.accessionId : 
   (getType(d) === "input" && d.files) ? Object.values(d.files).map(file => file.name).join(", ") :
@@ -126,7 +123,7 @@ export const DatasetList = () => {
       )
     },
     { 
-      name: "getType",
+      name: "Type",
       accessor: getType,
       sort: (a, b) => getType(a).localeCompare(getType(b))
     },

@@ -108,10 +108,16 @@ const getDataset = async id => {
 
   if (Object.keys(files).length > 0) dataset.files = files;
 
+  const getType = d => 
+    d.provider && d.provider.includes("fuse-provider") ? "input" : 
+    d.provider && d.provider.includes("fuse-tool") ? "result" : 
+    "unknown";
+
   dataset.status = agent.agent_status;
   dataset.detail = agent.detail;
   dataset.parameters = agent.parameters;
   dataset.provider = agent.parameters.service_id;
+  dataset.type = getType(dataset);
   dataset.id = agent.object_id;
   dataset.createdTime = new Date(agent.created_time + "z");
   dataset.finishedTime = finishedTime === -1 ? null : finishedTime;

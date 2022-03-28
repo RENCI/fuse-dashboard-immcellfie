@@ -13,6 +13,33 @@ const getId = datasets => {
   return pending.length === 0 ? 0 : Math.min(...pending.map(({ id }) => id));
 };
 
+const linkDatasets = datasets => {
+  // Split by type
+  const [inputs, results] = datasets.reduce((types, dataset) => {
+    if (dataset.type === "input") types[0].push(dataset);
+    else if (dataset.type === "result") types[1].push(dataset);
+    return types;
+  }, [[], []]);
+
+  // Each input dataset may have many result sets
+  inputs.forEach(input => input.results = []);
+  results.forEach(result => result.input = null);
+
+  // Link
+  results.forEach(result => {
+    const inputId = result.parameters.dataset;
+
+    const input = inputs.find(({ id }) => id === inputId);
+
+    if (!input) throw new Error(`Could not find input dataset ${ inputId } for result ${ result.id }`);
+
+    result.input = input;
+    input.results.push(result);
+  });
+
+  return datasets;
+};
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "setUser": 
@@ -30,7 +57,7 @@ const reducer = (state, action) => {
     case "setDatasets":
       return {
         ...state,
-        datasets: action.datasets
+        datasets: linkDatasets(action.datasets)
       };
 
     case "addDataset":     
