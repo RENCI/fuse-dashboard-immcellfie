@@ -49,7 +49,7 @@ export const ConfigProvider = ({ children }) => {
     };
 
     getConfig();
-  }, []);
+  }, [errorDispatch]);
  
   return (
     <ConfigContext.Provider value={ [state, dispatch] }>

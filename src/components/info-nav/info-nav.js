@@ -5,9 +5,18 @@ import { getName } from "utils/dataset-utils";
 
 export const InfoNav = () => {
   const [{ user },] = useContext(UserContext);
-  const [{ dataset },] = useContext(DataContext);
+  const [{ dataset, result },] = useContext(DataContext);
 
-  const name = dataset ? getName(dataset) : "None loaded";
+  const name = dataset => {
+    if (!dataset) return "none loaded";
+
+    let name = getName(dataset);
+
+    return name ? name : "no name";
+  };
+
+
+  console.log(name(dataset));
 
   return (
     user && 
@@ -18,8 +27,12 @@ export const InfoNav = () => {
           <div><b>{ user }</b></div>
         </Col>
         <Col>
-          <div>Input dataset</div>
-          <div><b>{ name }</b></div>
+          <div>Input</div>
+          <div><b>{ name(dataset) }</b></div>
+        </Col>
+        <Col>
+          <div>Result</div>
+          <div><b>{ name(result) }</b></div>
         </Col>
       </Row>      
     </div>

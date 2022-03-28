@@ -8,15 +8,15 @@
 }
 
 .input {
-  background: #edfcff;
+  background: #f6feff;
 }
 
 .result {
-  background: #ffffee;
+  background: #fffff6;
 }
 
 .datasetRow:hover {
-  background-color: #ececec;
+  background-color: #fafafa;
 }
 
 .detailsRow {

@@ -9,8 +9,6 @@ import { useLoadDataset } from "hooks";
 //import { api } from "utils/api";
 import styles from "./dataset-list.module.css";
 
-const providerString = "fuse-provider";
-
 const statusOrder = [
   "pending",
   "submitting",
@@ -65,38 +63,34 @@ const getFinishedDisplay = d => {
 
 export const DatasetList = () => {
   const [{ datasets }] = useContext(UserContext);
-  const [{ dataset }, dataDispatch] = useContext(DataContext);
-  const [loading, setLoading] = useState(null);
+  const [{ dataset, result }, dataDispatch] = useContext(DataContext);
+  const [loading, setLoading] = useState([]);
   const [sortColumn, setSortColumn] = useState(null);
   const loadDataset = useLoadDataset();
 
   const onLoadClick = async dataset => {
     if (getType(dataset) === "result") {
-      const input = datasets.find(({ id }) => id === dataset.parameters.dataset);
-
-      if (!input) return;
-
-      setLoading(input);
+      setLoading([dataset.input, dataset]);
 
       try {
-        await loadDataset(input);
+        await loadDataset(dataset.input, dataset);
   
-        setLoading(null);
+        setLoading([]);
       }
       catch (error) {
-        setLoading(null);      
+        setLoading([]);      
       }
     }
     else {
-      setLoading(dataset);
+      setLoading([dataset]);
 
       try {
         await loadDataset(dataset);
   
-        setLoading(null);
+        setLoading([]);
       }
       catch (error) {
-        setLoading(null);      
+        setLoading([]);      
       }
     }
   };
@@ -111,9 +105,9 @@ export const DatasetList = () => {
     // XXX: Check return and update datasets
   };
 
-  const isLoaded = d => d === dataset;
-  const isLoading = d => d === loading;
-  const disabled = loading !== null;
+  const isLoaded = d => d === dataset || d === result;
+  const isLoading = d => loading.includes(d);
+  const disabled = loading.length > 0;
 
   const columns = [  
     { 

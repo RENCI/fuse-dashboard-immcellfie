@@ -6,10 +6,11 @@ export const useLoadDataset = ()  => {
   const [, dataDispatch] = useContext(DataContext);
   const [, errorDispatch] = useContext(ErrorContext);
 
-  return async dataset => {
+  return async (dataset, result = null) => {
     try {
       //userDispatch({ type: "clearActiveTask" });
       dataDispatch({ type: "setDataset", dataset: dataset });
+      if (result) dataDispatch({ type: "setResult", result: result });
 
       if (dataset.files.properties) {
         const properties = await api.getData(dataset);        

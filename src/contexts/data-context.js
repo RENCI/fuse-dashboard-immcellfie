@@ -17,8 +17,9 @@ const timeSort = {
 };
 
 const initialState = {
-  // Current dataset
+  // Current datasets
   dataset: null,
+  result: null,
 
   // Properties data for each sample
   rawPropertiesData: null,
@@ -520,6 +521,12 @@ const reducer = (state, action) => {
       return {
         ...initialState,
         dataset: action.dataset
+      };
+
+    case "setResult":
+      return {
+        ...state,
+        result: action.result
       };
 
     case "setExpressionData":

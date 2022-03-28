@@ -1,8 +1,8 @@
-export const getName = ({ accessionId, description, files }) => {
+export const getName = ({ source, accessionId, description, files, finishedTime }) => {
   return accessionId ? accessionId : 
   description ? description :
-  files ? Object.values(files).map(file => file.name).join(", ") :
-  "";
+  source === "upload" && files ? Object.values(files).map(file => file.name).join(", ") :  
+  null;
 };
   
 export const isActive = ({ status }) => (
