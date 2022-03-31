@@ -35,6 +35,7 @@ export const MenuBar = () => {
         <Nav className="me-3">
           <Nav.Link as={ NavLink } to="/user">User</Nav.Link>
           <Nav.Link as={ NavLink } to="/data">Data</Nav.Link>
+          <Nav.Link as={ NavLink } to="/subgroups">Subgroups</Nav.Link>
           <NavDropdown 
             menuVariant="dark" 
             title="Analyze"
@@ -43,7 +44,7 @@ export const MenuBar = () => {
             { testTools.map((tool, i) => {
               const name = toolName(tool);
               return (
-                <NavDropdown.Item key={ i }>
+                <NavDropdown.Item key={ i } as="div">
                   <Nav.Link 
                     as={ NavLink } 
                     to={{ 
@@ -57,7 +58,6 @@ export const MenuBar = () => {
               );
             })}
           </NavDropdown>
-          <Nav.Link as={ NavLink } to="/subgroups">Subgroups</Nav.Link>
         </Nav>
         <InfoNav />
       </Navbar.Collapse>

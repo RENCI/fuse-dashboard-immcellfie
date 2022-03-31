@@ -276,8 +276,8 @@ export const api = {
     console.log(response);
   },
 
-  getData: async (dataset, type = "properties") => {
-    const urlResponse = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API}/objects/url/${ dataset.id }/type/filetype_dataset_${ type }`);
+  getData: async (dataset, type = "filetype_dataset_properties") => {
+    const urlResponse = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API}/objects/url/${ dataset.id }/type/${ type }`);
     const dataResponse = await axios.get(urlResponse.data.url);
 
     return dataResponse.data;

@@ -34,9 +34,13 @@ const initialState = {
   // Subgroups selected for visualization
   selectedSubgroups: null,
 
+  // XXX: Shouldn't need expression data any more
   // Expression data used as CellFIE input
   rawExpressionData: null,
   expressionData: null,
+
+  //////////////////////////////////////////////////
+  // XXX: Group cellfie output as single object
 
   // CellFIE output
   rawOutput: null,
@@ -48,9 +52,14 @@ const initialState = {
   // CellFIE output in tree format, used for aggregating info and for the Voronoi treemap,
   // since we have to calculate the layout external to the Vega spec
   tree: null,
+  //////////////////////////////////////////////////
+
+  pcaOutput: null,
 
   // Reaction scores from detailed CellFIE output
   reactionScores: null,  
+
+
 
   // Method for handling subgroup overlap
   overlapMethod: "both"
@@ -99,7 +108,7 @@ const createPropertiesData = expressionData => {
 
 const initializePropertiesData = (state, rawPropertiesData) => {
   const propertiesData = parsePropertiesData(rawPropertiesData);
-  const properties = createproperties(propertiesData);
+  const properties = createProperties(propertiesData);
 
   // Create initial group with all samples
   const subgroups = [createSubgroup("All samples", propertiesData, properties, [])];
@@ -123,6 +132,14 @@ const parsePropertiesData = data => {
   csv.forEach((sample, i) => sample.index = i);
 
   return csv;
+};
+
+const processPCAOutput = data => {
+  return {
+    name: data.contents[0].name,
+    size: data.contents[0].size,
+    data: data.contents[0].contents
+  };
 };
 
 const combineOutput = (taskInfo, score, scoreBinary) => {
@@ -188,7 +205,7 @@ const setReactionScores = (subgroup, samples, reactionScores) => {
   }, {});
 }
 
-const createproperties = propertiesData => {
+const createProperties = propertiesData => {
   return propertiesData.columns
     .filter(column => !excludedproperties.includes(column))
     .map(column => {
@@ -550,6 +567,12 @@ const reducer = (state, action) => {
 
     case "setProperties":
       return initializePropertiesData(state, action.data);
+
+    case "setPCAOutput":
+      return {
+        ...state,
+        pcaOutput: processPCAOutput(action.output)
+      };
 
     case "setOutput": {
       if (!state.subgroups || !state.selectedSubgroups) return state;
