@@ -12,6 +12,9 @@ export const MenuBar = () => {
   const [{ tools }] = useContext(ConfigContext);
   const location = useLocation();
 
+  // XXX: Add cellfie for testing
+  const testTools = ["cellfie", ...tools];
+
   return (
     <Navbar bg="dark" variant="dark" expand="md" className="mb-3">
       <Nav>
@@ -37,7 +40,7 @@ export const MenuBar = () => {
             title="Analyze"
             active={ location.pathname === "/analyze" }
           >
-            { tools.map((tool, i) => {
+            { testTools.map((tool, i) => {
               const name = toolName(tool);
               return (
                 <NavDropdown.Item key={ i }>

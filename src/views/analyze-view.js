@@ -10,7 +10,7 @@ import { CellfieOutput } from "components/cellfie-output";
 import { DataMissing } from "components/data-missing";
 import { UserLink, InputLink } from "components/page-links";
 
-export const OutputView = () => {
+export const AnalyzeView = () => {
   const location = useLocation();
   const [{ user }] = useContext(UserContext);
   const [{ result, propertiesData, properties }] = useContext(DataContext);

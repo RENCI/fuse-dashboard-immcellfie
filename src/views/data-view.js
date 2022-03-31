@@ -5,7 +5,7 @@ import { DataSelection } from "components/data-selection";
 import { DataMissing } from "components/data-missing";
 import { UserLink } from "components/page-links";
 
-export const InputView = () => {
+export const DataView = () => {
   const [{ user }] = useContext(UserContext);
   
   return (   

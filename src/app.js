@@ -3,9 +3,9 @@ import { Container } from "react-bootstrap";
 import { 
   Home, 
   UserView,
-  InputView, 
+  DataView,
   SubgroupView,
-  OutputView
+  AnalyzeView
 } from "views";
 import {
   ErrorProvider,
@@ -33,9 +33,9 @@ export const App = () => {
           <Switch>
             <Route exact path="/"><Home /></Route>
             <Route exact path="/user"><UserView /></Route>
-            <Route exact path="/data"><InputView /></Route>
-            <Route exact path="/analyze"><OutputView /></Route>
+            <Route exact path="/data"><DataView /></Route>
             <Route exact path="/subgroups"><SubgroupView /></Route>
+            <Route exact path="/analyze"><AnalyzeView /></Route>
             <Redirect to="/" />
           </Switch>
           <ErrorMessage />
