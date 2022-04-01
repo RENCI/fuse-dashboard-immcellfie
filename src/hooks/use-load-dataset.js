@@ -6,15 +6,27 @@ export const useLoadDataset = ()  => {
   const [, dataDispatch] = useContext(DataContext);
   const [, errorDispatch] = useContext(ErrorContext);
 
-  return async (dataset, result = null) => {
+  return async dataset => {
     try {
+      // Assume any dataset with an input is a result
+      let input = null;
+      let result = null;
+      
+      if (dataset.input) {
+        input = dataset.input;
+        result = dataset;
+      }
+      else {
+        input = dataset;
+      }
+
       // Set input dataset and result info
-      dataDispatch({ type: "setDataset", dataset: dataset });
+      dataDispatch({ type: "setDataset", dataset: input });
       if (result) dataDispatch({ type: "setResult", result: result });
 
       // Load input properties
-      if (dataset.files.properties) {
-        const properties = await api.getFile(dataset);        
+      if (input.files.properties) {
+        const properties = await api.getFile(input);        
 
         dataDispatch({ type: "setProperties", data: properties });      
       }
@@ -26,7 +38,6 @@ export const useLoadDataset = ()  => {
       if (result) {
         const data = await api.getFiles(result);
 
-        // XXX: Have one setOutput, switch in context based on type
         dataDispatch({ type: "setOutput", output: data });
       }
     }

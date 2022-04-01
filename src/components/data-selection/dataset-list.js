@@ -68,29 +68,20 @@ export const DatasetList = () => {
   const loadDataset = useLoadDataset();
 
   const onLoadClick = async dataset => {
-    if (getType(dataset) === "result") {
-      setLoading([dataset.input, dataset]);
+    try {
+      if (dataset.input) {
+        setLoading([dataset.input, dataset]);
+      }
+      else {
+        setLoading([dataset]);
+      }
 
-      try {
-        await loadDataset(dataset.input, dataset);
-  
-        setLoading([]);
-      }
-      catch (error) {
-        setLoading([]);      
-      }
+      await loadDataset(dataset);
+
+      setLoading([]);
     }
-    else {
-      setLoading([dataset]);
-
-      try {
-        await loadDataset(dataset);
-  
-        setLoading([]);
-      }
-      catch (error) {
-        setLoading([]);      
-      }
+    catch (error) {
+      setLoading([]);      
     }
   };
 

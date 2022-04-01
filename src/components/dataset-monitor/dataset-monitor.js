@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef } from "react";
-import { UserContext, ErrorContext } from "contexts";
+import { UserContext, ReadyContext, ErrorContext } from "contexts";
 import { api } from "utils/api";
 import { isActive } from "utils/dataset-utils";
 
@@ -7,6 +7,7 @@ const getActive = datasets => datasets.filter(isActive);
 
 export const DatasetMonitor = () => {
   const [{ datasets }, userDispatch] = useContext(UserContext);
+  const [, readyDispatch] = useContext(ReadyContext);
   const [, errorDispatch] = useContext(ErrorContext);
   const timer = useRef(-1);
 
@@ -66,6 +67,12 @@ export const DatasetMonitor = () => {
           if (update.status !== dataset.status) {
             userDispatch({ type: "updateDataset", id: id, dataset: update });
             dispatched = true;
+
+            if (update.status === "finished") {
+              console.log(update);
+
+              readyDispatch({ type: "add", id: id });
+            }
           }
         }
 

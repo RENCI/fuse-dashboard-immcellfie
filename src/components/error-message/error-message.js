@@ -52,7 +52,7 @@ export const ErrorMessage = () => {
         className="text-danger"
       >
         <Title>
-          <ExclamationCircleFill /> { error && error.name ? error.name : 'Error' }
+          <ExclamationCircleFill /> { error && error.name ? error.name : "Error" }
         </Title>
       </Header>  
       <Body>        
