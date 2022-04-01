@@ -4,8 +4,6 @@ import { DataContext } from "contexts";
 export const PCAOutput = () => {
   const [{ output }] = useContext(DataContext);
 
-  console.log(output);
-
   return (            
     <>
       { output === null ?

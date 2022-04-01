@@ -64,11 +64,9 @@ const getOutput = async (path, id) => {
 const getDataset = async id => {
   const response = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API}/objects/${ id }`);
 
-  console.log(response);
-
   const { agent, provider } = response.data;
 
-  if (!agent || !provider) throw new Error(`Error loading object ${ id }`);
+  if (!agent) throw new Error(`Error loading object ${ id }`);
 
   const dataset = {};
 
@@ -80,44 +78,48 @@ const getDataset = async id => {
   };
 
   const files = {};
-  for (const key in provider) {
-    const file = provider[key];
-    updateTime(file);
+  if (provider) {
+    for (const key in provider) {
+      const file = provider[key];
+      updateTime(file);
 
-    switch (file.file_type) {
-      case "filetype_dataset_expression":
-        files.expression = file;
-        break;
-      
-      case "filetype_dataset_properties":
-        files.properties = file;
-        break;
+      switch (file.file_type) {
+        case "filetype_dataset_expression":
+          files.expression = file;
+          break;
+        
+        case "filetype_dataset_properties":
+          files.properties = file;
+          break;
 
-      case "filetype_dataset_archive":
-        files.archive = file;
-        break;
+        case "filetype_dataset_archive":
+          files.archive = file;
+          break;
 
-      case "filetype_results_PCATable":
-        files.pcaTable = file;
-        break;
+        case "filetype_results_PCATable":
+          files.pcaTable = file;
+          break;
 
-      default:
-        console.log(`Unknown filetype ${ key }`);            
-    }
-  }    
+        default:
+          console.log(`Unknown filetype ${ key }`);            
+      }
+    }    
+  }
 
   if (Object.keys(files).length > 0) dataset.files = files;
 
-  const getType = d => 
-    d.provider && d.provider.includes("fuse-provider") ? "input" : 
-    d.provider && d.provider.includes("fuse-tool") ? "result" : 
+  const service = agent.parameters.service_id;
+
+  const type = 
+    service.includes("fuse-provider") ? "input" : 
+    service.includes("fuse-tool") ? "result" : 
     "unknown";
 
   dataset.status = agent.agent_status;
   dataset.detail = agent.detail;
   dataset.parameters = agent.parameters;
-  dataset.provider = agent.parameters.service_id;
-  dataset.type = getType(dataset);
+  dataset.service = service;
+  dataset.type = type;
   dataset.id = agent.object_id;
   dataset.createdTime = new Date(agent.created_time + "z");
   dataset.finishedTime = finishedTime === -1 ? null : finishedTime;
@@ -283,6 +285,8 @@ export const api = {
     console.log(response);
   },
 
+  // Data
+
   getFile: getFile,
 
   getFiles: async dataset => {
@@ -312,6 +316,21 @@ export const api = {
     return response.data.object_id;
   },
 
+  analyze: async (service, user, parameters, description) => {
+    // Set data and parameters as form data
+    const formData = new FormData();
+    formData.append("service_id", service);
+    formData.append("submitter_id", user);
+    Object.entries(parameters).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+    if (description) formData.append("description", description);
+
+    const response = await axios.post(`${ process.env.REACT_APP_FUSE_AGENT_API}/analyze`, formData);
+
+    return response.data.object_id;  
+  },
+/*
   // General file loading
 
   loadFile: async file => {
@@ -437,4 +456,5 @@ export const api = {
   deleteCellfieTask: async (id, immuneSpace = false) => await deleteTask(cellfiePath(immuneSpace), id),
   getCellfieOutput: async (id, immuneSpace = false) => await getOutput(cellfiePath(immuneSpace), id),
   getCellfieDetailScoring: async (id, immuneSpace = false) => await resultStream(cellfiePath(immuneSpace), id, "detailScoring"),
+*/  
 }

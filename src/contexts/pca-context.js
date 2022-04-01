@@ -1,7 +1,8 @@
 import { createContext, useReducer } from "react";
 
 const initialState = {
-  numComponents: 3
+  numComponents: 3,
+  description: ""
 };
 
 const reducer = (state, action) => {
@@ -10,6 +11,12 @@ const reducer = (state, action) => {
       return {
         ...state,
         numComponents: action.numComponents
+      };
+
+    case "setDescription":
+      return {
+        ...state,
+        description: action.description
       };
 
     default: 

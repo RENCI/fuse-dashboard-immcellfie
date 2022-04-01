@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Card, Row, Col, Stack } from "react-bootstrap";
+import { Card, Row, Col, Stack, Alert } from "react-bootstrap";
 import { ExclamationTriangle } from "react-bootstrap-icons";
 import { ConfigContext, UserContext, DataContext } from "contexts";
 import { CellfieLink, SubgroupsLink } from "components/page-links";
@@ -17,33 +17,20 @@ export const DataSelection = () => {
   const pending = datasets.filter(({ status }) => status === "pending");
 
   return (
-    <>
-      <Card>
-        <Header as="h5">
-          Add New Datasets
-        </Header>
-        <Body>
-          <Stack direction="horizontal" gap={ 2 }>
-            { providers.map((provider, i) => (
-              provider === "fuse-provider-immunespace" ? <LoadImmuneSpace key={ i } /> :
-              provider === "fuse-provider-upload" ? <UploadData key={ i } /> : 
-              null
-            ))}
-          </Stack>
-        </Body>
-        { pending.length > 0 && 
-          <Footer>
-            <div className="d-flex flex-row align-items-center">
-              <ExclamationTriangle className="text-warning me-3" size={ 32 }/>
-              <div>
-                <div>{ pending.length } pending datset{ pending.length > 1 ? "s" : null}</div> 
-                <small className="text-muted">Do not navigate away from the ImmCellFIE Dashboard while datasets are pending or they will be cancelled</small>                      
-              </div>
+    <Stack gap={ 3 }>
+      { pending.length > 0 && 
+        <Alert variant="warning">
+          <div className="d-flex flex-row align-items-center">
+            <ExclamationTriangle className="text-warning me-3" size={ 32 }/>
+            <div>
+              <div>{ pending.length } pending datset{ pending.length > 1 ? "s" : null}</div> 
+              <small className="text-muted">Do not navigate away from the ImmCellFIE Dashboard while datasets are pending or they will be cancelled</small>                      
             </div>
-          </Footer>
-        }
-      </Card>
-      <Card className="mt-3">
+          </div>
+        </Alert>
+      }
+
+      <Card>
         <Header as="h5">
           Dataset Selection
         </Header>
@@ -63,6 +50,21 @@ export const DataSelection = () => {
           </Footer>
         }
       </Card>
-  </>
+
+      <Card>
+        <Header as="h5">
+          Add New Datasets
+        </Header>
+        <Body>
+          <Stack direction="horizontal" gap={ 2 }>
+            { providers.map((provider, i) => (
+              provider === "fuse-provider-immunespace" ? <LoadImmuneSpace key={ i } /> :
+              provider === "fuse-provider-upload" ? <UploadData key={ i } /> : 
+              null
+            ))}
+          </Stack>
+        </Body>
+      </Card>
+  </Stack>
   );  
 };           

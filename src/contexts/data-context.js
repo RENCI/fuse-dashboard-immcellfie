@@ -135,7 +135,6 @@ const parsePropertiesData = data => {
 };
 
 const processPCAOutput = data => {
-  console.log(data);
   return {
     type: "PCA",
     name: data.contents[0].name,

@@ -1,20 +1,44 @@
 import { useContext } from "react";
 import { Card, Form, ButtonGroup, Button, } from "react-bootstrap";
-import { PCAContext, DataContext } from "contexts";
+import { PCAContext, UserContext, DataContext, ErrorContext } from "contexts";
 
 const { Header, Body } = Card;
 const { Label, Group, Control } = Form;
 
 export const PCAControls = () => {
-  const [{ numComponents }, dispatch] = useContext(PCAContext);
+  const [{ numComponents, description }, dispatch] = useContext(PCAContext);
+  const [{ user }, userDispatch] = useContext(UserContext);
   const [{ dataset }] = useContext(DataContext);
+  const [, errorDispatch] = useContext(ErrorContext);
 
   const onNumComponentsChange = event => {
     dispatch({ type: "setNumComponents", numComponents: +event.target.value });
   };
 
-  const onRunPCAClick = async () => {
+  const onDescriptionChange = event => {
+    dispatch({ type: "setDescription", description: event.target.value });
+  };
 
+  const onRunPCAClick = async () => {
+    try {
+      userDispatch({
+        type: "addDataset",
+        dataset: {
+          service: "fuse-tool-pca",
+          type: "result",
+          user: user,
+          parameters: {
+            dataset: dataset.id,
+            num_pca_components: numComponents
+          },
+          description: description,
+          createdTime: new Date()
+        }
+      });
+    }
+    catch (error) {
+      errorDispatch({ type: "setError", error: error });
+    }
   };
 
   return (        
@@ -31,6 +55,14 @@ export const PCAControls = () => {
             min={ 2 }
             value={ numComponents }
             onChange={ onNumComponentsChange }
+          />
+        </Group>
+        <Group controlId="description" className="mb-3">
+          <Label><h6>Description</h6></Label>
+          <Control 
+            as="input"
+            value={ description }
+            onChange={ onDescriptionChange }
           />
         </Group>
         <ButtonGroup style={{ width: "100%" }}>

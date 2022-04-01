@@ -17,9 +17,9 @@ export const DatasetMonitor = () => {
 
       for (const info of pending) {
         try {
-          if (info.provider === "fuse-provider-upload") {          
+          if (info.service === "fuse-provider-upload") {          
             const id = await api.uploadData(
-              info.provider,
+              info.service,
               info.user,
               info.files.expressionFile,
               info.files.propertiesFile,
@@ -30,7 +30,18 @@ export const DatasetMonitor = () => {
             
             userDispatch({ type: "updateDataset", id: info.id, dataset: dataset });
           }
-          // XXX: Add checks for other services
+          else if (info.service === "fuse-tool-pca") {
+            const id = await api.analyze(
+              info.service, 
+              info.user, 
+              info.parameters,
+              info.description
+            );
+
+            const dataset = await api.getDataset(id);
+
+            userDispatch({ type: "updateDataset", id: info.id, dataset: dataset });
+          }
         }  
         catch (error) {
           console.log(error);
@@ -52,7 +63,7 @@ export const DatasetMonitor = () => {
           const id = dataset.id;
           const update = await api.getDataset(id);
 
-          if (update.status !== dataset.status) {        
+          if (update.status !== dataset.status) {
             userDispatch({ type: "updateDataset", id: id, dataset: update });
             dispatched = true;
           }

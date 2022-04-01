@@ -9,7 +9,7 @@ const { Header, Title, Body } = Modal;
 const { Image } = Figure;
 const { Control } = Form;
 
-const provider = "fuse-provider-upload";
+const service = "fuse-provider-upload";
 
 export const UploadData = () => {
   const [{ user }, userDispatch] = useContext(UserContext);
@@ -38,11 +38,11 @@ export const UploadData = () => {
     userDispatch({ 
       type: "addDataset", 
       dataset: {
-        provider: provider,
-        user,
+        service: service,
+        type: "input",
+        user: user,
         files: files,
-        description,
-        createdTime: new Date()
+        description: description
       }
     });
 

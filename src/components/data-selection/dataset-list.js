@@ -6,7 +6,6 @@ import { TaskStatusIcon } from "components/task-status-icon";
 import { SpinnerButton } from "components/spinner-button";
 import { DatasetRow } from "./dataset-row";
 import { useLoadDataset } from "hooks";
-//import { api } from "utils/api";
 import styles from "./dataset-list.module.css";
 
 const statusOrder = [
@@ -27,7 +26,7 @@ const failed = d => d.status === "failed";
 const hasData = d => d.status === "finished" && d.files;
 
 const getType = d => d.type;
-const getSource = d => d.provider.replace("fuse-provider-", "").replace("fuse-tool-", "");
+const getSource = d => d.service.replace("fuse-provider-", "").replace("fuse-tool-", "");
 const getIdentifier = d => d.accessionId ? d.accessionId : 
   (getType(d) === "input" && d.files) ? Object.values(d.files).map(file => file.name).join(", ") :
   missingIndicator;

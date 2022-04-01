@@ -60,18 +60,22 @@ const reducer = (state, action) => {
         datasets: linkDatasets(action.datasets)
       };
 
-    case "addDataset":     
+    case "addDataset": {
+      const datasets = [
+        {            
+          id: getId(state.datasets), 
+          status: "pending",
+          createdTime: new Date(),
+          ...action.dataset
+        },
+        ...state.datasets
+      ];
+
       return {
         ...state,
-        datasets: [
-          {            
-            id: getId(state.datasets), 
-            status: "pending",
-            ...action.dataset
-          },
-          ...state.datasets
-        ]
+        datasets: linkDatasets(datasets)
       };
+    }
 
     case "updateDataset": {
       const index = state.datasets.findIndex(({ id }) => id === action.id);
@@ -83,7 +87,7 @@ const reducer = (state, action) => {
 
       return {
         ...state,
-        datasets: datasets
+        datasets: linkDatasets(datasets)
       };
     }   
     
