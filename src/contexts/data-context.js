@@ -139,7 +139,7 @@ const processPCAOutput = data => {
     type: "PCA",
     name: data.contents[0].name,
     size: data.contents[0].size,
-    data: data.contents[0].contents
+    points: data.contents[0].contents
   };
 };
 
