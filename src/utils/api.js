@@ -128,6 +128,13 @@ const getDataset = async id => {
   return dataset;
 };
 
+const getFile = async (dataset, type = "filetype_dataset_properties") => {
+  const urlResponse = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API}/objects/url/${ dataset.id }/type/${ type }`);
+  const dataResponse = await axios.get(urlResponse.data.url);
+
+  return dataResponse.data;
+};
+
 const getDownload = async id => {
   const status = await checkTaskStatus(IMMUNESPACE_DOWNLOAD_PATH, id);
   const info = await getTaskInfo(IMMUNESPACE_DOWNLOAD_PATH, id);
@@ -276,11 +283,18 @@ export const api = {
     console.log(response);
   },
 
-  getData: async (dataset, type = "filetype_dataset_properties") => {
-    const urlResponse = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API}/objects/url/${ dataset.id }/type/${ type }`);
-    const dataResponse = await axios.get(urlResponse.data.url);
+  getFile: getFile,
 
-    return dataResponse.data;
+  getFiles: async dataset => {
+    const files = [];
+
+    for (const key in dataset.files) {
+      const data = await getFile(dataset, dataset.files[key].file_type);
+      
+      files.push(data);
+    }
+
+    return files;
   },
 
   uploadData: async (service, user, expressionFile, propertiesFile, description) => {

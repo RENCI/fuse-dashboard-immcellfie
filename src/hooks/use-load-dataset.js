@@ -14,7 +14,7 @@ export const useLoadDataset = ()  => {
 
       // Load input properties
       if (dataset.files.properties) {
-        const properties = await api.getData(dataset);        
+        const properties = await api.getFile(dataset);        
 
         dataDispatch({ type: "setProperties", data: properties });      
       }
@@ -24,17 +24,10 @@ export const useLoadDataset = ()  => {
 
       // Load result data
       if (result) {
-        const fileKeys = Object.keys(result.files);
+        const data = await api.getFiles(result);
 
-        if (fileKeys.length > 1) {
-          console.warn(`More than one result file for ${ result.id }`);
-        }
-
-        const data = await api.getData(result, result.files[fileKeys[0]].file_type);
-
-        console.log(data);
-
-        dataDispatch({ type: "setPCAOutput", output: data });
+        // XXX: Have one setOutput, switch in context based on type
+        dataDispatch({ type: "setOutput", output: data });
       }
     }
     catch (error) {

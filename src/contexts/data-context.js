@@ -34,6 +34,13 @@ const initialState = {
   // Subgroups selected for visualization
   selectedSubgroups: null,
 
+  // Method for handling subgroup overlap
+  overlapMethod: "both",
+
+  // Tool-dependent output data
+  output: null
+
+/*
   // XXX: Shouldn't need expression data any more
   // Expression data used as CellFIE input
   rawExpressionData: null,
@@ -52,17 +59,10 @@ const initialState = {
   // CellFIE output in tree format, used for aggregating info and for the Voronoi treemap,
   // since we have to calculate the layout external to the Vega spec
   tree: null,
-  //////////////////////////////////////////////////
-
-  pcaOutput: null,
 
   // Reaction scores from detailed CellFIE output
   reactionScores: null,  
-
-
-
-  // Method for handling subgroup overlap
-  overlapMethod: "both"
+*/
 };
 
 const parseExpressionData = data => {
@@ -135,7 +135,9 @@ const parsePropertiesData = data => {
 };
 
 const processPCAOutput = data => {
+  console.log(data);
   return {
+    type: "PCA",
     name: data.contents[0].name,
     size: data.contents[0].size,
     data: data.contents[0].contents
@@ -568,12 +570,22 @@ const reducer = (state, action) => {
     case "setProperties":
       return initializePropertiesData(state, action.data);
 
-    case "setPCAOutput":
-      return {
-        ...state,
-        pcaOutput: processPCAOutput(action.output)
-      };
+    case "setOutput": {
+      // Figure out which type of output
+      if (action.output.length === 1 && action.output[0].contents[0].results_type === "PCA") {
+        // PCA
+        return {
+          ...state,
+          output: processPCAOutput(action.output[0])
+        };
+      }
+      else {
+        console.warn("Unknown output type", action.output);
 
+        return state;
+      }
+    }
+/*
     case "setOutput": {
       if (!state.subgroups || !state.selectedSubgroups) return state;
 
@@ -593,7 +605,7 @@ const reducer = (state, action) => {
         reactionScores: reactionScores
       };
     }   
-
+*/
     case "setDetailScoring": {
       const reactionScores = getReactionScores(action.data);
       updateTree(state.tree, state.subgroups, state.selectedSubgroups, state.overlapMethod, reactionScores);

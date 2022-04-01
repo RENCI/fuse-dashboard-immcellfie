@@ -13,6 +13,7 @@ import {
   UserProvider, 
   DataProvider, 
   ModelProvider,
+  PCAProvider,
   ColorProvider
 } from "contexts";
 import { MenuBar } from "components/menu-bar";
@@ -26,6 +27,7 @@ export const App = () => {
     <UserProvider>
     <DataProvider>
     <ModelProvider>
+    <PCAProvider>
     <ColorProvider>
       <Router>
         <MenuBar />
@@ -43,6 +45,7 @@ export const App = () => {
       </Router>
       <DatasetMonitor />
     </ColorProvider>
+    </PCAProvider>
     </ModelProvider>
     </DataProvider>    
     </UserProvider>
