@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import { Row, Col } from "react-bootstrap";
+import { useState, useMemo } from "react";
+import { Row, Col, Form } from "react-bootstrap";
 import { ResizeWrapper } from "components/resize-wrapper";
 import { VegaWrapper } from "components/vega-wrapper";
 import { VegaTooltip } from "components/vega-tooltip";
@@ -7,12 +7,21 @@ import { DetailVis } from "components/detail-vis";
 import { SelectedList } from "components/selected-list";
 import { pcaScatterPlot } from "vega-specs";
 
+const { Group, Label, Control, Select } = Form; 
+
+const indexToComponent = index => `PC${ index + 1 }`;
+
 export const PCAScatterVis = ({ data, subgroups }) => {
+  const [xComponent, setXComponent] = useState(0);
+  const [yComponent, setYComponent] = useState(1);
   //const hasSubgroups = subgroups[1] !== null;
 
   const pcaData = useMemo(() => { 
     return data.points.map(d => (
-      { x: d[0], y: d[1] }
+      { 
+        x: d[xComponent], 
+        y: d[yComponent]
+      }
     ));
 /*    
     return data.filter(node => node.depth > 0).map(node => {
@@ -36,7 +45,15 @@ export const PCAScatterVis = ({ data, subgroups }) => {
     });
   }, [data, significanceLevel, foldChangeThreshold]);  
 */
-}, [data]); 
+}, [data, xComponent, yComponent]); 
+
+  const onXComponentChange = event => {
+    setXComponent(+event.target.value);
+  };
+
+  const onYComponentChange = event => {
+    setYComponent(+event.target.value);
+  }
 
   //const subtitle = subgroups[1] && (subgroups[0].name + " vs. " + subgroups[1].name);
 
@@ -59,6 +76,44 @@ export const PCAScatterVis = ({ data, subgroups }) => {
         </Row>
       </div>
       */}
+      <Row className="mb-4">
+        <Group as={ Col } controlId="xComponentSelect"> 
+          <Label size="sm">X component</Label>       
+          <Select 
+            size="sm"
+            type="select"    
+            value={ xComponent }
+            onChange={ onXComponentChange } 
+          >
+            { new Array(data.size[1]).fill().map((d, i) => (
+              <option 
+                key={ i}
+                value={ i }
+              >
+                { indexToComponent(i) }
+              </option>
+            ))}
+          </Select>
+        </Group>
+        <Group as={ Col } controlId="yComponentSelect">        
+          <Label size="sm">Y component</Label>     
+          <Select 
+            size="sm"
+            type="select"    
+            value={ yComponent }
+            onChange={ onYComponentChange } 
+          >
+            { new Array(data.size[1]).fill().map((d, i) => (
+              <option 
+                key={ i}
+                value={ i }
+              >
+                { indexToComponent(i) }
+              </option>
+            ))}
+          </Select>
+        </Group>
+      </Row>
       <ResizeWrapper 
         useWidth={ true }
         useHeight={ true }
@@ -69,7 +124,9 @@ export const PCAScatterVis = ({ data, subgroups }) => {
           spec={ pcaScatterPlot } 
           data={ pcaData }
           signals={[
-            { name: "subtitle", value: subtitle }
+            { name: "subtitle", value: subtitle },
+            { name: "xTitle", value: indexToComponent(xComponent) },
+            { name: "yTitle", value: indexToComponent(yComponent) }
           ]}
           tooltip={ null /*
             <VegaTooltip>

@@ -14,6 +14,14 @@ export const pcaScatterPlot = {
     {
       name: "subtitle",
       value: ""
+    },
+    {
+      name: "xTitle",
+      value: "x"
+    },
+    {
+      name: "yTitle",
+      value: "y"
     }
   ],
   data: {
@@ -26,6 +34,9 @@ export const pcaScatterPlot = {
       type: "quantitative",
       scale: {
         zero: false
+      },
+      axis: {
+        title: { signal: "xTitle" }
       }
     },
     y: {
@@ -33,6 +44,9 @@ export const pcaScatterPlot = {
       type: "quantitative",
       scale: {
         zero: false
+      },
+      axis: {
+        title: { signal: "yTitle" }
       }
     }
   }
