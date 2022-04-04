@@ -1,18 +1,19 @@
 import { useContext } from "react";
 import { UserContext } from "contexts";
 import { DatasetStatusIcon } from "components/dataset-status-icon";
-import { bootstrapColor, isActive } from "utils/dataset-utils";
+import { bootstrapColor, isPending, isActive } from "utils/dataset-utils";
 
 export const DatasetStatus = () => {
   const [{ datasets }] = useContext(UserContext);
 
-  const counts = datasets.filter(dataset => isActive(dataset)).reduce((counts, { status }) => {
-    if (!counts[status]) counts[status] = 0;
+  const counts = datasets.filter(dataset => isActive(dataset) || isPending(dataset))
+    .reduce((counts, { status }) => {
+      if (!counts[status]) counts[status] = 0;
 
-    counts[status]++;
+      counts[status]++;
 
-    return counts;
-  }, {});
+      return counts;
+    }, {});
 
   return (
     <div>

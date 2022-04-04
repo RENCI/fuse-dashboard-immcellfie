@@ -17,10 +17,12 @@ export const Cellfie = () => {
           <div className="mt-4">
             <SubgroupSelection />  
           </div> 
-        }                  
+        }        
+        {/*          
         <div className="mt-4">
           <TaskSelection />  
-        </div>   
+        </div>
+        */}   
       </Col>            
       <Col xs={ 12 } xl={ 8 }>
         <CellfieOutput /> 

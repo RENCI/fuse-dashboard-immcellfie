@@ -4,6 +4,8 @@ export const getName = ({ source, accessionId, description, files }) => {
   source === "upload" && files ? Object.values(files).map(file => file.name).join(", ") :  
   null;
 };
+
+export const isPending = ({ status }) => status === "pending";
   
 export const isActive = ({ status }) => (
   status === "unknown" ||

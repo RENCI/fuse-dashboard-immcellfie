@@ -5,10 +5,12 @@ import { PCAContext, UserContext, DataContext, ErrorContext } from "contexts";
 const { Header, Body } = Card;
 const { Label, Group, Control } = Form;
 
+const service = "fuse-tool-pca";
+
 export const PCAControls = () => {
-  const [{ numComponents, description }, dispatch] = useContext(PCAContext);
   const [{ user }, userDispatch] = useContext(UserContext);
   const [{ dataset }] = useContext(DataContext);
+  const [{ numComponents, description }, dispatch] = useContext(PCAContext);
   const [, errorDispatch] = useContext(ErrorContext);
 
   const onNumComponentsChange = event => {
@@ -24,7 +26,7 @@ export const PCAControls = () => {
       userDispatch({
         type: "addDataset",
         dataset: {
-          service: "fuse-tool-pca",
+          service: service,
           type: "result",
           user: user,
           parameters: {

@@ -7,10 +7,19 @@ import { api } from "utils/api";
 const { Header, Body } = Card;
 const { Label, Group, Control } = Form;
 
+const service = "fuse-tool-cellfie";
+
+const getParameterObject = parameters => (
+  parameters.reduce((parameters, parameter) => {
+    parameters[parameter.name] = parameter.value;
+    return parameters; 
+  }, {})
+);
+
 export const ModelSelection = () => {
-  const [{ user, downloads }, userDispatch] = useContext(UserContext);
-  const [{ dataInfo, rawExpressionData, rawPropertiesData }, dataDispatch] = useContext(DataContext);
-  const [{ organism, model, parameters }, modelDispatch] = useContext(ModelContext); 
+  const [{ user }, userDispatch] = useContext(UserContext);
+  const [{ dataset }] = useContext(DataContext); 
+  const [{ organism, model, parameters }, modelDispatch] = useContext(ModelContext);
   const [, errorDispatch] = useContext(ErrorContext);
 
   const thresholdType = parameters.find(({ name }) => name === "ThreshType"); 
@@ -31,14 +40,28 @@ export const ModelSelection = () => {
     modelDispatch({ type: "resetParameterValue", name: name });
   };
 
-  const getParameterObject = parameters => (
-    parameters.reduce((parameters, parameter) => {
-      parameters[parameter.name] = parameter.value;
-      return parameters; 
-    }, {})
-  );
-
   const onRunCellfieClick = async () => {
+    try {
+      userDispatch({
+        type: "addDataset",
+        dataset: {
+          service: service,
+          type: "result",
+          user: user,
+          parameters: {
+            dataset: dataset.id,
+            model: model,
+            ...getParameterObject(parameters)
+          },
+          //description: description,
+          createdTime: new Date()
+        }
+      });
+    }
+    catch (error) {
+      errorDispatch({ type: "setError", error: error });
+    }
+/*    
     if (dataInfo.source.name === "ImmuneSpace") {
       try {
         const n = dataInfo.properties.numSamples;
@@ -95,6 +118,7 @@ export const ModelSelection = () => {
         errorDispatch({ type: "setError", error: error });
       }
     }
+*/    
   };
 
   const currentParameters = parameters.filter(({ type, name }) => {
@@ -212,18 +236,18 @@ export const ModelSelection = () => {
           <Col>
             <ButtonGroup style={{ width: "100%" }}>
               <Button 
-                disabled={ !dataInfo }
+                disabled={ !dataset }
                 onClick={ onRunCellfieClick }
               >
-                { !dataInfo ? 
+                { !dataset ? 
                   <>No input data</>
                 : <>Run CellFIE</>
                 }
               </Button> 
             </ButtonGroup>
-            { !dataInfo && 
+            { !dataset && 
               <div className="text-center">
-                <Form.Text>Select task or load input data</Form.Text>
+                <Form.Text>Load input data</Form.Text>
               </div> 
             }
           </Col>       

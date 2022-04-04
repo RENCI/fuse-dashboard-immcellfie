@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef } from "react";
 import { UserContext, ReadyContext, ErrorContext } from "contexts";
 import { api } from "utils/api";
-import { isActive } from "utils/dataset-utils";
+import { isPending, isActive } from "utils/dataset-utils";
 
 const getActive = datasets => datasets.filter(isActive);
 
@@ -14,7 +14,7 @@ export const DatasetMonitor = () => {
   useEffect(() => {
     const loadPending = async () => {
       // Load any pending datasets
-      const pending = datasets.filter(({ status }) => status === "pending");
+      const pending = datasets.filter(isPending);
 
       for (const info of pending) {
         try {
@@ -31,7 +31,7 @@ export const DatasetMonitor = () => {
             
             userDispatch({ type: "updateDataset", id: info.id, dataset: dataset });
           }
-          if (info.service === "fuse-provider-immunespace") {          
+          else if (info.service === "fuse-provider-immunespace") {          
             const id = await api.loadImmunespace(
               info.service,
               info.user,
@@ -48,7 +48,7 @@ export const DatasetMonitor = () => {
             
             userDispatch({ type: "updateDataset", id: info.id, dataset: dataset });
           }
-          else if (info.service === "fuse-tool-pca") {
+          else if (info.service === "fuse-tool-pca" || info.service === "fuse-tool-cellfie") {
             const id = await api.analyze(
               info.service, 
               info.user, 
@@ -59,6 +59,9 @@ export const DatasetMonitor = () => {
             const dataset = await api.getDataset(id);
 
             userDispatch({ type: "updateDataset", id: info.id, dataset: dataset });
+          }
+          else {
+            console.warn(`Unknown service ${ info.service }`);
           }
         }  
         catch (error) {
