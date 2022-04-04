@@ -1,6 +1,9 @@
 import { useContext } from "react";
+import { Card } from "react-bootstrap";
 import { DataContext } from "contexts";
 import { PCAScatterVis } from "./pca-scatter-vis";
+
+const { Header, Title, Body } = Card;
 
 export const PCAOutput = () => {
   const [{ output, subgroups, selectedSubgroups }] = useContext(DataContext);
@@ -14,17 +17,22 @@ export const PCAOutput = () => {
   console.log(currentSubgroups);
 
   return (            
-    <>
-      { output === null ?
-        <>No output data</>
-      : output.type !== "PCA" ?
-        <>Output data is not of type PCA</>
-      : 
-        <PCAScatterVis 
-          data={ output } 
-          subgroups={ currentSubgroups } 
-        />
-      }
-    </>
+    <Card>
+      <Header as="h5">
+        PCA Results
+      </Header>
+      <Body>
+        { output === null ?
+          <>No output data</>
+        : output.type !== "PCA" ?
+          <>Output data is not of type PCA</>
+        : 
+          <PCAScatterVis 
+            data={ output } 
+            subgroups={ currentSubgroups } 
+          />
+        }
+      </Body>
+    </Card>
   );
 };

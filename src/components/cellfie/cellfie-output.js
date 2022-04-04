@@ -39,7 +39,7 @@ export const CellfieOutput = () => {
         <Header>
           <Row>
             <Col>
-              <Title>CellFIE Run Results</Title>
+              <Title>CellFIE Results</Title>
             </Col>
             <Col xs="auto">
               <OutputDownload />
