@@ -18,6 +18,14 @@ export const UploadData = () => {
   const [propertiesFile, setPropertiesFile] = useState(null);
   const [description, setDescription] = useState("");
 
+  const onShowClick = () => {
+    setShow(true);
+  };
+
+  const onHideClick = () => {
+    setShow(false);
+  };
+
   const onPropertiesFileSelect = file => {
     setPropertiesFile(file);    
   };
@@ -59,14 +67,6 @@ export const UploadData = () => {
       <Image className="mt-1" src={ src } />
     </>
   );
-
-  const onShowClick = () => {
-    setShow(true);
-  };
-
-  const onHideClick = () => {
-    setShow(false);
-  };
 
   return (
     <>

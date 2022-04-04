@@ -10,10 +10,10 @@ import style from "./load-immunespace.module.css";
 const { Header, Title, Body } = Modal;
 const { Group, Control, Label } = Form;
 
+const service = "fuse-provider-immunespace";
+
 export const LoadImmuneSpace = () => {
-  const [{ user, apiKey, downloads }, userDispatch] = useContext(UserContext);
-  const [, dataDispatch] = useContext(DataContext);
-  const [, errorDispatch] = useContext(ErrorContext);
+  const [{ user, apiKey, datasets }, userDispatch] = useContext(UserContext);
   const [show, setShow] = useState(false);
   const [inputApiKey, setInputApiKey] = useState(apiKey);
   const [groupId, setGroupId] = useState("");
@@ -51,79 +51,27 @@ export const LoadImmuneSpace = () => {
   };
 
   const onSubmitGroupIdClick = async () => {
-    //onSetState(states.submitting);
+    userDispatch({
+      type: "addDataset",
+      dataset: {
+        service: service,
+        type: "input",
+        user: user,
+        apiKey: apiKey,
+        accessionId: groupId
+      }
+    });
 
-    dataDispatch({ type: "clearData" });
-    userDispatch({ type: "clearActiveTask" });
-
-    try {
-      const downloadId = await api.getImmuneSpaceDownloadId(user, groupId, apiKey);
-
-      const timer = setInterval(checkStatus, 1000);
-
-      async function checkStatus() {
-        const status = await api.checkImmuneSpaceDownloadStatus(downloadId);
-
-        if (status === "finished") {
-          clearInterval(timer);
-
-          const info = await api.getImmuneSpaceDownloadInfo(downloadId);
-
-          userDispatch({ type: "addDownload", download: {
-            id: downloadId,
-            status: status,
-            info: info,
-            tasks: []
-          }});
-
-          const propertiesData = await api.getImmuneSpaceproperties(downloadId);
-
-          dataDispatch({ 
-            type: "setDataInfo", 
-            source: { name: "ImmuneSpace", downloadId: downloadId },
-            properties: { name: groupId },
-            expression: { name: groupId }
-          });
-    
-          dataDispatch({ type: "setProperties", data: propertiesData });
-
-          //onSetState(states.normal);
-        }
-        else if (status === "failed") {
-          clearInterval(timer);         
-          
-          const info = await api.getImmuneSpaceDownloadInfo(downloadId);
-
-          dataDispatch({ type: "addDownload", download: {
-            id: downloadId,
-            status: status,
-            info: info,
-            tasks: []
-          }});
-
-          //onSetState(states.normal); 
-        }
-      };
-    }
-    catch (error) {
-      console.log(error);
-  
-      //onSetState(states.normal);
-
-      errorDispatch({ type: "setError", error: error });
-    }
+    setShow(false);
   };
 
-  //const disabled = state !== states.normal;
-  const disabled = false;
+  const apiKeys = Array.from(datasets
+    .filter(({ parameters }) => parameters && parameters.apiKey)
+    .reduce((apiKeys, { parameters }) => {
+      apiKeys.add(parameters.apikey);
 
-  const finished = downloads.filter(({ status }) => status === "finished");
-
-  const apiKeys = Array.from(finished.reduce((apiKeys, download) => {
-    apiKeys.add(download.info.apikey);
-
-    return apiKeys;
-  }, new Set()));
+      return apiKeys;
+    }, new Set()));
 
   return (
     <>
@@ -175,7 +123,7 @@ export const LoadImmuneSpace = () => {
             <InputGroup>
               <Button 
                 variant="primary"
-                disabled={ disabled || inputApiKey === "" || inputApiKey === apiKey }
+                disabled={ inputApiKey === "" || inputApiKey === apiKey }
                 onClick={ onEnterApiKeyClick }
               >
                 Enter
@@ -225,7 +173,7 @@ export const LoadImmuneSpace = () => {
             <InputGroup>
               <SpinnerButton 
                 variant="primary"
-                disabled={ disabled || apiKey === "" || groupId === "" }
+                disabled={ apiKey === "" || groupId === "" }
                 spin={ false }//state === "submitting" }
                 onClick={ onSubmitGroupIdClick }
               >

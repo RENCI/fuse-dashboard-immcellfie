@@ -316,6 +316,21 @@ export const api = {
     return response.data.object_id;
   },
 
+  loadImmunespace: async (service, user, apiKey, groupId, description) => {
+    // Set data and parameters as form data
+    const formData = new FormData();
+    formData.append("service_id", service);
+    formData.append("submitter_id", user);
+    formData.append("data_type", inputDataType);    
+    formData.append("apikey", apiKey);
+    formData.append("accession_id", groupId);
+    if (description) formData.append("description", description);
+
+    const response = await axios.post(`${ process.env.REACT_APP_FUSE_AGENT_API}/objects/load`, formData);
+
+    return response.data.object_id;
+  },
+
   analyze: async (service, user, parameters, description) => {
     // Set data and parameters as form data
     const formData = new FormData();

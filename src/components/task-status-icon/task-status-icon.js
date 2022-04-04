@@ -14,7 +14,7 @@ export const TaskStatusIcon = ({ task }) => {
       placement="right"
       overlay={ 
         <Tooltip id={ task.id }>
-          <span className="text-capitalize">{ task.status }</span>
+          <span>{ task.status ? task.status : "unknown" }</span>
         </Tooltip>
       }
     >

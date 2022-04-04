@@ -31,6 +31,23 @@ export const DatasetMonitor = () => {
             
             userDispatch({ type: "updateDataset", id: info.id, dataset: dataset });
           }
+          if (info.service === "fuse-provider-immunespace") {          
+            const id = await api.loadImmunespace(
+              info.service,
+              info.user,
+              info.apiKey,
+              info.accessionId,
+              info.description
+            );
+
+            console.log(id);
+
+            const dataset = await api.getDataset(id);
+
+            console.log(dataset);
+            
+            userDispatch({ type: "updateDataset", id: info.id, dataset: dataset });
+          }
           else if (info.service === "fuse-tool-pca") {
             const id = await api.analyze(
               info.service, 
