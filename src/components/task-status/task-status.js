@@ -1,6 +1,6 @@
 import { useContext, useEffect, useReducer } from "react";
 import { DataContext, UserContext } from "contexts";
-import { TaskStatusIcon } from "components/task-status-icon";
+import { DatasetStatusIcon } from "components/dataset-status-icon";
 import { api } from "utils/api";
 //import { taskUtils } from "utils/task-utils";
 
@@ -10,7 +10,7 @@ const isActive = status  => {
   return status === "submitting" || status === "queued" || status === "started";
 };
 
-// XXX: Should move this to colors.js and use in task-status-icon
+// XXX: Should move this to colors.js and use in dataset-status-icon
 const statusColor = {
   submitting: "primary",
   queued: "info",
@@ -116,7 +116,7 @@ export const TaskStatus = () => {
 
         return (
           <span key={ status } className="me-2 no-wrap">
-            <TaskStatusIcon task={{ status: status } } />
+            <DatasetStatusIcon dataset={{ status: status } } />
             <b className={ `text-${ statusColor[status] } small ms-1`}>{ count }</b>
           </span>
         );

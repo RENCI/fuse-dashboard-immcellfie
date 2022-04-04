@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { Table, Button, OverlayTrigger, Popover, Badge } from "react-bootstrap";
 import { XCircle, QuestionCircle } from "react-bootstrap-icons";
 import { UserContext, DataContext } from "contexts";
-import { TaskStatusIcon } from "components/task-status-icon";
+import { DatasetStatusIcon } from "components/dataset-status-icon";
 import { SpinnerButton } from "components/spinner-button";
 import { DatasetRow } from "./dataset-row";
 import { useLoadDataset } from "hooks";
@@ -10,6 +10,7 @@ import styles from "./dataset-list.module.css";
 
 const statusOrder = [
   "pending",
+  "null",
   "submitting",
   "queued",
   "started",
@@ -135,7 +136,7 @@ export const DatasetList = () => {
       accessor: d => {        
         return failed(d) && d.detail ?
           <>
-            <TaskStatusIcon task={ d } />
+            <DatasetStatusIcon dataset={ d } />
             <OverlayTrigger
               placement="left"
               overlay={ 
@@ -149,7 +150,7 @@ export const DatasetList = () => {
             </OverlayTrigger>
           </>
         :
-          <TaskStatusIcon task={ d } />
+          <DatasetStatusIcon dataset={ d } />
       },
       sort: (a, b) => statusOrder[getStatus(a)] - statusOrder[getStatus(b)],
       classes: "text-center"

@@ -6,6 +6,7 @@ export const getName = ({ source, accessionId, description, files, finishedTime 
 };
   
 export const isActive = ({ status }) => (
+  !status ||
   status === "submitting" || 
   status === "queued"     || 
   status === "started"
