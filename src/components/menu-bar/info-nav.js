@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { Row, Col } from "react-bootstrap";
 import { UserContext, DataContext } from "contexts";
+import { DatasetStatus } from "./dataset-status";
 import { getName } from "utils/dataset-utils";
 
 export const InfoNav = () => {
@@ -30,6 +31,9 @@ export const InfoNav = () => {
         <Col>
           <div>Result</div>
           <div><b>{ name(result) }</b></div>
+        </Col>
+        <Col className="d-flex align-items-center">
+          <DatasetStatus />
         </Col>
       </Row>      
     </div>

@@ -10,7 +10,7 @@ import styles from "./dataset-list.module.css";
 
 const statusOrder = [
   "pending",
-  "null",
+  "unknown",
   "submitting",
   "queued",
   "started",

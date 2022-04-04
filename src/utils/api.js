@@ -117,7 +117,7 @@ const getDataset = async id => {
     service.includes("fuse-tool") ? "result" : 
     "unknown";
 
-  dataset.status = agent.agent_status;
+  dataset.status = agent.agent_status ? agent.agent_status : "unknown";
   dataset.detail = agent.detail;
   dataset.parameters = agent.parameters;
   dataset.service = service;

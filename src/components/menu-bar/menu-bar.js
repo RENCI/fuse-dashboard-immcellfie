@@ -3,8 +3,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { Navbar, Nav, NavDropdown } from "react-bootstrap";
 import { QuestionCircle } from "react-bootstrap-icons";
 import { ConfigContext } from "contexts";
-import { TaskStatus } from "components/task-status";
-import { InfoNav } from "components/menu-bar/info-nav";
+import { InfoNav } from "./info-nav";
 
 const toolName = tool => tool.replace("fuse-tool-", "");
 
@@ -62,9 +61,6 @@ export const MenuBar = () => {
         <InfoNav />
       </Navbar.Collapse>
       <Navbar.Collapse className="justify-content-end">
-        <div className="me-3">
-          <TaskStatus />
-        </div>
         <Nav>
           <Nav.Link 
             href="https://github.com/RENCI/fuse-dashboard-immcellfie/wiki" 

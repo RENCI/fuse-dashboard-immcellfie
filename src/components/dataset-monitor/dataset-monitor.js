@@ -81,17 +81,11 @@ export const DatasetMonitor = () => {
           const id = dataset.id;
           const update = await api.getDataset(id);
 
-          console.log(update);
-
           if (update.status !== dataset.status) {
-            console.log("HERE");
-
             userDispatch({ type: "updateDataset", id: id, dataset: update });
             dispatched = true;
 
             if (update.status === "finished") {
-              console.log(update);
-
               readyDispatch({ type: "add", id: id });
             }
           }
