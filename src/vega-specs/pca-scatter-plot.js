@@ -23,11 +23,17 @@ export const pcaScatterPlot = {
   encoding: {
     x: {
       field: "x", 
-      type: "quantitative"
+      type: "quantitative",
+      scale: {
+        zero: false
+      }
     },
     y: {
       field: "y", 
-      type: "quantitative"
+      type: "quantitative",
+      scale: {
+        zero: false
+      }
     }
   }
 };
