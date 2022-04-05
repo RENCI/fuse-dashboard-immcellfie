@@ -8,7 +8,8 @@ export const getName = ({ source, accessionId, description, files }) => {
 export const isPending = ({ status }) => status === "pending";
   
 export const isActive = ({ status }) => (
-  status === "unknown" ||
+  // Leave this out for now until null status problem has been fixed for immunespace
+//  status === "unknown" ||
   status === "submitting" || 
   status === "queued"     || 
   status === "started"

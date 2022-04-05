@@ -3,8 +3,7 @@ export const pcaScatterPlot = {
   width: "container",
   height: "container",
   title: { 
-    text: "PCA scatter plot",
-    subtitle: { signal: "subtitle" }
+    text: "PCA scatter plot"
   },
   autosize: {
     type: "fit",
@@ -12,22 +11,25 @@ export const pcaScatterPlot = {
   },
   params: [
     {
-      name: "subtitle",
-      value: ""
-    },
-    {
       name: "xTitle",
       value: "x"
     },
     {
       name: "yTitle",
       value: "y"
+    },
+    {
+      name: "colors",
+      value: ["purple", "black"]
     }
   ],
   data: {
     name: "data"
   },
-  mark: "point",
+  mark: {
+    type: "point",
+    tooltip: true
+  },
   encoding: {
     x: {
       field: "x", 
@@ -47,6 +49,13 @@ export const pcaScatterPlot = {
       },
       axis: {
         title: { signal: "yTitle" }
+      }
+    },
+    color: {
+      field: "subgroup",
+      type: "nominal",
+      scale: { 
+        range: { field: "color" }
       }
     }
   }

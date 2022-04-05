@@ -40,11 +40,7 @@ export const DatasetMonitor = () => {
               info.description
             );
 
-            console.log(id);
-
             const dataset = await api.getDataset(id);
-
-            console.log(dataset);
             
             userDispatch({ type: "updateDataset", id: info.id, dataset: dataset });
           }
