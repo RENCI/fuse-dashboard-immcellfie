@@ -92,7 +92,7 @@ const reducer = (state, action) => {
     }   
     
     case "removeDataset": {
-      const index = state.datasets.findIndex(({ id }) => id === action.id);
+      const index = state.datasets.findIndex(({ id }) => id === action.dataset.id);
 
       if (index === -1) return state;
 
@@ -101,7 +101,7 @@ const reducer = (state, action) => {
 
       return {
         ...state,
-        datasets: datasets
+        datasets: linkDatasets(datasets)
       }
     }
 

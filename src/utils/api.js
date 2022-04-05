@@ -282,9 +282,9 @@ export const api = {
   },
 
   deleteDataset: async id => {
-    const response = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API}/delete/${ id }`);
+    const response = await axios.delete(`${ process.env.REACT_APP_FUSE_AGENT_API}/delete/${ id }`);
 
-    console.log(response);
+    return response.data;
   },
 
   // Data

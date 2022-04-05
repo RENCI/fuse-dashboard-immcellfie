@@ -30,26 +30,28 @@ export const DataSelection = () => {
         </Alert>
       }
 
-      <Card>
-        <Header as="h5">
-          Dataset Selection
-        </Header>
-        <Body>
-          <DatasetList />
-        </Body>
-        { propertiesData &&
-          <Footer>
-            <Row className="text-center">
-              <Col>
-                <CellfieLink />
-              </Col>
-              <Col>
-                <SubgroupsLink />
-              </Col>
-            </Row>
-          </Footer>
-        }
-      </Card>
+      { datasets.length > 0 &&
+        <Card>
+          <Header as="h5">
+            Dataset Selection
+          </Header>
+          <Body>
+            <DatasetList />
+          </Body>
+          { propertiesData &&
+            <Footer>
+              <Row className="text-center">
+                <Col>
+                  <CellfieLink />
+                </Col>
+                <Col>
+                  <SubgroupsLink />
+                </Col>
+              </Row>
+            </Footer>
+          }
+        </Card>
+      }
 
       <Card>
         <Header as="h5">

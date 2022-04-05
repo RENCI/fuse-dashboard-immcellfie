@@ -1,11 +1,12 @@
 import { useContext, useState } from "react";
 import { Table, Button, OverlayTrigger, Popover, Badge } from "react-bootstrap";
 import { XCircle, QuestionCircle } from "react-bootstrap-icons";
-import { UserContext, DataContext } from "contexts";
+import { UserContext, DataContext, ErrorContext } from "contexts";
 import { DatasetStatusIcon } from "components/dataset-status-icon";
 import { SpinnerButton } from "components/spinner-button";
 import { DatasetRow } from "./dataset-row";
 import { useLoadDataset } from "hooks";
+import { api } from "utils/api";
 import styles from "./dataset-list.module.css";
 
 const statusOrder = [
@@ -62,8 +63,9 @@ const getFinishedDisplay = d => {
 };
 
 export const DatasetList = () => {
-  const [{ datasets }] = useContext(UserContext);
+  const [{ datasets }, userDispatch] = useContext(UserContext);
   const [{ dataset, result }, dataDispatch] = useContext(DataContext);
+  const [, errorDispatch] = useContext(ErrorContext);
   const [loading, setLoading] = useState([]);
   const [sortColumn, setSortColumn] = useState(null);
   const loadDataset = useLoadDataset();
@@ -87,13 +89,23 @@ export const DatasetList = () => {
   };
 
   const onDeleteClick = async deleteDataset => {
-    if (deleteDataset === dataset) {
-      dataDispatch({ type: "clearData" });
+    try {
+      const result = await api.deleteDataset(deleteDataset.id);
+
+      if (result.status === "deleted") {
+        if (deleteDataset === dataset) {
+          dataDispatch({ type: "clearData" });
+        }
+
+        userDispatch({ type: "removeDataset", dataset: deleteDataset });
+      }
+      else {
+        throw new Error(result);
+      }
     }
-
-    // const success = api.deleteDataset(deleteDataset.id);
-
-    // XXX: Check return and update datasets
+    catch (error) {
+      errorDispatch({ type: "setError", error: error }) ;
+    }
   };
 
   const isLoaded = d => d === dataset || d === result;
