@@ -17,10 +17,6 @@ export const pcaScatterPlot = {
     {
       name: "yTitle",
       value: "y"
-    },
-    {
-      name: "colors",
-      value: ["purple", "black"]
     }
   ],
   data: {
