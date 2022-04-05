@@ -100,6 +100,7 @@ export const DatasetList = () => {
   const isLoading = d => loading.includes(d);
   const disabled = loading.length > 0;
 
+  // XXX: useMemo here, or figure out how to move outside of component?
   const columns = [  
     { 
       name: "Type",
@@ -177,7 +178,7 @@ export const DatasetList = () => {
     }
   ];
 
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === "development") {
     columns.push({
       name: "",
       accessor: d => (
@@ -218,6 +219,7 @@ export const DatasetList = () => {
                     onClick={ () => setSortColumn(column) }
                   >
                     { column.name }
+                    { sortColumn && column.name === sortColumn.name && <span className="ms-2">🠫</span> }
                   </th>
                 ))}   
               </tr>
