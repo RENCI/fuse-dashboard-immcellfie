@@ -2,7 +2,6 @@ import { useContext } from "react";
 import { Row, Col, Card, Form, Button, ButtonGroup, InputGroup } from "react-bootstrap";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
 import { UserContext, DataContext, ModelContext, ErrorContext } from "contexts";
-import { api } from "utils/api";
 
 const { Header, Body } = Card;
 const { Label, Group, Control } = Form;

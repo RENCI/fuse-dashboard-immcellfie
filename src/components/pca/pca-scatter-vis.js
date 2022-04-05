@@ -44,7 +44,7 @@ export const PCAScatterVis = ({ data, subgroups }) => {
         }
       });
     }
-  }, [data, subgroups, xComponent, yComponent]);
+  }, [data, subgroups, subgroupColors, xComponent, yComponent]);
 
   const onXComponentChange = event => {
     setXComponent(+event.target.value);

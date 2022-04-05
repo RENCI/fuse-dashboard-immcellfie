@@ -1,10 +1,9 @@
 import { useState, useContext } from "react";
 import { Modal, Form, InputGroup, OverlayTrigger, Popover, Button } from "react-bootstrap";
 import { BoxArrowUpRight, QuestionCircle, PersonFill } from "react-bootstrap-icons";
-import { UserContext, DataContext, ErrorContext } from "contexts";
+import { UserContext } from "contexts";
 import { SpinnerButton } from "components/spinner-button";
 import { LoadNewButton } from "./load-new-button";
-import { api } from "utils/api";
 import style from "./load-immunespace.module.css";
 
 const { Header, Title, Body } = Modal;
