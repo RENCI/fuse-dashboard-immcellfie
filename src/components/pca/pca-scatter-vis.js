@@ -39,7 +39,7 @@ export const PCAScatterVis = ({ data, subgroups }) => {
         return {
           x: point[xComponent],
           y: point[yComponent],
-          subgroup: "all",
+          subgroup: "All",
           color: subgroupColors[0]
         }
       });
