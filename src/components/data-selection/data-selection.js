@@ -1,6 +1,6 @@
-import { useContext } from "react";
-import { Card, Row, Col, Stack, Alert } from "react-bootstrap";
-import { ExclamationTriangle } from "react-bootstrap-icons";
+import { useContext, useState } from "react";
+import { Card, Row, Col, Stack, Alert, InputGroup, FormControl, Button } from "react-bootstrap";
+import { ExclamationTriangle, X } from "react-bootstrap-icons";
 import { ConfigContext, UserContext, DataContext } from "contexts";
 import { CellfieLink, SubgroupsLink } from "components/page-links";
 import { DatasetList } from './dataset-list';
@@ -13,6 +13,15 @@ export const DataSelection = () => {
   const [{ providers }] = useContext(ConfigContext);
   const [{ datasets }] = useContext(UserContext);
   const [{ propertiesData }] = useContext(DataContext);
+  const [filter, setFilter] = useState("");
+
+  const onFilterChange = evt => {
+    setFilter(evt.target.value.trim());
+  };
+
+  const onClearFilter = () => {
+    setFilter("");
+  };
 
   const pending = datasets.filter(({ status }) => status === "pending");
 
@@ -32,11 +41,30 @@ export const DataSelection = () => {
 
       { datasets.length > 0 &&
         <Card>
-          <Header as="h5">
-            Dataset Selection
+          <Header as="h5" className="d-flex align-items-center">
+            <div className="flex-grow-1">
+              Dataset Selection
+            </div>
+            <div>
+              <InputGroup size="sm">
+                <FormControl 
+                  size="sm"
+                  placeholder="Filter datasets..."
+                  value={ filter }
+                  onChange={ onFilterChange }
+                />
+                <Button 
+                  variant="secondary"
+                  size="lg"
+                  onClick={ onClearFilter }
+                >
+                  <X className="icon-offset" />
+                </Button>
+              </InputGroup>
+            </div>
           </Header>
           <Body>
-            <DatasetList />
+            <DatasetList filter={ filter === "" ? null : filter } />
           </Body>
           { propertiesData &&
             <Footer>

@@ -62,7 +62,7 @@ const getFinishedDisplay = d => {
     d.finishedTime.toLocaleString();
 };
 
-export const DatasetList = () => {
+export const DatasetList = ({ filter }) => {
   const [{ datasets }, userDispatch] = useContext(UserContext);
   const [{ dataset, result }, dataDispatch] = useContext(DataContext);
   const [, errorDispatch] = useContext(ErrorContext);
@@ -214,6 +214,35 @@ export const DatasetList = () => {
 
   const inputs = datasets.filter(({ type }) => type === "input");
 
+  const re = new RegExp(filter, "i");
+  const filterDataset = dataset => {
+    return getType(dataset).match(re) ||
+      getSource(dataset).match(re) ||
+      getIdentifier(dataset).match(re) ||
+      getDescription(dataset).match(re) ||
+      getFinishedDisplay(dataset).match(re) ||
+      getStatus(dataset).match(re);
+  };
+
+  const filtered = !filter ? inputs : 
+    inputs.reduce((filtered, input) => {
+      if (filterDataset(input)) {
+        filtered.push(input);
+      }
+      else {
+        const results = input.results.filter(filterDataset);
+
+        if (results.length > 0) {
+          filtered.push({
+            ...input,
+            results: results
+          });
+        }
+      }
+      
+      return filtered;
+    }, []);
+
   return (
     <>
       { inputs.length > 0 &&
@@ -237,7 +266,7 @@ export const DatasetList = () => {
               </tr>
             </thead>
             <tbody>
-              { inputs.sort(sortColumn ? sortColumn.sort : undefined).map((dataset) => {
+              { filtered.sort(sortColumn ? sortColumn.sort : undefined).map((dataset) => {
                 const results = dataset.results.slice().sort(sortColumn ? sortColumn.sort : undefined);
                 return [dataset, ...results].map((dataset, i) => (
                   <DatasetRow 
