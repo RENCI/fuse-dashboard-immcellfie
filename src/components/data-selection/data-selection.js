@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { Card, Row, Col, Stack, Alert, InputGroup, FormControl, Button } from "react-bootstrap";
 import { ExclamationTriangle, X } from "react-bootstrap-icons";
 import { ConfigContext, UserContext, DataContext } from "contexts";
-import { CellfieLink, SubgroupsLink } from "components/page-links";
+import { AnalyzeLink, SubgroupsLink } from "components/page-links";
 import { DatasetList } from './dataset-list';
 import { LoadImmuneSpace } from "./load-immunespace";
 import { UploadData } from "./upload-data";
@@ -12,7 +12,7 @@ const { Header, Body, Footer } = Card;
 export const DataSelection = () => {  
   const [{ providers }] = useContext(ConfigContext);
   const [{ datasets }] = useContext(UserContext);
-  const [{ propertiesData }] = useContext(DataContext);
+  const [{ dataset, propertiesData, result }] = useContext(DataContext);
   const [filter, setFilter] = useState("");
 
   const onFilterChange = evt => {
@@ -66,15 +66,17 @@ export const DataSelection = () => {
           <Body>
             <DatasetList filter={ filter === "" ? null : filter } />
           </Body>
-          { propertiesData &&
+          { dataset &&
             <Footer>
               <Row className="text-center">
+                { propertiesData &&
+                  <Col>
+                    <SubgroupsLink />
+                  </Col>
+                }
                 <Col>
-                  <CellfieLink />
-                </Col>
-                <Col>
-                  <SubgroupsLink />
-                </Col>
+                  <AnalyzeLink tool={ result ? result.service.replace("fuse-tool-", "") : null } />
+                </Col>                
               </Row>
             </Footer>
           }

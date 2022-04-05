@@ -3,7 +3,7 @@ import { Card, Form, InputGroup, Button, Row, Col } from "react-bootstrap";
 import { ExclamationCircle } from "react-bootstrap-icons";
 import { UserContext, DataContext, ErrorContext } from "contexts";
 import { LoadingSpinner } from "components/loading-spinner";
-import { CellfieLink, InputLink } from "components/page-links";
+import { DataLink } from "components/page-links";
 import { api } from "utils/api";
 
 const { Header, Body, Footer } = Card;
@@ -18,14 +18,12 @@ const validateEmail = email => {
 
 export const UserInput = () => {
   const [, dataDispatch] = useContext(DataContext);
-  const [{ user, tasks, downloads }, userDispatch] = useContext(UserContext);
+  const [{ user, datasets }, userDispatch] = useContext(UserContext);
   const [, errorDispatch] = useContext(ErrorContext);
   const [userValue, setUserValue] = useState("");
   const [validEmail, setValidEmail] = useState(false);
   const [userStatus, setUserStatus] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [failedDownloads, setFailedDownloads] = useState([]);
-  const [failedTasks, setFailedTasks] = useState([]);
   const buttonRef = useRef();
 
   useEffect(() => {
@@ -44,8 +42,6 @@ export const UserInput = () => {
     evt.preventDefault();
 
     setLoading(true);
-    setFailedDownloads([]);
-    setFailedTasks([]);
 
     userDispatch({ type: "clearUser" });
     dataDispatch({ type: "clearData" });
@@ -74,37 +70,7 @@ export const UserInput = () => {
             </pre>
           </>
         )});
-      }
-/*      
-      // Get ImmuneSpace downloads
-      const { downloads, failed: failedDownloads } = await api.getImmuneSpaceDownloads(userValue);
-      
-      downloads.sort((a, b) => b.info.date_created - a.info.date_created);
-
-      // Get tasks
-      const { tasks, failed: failedTasks } = await api.getTasks(userValue);
-
-      // Add downloads to tasks and vice versa
-      tasks.filter(task => task.isImmuneSpace).forEach(task => {
-        const download = downloads.find(({ id }) => id === task.info.immunespace_download_id);
-        task.download = download;
-        download.tasks.push(task);
-      });
-
-      // Dispatch
-      userDispatch({ type: "setDownloads", downloads: downloads });
-
-      // If there are downloads, set an api key
-      if (downloads.length > 0) {
-        userDispatch({ type: "setApiKey", apiKey: downloads[0].info.apikey })
-      }
-
-      userDispatch({ type: "setTasks", tasks: tasks });
-
-      setLoading(false);
-      setFailedDownloads(failedDownloads);
-      setFailedTasks(failedTasks);
-*/      
+      }     
     }
     catch (error) {
       console.log(error);
@@ -154,7 +120,7 @@ export const UserInput = () => {
             { userStatus && 
               <Text className="text-muted">
                 { userStatus === "existed" ? 
-                  <>Found existing user <b>{ user }</b></>
+                  <>Found existing user <b>{ user }</b> with { datasets.length } dataset{ datasets.length === 1 ? "" : "s" }</>
                 :
                   <>Added new user <b>{ user }</b></>
                 }
@@ -172,28 +138,12 @@ export const UserInput = () => {
               </Col>
             :  
               <>
-                { tasks.length > 0 && 
-                  <Col className="text-center">
-                    <CellfieLink />
-                    <div className="small text-muted">{ tasks.length } task{ tasks.length > 1 ? "s" : null } found for <b>{ user }</b></div> 
-                  </Col> 
-                }
                 <Col className="text-center">
-                  <InputLink />
-                  { downloads.length > 0 && <div className="small text-muted">{ downloads.length } ImmuneSpace download{ downloads.length > 0 ? "s" : null } found for <b>{ user }</b></div> }
+                  <DataLink />
                 </Col>
               </>
             }     
           </Row>
-          { (failedDownloads.length > 0 || failedTasks.length > 0) &&
-            <Row>
-              <Col>
-                <hr />
-                { failedDownloads.map(({ id }) => failure(id, "download")) }
-                { failedTasks.map(({ id }) => failure(id, "task")) }
-              </Col>
-            </Row>
-          }
         </Footer>
       }
     </Card>

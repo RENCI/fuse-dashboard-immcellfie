@@ -3,7 +3,7 @@ import { Row, Col, Card, Button, ListGroup, ListGroupItem } from "react-bootstra
 import { PlusCircle} from "react-bootstrap-icons";
 import { DataContext } from "contexts";
 import { Subgroup } from "./subgroup";
-import { CellfieLink } from "components/page-links";
+import { AnalyzeLink } from "components/page-links";
 
 const { Header, Body, Footer } = Card;
 
@@ -55,7 +55,7 @@ export const DataGrouping = () => {
                 </Button>
               </Col>
               <Col className="text-end">
-                <CellfieLink />
+                <AnalyzeLink />
               </Col>
             </Row>
           </Footer>

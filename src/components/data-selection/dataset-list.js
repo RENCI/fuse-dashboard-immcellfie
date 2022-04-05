@@ -81,6 +81,10 @@ export const DatasetList = ({ filter }) => {
 
       await loadDataset(dataset);
 
+      if (result) {
+        console.log("sup");
+      }
+
       setLoading([]);
     }
     catch (error) {

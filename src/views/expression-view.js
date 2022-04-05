@@ -8,7 +8,7 @@ import { VegaWrapper } from "components/vega-wrapper";
 import { expressionHeatmap } from "vega-specs";
 import { DataMissing } from "components/data-missing";
 import { LoadExpression } from "components/load-expression";
-import { UserLink, InputLink } from "components/page-links";
+import { UserLink, DataLink } from "components/page-links";
 
 const { Header, Body } = Card;
 const { Group, Label, Control } = Form;
@@ -56,7 +56,7 @@ export const ExpressionView = () => {
       { !user ?
         <DataMissing message="No user selected" pageLink={ <UserLink /> } />
       : !propertiesData ? 
-        <DataMissing message="No data loaded" pageLink={ <InputLink /> } />
+        <DataMissing message="No data loaded" pageLink={ <DataLink /> } />
       : !expressionData ? 
           <div className="text-center">
             <DataMissing message="No expression data loaded" /> 

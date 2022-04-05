@@ -4,7 +4,7 @@ import { Download } from "react-bootstrap-icons";
 import { UserContext, DataContext } from "contexts";
 import { ViewWrapper } from "components/view-wrapper";
 import { DataMissing } from "components/data-missing";
-import { UserLink, CellfieLink, InputLink } from "components/page-links";
+import { UserLink, AnalyzeLink, DataLink } from "components/page-links";
 import { LoadExpression } from "components/load-expression";
 import { useDownloadLink, useZipLink } from "hooks";
 
@@ -14,7 +14,7 @@ export const DownloadView = () => {
   const [{ user }] = useContext(UserContext);
   const [{ rawPropertiesData, rawExpressionData, rawOutput }] = useContext(DataContext);
   const propertiesLink = useDownloadLink(rawPropertiesData);
-  const inputLink = useDownloadLink(rawExpressionData);
+  const DataLink = useDownloadLink(rawExpressionData);
   const outputLink = useZipLink([
     { data: rawOutput && rawOutput.taskInfo , fileName: "taskInfo.csv" },
     { data: rawOutput && rawOutput.score, fileName: "score.csv" },
@@ -57,7 +57,7 @@ export const DownloadView = () => {
       { !user ?
         <DataMissing message="No user selected" pageLink={ <UserLink /> } />
       : !rawPropertiesData ? 
-        <DataMissing message="No data loaded" pageLink={ <InputLink /> } />      
+        <DataMissing message="No data loaded" pageLink={ <DataLink /> } />      
       : 
         <Card>
           <Header as="h5">
@@ -66,8 +66,8 @@ export const DownloadView = () => {
           <Body>  
             <Row className="align-items-end">
               <Col className="text-center">{ download(propertiesLink, "properties.csv", "Properties data", UserLink, "No properties data") }</Col>
-              <Col className="text-center">{ download(inputLink, "expression.csv", "Expression data", LoadExpression, "No expression data") }</Col>
-              <Col className="text-center">{ download(outputLink, "cellfie_output.zip", "CellFIE output (zipped)", CellfieLink, "No CellFIE output") }</Col>
+              <Col className="text-center">{ download(DataLink, "expression.csv", "Expression data", LoadExpression, "No expression data") }</Col>
+              <Col className="text-center">{ download(outputLink, "cellfie_output.zip", "CellFIE output (zipped)", AnalyzeLink, "No result data") }</Col>
             </Row>
             <hr />
             <Row>
