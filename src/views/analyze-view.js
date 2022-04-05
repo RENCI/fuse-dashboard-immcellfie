@@ -10,7 +10,7 @@ import { UserLink, InputLink } from "components/page-links";
 export const AnalyzeView = () => {
   const location = useLocation();
   const [{ user }] = useContext(UserContext);
-  const [{ propertiesData }] = useContext(DataContext);
+  const [{ dataset }] = useContext(DataContext);
 
   const tool = location.hash.slice(1);
 
@@ -21,9 +21,9 @@ export const AnalyzeView = () => {
           <DataMissing message="No user selected" pageLink={ <UserLink /> } /> 
         </ViewWrapper>
       : 
-        !propertiesData ? 
+        !dataset ? 
         <ViewWrapper> 
-          <DataMissing message="No data loaded" pageLink={ <InputLink /> } /> 
+          <DataMissing message="No dataset selected" pageLink={ <InputLink /> } /> 
         </ViewWrapper>
       : tool === "cellfie" ? <Cellfie />
       : tool === "pca" ? <PCA />

@@ -5,7 +5,7 @@ import { ResizeWrapper } from "components/resize-wrapper";
 import { VegaWrapper } from "components/vega-wrapper";
 import { pcaScatterPlot } from "vega-specs";
 
-const { Group, Label, Control, Select } = Form; 
+const { Group, Label, Select } = Form; 
 
 const indexToComponent = index => `PC${ index + 1 }`;
 
@@ -15,23 +15,35 @@ export const PCAScatterVis = ({ data, subgroups }) => {
   const [yComponent, setYComponent] = useState(1);
 
   const pcaData = useMemo(() => { 
-    const getPoints = which => {
-      const subgroup = subgroups[which];
+    if (subgroups) {
+      const getPoints = which => {
+        const subgroup = subgroups[which];
+  
+        return !subgroup ? [] : 
+          subgroup.samples.map(sample => {
+            const point = data.points[sample.index];
+  
+            return {
+              x: point[xComponent],
+              y: point[yComponent],
+              subgroup: subgroup.name,
+              color: subgroupColors[which]
+            }
+          });
+      };
 
-      return !subgroup ? [] : 
-        subgroup.samples.map(sample => {
-          const point = data.points[sample.index];
-
-          return {
-            x: point[xComponent],
-            y: point[yComponent],
-            subgroup: subgroup.name,
-            color: subgroupColors[which]
-          }
-        });
-    };
-
-    return getPoints(0).concat(getPoints(1));
+      return getPoints(0).concat(getPoints(1));
+    }
+    else {
+      return data.points.map(point => {
+        return {
+          x: point[xComponent],
+          y: point[yComponent],
+          subgroup: "all",
+          color: subgroupColors[0]
+        }
+      });
+    }
   }, [data, subgroups, xComponent, yComponent]);
 
   const onXComponentChange = event => {

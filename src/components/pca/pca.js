@@ -6,13 +6,13 @@ import { PCAControls } from "./pca-controls";
 import { PCAOutput } from "./pca-output";
 
 export const PCA = () => {
-  const [{ properties }] = useContext(DataContext);
+  const [{ subgroups }] = useContext(DataContext);
 
   return (        
     <Row>
       <Col xs={ 12 } xl={ 4 }>
         <PCAControls />
-        { properties.length > 0 &&
+        { subgroups &&
           <div className="mt-4">
             <SubgroupSelection />  
           </div> 

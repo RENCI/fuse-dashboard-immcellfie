@@ -7,13 +7,13 @@ import { ModelSelection } from "./model-selection";
 import { CellfieOutput } from "./cellfie-output";
 
 export const Cellfie = () => {
-  const [{ properties }] = useContext(DataContext);
+  const [{ subgroups }] = useContext(DataContext);
 
   return (        
     <Row>
       <Col xs={ 12 } xl={ 4 }>
         <ModelSelection />     
-        { properties.length > 0 &&
+        { subgroups &&
           <div className="mt-4">
             <SubgroupSelection />  
           </div> 

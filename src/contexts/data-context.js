@@ -107,6 +107,17 @@ const createPropertiesData = expressionData => {
 };
 
 const initializePropertiesData = (state, rawPropertiesData) => {
+  if (!rawPropertiesData) {
+    return {
+      ...state,
+      rawPropertiesData: initialState.rawPropertiesData,
+      propertiesData: initialState.propertiesData,
+      properties: initialState.properties,
+      subgroups: initialState.subgroups,
+      selectedSubgroups: initialState.selectedSubgroups
+    }
+  }
+
   const propertiesData = parsePropertiesData(rawPropertiesData);
   const properties = createProperties(propertiesData);
 
@@ -564,7 +575,7 @@ const reducer = (state, action) => {
       };
 
     case "setEmptyProperties":
-      return initializePropertiesData(state, "");
+      return initializePropertiesData(state);
 
     case "setProperties":
       return initializePropertiesData(state, action.data);

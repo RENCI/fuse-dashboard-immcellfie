@@ -7,14 +7,16 @@ import { UserLink, InputLink } from "components/page-links";
 
 export const SubgroupView = () => {
   const [{ user }] = useContext(UserContext);
-  const [{ propertiesData }] = useContext(DataContext);
+  const [{ dataset, propertiesData }] = useContext(DataContext);
 
   return (
     <ViewWrapper>
       { !user ?
         <DataMissing message="No user selected" pageLink={ <UserLink /> } />
+      : !dataset ?
+        <DataMissing message="No dataset selected" pageLink={ <InputLink /> } />
       : !propertiesData ? 
-        <DataMissing message="No data loaded" pageLink={ <InputLink /> } />
+        <DataMissing message="Dataset does not contain properties data" pageLink={ <InputLink /> } />
       : 
         <DataGrouping />
       }
