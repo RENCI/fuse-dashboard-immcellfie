@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { Table, Button, OverlayTrigger, Popover, Badge } from "react-bootstrap";
-import { XCircle, QuestionCircle } from "react-bootstrap-icons";
+import { XCircle, InfoCircle } from "react-bootstrap-icons";
 import { UserContext, DataContext, ErrorContext } from "contexts";
 import { DatasetStatusIcon } from "components/dataset-status-icon";
 import { SpinnerButton } from "components/spinner-button";
@@ -163,7 +163,7 @@ export const DatasetList = ({ filter }) => {
                 </Popover>
               }
             >
-              <QuestionCircle className="ms-1 icon-offset text-secondary" />
+              <InfoCircle className="ms-1 icon-offset text-secondary" />
             </OverlayTrigger>
           </>
         :

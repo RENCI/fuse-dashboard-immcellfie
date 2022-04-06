@@ -20,5 +20,7 @@ export const bootstrapColor = ({ status }) => (
   status === "submitting" ? "primary" :
   status === "queued" ? "info" :
   status === "started" ? "success" :    
+  status === "finished" ? "success" :
+  status === "failed" ? "danger" :
   "secondary"
 );
