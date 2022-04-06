@@ -319,6 +319,11 @@ export const api = {
   },
 
   loadImmunespace: async (service, user, apiKey, groupId, description) => {
+    // Dummy files for getting expression and properties data
+    const expression = new Blob(["expression"], { type: "text/plain" });
+    const properties = new Blob(["properties"], { type: "text/plain" });
+
+
     // Set data and parameters as form data
     const formData = new FormData();
     formData.append("service_id", service);
@@ -327,6 +332,10 @@ export const api = {
     formData.append("apikey", apiKey);
     formData.append("accession_id", groupId);
     if (description) formData.append("description", description);
+
+    // XXX: Add dummy files
+    formData.append("optional_file_expression", expression);
+    formData.append("optional_file_properties", properties);
 
     const response = await axios.post(`${ process.env.REACT_APP_FUSE_AGENT_API}/objects/load`, formData);
 

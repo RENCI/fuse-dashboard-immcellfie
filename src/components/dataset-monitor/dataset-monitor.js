@@ -63,7 +63,7 @@ export const DatasetMonitor = () => {
         catch (error) {
           console.log(error);
 
-          userDispatch({ type: "removeDataset", id: info.id });
+          //userDispatch({ type: "removeDataset", id: info.id });
 
           errorDispatch({ type: "setError", error: error });
         }  
