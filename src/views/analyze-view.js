@@ -1,12 +1,14 @@
 import { useContext } from "react";
 import { useLocation } from "react-router-dom";
-import { Row, Col } from "react-bootstrap";
+import { Card,Row, Col } from "react-bootstrap";
 import { UserContext, DataContext } from "contexts";
 import { ViewWrapper } from "components/view-wrapper";
 import { Cellfie } from "components/cellfie";
 import { PCA } from "components/pca";
 import { DataMissing } from "components/data-missing";
 import { UserLink, DataLink, AnalyzeLink } from "components/page-links";
+
+const { Header, Body } = Card;
 
 export const AnalyzeView = () => {
   const location = useLocation();
@@ -28,14 +30,21 @@ export const AnalyzeView = () => {
         </ViewWrapper>
       : !tool ?
         <ViewWrapper>
-          <Row>
-            <Col>
-              <AnalyzeLink tool={ "cellfie" } />
-            </Col>
-            <Col>
-              <AnalyzeLink tool={ "pca" } />
-            </Col>
-          </Row>
+          <Card>
+            <Header as="h5">
+              Select Analysis Tool
+            </Header>
+            <Body>
+              <Row className="text-center">
+                <Col>
+                  <AnalyzeLink tool={ "cellfie" } />
+                </Col>
+                <Col>
+                  <AnalyzeLink tool={ "pca" } />
+                </Col>
+              </Row>
+            </Body>
+          </Card>
         </ViewWrapper>
       : tool === "cellfie" ? <Cellfie />
       : tool === "pca" ? <PCA />

@@ -110,9 +110,9 @@ export const DatasetList = ({ filter }) => {
     }
   };
 
-  const isLoaded = d => d === dataset || d === result;
   const isLoading = d => loading.includes(d);
-  const disabled = loading.length > 0;
+  const isLoaded = d => (d === dataset || d === result) && !isLoading(d);
+  const dataLoading = loading.length > 0;
 
   // XXX: useMemo here, or figure out how to move outside of component?
   const columns = [
@@ -176,7 +176,7 @@ export const DatasetList = ({ filter }) => {
         <div style={{ visibility: (hasData(d) && !failed(d)) ? "visible" : "hidden" }}>
           <SpinnerButton 
             size="sm"
-            disabled={ disabled || isLoaded(d) }
+            disabled={ (dataLoading && !isLoading(d)) || isLoaded(d) }
             spin={ isLoading(d) }
             replace={ true }
             onClick={ evt => {
@@ -200,7 +200,7 @@ export const DatasetList = ({ filter }) => {
           <Button 
             size="sm"
             variant="outline-danger"
-            disabled={ disabled }
+            disabled={ dataLoading }
             onClick={ evt => {
               evt.stopPropagation();
               onDeleteClick(d);
