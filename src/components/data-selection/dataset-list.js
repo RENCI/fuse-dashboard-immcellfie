@@ -51,6 +51,15 @@ const getTypeDisplay = d => (
   </>
 );
 
+const getIdentifierDisplay = d => d.accessionId ? d.accessionId : 
+  (getType(d) === "input" && d.files) ? Object.values(d.files).map((file, i) => (
+    <div key={ i }>
+      <small className="text-muted">{ file.file_type === "filetype_dataset_expression" ? "expression" : "properties" }: </small>
+      { file.name }
+    </div>
+  )) :
+  missingIndicator
+
 const getFinishedDisplay = d => {
   if (!d.finishedTime) return missingIndicator;
 
@@ -66,28 +75,13 @@ const getFinishedDisplay = d => {
 
 export const DatasetList = ({ filter }) => {
   const [{ datasets }, userDispatch] = useContext(UserContext);
-  const [{ dataset, result }, dataDispatch] = useContext(DataContext);
+  const [{ dataset, propertiesData, result, output }, dataDispatch] = useContext(DataContext);
   const [, errorDispatch] = useContext(ErrorContext);
-  const [loading, setLoading] = useState([]);
   const [sortColumn, setSortColumn] = useState(null);
   const loadDataset = useLoadDataset();
 
   const onLoadClick = async dataset => {
-    try {
-      if (dataset.input) {
-        setLoading([dataset.input, dataset]);
-      }
-      else {
-        setLoading([dataset]);
-      }
-
-      await loadDataset(dataset);
-
-      setLoading([]);
-    }
-    catch (error) {
-      setLoading([]);      
-    }
+    await loadDataset(dataset);
   };
 
   const onDeleteClick = async deleteDataset => {
@@ -110,9 +104,10 @@ export const DatasetList = ({ filter }) => {
     }
   };
 
-  const isLoading = d => loading.includes(d);
+  const dataLoading = (dataset && dataset.properties && !propertiesData) || (result && !output);
+  const isLoading = d => dataLoading && (d === dataset || d === result);
   const isLoaded = d => (d === dataset || d === result) && !isLoading(d);
-  const dataLoading = loading.length > 0;
+  
 
   // XXX: useMemo here, or figure out how to move outside of component?
   const columns = [
@@ -128,7 +123,7 @@ export const DatasetList = ({ filter }) => {
     },
     { 
       name: "Identifier",
-      accessor: getIdentifier,
+      accessor: getIdentifierDisplay,
       sort: (a, b) => getIdentifier(a).localeCompare(getIdentifier(b))
     },
     { 
