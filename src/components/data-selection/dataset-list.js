@@ -81,10 +81,6 @@ export const DatasetList = ({ filter }) => {
 
       await loadDataset(dataset);
 
-      if (result) {
-        console.log("sup");
-      }
-
       setLoading([]);
     }
     catch (error) {
@@ -116,8 +112,12 @@ export const DatasetList = ({ filter }) => {
   const isLoading = d => loading.includes(d);
   const disabled = loading.length > 0;
 
+  const getLoadedDisplay = d => isLoaded(d) ? 
+    <div style={{ width: 10, height: 10 }} className={ getType(d) === "input" ? "bg-info" : "bg-warning" }></div> : 
+    null;
+
   // XXX: useMemo here, or figure out how to move outside of component?
-  const columns = [  
+  const columns = [
     { 
       name: "Type",
       accessor: getTypeDisplay,
@@ -270,14 +270,16 @@ export const DatasetList = ({ filter }) => {
               </tr>
             </thead>
             <tbody>
-              { filtered.sort(sortColumn ? sortColumn.sort : undefined).map((dataset) => {
+              { filtered.sort(sortColumn ? sortColumn.sort : undefined).map((dataset, i) => {
                 const results = dataset.results.slice().sort(sortColumn ? sortColumn.sort : undefined);
-                return [dataset, ...results].map((dataset, i) => (
+
+                return [dataset, ...results].map((dataset, j) => (
                   <DatasetRow 
-                    key={ i }
+                    key={ j }
                     dataset={ dataset } 
                     loaded={ isLoaded(dataset) }
-                    columns={ columns } 
+                    columns={ columns }                     
+                    stripe={ i % 2 === 1 }
                   />
                 ));
               })}

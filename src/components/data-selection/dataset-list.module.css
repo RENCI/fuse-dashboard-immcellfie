@@ -1,22 +1,24 @@
 .tableWrapper {
   max-height: 500px;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .active {
-  border-width: 2px 0px !important;
+  border-left-width: 5px;
 }
 
-.input {
-  background: #f6feff;
+.datasetRow {
+  border-bottom: 1px solid #f0f0f0;
 }
 
-.result {
-  background: #fffff6;
+.stripe {
+  border-bottom: 1px solid #fff;
+  background-color: #f6f6f6;
 }
 
 .datasetRow:hover {
-  background-color: #fafafa;
+  background-color: #f0f0f0;
 }
 
 .detailsRow {

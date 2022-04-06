@@ -16,7 +16,7 @@ function replacer(key, value) {
   }
 }
 
-export const DatasetRow = ({ dataset, loaded, columns }) => {
+export const DatasetRow = ({ dataset, loaded, columns, stripe }) => {
   const [showDetails, setShowDetails] = useState(false);
 
   const finished = dataset.status === "finished";
@@ -26,14 +26,14 @@ export const DatasetRow = ({ dataset, loaded, columns }) => {
   };
 
   let classes = styles.datasetRow;
+  if (stripe) classes += ` ${ styles.stripe }`;
 
   if (loaded) {
-    classes += ` ${ styles.active } rounded`;
+    classes += ` ${ styles.active }`;
 
-    if (dataset.type === "input") classes += ` ${ styles.input } border-info`;
-    else if (dataset.type === "result") classes += ` ${ styles.result } border-warning`;
+    if (dataset.type === "input") classes += ` border-info`;
+    else if (dataset.type === "result") classes += ` border-warning`;
   }
-  
 
   return (
     <>
