@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { Table, Button, OverlayTrigger, Popover, Badge } from "react-bootstrap";
-import { XCircle, InfoCircle } from "react-bootstrap-icons";
+import { XCircle, InfoCircle, CaretRightFill } from "react-bootstrap-icons";
 import { UserContext, DataContext, ErrorContext } from "contexts";
 import { DatasetStatusIcon } from "components/dataset-status-icon";
 import { SpinnerButton } from "components/spinner-button";
@@ -37,16 +37,18 @@ const getFinished = d => d.finishedTime ? d.finishedTime.toLocaleString() : null
 const getStatus = d => d.status;
 
 const getTypeDisplay = d => (
-  <Badge 
-    className={ getType(d) === "result" ? "ms-3" : null }    
-    bg={ 
-      getType(d) === "input" ? "info" : 
-      getType(d) === "result" ? "warning" : 
-      "secondary"
-    }
-  >
-    { getType(d) }
-  </Badge>
+  <>
+    <>{ getType(d) === "result" ? <CaretRightFill className="text-warning" /> : null }</>
+    <Badge     
+      bg={ 
+        getType(d) === "input" ? "info" : 
+        getType(d) === "result" ? "warning" : 
+        "secondary"
+      }
+    >
+      { getType(d) }
+    </Badge>
+  </>
 );
 
 const getFinishedDisplay = d => {
@@ -111,10 +113,6 @@ export const DatasetList = ({ filter }) => {
   const isLoaded = d => d === dataset || d === result;
   const isLoading = d => loading.includes(d);
   const disabled = loading.length > 0;
-
-  const getLoadedDisplay = d => isLoaded(d) ? 
-    <div style={{ width: 10, height: 10 }} className={ getType(d) === "input" ? "bg-info" : "bg-warning" }></div> : 
-    null;
 
   // XXX: useMemo here, or figure out how to move outside of component?
   const columns = [
