@@ -40,6 +40,12 @@ const linkDatasets = datasets => {
   return datasets;
 };
 
+const getApiKey = datasets => {
+  const hasKey = datasets.filter(({ apiKey }) => apiKey).sort((a, b) => b.createdTime - a.createdTime);
+
+  return hasKey.length > 0 ? hasKey[0].apiKey : "";
+};
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "setUser": 
@@ -57,7 +63,8 @@ const reducer = (state, action) => {
     case "setDatasets":
       return {
         ...state,
-        datasets: linkDatasets(action.datasets)
+        datasets: linkDatasets(action.datasets),
+        apiKey: getApiKey(action.datasets)
       };
 
     case "addDataset": {
