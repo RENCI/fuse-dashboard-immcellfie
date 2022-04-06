@@ -81,7 +81,7 @@ export const DatasetList = ({ filter }) => {
   const loadDataset = useLoadDataset();
 
   const onLoadClick = async dataset => {
-    await loadDataset(dataset);
+    loadDataset(dataset);
   };
 
   const onDeleteClick = async deleteDataset => {

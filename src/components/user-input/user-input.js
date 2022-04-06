@@ -120,7 +120,8 @@ export const UserInput = () => {
             { userStatus && 
               <Text className="text-muted">
                 { userStatus === "existed" ? 
-                  <>Found existing user <b>{ user }</b> with { datasets.length } dataset{ datasets.length === 1 ? "" : "s" }</>
+                  <>Found existing user <b>{ user }</b>
+                  { (datasets.length > 0) && <> with { datasets.length } dataset{ datasets.length === 1 ? "" : "s" } </> }</>
                 :
                   <>Added new user <b>{ user }</b></>
                 }

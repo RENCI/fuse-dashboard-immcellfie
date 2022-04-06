@@ -3,9 +3,7 @@ import { createContext, useReducer } from "react";
 const initialState = {
   user: "",
   apiKey: "",
-  downloads: [],
-  datasets: [],
-  tasks: []
+  datasets: []
 };
 
 const getId = datasets => {
