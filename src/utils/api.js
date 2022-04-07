@@ -1,8 +1,8 @@
 import axios from "axios";
 
-axios.defaults.headers = {
-  "Cache-Control": "no-store"
-};
+//axios.defaults.headers = {
+//  "Cache-Control": "no-store"
+//};
 
 /*
 axios.defaults.headers ={
@@ -73,6 +73,8 @@ const getOutput = async (path, id) => {
 
 // API helper functions
 
+const convertDate = date => date + "Z";
+
 const getDataset = async id => {
   const response = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API}/objects/${ id }`);
 
@@ -87,7 +89,8 @@ const getDataset = async id => {
   let finishedTime = -1;
 
   const updateTime = file => {
-    const time = new Date(file.updated_time + "z");
+    const time = new Date(convertDate(file.updated_time));
+
     if (!finishedTime || time > finishedTime) finishedTime = time;
   };
 
@@ -135,7 +138,7 @@ const getDataset = async id => {
   dataset.service = service;
   dataset.type = type;
   dataset.id = agent.object_id;
-  dataset.createdTime = new Date(agent.created_time + "z");
+  dataset.createdTime = new Date(convertDate(agent.created_time));
   dataset.finishedTime = finishedTime === -1 ? null : finishedTime;
   dataset.description = agent.parameters.description;
   dataset.apiKey = agent.parameters.apikey;
