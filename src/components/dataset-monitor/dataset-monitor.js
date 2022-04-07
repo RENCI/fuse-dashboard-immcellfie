@@ -3,6 +3,8 @@ import { UserContext, ReadyContext, ErrorContext } from "contexts";
 import { api } from "utils/api";
 import { isPending, isActive } from "utils/dataset-utils";
 
+const pollInterval = 5000;
+
 const getActive = datasets => datasets.filter(isActive);
 
 export const DatasetMonitor = () => {
@@ -86,25 +88,27 @@ export const DatasetMonitor = () => {
     const checkStatus = () => {
       const active = getActive(datasets);
 
-      timer.current = setTimeout(async () => {
-        let dispatched = false;
+      if (active.length > 0) {
+        timer.current = setTimeout(async () => {
+          let dispatched = false;
 
-        for (const dataset of active) {
-          const id = dataset.id;
-          const update = await api.getDataset(id);
+          for (const dataset of active) {
+            const id = dataset.id;
+            const update = await api.getDataset(id);
 
-          if (update.status !== dataset.status) {
-            userDispatch({ type: "updateDataset", id: id, dataset: update });
-            dispatched = true;
+            if (update.status !== dataset.status) {
+              userDispatch({ type: "updateDataset", id: id, dataset: update });
+              dispatched = true;
 
-            if (update.status === "finished") {
-              readyDispatch({ type: "add", id: id });
+              if (update.status === "finished") {
+                readyDispatch({ type: "add", id: id });
+              }
             }
           }
-        }
 
-        if (!dispatched) checkStatus();
-      });
+          if (!dispatched) checkStatus();
+        }, pollInterval);
+      }
     };
 
     loadPending();

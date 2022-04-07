@@ -18,24 +18,22 @@ export const InfoNav = () => {
 
   return (
     user && 
-    <div className="text-info small">
-      <Row>
-        <Col>
+    <div style={{ width: "100%"}} className="text-info small d-flex justify-content-evenly">
+        <div>
           <div>User</div>
           <div><b>{ user }</b></div>
-        </Col>
-        <Col>
+        </div>
+        <div>
           <div>Input</div>
           <div><b>{ name(dataset) }</b></div>
-        </Col>
-        <Col>
+        </div>
+        <div>
           <div>Result</div>
           <div><b>{ name(result) }</b></div>
-        </Col>
-        <Col className="d-flex align-items-center">
+        </div>
+        <div className="d-flex align-items-center">
           <DatasetStatus />
-        </Col>
-      </Row>      
+        </div>
     </div>
   );
 };           

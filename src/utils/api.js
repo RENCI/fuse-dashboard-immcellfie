@@ -1,16 +1,18 @@
 import axios from "axios";
 
 //axios.defaults.headers = {
+//  "Cache-Control": "max-age-0, must-revalidate"
+//};
+
+//axios.defaults.headers = {
 //  "Cache-Control": "no-store"
 //};
 
-/*
-axios.defaults.headers ={
-  "Cache-Control": "no-cache, no-transform, no-store, must-revalidate, max-age=3",
-  "Pragma": "no-cache",
-  "Expires": "0"
-};
-*/
+//axios.defaults.headers ={
+//  "Cache-Control": "no-cache, no-transform, no-store, must-revalidate, max-age=3",
+//  "Pragma": "no-cache",
+//  "Expires": "0"
+//};
 
 const inputDataType = "class_dataset_expression";
 
@@ -118,7 +120,7 @@ const getDataset = async id => {
           break;
 
         default:
-          console.log(`Unknown filetype ${ key }`);            
+          console.log(`Unknown filetype: ${ file.file_type }`);            
       }
     }    
   }

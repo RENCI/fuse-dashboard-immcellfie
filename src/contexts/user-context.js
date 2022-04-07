@@ -29,10 +29,13 @@ const linkDatasets = datasets => {
 
     const input = inputs.find(({ id }) => id === inputId);
 
-    if (!input) throw new Error(`Could not find input dataset ${ inputId } for result ${ result.id }`);
-
-    result.input = input;
-    input.results.push(result);
+    if (input) {
+      result.input = input;
+      input.results.push(result);
+    }
+    else {
+      console.warn(`Could not find input dataset ${ inputId } for result ${ result.id }`);
+    }
   });
 
   return datasets;

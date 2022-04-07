@@ -27,6 +27,7 @@ const statusOrder = [
 
 const failed = d => d.status === "failed";
 const hasData = d => d.status === "finished" && d.files;
+const canDelete = d => !d.results || d.results.length === 0;
 
 const getType = d => d.type;
 const getDescription = d => d.description ? d.description : missingIndicator;
@@ -82,6 +83,8 @@ export const DatasetList = ({ filter }) => {
   };
 
   const onDeleteClick = async deleteDataset => {
+    if (!canDelete(deleteDataset)) return;
+
     try {
       const result = await api.deleteDataset(deleteDataset.id);
 
@@ -192,7 +195,7 @@ export const DatasetList = ({ filter }) => {
           <Button 
             size="sm"
             variant="outline-danger"
-            disabled={ dataLoading }
+            disabled={ dataLoading || !canDelete(d) }
             onClick={ evt => {
               evt.stopPropagation();
               onDeleteClick(d);
