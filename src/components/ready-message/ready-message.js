@@ -4,6 +4,7 @@ import { Modal, Button } from 'react-bootstrap';
 import { CheckCircle } from "react-bootstrap-icons";
 import { ReadyContext, UserContext } from '../../contexts';
 import { useLoadDataset } from "hooks";
+import { getIdentifier, getSource } from "utils/dataset-utils";
 
 const { Header, Title, Body, Footer } = Modal;
 
@@ -34,6 +35,8 @@ export const ReadyMessage = () => {
 
   const id = ready.length > 0 ? ready[0] : null;
   const dataset = id !== null ? datasets.find(dataset => dataset.id === id) : null;
+
+  const identifier = dataset && getIdentifier(dataset);
   
   return (
     <Modal     
@@ -49,7 +52,14 @@ export const ReadyMessage = () => {
         </Title>
       </Header>  
       <Body>        
-        { dataset && dataset.id }
+        { dataset && 
+          <>
+            <div><small className="text-muted">type:</small> { dataset.type }</div>
+            <div><small className="text-muted">source:</small> { getSource(dataset) }</div>
+            { identifier && <div><small className="text-muted">identifier:</small> { identifier }</div> }
+            <div><small className="text-muted">description:</small> { dataset.description }</div>
+          </>
+        }
       </Body>
       <Footer>
         <Button 

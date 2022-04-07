@@ -7,7 +7,10 @@ import { SpinnerButton } from "components/spinner-button";
 import { DatasetRow } from "./dataset-row";
 import { useLoadDataset } from "hooks";
 import { api } from "utils/api";
+import { getSource, getIdentifier } from "utils/dataset-utils";
 import styles from "./dataset-list.module.css";
+
+const missingIndicator = "—";
 
 const statusOrder = [
   "pending",
@@ -22,16 +25,10 @@ const statusOrder = [
   return order;
 }, {});
 
-const missingIndicator = "—";
-
 const failed = d => d.status === "failed";
 const hasData = d => d.status === "finished" && d.files;
 
 const getType = d => d.type;
-const getSource = d => d.service.replace("fuse-provider-", "").replace("fuse-tool-", "");
-const getIdentifier = d => d.accessionId ? d.accessionId : 
-  (getType(d) === "input" && d.files) ? Object.values(d.files).map(file => file.name).join(", ") :
-  missingIndicator;
 const getDescription = d => d.description ? d.description : missingIndicator;
 const getFinished = d => d.finishedTime ? d.finishedTime.toLocaleString() : null;
 const getStatus = d => d.status;
@@ -213,9 +210,11 @@ export const DatasetList = ({ filter }) => {
 
   const re = new RegExp(filter, "i");
   const filterDataset = dataset => {
+    const identifier = getIdentifier(dataset);
+
     return getType(dataset).match(re) ||
       getSource(dataset).match(re) ||
-      getIdentifier(dataset).match(re) ||
+      identifier && identifier.match(re) ||
       getDescription(dataset).match(re) ||
       getFinishedDisplay(dataset).match(re) ||
       getStatus(dataset).match(re);
