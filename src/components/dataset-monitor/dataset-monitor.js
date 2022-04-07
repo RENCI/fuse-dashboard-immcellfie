@@ -86,11 +86,17 @@ export const DatasetMonitor = () => {
     };
 
     const checkStatus = () => {
+      console.log("checkStatus");
+
       const active = getActive(datasets);
+
+      console.log(active);
 
       if (active.length > 0) {
         timer.current = setTimeout(async () => {
           let dispatched = false;
+
+          console.log("pollin")
 
           for (const dataset of active) {
             const id = dataset.id;

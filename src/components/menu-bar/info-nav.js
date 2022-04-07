@@ -1,35 +1,35 @@
 import { useContext } from "react";
-import { Row, Col } from "react-bootstrap";
 import { UserContext, DataContext } from "contexts";
 import { DatasetStatus } from "./dataset-status";
 import { getName } from "utils/dataset-utils";
+import styles from "./info-nav.module.css";
 
 export const InfoNav = () => {
   const [{ user },] = useContext(UserContext);
   const [{ dataset, result },] = useContext(DataContext);
 
   const name = dataset => {
-    if (!dataset) return "none loaded";
+    if (!dataset) return "None loaded";
 
     let name = getName(dataset);
 
-    return name ? name : "no name";
+    return name ? name : "No name";
   };
 
   return (
     user && 
-    <div style={{ width: "100%"}} className="text-info small d-flex justify-content-evenly">
-        <div>
-          <div>User</div>
-          <div><b>{ user }</b></div>
+    <div style={{ width: "100%"}} className="small d-flex justify-content-around gap-3">
+        <div className="text-light">
+          <div className="text-white-50">User</div>
+          <div>{ user }</div>
         </div>
-        <div>
-          <div>Input</div>
-          <div><b>{ name(dataset) }</b></div>
+        <div className="text-info">
+          <div className="text-white-50">Input</div>
+          <div className={ styles.message }>{ name(dataset) }</div>
         </div>
-        <div>
-          <div>Result</div>
-          <div><b>{ name(result) }</b></div>
+        <div className="text-warning">
+          <div className="text-white-50">Result</div>
+          <div className={ styles.message }>{ name(result) }</div>
         </div>
         <div className="d-flex align-items-center">
           <DatasetStatus />

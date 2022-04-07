@@ -35,8 +35,8 @@ const getFinished = d => d.finishedTime ? d.finishedTime.toLocaleString() : null
 const getStatus = d => d.status;
 
 const getTypeDisplay = d => (
-  <>
-    <>{ getType(d) === "result" ? <CaretRightFill className="text-warning" /> : null }</>
+  <div style={{ whiteSpace: "nowrap"}}>
+    { getType(d) === "result" ? <CaretRightFill className="text-warning" /> : null }
     <Badge     
       bg={ 
         getType(d) === "input" ? "info" : 
@@ -46,7 +46,7 @@ const getTypeDisplay = d => (
     >
       { getType(d) }
     </Badge>
-  </>
+  </div>
 );
 
 const getIdentifierDisplay = d => d.accessionId ? d.accessionId : 
