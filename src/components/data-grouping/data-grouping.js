@@ -2,13 +2,14 @@ import { useContext, useState, useEffect} from "react";
 import { Row, Col, Card, Button, ListGroup, ListGroupItem } from "react-bootstrap";
 import { PlusCircle} from "react-bootstrap-icons";
 import { DataContext } from "contexts";
-import { Subgroup } from "./subgroup";
+import { LoadingSpinner } from "components/loading-spinner";
 import { AnalyzeLink } from "components/page-links";
+import { Subgroup } from "./subgroup";
 
 const { Header, Body, Footer } = Card;
 
 export const DataGrouping = () => {
-  const [{ properties, subgroups }, dataDispatch] = useContext(DataContext);
+  const [{ dataset, propertiesData, subgroups }, dataDispatch] = useContext(DataContext);
   const [newAdded, setNewAdded] = useState(false);  
 
   useEffect(() => {
@@ -26,9 +27,13 @@ export const DataGrouping = () => {
       <Header as="h5">
         Data Grouping
       </Header>
-      { properties.length === 0 ? 
-      <Body>
-        <>No properties data loaded for creating subgroups</>
+      { !propertiesData ?  
+        <Body>
+          { dataset.files.properties ? 
+            <LoadingSpinner text="Loading properties data" />
+          :
+            <>Dataset does not contain properties for creating subgroups</>
+          }
         </Body>
       : 
         <>

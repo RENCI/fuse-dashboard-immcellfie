@@ -8,8 +8,6 @@ export const useLoadDataset = ()  => {
 
   return async dataset => {
     try {
-      console.log(dataset);
-
       // Assume any dataset with an input is a result
       let input = null;
       let result = null;

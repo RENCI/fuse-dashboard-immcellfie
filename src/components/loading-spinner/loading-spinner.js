@@ -1,9 +1,9 @@
 import { Spinner } from "react-bootstrap";
 
-export const LoadingSpinner = () => {
+export const LoadingSpinner = ({ text = "Loading" }) => {
   return (
     <>
-      Loading 
+      { text } 
       <Spinner 
         className="ms-1"
         animation="border" 

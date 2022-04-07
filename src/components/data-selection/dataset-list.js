@@ -104,7 +104,7 @@ export const DatasetList = ({ filter }) => {
     }
   };
 
-  const dataLoading = (dataset && dataset.properties && !propertiesData) || (result && !output);
+  const dataLoading = (dataset && dataset.files.properties && !propertiesData) || (result && !output);
   const isLoading = d => dataLoading && (d === dataset || d === result);
   const isLoaded = d => (d === dataset || d === result) && !isLoading(d);
   
