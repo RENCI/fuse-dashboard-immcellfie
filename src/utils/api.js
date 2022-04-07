@@ -1,5 +1,17 @@
 import axios from "axios";
 
+axios.defaults.headers = {
+  "Cache-Control": "no-store"
+};
+
+/*
+axios.defaults.headers ={
+  "Cache-Control": "no-cache, no-transform, no-store, must-revalidate, max-age=3",
+  "Pragma": "no-cache",
+  "Expires": "0"
+};
+*/
+
 const inputDataType = "class_dataset_expression";
 
 // Paths for services
