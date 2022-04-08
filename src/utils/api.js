@@ -4,9 +4,9 @@ import axios from "axios";
 //  "Cache-Control": "max-age-0, must-revalidate"
 //};
 
-axios.defaults.headers = {
-  "Cache-Control": "no-store"
-};
+//axios.defaults.headers = {
+//  "Cache-Control": "no-store"
+//};
 
 //axios.defaults.headers ={
 //  "Cache-Control": "no-cache, no-transform, no-store, must-revalidate, max-age=3",

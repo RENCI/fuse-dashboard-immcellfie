@@ -4,7 +4,8 @@ import { Modal, Button } from 'react-bootstrap';
 import { CheckCircle } from "react-bootstrap-icons";
 import { ReadyContext, UserContext } from '../../contexts';
 import { useLoadDataset } from "hooks";
-import { getIdentifier, getSource } from "utils/dataset-utils";
+import { getServiceDisplay } from "utils/config-utils";
+import { getIdentifier } from "utils/dataset-utils";
 
 const { Header, Title, Body, Footer } = Modal;
 
@@ -55,7 +56,7 @@ export const ReadyMessage = () => {
         { dataset && 
           <>
             <div><small className="text-muted">type:</small> { dataset.type }</div>
-            <div><small className="text-muted">source:</small> { getSource(dataset) }</div>
+            <div><small className="text-muted">source:</small> { getServiceDisplay(dataset.service) }</div>
             { identifier && <div><small className="text-muted">identifier:</small> { identifier }</div> }
             <div><small className="text-muted">description:</small> { dataset.description }</div>
           </>

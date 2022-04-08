@@ -7,7 +7,8 @@ import { SpinnerButton } from "components/spinner-button";
 import { DatasetRow } from "./dataset-row";
 import { useLoadDataset } from "hooks";
 import { api } from "utils/api";
-import { getSource, getIdentifier } from "utils/dataset-utils";
+import { getServiceDisplay } from "utils/config-utils";
+import { getIdentifier } from "utils/dataset-utils";
 import styles from "./dataset-list.module.css";
 
 const missingIndicator = "—";
@@ -30,6 +31,7 @@ const hasData = d => d.status === "finished" && d.files;
 const canDelete = d => !d.results || d.results.length === 0;
 
 const getType = d => d.type;
+const getSource = d => getServiceDisplay(d.service);
 const getDescription = d => d.description ? d.description : missingIndicator;
 const getFinished = d => d.finishedTime ? d.finishedTime.toLocaleString() : null;
 const getStatus = d => d.status;
@@ -268,9 +270,9 @@ export const DatasetList = ({ filter }) => {
               { filtered.sort(sortColumn ? sortColumn.sort : undefined).map((dataset, i) => {
                 const results = dataset.results.slice().sort(sortColumn ? sortColumn.sort : undefined);
 
-                return [dataset, ...results].map((dataset, j) => (
+                return [dataset, ...results].map(dataset => (
                   <DatasetRow 
-                    key={ j }
+                    key={ dataset.id }
                     dataset={ dataset } 
                     loaded={ isLoaded(dataset) }
                     columns={ columns }                     

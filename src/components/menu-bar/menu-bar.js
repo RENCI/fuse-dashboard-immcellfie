@@ -4,15 +4,11 @@ import { Navbar, Nav, NavDropdown } from "react-bootstrap";
 import { QuestionCircle } from "react-bootstrap-icons";
 import { ConfigContext } from "contexts";
 import { InfoNav } from "./info-nav";
-
-const toolName = tool => tool.replace("fuse-tool-", "");
+import { getServiceName, getServiceDisplay } from "utils/config-utils";
 
 export const MenuBar = () => {
   const [{ tools }] = useContext(ConfigContext);
   const location = useLocation();
-
-  // XXX: Add cellfie for testing
-  const testTools = ["cellfie", ...tools];
 
   return (
     <Navbar bg="dark" variant="dark" expand="md" className="mb-3">
@@ -40,22 +36,19 @@ export const MenuBar = () => {
             title="Analyze"
             active={ location.pathname === "/analyze" }
           >
-            { testTools.map((tool, i) => {
-              const name = toolName(tool);
-              return (
-                <NavDropdown.Item key={ i } as="div">
-                  <Nav.Link 
-                    as={ NavLink } 
-                    to={{ 
-                      pathname: "/analyze", 
-                      hash: `#${ name }` 
-                    }}
-                  >
-                    { name }
-                  </Nav.Link>
-                </NavDropdown.Item>
-              );
-            })}
+            { tools.map((tool, i) => (
+              <NavDropdown.Item key={ i } as="div">
+                <Nav.Link 
+                  as={ NavLink } 
+                  to={{ 
+                    pathname: "/analyze", 
+                    hash: `#${ getServiceName(tool) }` 
+                  }}
+                >
+                  { getServiceDisplay(tool) }
+                </Nav.Link>
+              </NavDropdown.Item>              
+            ))}
           </NavDropdown>
         </Nav>
         <InfoNav />

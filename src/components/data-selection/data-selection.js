@@ -6,6 +6,7 @@ import { AnalyzeLink, SubgroupsLink } from "components/page-links";
 import { DatasetList } from './dataset-list';
 import { LoadImmuneSpace } from "./load-immunespace";
 import { UploadData } from "./upload-data";
+import { getServiceName } from "utils/config-utils";
 
 const { Header, Body, Footer } = Card;
 
@@ -75,7 +76,7 @@ export const DataSelection = () => {
                   </Col>
                 }
                 <Col>
-                  <AnalyzeLink tool={ result ? result.service.replace("fuse-tool-", "") : null } />
+                  <AnalyzeLink tool={ result ? getServiceName(result.service) : null } />
                 </Col>                
               </Row>
             </Footer>

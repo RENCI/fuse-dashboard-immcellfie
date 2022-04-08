@@ -4,9 +4,6 @@ export const getName = ({ source, accessionId, description, files }) =>
   source === "upload" && files ? Object.values(files).map(file => file.name).join(", ") :  
   null;
 
-export const getSource = ({ service }) => 
-  service.replace("fuse-provider-", "").replace("fuse-tool-", "");
-
 export const getIdentifier = ({ accessionId, type, files }) =>
   accessionId ? accessionId : 
   type === "input" && files ? Object.values(files).map(file => file.name).join(", ") :

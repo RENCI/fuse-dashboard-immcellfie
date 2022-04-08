@@ -1,0 +1,6 @@
+.message {
+  max-width: 20em;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
