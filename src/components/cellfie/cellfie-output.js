@@ -22,7 +22,8 @@ export const CellfieOutput = () => {
     return key !== null ? subgroups.find(subgroup => subgroup.key === key) : null;
   });
 
-  const activeTask = tasks.find(({ active }) => active);
+  //const activeTask = tasks.find(({ active }) => active);
+  const activeTask = null;
 
   const onSelect = tab => {
     setTab(tab);
