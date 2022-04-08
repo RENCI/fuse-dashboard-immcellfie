@@ -4,7 +4,7 @@ import { Modal, Button } from 'react-bootstrap';
 import { CheckCircle } from "react-bootstrap-icons";
 import { ReadyContext, UserContext } from '../../contexts';
 import { useLoadDataset } from "hooks";
-import { getServiceDisplay } from "utils/config-utils";
+import { getServiceName, getServiceDisplay } from "utils/config-utils";
 import { getIdentifier } from "utils/dataset-utils";
 
 const { Header, Title, Body, Footer } = Modal;
@@ -25,8 +25,8 @@ export const ReadyMessage = () => {
 
     dispatch({ type: "remove", id: dataset.id });
 
-    if (dataset.service === "fuse-tool-pca") {
-      history.push("/analyze#pca");
+    if (dataset.service.includes("fuse-tool-")) {
+      history.push(`/analyze#${ getServiceName(dataset.service) }`);
     }
   };
 

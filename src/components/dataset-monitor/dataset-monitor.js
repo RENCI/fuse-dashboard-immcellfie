@@ -3,7 +3,7 @@ import { UserContext, ReadyContext, ErrorContext } from "contexts";
 import { api } from "utils/api";
 import { isPending, isActive } from "utils/dataset-utils";
 
-const pollInterval = 5000;
+const pollInterval = 1000;
 
 const getActive = datasets => datasets.filter(isActive);
 
@@ -91,31 +91,38 @@ export const DatasetMonitor = () => {
       const active = getActive(datasets);
 
       console.log(active);
+        
+      const delay = ms => new Promise(resolve => timer.current = setTimeout(resolve, ms));
 
-      if (active.length > 0) {
-        timer.current = setTimeout(async () => {
-          let dispatched = false;
+      const doCheck = async () => {
+        let dispatched = false;
 
-          console.log("pollin")
+        console.log("pollin")
 
-          for (const dataset of active) {
-            const id = dataset.id;
-            const update = await api.getDataset(id);
+        for (const dataset of active) {
+          const id = dataset.id;
+          const update = await api.getDataset(id);
 
-            console.log(update);
+          console.log(update);
 
-            if (update.status !== dataset.status) {
-              userDispatch({ type: "updateDataset", id: id, dataset: update });
-              dispatched = true;
+          if (update.status !== dataset.status) {
+            userDispatch({ type: "updateDataset", id: id, dataset: update });
+            dispatched = true;
 
-              if (update.status === "finished") {
-                readyDispatch({ type: "add", id: id });
-              }
+            if (update.status === "finished") {
+              readyDispatch({ type: "add", id: id });
             }
           }
+        }
 
-          if (!dispatched) checkStatus();
-        }, pollInterval);
+        if (!dispatched) {
+          await delay(pollInterval);
+          doCheck();
+        }
+      };
+
+      if (active.length > 0) {
+        doCheck();
       }
     };
 
