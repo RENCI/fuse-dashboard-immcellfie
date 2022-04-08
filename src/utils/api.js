@@ -17,7 +17,7 @@ import axios from "axios";
 const inputDataType = "class_dataset_expression";
 
 // Stream helper functions
-
+/*
 const getStream = async (url, token = null) => {
   const params = { method: "get" };
 
@@ -65,6 +65,7 @@ const getOutput = async (path, id) => {
     scoreBinary: results[2]
   };
 };
+*/
 
 // API helper functions
 

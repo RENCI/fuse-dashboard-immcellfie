@@ -85,6 +85,23 @@ const reducer = (state, action) => {
       };
     }
 
+    case "updateId": {
+      const index = state.datasets.findIndex(({ id }) => id === action.oldId);
+
+      if (index === -1) return state;
+
+      const datasets = [...state.datasets];
+      datasets[index] = {
+        id: action.newId,
+        status: "submitting"
+      };
+
+      return {
+        ...state,
+        datasets: linkDatasets(datasets)
+      };
+    }
+
     case "updateDataset": {
       const index = state.datasets.findIndex(({ id }) => id === action.id);
 

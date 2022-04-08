@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState, useRef } from "react";
 import { Card, Form, InputGroup, Button, Row, Col } from "react-bootstrap";
-import { ExclamationCircle } from "react-bootstrap-icons";
 import { UserContext, DataContext, ErrorContext } from "contexts";
 import { LoadingSpinner } from "components/loading-spinner";
 import { DataLink } from "components/page-links";

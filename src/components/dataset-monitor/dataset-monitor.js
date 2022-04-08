@@ -27,15 +27,9 @@ export const DatasetMonitor = () => {
               info.files.expressionFile,
               info.files.propertiesFile,
               info.description
-            );
+            );          
 
-            const dataset = await api.getDataset(id);
-            
-            userDispatch({ type: "updateDataset", id: info.id, dataset: dataset });
-
-            if (dataset.status === "finished") {
-              readyDispatch({ type: "add", id: id });
-            }
+            userDispatch({ type: "updateId", oldId: info.id, newId: id });        
           }
           else if (info.service === "fuse-provider-immunespace") {          
             const id = await api.loadImmunespace(
@@ -46,13 +40,7 @@ export const DatasetMonitor = () => {
               info.description
             );
 
-            const dataset = await api.getDataset(id);
-            
-            userDispatch({ type: "updateDataset", id: info.id, dataset: dataset });
-
-            if (dataset.status === "finished") {
-              readyDispatch({ type: "add", id: id });
-            }
+            userDispatch({ type: "updateId", oldId: info.id, newId: id });           
           }
           else if (info.service === "fuse-tool-pca" || info.service === "fuse-tool-cellfie") {
             const id = await api.analyze(
@@ -62,13 +50,7 @@ export const DatasetMonitor = () => {
               info.description
             );
 
-            const dataset = await api.getDataset(id);
-
-            userDispatch({ type: "updateDataset", id: info.id, dataset: dataset });
-
-            if (dataset.status === "finished") {
-              readyDispatch({ type: "add", id: id });
-            }
+            userDispatch({ type: "updateId", id: info.id, newId: id });            
           }
           else {
             console.warn(`Unknown service ${ info.service }`);
@@ -85,7 +67,11 @@ export const DatasetMonitor = () => {
       }
     };
 
+    console.log(datasets);
+
     const checkStatus = () => {
+      clearTimeout(timer.current);
+
       console.log("checkStatus");
 
       const active = getActive(datasets);
@@ -97,7 +83,7 @@ export const DatasetMonitor = () => {
       const doCheck = async () => {
         let dispatched = false;
 
-        console.log("pollin")
+        console.log("polling")
 
         for (const dataset of active) {
           const id = dataset.id;
