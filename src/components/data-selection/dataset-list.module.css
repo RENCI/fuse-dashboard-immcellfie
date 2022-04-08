@@ -29,3 +29,7 @@
   max-height: 200px !important;
   overflow-y: auto;
 }
+
+.noWrap {
+  white-space: nowrap;
+}

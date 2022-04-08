@@ -53,7 +53,7 @@ const getTypeDisplay = d => (
 
 const getIdentifierDisplay = d => d.accessionId ? d.accessionId : 
   (getType(d) === "input" && d.files) ? Object.values(d.files).map((file, i) => (
-    <div key={ i }>
+    <div key={ i } className={ styles.noWrap }>
       <small className="text-muted">{ file.file_type === "filetype_dataset_expression" ? "expression" : "properties" }: </small>
       { file.name }
     </div>
