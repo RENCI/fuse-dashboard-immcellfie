@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { Tab, Card, Row, Col, Nav } from "react-bootstrap";
-import { UserContext, DataContext } from "contexts";
+import { DataContext } from "contexts";
 import { HierarchyVis } from "components/hierarchy-vis";
 import { HeatmapVis } from "components/heatmap-vis";
 import { VolcanoVis } from "components/volcano-vis";
@@ -14,7 +14,7 @@ const { Item, Link } = Nav;
 const { Container, Content, Pane } = Tab;
 
 export const CellfieOutput = () => {
-  const [{ tasks }] = useContext(UserContext);
+//  const [{ tasks }] = useContext(UserContext);
   const [{ hierarchy, tree, subgroups, selectedSubgroups }] = useContext(DataContext);
   const [tab, setTab] = useLocalStorage("CellfieOutputTab", "hierarchy");
 

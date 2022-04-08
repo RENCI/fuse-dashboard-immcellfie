@@ -219,7 +219,7 @@ export const DatasetList = ({ filter }) => {
 
     return getType(dataset).match(re) ||
       getSource(dataset).match(re) ||
-      identifier && identifier.match(re) ||
+      (identifier && identifier.match(re)) ||
       getDescription(dataset).match(re) ||
       getFinishedDisplay(dataset).match(re) ||
       getStatus(dataset).match(re);

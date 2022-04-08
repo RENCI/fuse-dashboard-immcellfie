@@ -4,11 +4,6 @@ import { Button } from "react-bootstrap";
 import { PersonCircle, Files, Diagram3, Calculator, Table } from "react-bootstrap-icons";
 import { getServiceName, getServiceDisplay } from "utils/config-utils";
 
-const toolText = {
-  cellfie: "CellFIE",
-  pca: "PCA"
-};
-
 const PageLink = ({ text, icon, page }) => {
   const history = useHistory();
 
