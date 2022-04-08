@@ -1,0 +1,35 @@
+.tableWrapper {
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.active {
+  border-left-width: 5px;
+}
+
+.datasetRow {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.stripe {
+  border-bottom: 1px solid #fff;
+  background-color: #f9f9f9;
+}
+
+.datasetRow:hover {
+  background-color: #f0f0f0;
+}
+
+.detailsRow {
+  background-color: #fafafa;
+}
+
+.detailsRow pre {
+  max-height: 200px !important;
+  overflow-y: auto;
+}
+
+.noWrap {
+  white-space: nowrap;
+}

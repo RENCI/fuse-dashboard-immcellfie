@@ -1,8 +1,8 @@
 import { useContext, useState } from "react";
 import { Card, ListGroup } from "react-bootstrap";
-import { DataContext, UserContext, ModelContext } from "../../contexts";
+import { DataContext, UserContext, ModelContext, ErrorContext } from "contexts";
 import { Task } from "./task";
-import { api } from "../../utils/api";
+import { api } from "utils/api";
 
 const { Header, Body } = Card;
 const { Item } = ListGroup;
@@ -17,8 +17,9 @@ const sortOrder = {
 
 export const TaskSelection = () => {
   const [, dataDispatch  ] = useContext(DataContext);
-  const [{ email, tasks }, userDispatch  ] = useContext(UserContext);
+  const [{ user, tasks }, userDispatch  ] = useContext(UserContext);
   const [, modelDispatch] = useContext(ModelContext);
+  const [, errorDispatch] = useContext(ErrorContext);
   const [loading, setLoading] = useState(false);
 
   const selectTask = async task => {
@@ -35,7 +36,7 @@ export const TaskSelection = () => {
         dataDispatch({ 
           type: "setDataInfo", 
           source: { name: "ImmuneSpace", downloadId: task.download.id },
-          phenotypes: { name: task.download.info.group_id },
+          properties: { name: task.download.info.group_id },
           expression: { name: task.download.info.group_id }
         });
       }
@@ -46,11 +47,11 @@ export const TaskSelection = () => {
         });
       }
 
-      const phenotypes = isImmuneSpace ? 
-        await api.getImmuneSpacePhenotypes(task.info.immunespace_download_id) : 
-        await api.getCellfiePhenotypes(id);
+      const properties = isImmuneSpace ? 
+        await api.getImmuneSpaceproperties(task.info.immunespace_download_id) : 
+        await api.getCellfieproperties(id);
 
-      dataDispatch({ type: "setPhenotypes", data: phenotypes });
+      dataDispatch({ type: "setProperties", data: properties });
 
       if (!isImmuneSpace) {
         const expressionData = await api.getCellfieExpressionData(id);
@@ -71,6 +72,8 @@ export const TaskSelection = () => {
     }
     catch (error) {
       console.log(error);
+
+      errorDispatch({ type: "setError", error: error });
     }
 
     setLoading(false);
@@ -97,7 +100,7 @@ export const TaskSelection = () => {
   };
 
   const taskDisplays = tasks.length === 0 ? 
-    <Item><span>No current CellFIE tasks found for <b>{ email }</b></span></Item> :
+    <Item><span>No current CellFIE tasks found for <b>{ user }</b></span></Item> :
     tasks.sort((a, b) => {
       return a.status === b.status ? 
         b.info.date_created - a.info.date_created :

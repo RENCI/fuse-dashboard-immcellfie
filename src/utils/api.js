@@ -1,14 +1,23 @@
 import axios from "axios";
 
-// Paths for services
-const CELLFIE_PATH = "/cellfie";
-const IMMUNESPACE_DOWNLOAD_PATH = "/immunespace/download";
-const IMMUNESPACE_CELLFIE_PATH = "/immunespace/cellfie";
+//axios.defaults.headers = {
+//  "Cache-Control": "max-age-0, must-revalidate"
+//};
 
-const cellfiePath = immuneSpace => immuneSpace ? IMMUNESPACE_CELLFIE_PATH : CELLFIE_PATH;
+//axios.defaults.headers = {
+//  "Cache-Control": "no-store"
+//};
+
+//axios.defaults.headers ={
+//  "Cache-Control": "no-cache, no-transform, no-store, must-revalidate, max-age=3",
+//  "Pragma": "no-cache",
+//  "Expires": "0"
+//};
+
+const inputDataType = "class_dataset_expression";
 
 // Stream helper functions
-
+/*
 const getStream = async (url, token = null) => {
   const params = { method: "get" };
 
@@ -56,212 +65,229 @@ const getOutput = async (path, id) => {
     scoreBinary: results[2]
   };
 };
+*/
 
 // API helper functions
-const getDownload = async id => {
-  const status = await checkTaskStatus(IMMUNESPACE_DOWNLOAD_PATH, id);
-  const info = await getTaskInfo(IMMUNESPACE_DOWNLOAD_PATH, id);
 
-  return {
-    id: id,
-    status: status,
-    info: info,
-    tasks: []
+const convertDate = date => date + "Z";
+
+const getDataset = async id => {
+  const response = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API}/objects/${ id }`);
+
+  const { agent, provider } = response.data;
+
+  if (!agent) throw new Error(`Error loading object ${ id }`);
+
+  //console.log(response.data);
+
+  const dataset = {};
+
+  let finishedTime = -1;
+
+  const updateTime = file => {
+    const time = new Date(convertDate(file.updated_time));
+
+    if (!finishedTime || time > finishedTime) finishedTime = time;
   };
-};
 
-const getTaskParameters = async (path, id) => {
-  const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }${ path }/parameters/${ id }`);
+  const files = {};
+  if (provider) {
+    for (const key in provider) {
+      const file = provider[key];
+      updateTime(file);
 
-  return result.data;
-};
+      switch (file.file_type) {
+        case "filetype_dataset_expression":
+          files.expression = file;
+          break;
+        
+        case "filetype_dataset_properties":
+          files.properties = file;
+          break;
 
-const checkTaskStatus = async (path, id) => {
-  const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }${ path }/status/${ id }`);
+        case "filetype_dataset_archive":
+          files.archive = file;
+          break;
 
-  return result.data.status; 
-};
+        case "filetype_results_PCATable":
+          files.pcaTable = file;
+          break;
 
-const getTaskInfo = async (path, id) => {
-  const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }${ path }/metadata/${ id }`);
-
-  const info = {...result.data};
-
-  const createDate = key => info[key] ? new Date(info[key]) : null;
-
-  // Convert to dates
-  info.date_created = createDate("date_created");
-  info.start_date = createDate("start_date");
-  info.end_date = createDate("end_date");
-
-  return info;
-};
-
-const getTasks = async (path, email) => {
-  const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }${ path }/task_ids/${ email }`);
-
-  const tasks = result.data.map(({ task_id }) => ({ id: task_id }));
-
-  const loaded = [];
-  const failed = [];
-
-  for (const task of tasks) {  
-    try {
-      task.status = await checkTaskStatus(path, task.id);
-      task.parameters = await getTaskParameters(path, task.id);
-      task.info = await getTaskInfo(path, task.id);
-
-      if (path === IMMUNESPACE_CELLFIE_PATH) task.isImmuneSpace = true;
-
-      loaded.push(task);
-    }
-    catch (error) {
-      console.log(error);
-      console.log(`Error loading task ${ task.id }. Removing from task list.`);
-
-      failed.push(task);
-    }
+        default:
+          console.log(`Unknown filetype: ${ file.file_type }`);            
+      }
+    }    
   }
 
-  return {
-    loaded: loaded,
-    failed: failed
-  };
+  if (Object.keys(files).length > 0) dataset.files = files;
+
+  const service = agent.parameters.service_id;
+
+  const type = 
+    service.includes("fuse-provider") ? "input" : 
+    service.includes("fuse-tool") ? "result" : 
+    "unknown";
+
+  dataset.status = agent.agent_status ? agent.agent_status : "unknown";
+  dataset.detail = agent.detail;
+  dataset.parameters = agent.parameters;
+  dataset.service = service;
+  dataset.type = type;
+  dataset.id = agent.object_id;
+  dataset.createdTime = new Date(convertDate(agent.created_time));
+  dataset.finishedTime = finishedTime === -1 ? null : finishedTime;
+  dataset.description = agent.parameters.description;
+  dataset.apiKey = agent.parameters.apikey;
+  dataset.accessionId = agent.parameters.accession_id;
+
+  return dataset;
 };
 
-const deleteTask = async (path, id) => {
-  const result = await axios.delete(`${ process.env.REACT_APP_API_ROOT }${ path }/delete/${ id }`);
+const getFile = async (dataset, type = "filetype_dataset_properties") => {
+  const urlResponse = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API}/objects/url/${ dataset.id }/type/${ type }`);
+  const dataResponse = await axios.get(urlResponse.data.url);
 
-  return result.data.status === "done";
+  return dataResponse.data;
 };
 
 // Exported API functions
 
 export const api = {
 
-  // General file loading
+  // System config
 
-  loadFile: async file => {
-    const response = await axios.get(window.URL.createObjectURL(file));
-
-    return response.data;
-  },
-  loadExampleData: async name => {
-    const response = await axios.get(`${ process.env.REACT_APP_EXAMPLE_DATA_ROOT }/${ name }`);
+  getProviders: async () => {
+    const response = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API }/services/providers`);
 
     return response.data;
   },
 
-  // Generic Cellfie API (e.g. for uploaded data)
+  getTools: async () => {
+    const response = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API }/services/tools`);
 
-  runCellfie: async (email, expressionData, phenotypeData, sampleNumber, model, parameters) => {   
-    // Set data and parameters as form data
-    const formData = new FormData();
-    formData.append("expression_data", expressionData);
-    formData.append("phenotype_data", phenotypeData);
-    formData.append("SampleNumber", sampleNumber);
-    formData.append("Ref", model);
-    Object.entries(parameters).forEach(([key, value]) => formData.append(key, value));
+    return response.data;
+  },
 
-    // Make post request
-    const result = await axios.post(
-      `${ process.env.REACT_APP_API_ROOT }/cellfie/submit`, 
-      formData,
-      { 
-        headers: { "Content-Type": "multipart/form-data" },
-        params: { "email": email }
-      }
-    );
-
-    return result.data.task_id;    
-  }, 
-  getCellfieExpressionData: async id => await resultStream(CELLFIE_PATH, id, "geneBySampleMatrix"),
-  getCellfiePhenotypes: async id => await resultStream(CELLFIE_PATH, id, "phenoDataMatrix"),
-
-  // ImmuneSpace download API
-
-  getImmuneSpaceDownloadId: async (email, groupId, apiKey) => {
-    const result = await axios.post(`${ process.env.REACT_APP_API_ROOT }/immunespace/download`, null, {
+  // User
+  addUser: async user => {
+    const response = await axios.post(`${ process.env.REACT_APP_FUSE_AGENT_API }/submitters/add`, null, {
       params: {
-        email: email,
-        group: groupId,
-        apikey: apiKey
+        submitter_id: user
       }
     });
 
-    return result.data.immunespace_download_id;
+    if (response.data.submitter_action_status === "unknown") {
+      throw new Error("Submitting user name failed");
+    }
+
+    return {
+      user: response.data.submitter_id,
+      status: response.data.submitter_action_status
+    };
   },
-  getImmuneSpaceDownloads: async email => {
-    const result = await axios.get(`${ process.env.REACT_APP_API_ROOT }/immunespace/download/ids/${ email }`);
 
-    const ids = result.data.map(d => d.immunespace_download_id);
+  // Dataset objects
 
-    const loaded = [];
-    const failed = [];
-  
-    for (const id of ids) {
+  getDataset: getDataset,
+
+  getDatasets: async user => {
+    const response = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API }/objects/search/${ user }`);
+
+    let datasets = [];
+    let failed = [];
+    for (const object of response.data.slice(-10)) { // XXX: JUST GET MOST RECENT 10 FOR TESTING
+      const id = object.object_id;
+
       try {
-        const download = await getDownload(id);
-        loaded.push(download);
+        const dataset = await getDataset(id);
+
+        datasets.push(dataset);
       }
       catch (error) {
         console.log(error);
-        console.log(`Error loading download ${ id }. Removing from download list.`);
 
-        failed.push({ id: id });
+        failed.push(id);
       }
     }
-  
-    return {
-      downloads: loaded,
-      failed: failed
-    };
+
+    datasets.sort((a, b) => b.finishedTime - a.finishedTime);
+
+    return [datasets, failed];
   },
-  getImmuneSpaceDownload: async downloadId => await getDownload(downloadId),
-  checkImmuneSpaceDownloadStatus: async downloadId => await checkTaskStatus(IMMUNESPACE_DOWNLOAD_PATH, downloadId),
-  getImmuneSpaceDownloadInfo: async downloadId => await getTaskInfo(IMMUNESPACE_DOWNLOAD_PATH, downloadId),
-  getImmuneSpaceExpressionData: async downloadId => await resultStream(IMMUNESPACE_DOWNLOAD_PATH, downloadId, "geneBySampleMatrix"),
-  getImmuneSpacePhenotypes: async downloadId => await resultStream(IMMUNESPACE_DOWNLOAD_PATH, downloadId, "phenoDataMatrix"),
 
-  // ImmuneSpace Cellfie API
+  deleteDataset: async id => {
+    const response = await axios.delete(`${ process.env.REACT_APP_FUSE_AGENT_API}/delete/${ id }`);
 
-  runImmuneSpaceCellfie: async (downloadId, sampleNumber, model, parameters) => {   
+    return response.data;
+  },
+
+  // Data
+
+  getFile: getFile,
+
+  getFiles: async dataset => {
+    const files = [];
+
+    for (const key in dataset.files) {
+      const data = await getFile(dataset, dataset.files[key].file_type);
+      
+      files.push(data);
+    }
+
+    return files;
+  },
+
+  uploadData: async (service, user, expressionFile, propertiesFile, description) => {
     // Set data and parameters as form data
     const formData = new FormData();
-    formData.append("SampleNumber", sampleNumber);
-    formData.append("Ref", model);
-    Object.entries(parameters).forEach(([key, value]) => formData.append(key, value));
+    formData.append("optional_file_expression", expressionFile);
+    if (propertiesFile) formData.append("optional_file_properties", propertiesFile);
+    formData.append("service_id", service);
+    formData.append("submitter_id", user);
+    formData.append("data_type", inputDataType);
+    if (description) formData.append("description", description);
 
-    // Make post request
-    const result = await axios.post(
-      `${ process.env.REACT_APP_API_ROOT }/immunespace/cellfie/submit`, 
-      formData,
-      { 
-        headers: { "Content-Type": "multipart/form-data" },
-        params: { "immunespace_download_id": downloadId }
-      }
-    );
+    const response = await axios.post(`${ process.env.REACT_APP_FUSE_AGENT_API}/objects/load`, formData);
 
-    return result.data.task_id;    
+    return response.data.object_id;
   },
-  
-  // Combined API
 
-  getTasks: async email => {
-    const results = await Promise.all([
-      getTasks(CELLFIE_PATH, email),
-      getTasks(IMMUNESPACE_CELLFIE_PATH, email)
-    ]);
+  loadImmunespace: async (service, user, apiKey, groupId, description) => {
+    // Dummy files for getting expression and properties data
+    const expression = new Blob(["expression"], { type: "text/plain" });
+    const properties = new Blob(["properties"], { type: "text/plain" });
 
-    return {
-      tasks: [...results[0].loaded, ...results[1].loaded],
-      failed: [...results[0].failed, ...results[1].failed]
-    };
+
+    // Set data and parameters as form data
+    const formData = new FormData();
+    formData.append("service_id", service);
+    formData.append("submitter_id", user);
+    formData.append("data_type", inputDataType);    
+    formData.append("apikey", apiKey);
+    formData.append("accession_id", groupId);
+    if (description) formData.append("description", description);
+
+    // XXX: Add dummy files
+    formData.append("optional_file_expression", expression);
+    formData.append("optional_file_properties", properties);
+
+    const response = await axios.post(`${ process.env.REACT_APP_FUSE_AGENT_API}/objects/load`, formData);
+
+    return response.data.object_id;
   },
-  checkCellfieTaskStatus: async (id, immuneSpace = false) => await checkTaskStatus(cellfiePath(immuneSpace), id), 
-  getCellfieTaskParameters: async (id, immuneSpace = false) => await getTaskParameters(cellfiePath(immuneSpace), id),
-  getCellfieTaskInfo: async (id, immuneSpace = false) => await getTaskInfo(cellfiePath(immuneSpace), id),
-  deleteCellfieTask: async (id, immuneSpace = false) => await deleteTask(cellfiePath(immuneSpace), id),
-  getCellfieOutput: async (id, immuneSpace = false) => await getOutput(cellfiePath(immuneSpace), id),
-  getCellfieDetailScoring: async (id, immuneSpace = false) => await resultStream(cellfiePath(immuneSpace), id, "detailScoring"),
+
+  analyze: async (service, user, parameters, description) => {
+    // Set data and parameters as form data
+    const formData = new FormData();
+    formData.append("service_id", service);
+    formData.append("submitter_id", user);
+    Object.entries(parameters).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+    if (description) formData.append("description", description);
+
+    const response = await axios.post(`${ process.env.REACT_APP_FUSE_AGENT_API}/analyze`, formData);
+
+    return response.data.object_id;  
+  } 
 }

@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { ListGroup, Row, Col, Button, Collapse, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { ChevronDown, ChevronUp, XCircle } from "react-bootstrap-icons";
-import { TaskStatusIcon } from "../task-status-icon";
-import { getModel } from "../../utils/models";
+import { DatasetStatusIcon } from "components/dataset-status-icon";
+import { getModel } from "utils/models";
 import styles from "./task.module.css";
 
 const { Item } = ListGroup;
@@ -119,7 +119,7 @@ export const Task = ({ task, onClick, onDeleteClick }) => {
         </Col>      
         <Col>{ summary }</Col>
         <Col xs="auto" className="text-end">
-          <TaskStatusIcon task={ task } />
+          <DatasetStatusIcon dataset={ task } />
           { task.status !== "failed" && 
             <div className="text-muted small">
               { timeString(elapsed) }

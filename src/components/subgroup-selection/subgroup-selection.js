@@ -1,9 +1,9 @@
 import { useContext } from "react";
 import { Card, Row, Col, Form } from "react-bootstrap";
-import { DataContext, ColorContext } from "../../contexts";
-import { SubgroupsLink } from "../page-links";
-import { OverlapVis } from "../overlap-vis";
-import { WarningMessage } from "../warning-message";
+import { DataContext, ColorContext } from "contexts";
+import { SubgroupsLink } from "components/page-links";
+import { OverlapVis } from "components/overlap-vis";
+import { WarningMessage } from "components/warning-message";
 import styles from "./subgroup-selection.module.css";
 
 const { Header, Body } = Card;

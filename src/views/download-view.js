@@ -1,20 +1,20 @@
 import { useContext } from "react";
 import { Row, Col, Card, Button } from "react-bootstrap";
 import { Download } from "react-bootstrap-icons";
-import { UserContext, DataContext } from "../contexts";
-import { ViewWrapper } from "../components/view-wrapper";
-import { DataMissing } from "../components/data-missing";
-import { UserLink, CellfieLink, InputLink } from "../components/page-links";
-import { LoadExpression } from "../components/load-expression";
-import { useDownloadLink, useZipLink } from "../hooks";
+import { UserContext, DataContext } from "contexts";
+import { ViewWrapper } from "components/view-wrapper";
+import { DataMissing } from "components/data-missing";
+import { UserLink, AnalyzeLink, DataLink } from "components/page-links";
+import { LoadExpression } from "components/load-expression";
+import { useDownloadLink, useZipLink } from "hooks";
 
 const { Header, Body } = Card;
 
 export const DownloadView = () => {
-  const [{ email }] = useContext(UserContext);
-  const [{ rawPhenotypeData, rawExpressionData, rawOutput }] = useContext(DataContext);
-  const phenotypeLink = useDownloadLink(rawPhenotypeData);
-  const inputLink = useDownloadLink(rawExpressionData);
+  const [{ user }] = useContext(UserContext);
+  const [{ rawPropertiesData, rawExpressionData, rawOutput }] = useContext(DataContext);
+  const propertiesLink = useDownloadLink(rawPropertiesData);
+  const DataLink = useDownloadLink(rawExpressionData);
   const outputLink = useZipLink([
     { data: rawOutput && rawOutput.taskInfo , fileName: "taskInfo.csv" },
     { data: rawOutput && rawOutput.score, fileName: "score.csv" },
@@ -22,7 +22,7 @@ export const DownloadView = () => {
     { data: rawOutput && rawOutput.detailScoring, fileName: "detailScoring.csv" }
   ]);
   const allLink = useZipLink([
-    { data: rawPhenotypeData, fileName: "phenotypes.csv" },
+    { data: rawPropertiesData, fileName: "properties.csv" },
     { data: rawExpressionData, fileName: "expression.csv" },
     { data: rawOutput && rawOutput.taskInfo , fileName: "taskInfo.csv" },
     { data: rawOutput && rawOutput.score, fileName: "score.csv" },
@@ -54,10 +54,10 @@ export const DownloadView = () => {
 
   return (   
     <ViewWrapper>
-      { !email ?
-        <DataMissing message="No user email selected" pageLink={ <UserLink /> } />
-      : !rawPhenotypeData ? 
-        <DataMissing message="No data loaded" pageLink={ <InputLink /> } />      
+      { !user ?
+        <DataMissing message="No user selected" pageLink={ <UserLink /> } />
+      : !rawPropertiesData ? 
+        <DataMissing message="No data loaded" pageLink={ <DataLink /> } />      
       : 
         <Card>
           <Header as="h5">
@@ -65,9 +65,9 @@ export const DownloadView = () => {
           </Header>
           <Body>  
             <Row className="align-items-end">
-              <Col className="text-center">{ download(phenotypeLink, "phenotypes.csv", "Phenotype data", UserLink, "No phenotype data") }</Col>
-              <Col className="text-center">{ download(inputLink, "expression.csv", "Expression data", LoadExpression, "No expression data") }</Col>
-              <Col className="text-center">{ download(outputLink, "cellfie_output.zip", "CellFIE output (zipped)", CellfieLink, "No CellFIE output") }</Col>
+              <Col className="text-center">{ download(propertiesLink, "properties.csv", "Properties data", UserLink, "No properties data") }</Col>
+              <Col className="text-center">{ download(DataLink, "expression.csv", "Expression data", LoadExpression, "No expression data") }</Col>
+              <Col className="text-center">{ download(outputLink, "cellfie_output.zip", "CellFIE output (zipped)", AnalyzeLink, "No result data") }</Col>
             </Row>
             <hr />
             <Row>

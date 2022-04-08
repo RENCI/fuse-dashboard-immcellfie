@@ -1,20 +1,22 @@
 import { useContext } from "react";
-import { UserContext, DataContext } from "../contexts";
-import { ViewWrapper } from "../components/view-wrapper";
-import { DataGrouping } from "../components/data-grouping";
-import { DataMissing } from "../components/data-missing";
-import { UserLink, InputLink } from "../components/page-links";
+import { UserContext, DataContext } from "contexts";
+import { ViewWrapper } from "components/view-wrapper";
+import { DataGrouping } from "components/data-grouping";
+import { DataMissing } from "components/data-missing";
+import { UserLink, DataLink } from "components/page-links";
 
 export const SubgroupView = () => {
-  const [{ email }] = useContext(UserContext);
-  const [{ phenotypeData }] = useContext(DataContext);
+  const [{ user }] = useContext(UserContext);
+  const [{ dataset, propertiesData }] = useContext(DataContext);
 
   return (
     <ViewWrapper>
-      { !email ?
-        <DataMissing message="No user email selected" pageLink={ <UserLink /> } />
-      : !phenotypeData ? 
-        <DataMissing message="No data loaded" pageLink={ <InputLink /> } />
+      { !user ?
+        <DataMissing message="No user selected" pageLink={ <UserLink /> } />
+      : !dataset ?
+        <DataMissing message="No dataset selected" pageLink={ <DataLink /> } />
+      : !propertiesData ? 
+        <DataMissing message="Dataset does not contain properties data" pageLink={ <DataLink /> } />
       : 
         <DataGrouping />
       }

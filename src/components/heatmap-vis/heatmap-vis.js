@@ -1,9 +1,9 @@
 import { useContext, useState, useMemo } from "react";
 import { Form, Row, Col } from "react-bootstrap";
 import { merge, group, mean } from "d3-array";
-import { ColorContext } from "../../contexts";
-import { VegaWrapper } from "../vega-wrapper";
-import { taskHeatmap } from "../../vega-specs";
+import { ColorContext } from "contexts";
+import { VegaWrapper } from "components/vega-wrapper";
+import { taskHeatmap } from "vega-specs";
 import styles from "./heatmap-vis.module.css";
 
 const { Group, Label, Control, Range } = Form; 

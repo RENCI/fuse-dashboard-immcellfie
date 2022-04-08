@@ -9,5 +9,6 @@ export * from "./density";
 export * from "./density-comparison";
 export * from "./bar";
 export * from "./bar-comparison";
-export * from "./phenotype-bar-chart";
+export * from "./properties-bar-chart";
 export * from "./bar-overlap";
+export * from "./pca-scatter-plot";

@@ -1,15 +1,15 @@
 import { useContext, useState, useMemo } from "react";
 import { Form, Row, Col } from "react-bootstrap";
 import { extent, min } from "d3-array";
-import { DataContext } from "../../contexts";
-import { ResizeWrapper } from "../resize-wrapper";
-import { VegaWrapper } from "../vega-wrapper";
-import { VegaTooltip } from "../vega-tooltip";
-import { DetailVis } from "../detail-vis";
-import { SubgroupsLink } from "../page-links";
-import { WarningMessage } from "../warning-message";
-import { SelectedList } from "../selected-list";
-import { volcanoPlot } from "../../vega-specs";
+import { DataContext } from "contexts";
+import { ResizeWrapper } from "components/resize-wrapper";
+import { VegaWrapper } from "components/vega-wrapper";
+import { VegaTooltip } from "components/vega-tooltip";
+import { DetailVis } from "components/detail-vis";
+import { SubgroupsLink } from "components/page-links";
+import { WarningMessage } from "components/warning-message";
+import { SelectedList } from "components/selected-list";
+import { volcanoPlot } from "vega-specs";
 
 const { Group, Label, Control, Range } = Form; 
 

@@ -1,33 +1,140 @@
 import { createContext, useReducer } from "react";
 
 const initialState = {
-  email: "",
+  user: "",
   apiKey: "",
-  downloads: [],
-  tasks: [],
+  datasets: []
+};
+
+const getId = datasets => {
+  const pending = datasets.filter(({ status }) => status === "pending");
+  return pending.length === 0 ? 0 : Math.min(...pending.map(({ id }) => id));
+};
+
+const linkDatasets = datasets => {
+  // Split by type
+  const [inputs, results] = datasets.reduce((types, dataset) => {
+    if (dataset.type === "input") types[0].push(dataset);
+    else if (dataset.type === "result") types[1].push(dataset);
+    return types;
+  }, [[], []]);
+
+  // Each input dataset may have many result sets
+  inputs.forEach(input => input.results = []);
+  results.forEach(result => result.input = null);
+
+  // Link
+  results.forEach(result => {
+    const inputId = result.parameters.dataset;
+
+    const input = inputs.find(({ id }) => id === inputId);
+
+    if (input) {
+      result.input = input;
+      input.results.push(result);
+    }
+    else {
+      console.warn(`Could not find input dataset ${ inputId } for result ${ result.id }`);
+    }
+  });
+
+  return datasets;
+};
+
+const getApiKey = datasets => {
+  const hasKey = datasets.filter(({ apiKey }) => apiKey).sort((a, b) => b.createdTime - a.createdTime);
+
+  return hasKey.length > 0 ? hasKey[0].apiKey : "";
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "setEmail": 
+    case "setUser": 
       return {
         ...state,
-        email: action.email
+        user: action.user
       };
 
-    case "setApiKey": {
+    case "setApiKey":
       return {
         ...state,
         apiKey: action.apiKey
       };
+
+    case "setDatasets":
+      return {
+        ...state,
+        datasets: linkDatasets(action.datasets),
+        apiKey: getApiKey(action.datasets)
+      };
+
+    case "addDataset": {
+      const datasets = [
+        {            
+          id: getId(state.datasets), 
+          status: "pending",
+          createdTime: new Date(),
+          ...action.dataset
+        },
+        ...state.datasets
+      ];
+
+      return {
+        ...state,
+        datasets: linkDatasets(datasets)
+      };
     }
 
-    case "setDownloads": {
+    case "updateId": {
+      const index = state.datasets.findIndex(({ id }) => id === action.oldId);
+
+      if (index === -1) return state;
+
+      const datasets = [...state.datasets];
+      datasets[index] = {
+        id: action.newId,
+        status: "submitting"
+      };
+
+      return {
+        ...state,
+        datasets: linkDatasets(datasets)
+      };
+    }
+
+    case "updateDataset": {
+      const index = state.datasets.findIndex(({ id }) => id === action.id);
+
+      if (index === -1) return state;
+
+      const datasets = [...state.datasets];
+      datasets[index] = action.dataset;
+
+      return {
+        ...state,
+        datasets: linkDatasets(datasets)
+      };
+    }   
+    
+    case "removeDataset": {
+      const index = state.datasets.findIndex(({ id }) => id === action.dataset.id);
+
+      if (index === -1) return state;
+
+      const datasets = [...state.datasets];
+      datasets.splice(index, 1);
+
+      return {
+        ...state,
+        datasets: linkDatasets(datasets)
+      }
+    }
+
+    case "setDownloads":
       return {
         ...state,
         downloads: action.downloads
       };
-    }
 
     case "addDownload": {
       if (state.downloads.find(({ id }) => id === action.download.id)) {
@@ -43,96 +150,10 @@ const reducer = (state, action) => {
       };
     }
 
-    case "setTasks":
+    case "clearUser":
       return {
-        ...state,
-        tasks: action.tasks
+        ...initialState
       };
-
-    case "addTask": {
-      const tasks = [...state.tasks];
-      tasks.push({
-        id: action.id, 
-        isImmuneSpace: action.isImmuneSpace,
-        status: action.status,
-        parameters: action.parameters, 
-        info: action.info
-      });
-
-      if (action.download) tasks[tasks.length -1].download = action.download;
-
-      return {
-        ...state,
-        tasks: tasks
-      };
-    }
-
-    case "removeTask": {
-      const tasks = [...state.tasks];
-
-      const index = tasks.findIndex(({ id }) => id === action.id);
-
-      if (index !== -1) {
-        // Remove task
-        const task = tasks[index];
-
-        tasks.splice(index, 1);
-
-        // Set new active task if necessary
-        if (task.active && tasks.length > 0) {
-          tasks[0].active = true;
-        }
-      }
-
-      return {
-        ...state,
-        tasks: tasks
-      };
-    }
-
-    case "setActiveTask": {
-      const tasks = [...state.tasks];
-      tasks.forEach(task => task.active = task.id === action.id);
-
-      return {
-        ...state,
-        tasks: tasks
-      };
-    }
-
-    case "clearActiveTask": {
-      const tasks = [...state.tasks];
-      tasks.forEach(task => task.active = false);
-
-      return {
-        ...state,
-        tasks: tasks
-      };
-    }
-
-    case "setStatus": {
-      const tasks = [...state.tasks];
-      const task = state.tasks.find(({ id }) => id === action.id);
-
-      if (task) task.status = action.status;
-
-      return {
-        ...state,
-        tasks: tasks
-      };
-    }
-
-    case "setInfo": {
-      const tasks = [...state.tasks];
-      const task = state.tasks.find(({ id }) => id === action.id);
-
-      if (task) task.info = action.info;
-
-      return {
-        ...state,
-        tasks: tasks
-      };
-    }
 
     default: 
       throw new Error("Invalid user context action: " + action.type);

@@ -1,8 +1,8 @@
 import { useContext, useState, useCallback } from "react";
 import { Form, Row, Col, Card } from "react-bootstrap";
-import { DataContext } from "../../contexts";
-import { EscherWrapper } from "../escher-wrapper";
-import { LoadingSpinner } from "../loading-spinner";
+import { DataContext } from "contexts";
+import { EscherWrapper } from "components/escher-wrapper";
+import { LoadingSpinner } from "components/loading-spinner";
 
 const { Group, Label, Control } = Form; 
 const { Body } = Card;

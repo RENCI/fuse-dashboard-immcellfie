@@ -3,19 +3,19 @@ import { Form, Row, Col, ToggleButtonGroup, ToggleButton } from "react-bootstrap
 import { randomUniform, randomLcg } from "d3-random";
 import { range, extent, merge } from "d3-array";
 import { line } from "d3-shape";
-import { DataContext, ColorContext } from "../../contexts";
+import { DataContext, ColorContext } from "contexts";
 import { voronoiTreemap as d3VoronoiTreemap } from "d3-voronoi-treemap";
-import { ResizeWrapper } from "../resize-wrapper";
-import { VegaWrapper } from "../vega-wrapper";
-import { VegaTooltip } from "../vega-tooltip";
-import { DetailVis } from "../detail-vis";
+import { ResizeWrapper } from "components/resize-wrapper";
+import { VegaWrapper } from "components/vega-wrapper";
+import { VegaTooltip } from "components/vega-tooltip";
+import { DetailVis } from "components/detail-vis";
 import { 
   treemap, treemapLogScale, treemapPValue,
   enclosure, enclosureLogScale, enclosurePValue,
   voronoiTreemap, voronoiTreemapLogScale, voronoiTreemapPValue
-} from "../../vega-specs";
-import { LoadingSpinner } from "../loading-spinner";
-import { SelectedList } from "../selected-list";
+} from "vega-specs";
+import { LoadingSpinner } from "components/loading-spinner";
+import { SelectedList } from "components/selected-list";
 
 const { Group, Label, Control, Range } = Form; 
 

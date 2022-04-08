@@ -1,21 +1,21 @@
 import { useContext, useState } from "react";
 import { max, range } from "d3-array";
 import { Card, Form, Row, Col } from "react-bootstrap";
-import { UserContext, DataContext, ColorContext } from "../contexts";
-import { ViewWrapper } from "../components/view-wrapper";
-import { ResizeWrapper } from "../components/resize-wrapper";
-import { VegaWrapper } from "../components/vega-wrapper";
-import { expressionHeatmap } from "../vega-specs";
-import { DataMissing } from "../components/data-missing";
-import { LoadExpression } from "../components/load-expression";
-import { UserLink, InputLink } from "../components/page-links";
+import { UserContext, DataContext, ColorContext } from "contexts";
+import { ViewWrapper } from "components/view-wrapper";
+import { ResizeWrapper } from "components/resize-wrapper";
+import { VegaWrapper } from "components/vega-wrapper";
+import { expressionHeatmap } from "vega-specs";
+import { DataMissing } from "components/data-missing";
+import { LoadExpression } from "components/load-expression";
+import { UserLink, DataLink } from "components/page-links";
 
 const { Header, Body } = Card;
 const { Group, Label, Control } = Form;
 
 export const ExpressionView = () => {
-  const [{ email }] = useContext(UserContext);
-  const [{ phenotypeData, expressionData, groups }] = useContext(DataContext); 
+  const [{ user }] = useContext(UserContext);
+  const [{ propertiesData, expressionData, groups }] = useContext(DataContext); 
   const [{ sequentialScales, sequentialScale }, colorDispatch] = useContext(ColorContext); 
   const [sortBy, setSortBy] = useState("median");
 
@@ -53,10 +53,10 @@ export const ExpressionView = () => {
 
   return (
     <ViewWrapper>
-      { !email ?
-        <DataMissing message="No user email selected" pageLink={ <UserLink /> } />
-      : !phenotypeData ? 
-        <DataMissing message="No data loaded" pageLink={ <InputLink /> } />
+      { !user ?
+        <DataMissing message="No user selected" pageLink={ <UserLink /> } />
+      : !propertiesData ? 
+        <DataMissing message="No data loaded" pageLink={ <DataLink /> } />
       : !expressionData ? 
           <div className="text-center">
             <DataMissing message="No expression data loaded" /> 

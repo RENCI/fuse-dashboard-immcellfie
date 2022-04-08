@@ -1,10 +1,10 @@
-import React, { createContext, useReducer } from "react";
+import { createContext, useReducer } from "react";
 import { csvParseRows, csvParse } from "d3-dsv";
 import { stratify } from "d3-hierarchy";
 import { merge, mean, group } from "d3-array";
 import ttest2 from "@stdlib/stats/ttest2";
 
-const excludedPhenotypes = [
+const excludedproperties = [
   "participant_id",
   "biosample_accession"
 ];
@@ -17,15 +17,16 @@ const timeSort = {
 };
 
 const initialState = {
-  // Info for current dataset (source, names, etc.)
-  dataInfo: null,
+  // Current datasets
+  dataset: null,
+  result: null,
 
-  // Phenotype data for each sample
-  rawPhenotypeData: null,
-  phenotypeData: null,
+  // Properties data for each sample
+  rawPropertiesData: null,
+  propertiesData: null,
 
-  // Phenotype options created from phenotype data
-  phenotypes: null,
+  // Properties options created from properties data
+  properties: null,
 
   // Subgroups
   subgroups: null,
@@ -33,9 +34,20 @@ const initialState = {
   // Subgroups selected for visualization
   selectedSubgroups: null,
 
+  // Method for handling subgroup overlap
+  overlapMethod: "both",
+
+  // Tool-dependent output data
+  output: null
+
+/*
+  // XXX: Shouldn't need expression data any more
   // Expression data used as CellFIE input
   rawExpressionData: null,
   expressionData: null,
+
+  //////////////////////////////////////////////////
+  // XXX: Group cellfie output as single object
 
   // CellFIE output
   rawOutput: null,
@@ -50,9 +62,7 @@ const initialState = {
 
   // Reaction scores from detailed CellFIE output
   reactionScores: null,  
-
-  // Method for handling subgroup overlap
-  overlapMethod: "both"
+*/
 };
 
 const parseExpressionData = data => {
@@ -70,7 +80,7 @@ const parseExpressionData = data => {
 const parseNumber = d => d < 0 ? NaN : +d;
 
 /*
-const parsePhenotypeDataRandomize = (data, n = 32) => {
+const parsePropertiesDataRandomize = (data, n = 32) => {
   const csv = csvParse(data);
 
   const random = randomInt(csv.length);
@@ -91,46 +101,57 @@ const parsePhenotypeDataRandomize = (data, n = 32) => {
 }
 */
 
-const createPhenotypeData = expressionData => {
+const createPropertiesData = expressionData => {
   return expressionData.length === 0 ? "" :
     "ID\n" + expressionData[0].values.map((value, i) => i).join("\n");
 };
 
-const initializePhenotypeData = (state, rawPhenotypeData) => {
-  const phenotypeData = parsePhenotypeData(rawPhenotypeData);
-  const phenotypes = createPhenotypes(phenotypeData);
+const initializePropertiesData = (state, rawPropertiesData) => {
+  if (!rawPropertiesData) {
+    return {
+      ...state,
+      rawPropertiesData: initialState.rawPropertiesData,
+      propertiesData: initialState.propertiesData,
+      properties: initialState.properties,
+      subgroups: initialState.subgroups,
+      selectedSubgroups: initialState.selectedSubgroups
+    }
+  }
+
+  const propertiesData = parsePropertiesData(rawPropertiesData);
+  const properties = createProperties(propertiesData);
 
   // Create initial group with all samples
-  const subgroups = [createSubgroup("All samples", phenotypeData, phenotypes, [])];
+  const subgroups = [createSubgroup("All samples", propertiesData, properties, [])];
 
   // Select this subgroup
   const selectedSubgroups = [subgroups[0].key, null];
 
-  const dataInfo = {
-    ...state.dataInfo,
-    phenotypes: {
-      ...state.dataInfo.phenotypes, 
-      numSamples: phenotypeData.length
-    }
-  };
-
   return {
     ...state,
-    dataInfo: dataInfo,
-    rawPhenotypeData: rawPhenotypeData,
-    phenotypeData: phenotypeData,
-    phenotypes: phenotypes,
+    rawPropertiesData: rawPropertiesData,
+    propertiesData: propertiesData,
+    properties: properties,
     subgroups: subgroups,
     selectedSubgroups: selectedSubgroups
   };
 }
 
-const parsePhenotypeData = data => {
+const parsePropertiesData = data => {
   const csv = csvParse(data);
 
   csv.forEach((sample, i) => sample.index = i);
 
   return csv;
+};
+
+const processPCAOutput = data => {
+  return {
+    type: "PCA",
+    name: data.contents[0].name,
+    size: data.contents[0].size,
+    points: data.contents[0].contents
+  };
 };
 
 const combineOutput = (taskInfo, score, scoreBinary) => {
@@ -143,7 +164,7 @@ const combineOutput = (taskInfo, score, scoreBinary) => {
       return {
         id: task[0],
         name: task[1],        
-        phenotype: [task[1], task[3], task[2]],
+        properties: [task[1], task[3], task[2]],
         scores: scoreParsed[i].map(parseNumber),
         activities: scoreBinaryParsed[i].map(parseNumber)
       };  
@@ -196,11 +217,11 @@ const setReactionScores = (subgroup, samples, reactionScores) => {
   }, {});
 }
 
-const createPhenotypes = phenotypeData => {
-  return phenotypeData.columns
-    .filter(column => !excludedPhenotypes.includes(column))
+const createProperties = propertiesData => {
+  return propertiesData.columns
+    .filter(column => !excludedproperties.includes(column))
     .map(column => {
-      const values = phenotypeData.reduce((values, row) => {
+      const values = propertiesData.reduce((values, row) => {
         const v = row[column];
         let value = values.find(({ value }) => value === v);
 
@@ -242,8 +263,8 @@ const createPhenotypes = phenotypeData => {
 
 const createHierarchy = output => {
   const hierarchy = !output ? [] : Object.values(output.tasks.reduce((data, task) => {
-    // Add nodes for phenotype
-    task.phenotype.forEach((name, i, a) => { 
+    // Add nodes for properties
+    task.properties.forEach((name, i, a) => { 
       const top = i === a.length - 1;
 
       data[name] = {
@@ -259,7 +280,7 @@ const createHierarchy = output => {
 
     // Add nodes for scores
     task.scores.forEach((score, i) => {
-      const parent = task.phenotype[0];
+      const parent = task.properties[0];
       const id = parent + "_" + i;
 
       data[id] = {
@@ -321,12 +342,12 @@ const createTree = hierarchy => {
 
   tree.eachBefore(node => {
     if (node.depth === 0) {
-      node.data.phenotype = [];
+      node.data.properties = [];
 
       return;
     }
 
-    node.data.phenotype = node.parent.data.phenotype.concat(node.data.name);  
+    node.data.properties = node.parent.data.properties.concat(node.data.name);  
   });
 
   return tree;
@@ -475,27 +496,27 @@ const getNewSubgroupName = subgroups => {
   return "New subgroup";
 };
 
-const filterSubgroup = (subgroup, phenotypeData, phenotypes) => {
-  const filters = Array.from(group(subgroup.filters, d => d.phenotype));
+const filterSubgroup = (subgroup, propertiesData, properties) => {
+  const filters = Array.from(group(subgroup.filters, d => d.properties));
 
-  const samples = phenotypeData.filter(sample => {
+  const samples = propertiesData.filter(sample => {
     return filters.reduce((include, filter) => {
       return include && filter[1].reduce((include, value) => {
         const v = value.value + "";
-        return include || sample[value.phenotype] === v;
+        return include || sample[value.properties] === v;
       }, false);    
     }, true);
   });
 
-  const phenos = phenotypes.map(phenotype => {
+  const phenos = properties.map(properties => {
     return {
-      ...phenotype,
-      values: phenotype.values.map(value => {
+      ...properties,
+      values: properties.values.map(value => {
         return {
           ...value,
           count: samples.reduce((count, sample) => {
             const v = value.value + "";
-            if (sample[phenotype.name] === v) count++;
+            if (sample[properties.name] === v) count++;
             return count;
           }, 0)
         }
@@ -504,17 +525,17 @@ const filterSubgroup = (subgroup, phenotypeData, phenotypes) => {
   });
 
   subgroup.samples = samples;
-  subgroup.phenotypes = phenos;
+  subgroup.properties = phenos;
 };
 
-const createSubgroup = (name, phenotypeData, phenotypes, subgroups) => {
+const createSubgroup = (name, propertiesData, properties, subgroups) => {
   const subgroup = {
     key: getNewSubgroupKey(subgroups),
     name: name,
     filters: []
   };
 
-  filterSubgroup(subgroup, phenotypeData, phenotypes);
+  filterSubgroup(subgroup, propertiesData, properties);
 
   return subgroup;
 };
@@ -525,47 +546,56 @@ const keyIndex = (key, subgroups) => {
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "setDataInfo": {
-      const info = {
-        source: action.source,
-        phenotypes: action.phenotypes ? action.phenotypes : { name: "phenotypes" },       
-        expression: action.expression ? action.expression : { name: "expression data" }
-      };
-
+    case "setDataset":
       return {
         ...initialState,
-        dataInfo: info
+        dataset: action.dataset
       };
-    }
+
+    case "setResult":
+      return {
+        ...state,
+        result: action.result
+      };
 
     case "setExpressionData":
       const expressionData = parseExpressionData(action.data);
 
       let newState = {...state};
 
-      if (!state.phenotypeData) {
-        newState = initializePhenotypeData(newState, createPhenotypeData(expressionData));
+      if (!state.propertiesData) {
+        newState = initializePropertiesData(newState, createPropertiesData(expressionData));
       }
-
-      const dataInfo = {
-        ...newState.dataInfo,
-        expression: {
-          ...newState.dataInfo.expression,
-          numSamples: expressionData.length > 0 ? expressionData[0].values.length : 0
-        }
-      };
 
       return {
         ...newState,
-        dataInfo: dataInfo,
         expressionFile: action.file,
         rawExpressionData: action.data,
         expressionData: parseExpressionData(action.data)
       };
 
-    case "setPhenotypes":
-      return initializePhenotypeData(state, action.data);
+    case "setEmptyProperties":
+      return initializePropertiesData(state);
 
+    case "setProperties":
+      return initializePropertiesData(state, action.data);
+
+    case "setOutput": {
+      // Figure out which type of output
+      if (action.output.length === 1 && action.output[0].contents[0].results_type === "PCA") {
+        // PCA
+        return {
+          ...state,
+          output: processPCAOutput(action.output[0])
+        };
+      }
+      else {
+        console.warn("Unknown output type", action.output);
+
+        return state;
+      }
+    }
+/*
     case "setOutput": {
       if (!state.subgroups || !state.selectedSubgroups) return state;
 
@@ -585,7 +615,7 @@ const reducer = (state, action) => {
         reactionScores: reactionScores
       };
     }   
-
+*/
     case "setDetailScoring": {
       const reactionScores = getReactionScores(action.data);
       updateTree(state.tree, state.subgroups, state.selectedSubgroups, state.overlapMethod, reactionScores);
@@ -619,16 +649,16 @@ const reducer = (state, action) => {
       const subgroups = [...state.subgroups];
       const newSubgroups = [];
 
-      action.phenotype.values.forEach(({ value }) => {
+      action.properties.values.forEach(({ value }) => {
         const subgroup = createSubgroup(
           value,
-          state.phenotypeData,
-          state.phenotypes,
+          state.propertiesData,
+          state.properties,
           subgroups
         );
 
-        subgroup.filters.push({ phenotype: action.phenotype.name, value: value });
-        filterSubgroup(subgroup, state.phenotypeData, state.phenotypes);
+        subgroup.filters.push({ properties: action.properties.name, value: value });
+        filterSubgroup(subgroup, state.propertiesData, state.properties);
 
         subgroups.push(subgroup);
         newSubgroups.push(subgroup);
@@ -648,8 +678,8 @@ const reducer = (state, action) => {
     case "addSubgroup": {
       const subgroup = createSubgroup(
         getNewSubgroupName(state.subgroups), 
-        state.phenotypeData, 
-        state.phenotypes, 
+        state.propertiesData, 
+        state.properties, 
         state.subgroups
       );
 
@@ -683,7 +713,7 @@ const reducer = (state, action) => {
           filters: []
         };
 
-        filterSubgroup(reset, state.phenotypeData, state.phenotypes);
+        filterSubgroup(reset, state.propertiesData, state.properties);
 
         return reset;
       });
@@ -746,18 +776,18 @@ const reducer = (state, action) => {
       const subgroup = {...state.subgroups[index]};
       subgroup.filters = [...subgroup.filters];
 
-      const filterIndex = subgroup.filters.findIndex(({ phenotype, value }) => {
-        return phenotype === action.phenotype && value === action.value;
+      const filterIndex = subgroup.filters.findIndex(({ properties, value }) => {
+        return properties === action.properties && value === action.value;
       });
       
       if (filterIndex === -1) {
-        subgroup.filters.push({ phenotype: action.phenotype, value: action.value });
+        subgroup.filters.push({ properties: action.properties, value: action.value });
       }
       else {
         subgroup.filters.splice(filterIndex, 1);
       }     
 
-      filterSubgroup(subgroup, state.phenotypeData, state.phenotypes);
+      filterSubgroup(subgroup, state.propertiesData, state.properties);
 
       const subgroups = state.subgroups.map((sg, i) => {
         return i === index ? subgroup : sg;
@@ -778,9 +808,9 @@ const reducer = (state, action) => {
 
       const subgroup = {...state.subgroups[index]};
 
-      subgroup.filters = subgroup.filters.filter(({ phenotype }) => phenotype !== action.phenotype);
+      subgroup.filters = subgroup.filters.filter(({ properties }) => properties !== action.properties);
 
-      filterSubgroup(subgroup, state.phenotypeData, state.phenotypes);
+      filterSubgroup(subgroup, state.propertiesData, state.properties);
       
       const subgroups = state.subgroups.map((sg, i) => {
         return i === index ? subgroup : sg;

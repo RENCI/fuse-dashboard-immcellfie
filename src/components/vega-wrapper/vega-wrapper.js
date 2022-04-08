@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import vegaEmbed from "vega-embed";
-import { LoadingSpinner } from "../loading-spinner";
+import { LoadingSpinner } from "components/loading-spinner";
 import styles from "./vega-wrapper.module.css";
 
 export const VegaWrapper = ({ 
