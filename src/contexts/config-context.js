@@ -12,13 +12,15 @@ const reducer = (state, action) => {
     case "setProviders":
       return {
         ...state,
-        providers: action.providers.concat("fuse-provider-dummy")
+        providers: action.providers
+        //providers: action.providers.concat("fuse-provider-dummy")
       };
 
     case "setTools":
       return {
         ...state,
-        tools: action.tools.concat(["fuse-tool-cellfie", "fuse-tool-dummy"])
+        tools: action.tools
+        //tools: action.tools.concat(["fuse-tool-cellfie", "fuse-tool-dummy"])
       };
 
     default: 
