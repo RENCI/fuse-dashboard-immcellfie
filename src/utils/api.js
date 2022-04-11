@@ -195,7 +195,8 @@ export const api = {
 
     let datasets = [];
     let failed = [];
-    for (const object of response.data.slice(-10)) { // XXX: JUST GET MOST RECENT 10 FOR TESTING
+    for (const object of response.data) {
+    //for (const object of response.data.slice(-10)) { // XXX: JUST GET MOST RECENT 10 FOR TESTING
       const id = object.object_id;
 
       try {
