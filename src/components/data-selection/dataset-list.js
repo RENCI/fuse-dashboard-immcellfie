@@ -38,8 +38,9 @@ const getStatus = d => d.status;
 
 const getTypeDisplay = d => (
   <div style={{ whiteSpace: "nowrap"}}>
-    { getType(d) === "result" ? <CaretRightFill className="text-warning" /> : null }
+    { getType(d) === "result" ? <CaretRightFill className={ `text-warning ${ styles.resultCaret }` } /> : null }
     <Badge     
+      className="me-0"
       bg={ 
         getType(d) === "input" ? "info" : 
         getType(d) === "result" ? "warning" : 
@@ -48,6 +49,7 @@ const getTypeDisplay = d => (
     >
       { getType(d) }
     </Badge>
+    { getType(d) === "input" ? <CaretRightFill className={ `text-info ${ styles.inputCaret }` } /> : null }
   </div>
 );
 

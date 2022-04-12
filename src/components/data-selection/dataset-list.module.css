@@ -33,3 +33,11 @@
 .noWrap {
   white-space: nowrap;
 }
+
+.inputCaret {
+  margin-left: -3px;
+}
+
+.resultCaret {
+  margin-right: -2px;
+}
