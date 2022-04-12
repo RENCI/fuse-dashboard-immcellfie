@@ -50,7 +50,7 @@ export const DatasetMonitor = () => {
               info.description
             );
 
-            userDispatch({ type: "updateId", id: info.id, newId: id });            
+            userDispatch({ type: "updateId", oldId: info.id, newId: id });            
           }
           else {
             console.warn(`Unknown service ${ info.service }`);
@@ -67,29 +67,19 @@ export const DatasetMonitor = () => {
       }
     };
 
-    console.log(datasets);
-
     const checkStatus = () => {
       clearTimeout(timer.current);
 
-      console.log("checkStatus");
-
       const active = getActive(datasets);
-
-      console.log(active);
         
       const delay = ms => new Promise(resolve => timer.current = setTimeout(resolve, ms));
 
       const doCheck = async () => {
         let dispatched = false;
 
-        console.log("polling")
-
         for (const dataset of active) {
           const id = dataset.id;
           const update = await api.getDataset(id);
-
-          console.log(update);
 
           if (update.status !== dataset.status) {
             userDispatch({ type: "updateDataset", id: id, dataset: update });
