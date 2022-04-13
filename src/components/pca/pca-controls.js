@@ -31,7 +31,7 @@ export const PCAControls = () => {
           user: user,
           parameters: {
             dataset: dataset.id,
-            num_pca_components: numComponents
+            number_of_components: numComponents
           },
           description: description,
           createdTime: new Date()
