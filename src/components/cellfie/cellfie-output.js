@@ -14,16 +14,12 @@ const { Item, Link } = Nav;
 const { Container, Content, Pane } = Tab;
 
 export const CellfieOutput = () => {
-//  const [{ tasks }] = useContext(UserContext);
-  const [{ hierarchy, tree, subgroups, selectedSubgroups }] = useContext(DataContext);
+  const [{ output, hierarchy, tree, subgroups, selectedSubgroups }] = useContext(DataContext);
   const [tab, setTab] = useLocalStorage("CellfieOutputTab", "hierarchy");
 
   const currentSubgroups = selectedSubgroups && selectedSubgroups.map(key => {
     return key !== null ? subgroups.find(subgroup => subgroup.key === key) : null;
   });
-
-  //const activeTask = tasks.find(({ active }) => active);
-  const activeTask = null;
 
   const onSelect = tab => {
     setTab(tab);
@@ -69,18 +65,10 @@ export const CellfieOutput = () => {
           }
         </Header>
         <Body>
-          { !activeTask ? 
-            <>
-              <div>No active run</div>
-              <small className="text-muted"> - no output data - </small>
-            </>
-          : activeTask.status !== "finished" ? 
-            <>
-              <div>Run { activeTask.status }</div>
-              <small className="text-muted"> - no output data - </small>
-            </>
-          : !hierarchy ? 
-            <LoadingSpinner /> 
+          { output === null ?
+            <>No output data</>
+          : output.type !== "CellFIE" ? 
+            <>Output data is not of type CellFIE</>
           : 
             <Content>
               <Pane eventKey="hierarchy">
