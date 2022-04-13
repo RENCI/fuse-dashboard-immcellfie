@@ -19,6 +19,13 @@ const reducer = (state, action) => {
         description: action.description
       };
 
+    case "setParameters":
+      return {
+        ...state,
+        numComponents: action.parameters.number_of_components,
+        description: action.parameters.description
+      };
+
     default: 
       throw new Error("Invalid PCA context action: " + action.type);
   }

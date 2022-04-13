@@ -1,9 +1,11 @@
 import { useContext } from "react";
-import { DataContext, ErrorContext } from "contexts";
+import { DataContext, ModelContext, PCAContext, ErrorContext } from "contexts";
 import { api } from "utils/api";
 
 export const useLoadDataset = ()  => {
   const [, dataDispatch] = useContext(DataContext);
+  const [, pcaDispatch] = useContext(PCAContext);
+  const [, modelDispatch] = useContext(ModelContext);
   const [, errorDispatch] = useContext(ErrorContext);
 
   return async dataset => {
@@ -39,6 +41,16 @@ export const useLoadDataset = ()  => {
         const data = await api.getFiles(result);
 
         dataDispatch({ type: "setOutput", output: data });
+
+        if (result.service === "fuse-tool-pca") {
+          pcaDispatch({ type: "setParameters", parameters: result.parameters });
+        }
+        else if (result.service === "fuse-tool-cellfie") {
+          modelDispatch({ type: "setParameters", parameters: result.parameters });
+        }
+        else {
+          console.warn("Unknown service")
+        }
       }
     }
     catch (error) {
