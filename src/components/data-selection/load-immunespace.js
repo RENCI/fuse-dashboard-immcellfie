@@ -1,13 +1,13 @@
 import { useState, useContext } from "react";
 import { Modal, Form, InputGroup, OverlayTrigger, Popover, Button } from "react-bootstrap";
-import { BoxArrowUpRight, QuestionCircle, PersonFill } from "react-bootstrap-icons";
+import { BoxArrowUpRight, QuestionCircle, PersonFill, ArrowCounterclockwise } from "react-bootstrap-icons";
 import { UserContext } from "contexts";
 import { SpinnerButton } from "components/spinner-button";
 import { LoadNewButton } from "./load-new-button";
 import style from "./load-immunespace.module.css";
 
 const { Header, Title, Body } = Modal;
-const { Group, Control, Label } = Form;
+const { Group, Control } = Form;
 
 const service = "fuse-provider-immunespace";
 
@@ -16,6 +16,7 @@ export const LoadImmuneSpace = () => {
   const [show, setShow] = useState(false);
   const [inputApiKey, setInputApiKey] = useState(apiKey);
   const [groupId, setGroupId] = useState("");
+  const [description, setDescription] = useState("");
 
   const onShowClick = () => {
     setShow(true);
@@ -29,27 +30,21 @@ export const LoadImmuneSpace = () => {
     setInputApiKey(evt.target.value);
   };
 
-  const onApiKeyKeyPress = evt => {
-    if (evt.key === "Enter") {
-      onEnterApiKeyClick();
-    }
-  };
-
   const onGroupIdChange = evt => {
     setGroupId(evt.target.value);
   };
 
-  const onGroupIdKeyPress = evt => {
-    if (evt.key === "Enter") {
-      onSubmitGroupIdClick();
-    }
+  const onResetApiKeyClick = () => {
+    setInputApiKey(apiKey);
   };
 
-  const onEnterApiKeyClick = async () => {
+  const onDescriptionChange = evt => {
+    setDescription(evt.target.value);
+  };
+
+  const onSubmitClick = () => {
     userDispatch({ type: "setApiKey", apiKey: inputApiKey });
-  };
-
-  const onSubmitGroupIdClick = async () => {
+    
     userDispatch({
       type: "addDataset",
       dataset: {
@@ -57,7 +52,8 @@ export const LoadImmuneSpace = () => {
         type: "input",
         user: user,
         apiKey: apiKey,
-        accessionId: groupId
+        accessionId: groupId,
+        description: description
       }
     });
 
@@ -65,9 +61,9 @@ export const LoadImmuneSpace = () => {
   };
 
   const apiKeys = Array.from(datasets
-    .filter(({ parameters }) => parameters && parameters.apiKey)
-    .reduce((apiKeys, { parameters }) => {
-      apiKeys.add(parameters.apikey);
+    .filter(({ apiKey }) => apiKey)
+    .reduce((apiKeys, { apiKey }) => {
+      apiKeys.add(apiKey);
 
       return apiKeys;
     }, new Set()));
@@ -75,14 +71,14 @@ export const LoadImmuneSpace = () => {
   return (
     <>
       <LoadNewButton 
-        text='Retrieve data from ImmuneSpace'
+        text='ImmuneSpace'
         onClick={ onShowClick }
       />
 
       <Modal show={ show } onHide={ onHideClick }>
         <Header closeButton>
           <Title>
-            <span className="align-middle">Retrieve new data from ImmuneSpace</span>
+            <span className="align-middle">Retrieve new ImmuneSpace dataset</span>
             <a 
               href="https://www.immunespace.org/" 
               target="_blank"
@@ -94,13 +90,13 @@ export const LoadImmuneSpace = () => {
         </Header>
         <Body>
           <Group className="mb-3">
-            <Label>
-              API key 
+            <h6>
+              API Key 
               <OverlayTrigger
                 placement="right"
                 overlay={ 
                   <Popover className={ style.popoverWidth }>
-                    <Popover.Header>An <b>API key</b> is necessary to access data from <b>ImmuneSpace</b></Popover.Header>
+                    <Popover.Header>An <b>API Key</b> is necessary to access data from <b>ImmuneSpace</b></Popover.Header>
                     <Popover.Body>                        
                       <div>
                       In ImmuneSpace:
@@ -118,34 +114,31 @@ export const LoadImmuneSpace = () => {
               >
                 <QuestionCircle className="ms-1 mb-1" />
               </OverlayTrigger>
-            </Label>
+            </h6>
             <InputGroup>
-              <Button 
-                variant="primary"
-                disabled={ inputApiKey === "" || inputApiKey === apiKey }
-                onClick={ onEnterApiKeyClick }
-              >
-                Enter
-              </Button>
               <Control 
                 type="text"
                 list="apiKeys"
                 value={ inputApiKey }
                 onChange={ onApiKeyChange } 
-                onKeyPress={ onApiKeyKeyPress }
               />
               <datalist id="apiKeys">
                 { apiKeys.map((key, i) => 
                   <option key={ i }>{ key }</option>
                 )}
               </datalist>
+              <Button
+                variant="secondary"
+              >
+                <ArrowCounterclockwise 
+                  className="icon-offset" 
+                  onClick={ onResetApiKeyClick }
+                />
+              </Button>
             </InputGroup>
-            <Form.Text className="text-muted">
-              { apiKey ? <>Current: { apiKey }</> : <>No current API key</> } 
-            </Form.Text>
           </Group>
-          <Group>
-            <Label>
+          <Group className="mb-3">
+            <h6>
               Group Label
               <OverlayTrigger
                 placement="right"
@@ -168,24 +161,30 @@ export const LoadImmuneSpace = () => {
               >
                 <QuestionCircle className="ms-1 mb-1" />
               </OverlayTrigger>
-            </Label>
-            <InputGroup>
-              <SpinnerButton 
-                variant="primary"
-                disabled={ apiKey === "" || groupId === "" }
-                spin={ false }//state === "submitting" }
-                onClick={ onSubmitGroupIdClick }
-              >
-                Submit
-              </SpinnerButton>
+            </h6>
               <Control 
                 type="text"
                 value={ groupId }
                 onChange={ onGroupIdChange } 
-                onKeyPress={ onGroupIdKeyPress }
               />
-            </InputGroup>
           </Group>  
+          <Group className="mb-3">
+            <h6>Description (optional)</h6>
+            <Control 
+              as="input"
+              value={ description }
+              onChange={ onDescriptionChange }
+            />
+          </Group>
+          <div className="d-grid">
+            <Button
+              variant="primary"
+              disabled={ apiKey === "" || groupId === "" }
+              onClick={ onSubmitClick }
+            >
+              Submit
+            </Button>  
+          </div>
         </Body>
       </Modal>
     </>
