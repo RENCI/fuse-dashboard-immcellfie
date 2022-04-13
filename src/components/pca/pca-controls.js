@@ -1,24 +1,25 @@
 import { useContext } from "react";
 import { Card, Form, ButtonGroup, Button, } from "react-bootstrap";
 import { PCAContext, UserContext, DataContext, ErrorContext } from "contexts";
+import { BoldLabel } from "components/bold-label";
 
 const { Header, Body } = Card;
-const { Label, Group, Control } = Form;
+const { Group, Control } = Form;
 
 const service = "fuse-tool-pca";
 
 export const PCAControls = () => {
   const [{ user }, userDispatch] = useContext(UserContext);
   const [{ dataset }] = useContext(DataContext);
-  const [{ numComponents, description }, dispatch] = useContext(PCAContext);
+  const [{ numComponents, description }, pcaDispatch] = useContext(PCAContext);
   const [, errorDispatch] = useContext(ErrorContext);
 
   const onNumComponentsChange = event => {
-    dispatch({ type: "setNumComponents", numComponents: +event.target.value });
+    pcaDispatch({ type: "setNumComponents", numComponents: +event.target.value });
   };
 
   const onDescriptionChange = event => {
-    dispatch({ type: "setDescription", description: event.target.value });
+    pcaDispatch({ type: "setDescription", description: event.target.value });
   };
 
   const onRunPCAClick = async () => {
@@ -49,8 +50,8 @@ export const PCAControls = () => {
         PCA Parameters
       </Header>
       <Body>
-        <Group controlId="num_components" className="mb-3">
-          <Label><h6>Number of components</h6></Label>
+        <Group controlId="numComponents" className="mb-3">
+          <BoldLabel>Number of components</BoldLabel>
           <Control 
             as="input"
             type="number"
@@ -60,7 +61,7 @@ export const PCAControls = () => {
           />
         </Group>
         <Group controlId="description" className="mb-3">
-          <Label><h6>Description</h6></Label>
+          <BoldLabel>Description</BoldLabel>
           <Control 
             as="input"
             value={ description }

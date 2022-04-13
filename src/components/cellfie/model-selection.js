@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { Row, Col, Card, Form, Button, ButtonGroup, InputGroup } from "react-bootstrap";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
 import { UserContext, DataContext, ModelContext, ErrorContext } from "contexts";
+import { BoldLabel } from "components/bold-label";
 
 const { Header, Body } = Card;
 const { Label, Group, Control } = Form;
@@ -18,7 +19,7 @@ const getParameterObject = parameters => (
 export const ModelSelection = () => {
   const [{ user }, userDispatch] = useContext(UserContext);
   const [{ dataset }] = useContext(DataContext); 
-  const [{ organism, model, parameters }, modelDispatch] = useContext(ModelContext);
+  const [{ organism, model, parameters, description }, modelDispatch] = useContext(ModelContext);
   const [, errorDispatch] = useContext(ErrorContext);
 
   const thresholdType = parameters.find(({ name }) => name === "ThreshType"); 
@@ -39,6 +40,10 @@ export const ModelSelection = () => {
     modelDispatch({ type: "resetParameterValue", name: name });
   };
 
+  const onDescriptionChange = event => {
+    modelDispatch({ type: "setDescription", description: event.target.value });
+  };
+
   const onRunCellfieClick = async () => {
     try {
       userDispatch({
@@ -52,7 +57,7 @@ export const ModelSelection = () => {
             model: model,
             ...getParameterObject(parameters)
           },
-          //description: description,
+          description: description,
           createdTime: new Date()
         }
       });
@@ -185,7 +190,7 @@ export const ModelSelection = () => {
         <Row>
           <Col>
             <Group controlId="organism_select" className="mb-3">
-              <Label><h6>Organism</h6></Label>
+              <BoldLabel>Organism</BoldLabel>
               <Control 
                 as="select"
                 value={ organism.value }
@@ -197,7 +202,7 @@ export const ModelSelection = () => {
               </Control>
             </Group>
             <Group controlId="model_select" className="mb-3">
-            <Label><h6>Model</h6></Label>
+            <BoldLabel>Model</BoldLabel>
               <Control 
                 as="select"
                 value={ model.value.value }
@@ -211,7 +216,7 @@ export const ModelSelection = () => {
           </Col>
           <Col>
             <Group controlId="threshold_type_select" className="mb-3">
-              <Label><h6>{ thresholdType.name }</h6></Label>
+              <BoldLabel>{ thresholdType.name }</BoldLabel>
               <Control 
                 as="select"
                 value={ thresholdType.value }
@@ -222,13 +227,23 @@ export const ModelSelection = () => {
                 ))}
               </Control>
             </Group>
-            <Label>
-              <h6>
+            <BoldLabel>
                 <span className="text-capitalize">{ thresholdType.value }</span> 
                 <> thresholding parameters</>
-              </h6>
-            </Label>
+            </BoldLabel>
             { currentParameters }
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Group controlId="description" className="mb-3">
+              <BoldLabel>Description</BoldLabel>
+              <Control 
+                as="input"
+                value={ description }
+                onChange={ onDescriptionChange }
+              />
+            </Group>
           </Col>
         </Row>
         <Row>

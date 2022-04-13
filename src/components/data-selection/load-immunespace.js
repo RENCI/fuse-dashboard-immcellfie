@@ -2,7 +2,7 @@ import { useState, useContext } from "react";
 import { Modal, Form, InputGroup, OverlayTrigger, Popover, Button } from "react-bootstrap";
 import { BoxArrowUpRight, QuestionCircle, PersonFill, ArrowCounterclockwise } from "react-bootstrap-icons";
 import { UserContext } from "contexts";
-import { SpinnerButton } from "components/spinner-button";
+import { BoldLabel } from "components/bold-label";
 import { LoadNewButton } from "./load-new-button";
 import style from "./load-immunespace.module.css";
 
@@ -89,8 +89,8 @@ export const LoadImmuneSpace = () => {
           </Title>
         </Header>
         <Body>
-          <Group className="mb-3">
-            <h6>
+          <Group controlId="apiKey" className="mb-3">
+            <BoldLabel>
               API Key 
               <OverlayTrigger
                 placement="right"
@@ -114,7 +114,7 @@ export const LoadImmuneSpace = () => {
               >
                 <QuestionCircle className="ms-1 mb-1" />
               </OverlayTrigger>
-            </h6>
+            </BoldLabel>
             <InputGroup>
               <Control 
                 type="text"
@@ -137,8 +137,8 @@ export const LoadImmuneSpace = () => {
               </Button>
             </InputGroup>
           </Group>
-          <Group className="mb-3">
-            <h6>
+          <Group controlId="groupLable" className="mb-3">
+            <BoldLabel>
               Group Label
               <OverlayTrigger
                 placement="right"
@@ -161,15 +161,15 @@ export const LoadImmuneSpace = () => {
               >
                 <QuestionCircle className="ms-1 mb-1" />
               </OverlayTrigger>
-            </h6>
-              <Control 
-                type="text"
-                value={ groupId }
-                onChange={ onGroupIdChange } 
-              />
+            </BoldLabel>
+            <Control 
+              type="text"
+              value={ groupId }
+              onChange={ onGroupIdChange } 
+            />
           </Group>  
-          <Group className="mb-3">
-            <h6>Description (optional)</h6>
+          <Group controlId="description" className="mb-3">
+            <BoldLabel>Description (optional)</BoldLabel>
             <Control 
               as="input"
               value={ description }

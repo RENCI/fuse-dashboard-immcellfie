@@ -1,12 +1,13 @@
 import { useState, useContext } from "react";
 import { Modal, ListGroup, Figure, Alert, Form, Button } from "react-bootstrap";
 import { UserContext } from "contexts";
-import { LoadNewButton } from "./load-new-button";
 import { FileSelect } from "components/file-select";
+import { BoldLabel } from "components/bold-label";
+import { LoadNewButton } from "./load-new-button";
 
 const { Header, Title, Body } = Modal;
 const { Image } = Figure;
-const { Control } = Form;
+const { Group, Control } = Form;
 
 const service = "fuse-provider-upload";
 
@@ -61,7 +62,7 @@ export const UploadData = () => {
 
   const dataImage = (label, description, src) => (
     <>
-      <h6>{ label }</h6>
+      <BoldLabel>{ label }</BoldLabel>
       { description.concat("e.g.").map((d, i) => <div key={ i } className="text-muted small">{ d }</div>) }
       <Image className="mt-1" src={ src } />
     </>
@@ -99,11 +100,13 @@ export const UploadData = () => {
               <FileSelect onChange={ onPropertiesFileSelect } />
             </ListGroup.Item>
             <ListGroup.Item>
-              <h6>Description (optional)</h6>
-              <Control 
-                value={ description }
-                onChange={ onDescriptionChange }
-              />
+              <Group controlId="description">
+                <BoldLabel>Description (optional)</BoldLabel>
+                <Control 
+                  value={ description }
+                  onChange={ onDescriptionChange }
+                />
+              </Group>
             </ListGroup.Item>
           </ListGroup>
           <hr />
