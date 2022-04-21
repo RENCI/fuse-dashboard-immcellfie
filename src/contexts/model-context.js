@@ -173,9 +173,13 @@ const reducer = (state, action) => {
     case "setParameters": {     
       if (!action.parameters) return state;
 
-      const model = getOption(action.parameters.Ref, models);
+      console.log(action);
+
+      const model = getOption(action.parameters.reference_model, models);
       const organism = model.organism;
       const modelOptions = getModels(organism);
+
+      // XXX: Check parameter names
 
       return {
         ...state,

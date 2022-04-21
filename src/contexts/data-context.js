@@ -595,20 +595,29 @@ const reducer = (state, action) => {
           console.warn("NEED TO HANDLE NO SUBGROUPS");
         }
 
-        const output = combineOutput(action.output.taskInfo, action.output.score, action.output.scoreBinary);
-        const hierarchy = createHierarchy(output);
+        console.log(action);
+
+        const tasks = combineOutput(action.output.taskInfo, action.output.score, action.output.scoreBinary);
+        const hierarchy = createHierarchy(tasks);
         const tree = createTree(hierarchy);
         const reactionScores = null;
 
         updateTree(tree, state.subgroups, state.selectedSubgroups, state.overlapMethod, reactionScores);
 
-        console.log(output);
+        console.log(tasks);
         console.log(hierarchy);
         console.log(tree);
         console.log(reactionScores);
 
         return {
-          ...state
+          ...state,
+          output: {
+            type: "CellFIE",
+            tasks: tasks,
+            hierarchy: hierarchy,
+            tree: tree,
+            reactionScores: reactionScores
+          }
         }
       }
       else {
