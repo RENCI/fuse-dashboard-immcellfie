@@ -582,12 +582,34 @@ const reducer = (state, action) => {
 
     case "setOutput": {
       // Figure out which type of output
-      if (action.output.length === 1 && action.output[0].contents[0].results_type === "PCA") {
+      if (action.output.pcaTable) {
         // PCA
         return {
           ...state,
-          output: processPCAOutput(action.output[0])
+          output: processPCAOutput(action.output.pcaTable)
         };
+      }
+      else if (action.output.taskInfo) {
+        // CellFIE
+        if (!state.subgroups || !state.selectedSubgroups) {
+          console.warn("NEED TO HANDLE NO SUBGROUPS");
+        }
+
+        const output = combineOutput(action.output.taskInfo, action.output.score, action.output.scoreBinary);
+        const hierarchy = createHierarchy(output);
+        const tree = createTree(hierarchy);
+        const reactionScores = null;
+
+        updateTree(tree, state.subgroups, state.selectedSubgroups, state.overlapMethod, reactionScores);
+
+        console.log(output);
+        console.log(hierarchy);
+        console.log(tree);
+        console.log(reactionScores);
+
+        return {
+          ...state
+        }
       }
       else {
         console.warn("Unknown output type", action.output);

@@ -40,6 +40,10 @@ export const useLoadDataset = ()  => {
       if (result) {
         const data = await api.getFiles(result);
 
+
+        console.log(data);
+        
+
         dataDispatch({ type: "setOutput", output: data });
 
         if (result.service === "fuse-tool-pca") {

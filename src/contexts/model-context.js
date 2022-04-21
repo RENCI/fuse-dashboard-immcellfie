@@ -101,7 +101,8 @@ const initialState = {
       value: 10,
       range: [0, Number.MAX_SAFE_INTEGER]
     }
-  ]
+  ],
+  description: ""
 };
 
 const reducer = (state, action) => {
@@ -195,8 +196,14 @@ const reducer = (state, action) => {
 
             return parameters;
           }, [...state.parameters])                 
-      }
+      };
     }
+
+    case "setDescription":
+      return {
+        ...state,
+        description: action.description
+      };
 
     default: 
       throw new Error("Invalid model context action: " + action.type);

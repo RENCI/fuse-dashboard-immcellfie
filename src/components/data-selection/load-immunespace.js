@@ -179,7 +179,7 @@ export const LoadImmuneSpace = () => {
           <div className="d-grid">
             <Button
               variant="primary"
-              disabled={ apiKey === "" || groupId === "" }
+              disabled={ inputApiKey === "" || groupId === "" }
               onClick={ onSubmitClick }
             >
               Submit
