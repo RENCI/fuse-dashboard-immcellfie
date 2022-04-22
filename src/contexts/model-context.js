@@ -19,7 +19,7 @@ const initialState = {
   parameters: [
     {
       label: "Threshold type",
-      name: "ThreshType",
+      name: "threshold_type",
       default: "global",
       value: "global",
       options: [      
@@ -29,7 +29,7 @@ const initialState = {
     },
     {
       label: "Percentile or value",
-      name: "PercentileOrValue",    
+      name: "percentile_or_value",    
       default: "percentile",
       value: "percentile",
       options: [
@@ -39,7 +39,7 @@ const initialState = {
     },
     {
       label: "Percentile",
-      name: "Percentile",
+      name: "percentile",
       type: "global",
       default: 50,
       value: 50,
@@ -47,7 +47,7 @@ const initialState = {
     },
     {
       label: "Value",
-      name: "Value",
+      name: "value",
       type: "global",
       default: 5,
       value: 5,
@@ -55,7 +55,7 @@ const initialState = {
     },
     {
       label: "Local threshold type",
-      name: "LocalThresholdType",
+      name: "local_threshold_type",
       type: "local",
       flag: "-t",
       default: "minmaxmean",
@@ -67,7 +67,7 @@ const initialState = {
     },
     {
       label: "Low percentile",
-      name: "PercentileLow",
+      name: "percentile_low",
       type: "local",
       flag: "low",
       default: 25,
@@ -76,7 +76,7 @@ const initialState = {
     },
     {
       label: "High percentile",
-      name: "PercentileHigh",
+      name: "percentile_high",
       type: "local",
       flag: "high",
       default: 75,
@@ -85,7 +85,7 @@ const initialState = {
     },
     {
       label: "Low value",
-      name: "ValueLow",
+      name: "value_low",
       type: "local",
       flag: "low",
       default: 5,
@@ -94,7 +94,7 @@ const initialState = {
     },
     {
       label: "High value",
-      name: "ValueHigh",
+      name: "value_high",
       type: "local",
       flag: "high",
       default: 10,
@@ -173,8 +173,6 @@ const reducer = (state, action) => {
     case "setParameters": {     
       if (!action.parameters) return state;
 
-      console.log(action);
-
       const model = getOption(action.parameters.reference_model, models);
       const organism = model.organism;
       const modelOptions = getModels(organism);
@@ -199,7 +197,8 @@ const reducer = (state, action) => {
             if (parameter) parameter.value = value;
 
             return parameters;
-          }, [...state.parameters])                 
+          }, [...state.parameters]),
+        description: action.parameters.description              
       };
     }
 

@@ -294,6 +294,9 @@ export const api = {
   },
 
   analyze: async (service, user, parameters, description) => {
+
+    console.log(service, user, parameters, description);
+
     // Set data and parameters as form data
     const formData = new FormData();
     formData.append("service_id", service);

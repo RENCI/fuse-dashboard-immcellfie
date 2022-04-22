@@ -159,8 +159,7 @@ const combineOutput = (taskInfo, score, scoreBinary) => {
   const scoreParsed = csvParseRows(score);
   const scoreBinaryParsed = csvParseRows(scoreBinary);
 
-  return {
-    tasks: taskInfoParsed.map((task, i) => {
+  return taskInfoParsed.map((task, i) => {
       return {
         id: task[0],
         name: task[1],        
@@ -168,8 +167,7 @@ const combineOutput = (taskInfo, score, scoreBinary) => {
         scores: scoreParsed[i].map(parseNumber),
         activities: scoreBinaryParsed[i].map(parseNumber)
       };  
-    })
-  }
+  });
 };
 
 const getReactionScores = detailScoring => {
@@ -261,8 +259,8 @@ const createProperties = propertiesData => {
     });
 };
 
-const createHierarchy = output => {
-  const hierarchy = !output ? [] : Object.values(output.tasks.reduce((data, task) => {
+const createHierarchy = tasks => {
+  const hierarchy = !tasks ? [] : Object.values(tasks.reduce((data, task) => {
     // Add nodes for properties
     task.properties.forEach((name, i, a) => { 
       const top = i === a.length - 1;
@@ -540,6 +538,18 @@ const createSubgroup = (name, propertiesData, properties, subgroups) => {
   return subgroup;
 };
 
+const createDefaultSubgroups = tasks => {
+  const numSamples = tasks[0].scores.length;
+
+  return [{
+    name: "All samples",
+    key: 0,
+    samples: new Array(numSamples).fill().map((d, i) => ({ index: i })),
+    properties: [],
+    filters: []
+  }];
+};
+
 const keyIndex = (key, subgroups) => {
   return subgroups.findIndex(subgroup => subgroup.key === key);
 };
@@ -590,27 +600,19 @@ const reducer = (state, action) => {
         };
       }
       else if (action.output.taskInfo) {
-        // CellFIE
-        if (!state.subgroups || !state.selectedSubgroups) {
-          console.warn("NEED TO HANDLE NO SUBGROUPS");
-        }
-
-        console.log(action);
-
         const tasks = combineOutput(action.output.taskInfo, action.output.score, action.output.scoreBinary);
         const hierarchy = createHierarchy(tasks);
+        const subgroups = state.subgroups ? state.subgroups : createDefaultSubgroups(tasks);
+        const selectedSubgroups = state.selectedSubgroups ? state.selectedSubgroups : [0, null];
         const tree = createTree(hierarchy);
         const reactionScores = null;
 
-        updateTree(tree, state.subgroups, state.selectedSubgroups, state.overlapMethod, reactionScores);
-
-        console.log(tasks);
-        console.log(hierarchy);
-        console.log(tree);
-        console.log(reactionScores);
+        updateTree(tree, subgroups, selectedSubgroups, state.overlapMethod, reactionScores);
 
         return {
           ...state,
+          subgroups: subgroups,
+          selectedSubgroups: selectedSubgroups,
           output: {
             type: "CellFIE",
             tasks: tasks,

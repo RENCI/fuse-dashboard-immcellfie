@@ -22,7 +22,7 @@ export const ModelSelection = () => {
   const [{ organism, model, parameters, description }, modelDispatch] = useContext(ModelContext);
   const [, errorDispatch] = useContext(ErrorContext);
 
-  const thresholdType = parameters.find(({ name }) => name === "ThreshType"); 
+  const thresholdType = parameters.find(({ name }) => name === "threshold_type"); 
 
   const onOrganismChange = evt => {
     modelDispatch({ type: "setOrganism", value: evt.target.value });
@@ -54,7 +54,7 @@ export const ModelSelection = () => {
           user: user,
           parameters: {
             dataset: dataset.id,
-            model: model,
+            model: model.value.value,
             ...getParameterObject(parameters)
           },
           description: description,
@@ -64,76 +64,18 @@ export const ModelSelection = () => {
     }
     catch (error) {
       errorDispatch({ type: "setError", error: error });
-    }
-/*    
-    if (dataInfo.source.name === "ImmuneSpace") {
-      try {
-        const n = dataInfo.properties.numSamples;
-        const downloadId = dataInfo.source.downloadId;
-
-        // Run Cellfie
-        const id = await api.runImmuneSpaceCellfie(downloadId, n, model.value.value, getParameterObject(parameters));
-
-        // Get task info
-        const params = await api.getCellfieTaskParameters(id, true);
-        const info = await api.getCellfieTaskInfo(id, true);
-        const download = downloads.find(({ id }) => id === downloadId);
-
-        // Create task
-        userDispatch({ type: "addTask", id: id, isImmuneSpace: true, status: "submitting", parameters: params, info: info, download: download });
-        userDispatch({ type: "setActiveTask", id: id });      
-        
-        dataDispatch({ type: "clearOutput" });
-      }
-      catch (error) {
-        console.log(error);
-
-        errorDispatch({ type: "setError", error: error });
-      }
-    }
-    else {
-      try {
-        const n = dataInfo.expression.numSamples;
-
-        // Create blobs
-        const dataBlob = data => {
-          return new Blob([data], { type: "mimeString" });
-        };
-
-        const expressionBlob = dataBlob(rawExpressionData);
-        const propertiesBlob = dataBlob(rawPropertiesData);
-
-        // Run Cellfie
-        const id = await api.runCellfie(user, expressionBlob, propertiesBlob, n, model.value.value, getParameterObject(parameters));     
-
-        // Get task info
-        const params = await api.getCellfieTaskParameters(id);
-        const info = await api.getCellfieTaskInfo(id);
-
-        // Create task
-        userDispatch({ type: "addTask", id: id, isImmuneSpace: false, status: "submitting", parameters: params, info: info });
-        userDispatch({ type: "setActiveTask", id: id });      
-        
-        dataDispatch({ type: "clearOutput" });
-      }
-      catch (error) {
-        console.log(error);
-
-        errorDispatch({ type: "setError", error: error });
-      }
-    }
-*/    
+    }  
   };
 
   const currentParameters = parameters.filter(({ type, name }) => {
-    if (name === "ThreshType") return false;
+    if (name === "threshold_type") return false;
 
     const pv = name.toLowerCase().includes("percent") ? "percent" : 
       name.toLowerCase().includes("value") ? "value" : null;
 
     return !type || 
       (type === thresholdType.value && 
-      (!pv || parameters.find(({ name }) => name === "PercentileOrValue").value.includes(pv)));
+      (!pv || parameters.find(({ name }) => name === "percentile_or_value").value.includes(pv)));
   }).map((parameter, i) => {
       return (
         parameter.options ?
