@@ -240,10 +240,12 @@ export const api = {
 
   getFile: getFile,
 
-  getFiles: async dataset => {
+  getFiles: async (dataset, omit = []) => {
     const files = {};
 
     for (const key in dataset.files) {
+      if (omit.includes(key)) continue;
+
       const data = await getFile(dataset, dataset.files[key].file_type);
       
       files[key] = data;

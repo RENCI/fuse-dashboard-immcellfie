@@ -152,6 +152,7 @@ export const DatasetList = ({ filter }) => {
           <>
             <DatasetStatusIcon dataset={ d } />
             <OverlayTrigger
+              trigger="click"
               placement="left"
               overlay={ 
                 <Popover>
@@ -160,7 +161,10 @@ export const DatasetList = ({ filter }) => {
                 </Popover>
               }
             >
-              <InfoCircle className="ms-1 icon-offset text-secondary" />
+              <InfoCircle 
+                className="ms-1 icon-offset text-secondary" 
+                style={{ cursor: "pointer" }}
+              />
             </OverlayTrigger>
           </>
         :

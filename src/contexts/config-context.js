@@ -19,7 +19,7 @@ const reducer = (state, action) => {
     case "setTools":
       return {
         ...state,
-        tools: action.tools
+        tools: action.tools.sort()
         //tools: action.tools.concat(["fuse-tool-cellfie", "fuse-tool-dummy"])
       };
 

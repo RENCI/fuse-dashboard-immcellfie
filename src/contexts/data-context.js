@@ -146,11 +146,12 @@ const parsePropertiesData = data => {
 };
 
 const processPCAOutput = data => {
+  const points = csvParseRows(data);
+
   return {
     type: "PCA",
-    name: data.contents[0].name,
-    size: data.contents[0].size,
-    points: data.contents[0].contents
+    size: [points.length, points.length > 0 ? points[0].length : 0],
+    points: points
   };
 };
 
@@ -635,11 +636,10 @@ const reducer = (state, action) => {
 
       return {
         ...state,
-        rawOutput: {
-          ...state.rawOutput,
-          detailScoring: action.data
-        },
-        reactionScores: reactionScores
+        output: {
+          ...state.output,
+          reactionScores: reactionScores
+        }
       };
     }   
 
@@ -651,11 +651,7 @@ const reducer = (state, action) => {
     case "clearOutput":
       return {
         ...state,
-        rawOutput: null,
-        output: null,
-        hierarchy: null,
-        tree: null,
-        reactionScores: null
+        output: null
       };
 
     case "createSubgroups": {
