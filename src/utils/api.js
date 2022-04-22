@@ -76,8 +76,6 @@ const getDataset = async id => {
 
   const { agent, provider } = response.data;
 
-  console.log(response.data);
-
   if (!agent) throw new Error(`Error loading object ${ id }`);
 
   const dataset = {};
@@ -294,9 +292,6 @@ export const api = {
   },
 
   analyze: async (service, user, parameters, description) => {
-
-    console.log(service, user, parameters, description);
-
     // Set data and parameters as form data
     const formData = new FormData();
     formData.append("service_id", service);

@@ -628,30 +628,10 @@ const reducer = (state, action) => {
         return state;
       }
     }
-/*
-    case "setOutput": {
-      if (!state.subgroups || !state.selectedSubgroups) return state;
 
-      const output = combineOutput(action.output.taskInfo, action.output.score, action.output.scoreBinary);
-      const hierarchy = createHierarchy(output);
-      const tree = createTree(hierarchy);
-      const reactionScores = null;
-
-      updateTree(tree, state.subgroups, state.selectedSubgroups, state.overlapMethod, reactionScores);
-
-      return {
-        ...state,
-        rawOutput: {...action.output},
-        output: output,
-        hierarchy: hierarchy,
-        tree: tree,
-        reactionScores: reactionScores
-      };
-    }   
-*/
     case "setDetailScoring": {
       const reactionScores = getReactionScores(action.data);
-      updateTree(state.tree, state.subgroups, state.selectedSubgroups, state.overlapMethod, reactionScores);
+      if (state.output) updateTree(state.output.tree, state.subgroups, state.selectedSubgroups, state.overlapMethod, reactionScores);
 
       return {
         ...state,
@@ -699,7 +679,7 @@ const reducer = (state, action) => {
 
       const selectedSubgroups = [newSubgroups[0].key, newSubgroups.length > 1 ? newSubgroups[1].key : null];
 
-      updateTree(state.tree, subgroups, selectedSubgroups, state.overlapMethod, state.reactionScores);
+      if (state.output) updateTree(state.output.tree, subgroups, selectedSubgroups, state.overlapMethod, state.reactionScores);
 
       return {
         ...state,
@@ -724,7 +704,7 @@ const reducer = (state, action) => {
         subgroup
       ];
 
-      updateTree(state.tree, subgroups, selectedSubgroups, state.overlapMethod, state.reactionScores);
+      if (state.output) updateTree(state.output.tree, subgroups, selectedSubgroups, state.overlapMethod, state.reactionScores);
 
       return {
         ...state,
@@ -751,7 +731,7 @@ const reducer = (state, action) => {
         return reset;
       });
 
-      updateTree(state.tree, subgroups, state.selectedSubgroups, state.overlapMethod, state.reactionScores);
+      if (state.output) updateTree(state.output.tree, subgroups, state.selectedSubgroups, state.overlapMethod, state.reactionScores);
 
       return {
         ...state,
@@ -777,7 +757,7 @@ const reducer = (state, action) => {
         selectedSubgroups[1] = null;
       }
 
-      updateTree(state.tree, subgroups, selectedSubgroups, state.overlapMethod, state.reactionScores);
+      if (state.output) updateTree(state.output.tree, subgroups, selectedSubgroups, state.overlapMethod, state.reactionScores);
 
       return {
         ...state,
@@ -826,7 +806,7 @@ const reducer = (state, action) => {
         return i === index ? subgroup : sg;
       });
 
-      updateTree(state.tree, subgroups, state.selectedSubgroups, state.overlapMethod, state.reactionScores);
+      if (state.output) updateTree(state.output.tree, subgroups, state.selectedSubgroups, state.overlapMethod, state.reactionScores);
 
       return {
         ...state,
@@ -849,7 +829,7 @@ const reducer = (state, action) => {
         return i === index ? subgroup : sg;
       });
 
-      updateTree(state.tree, subgroups, state.selectedSubgroups, state.overlapMethod, state.reactionScores);
+      if (state.output) updateTree(state.output.tree, subgroups, state.selectedSubgroups, state.overlapMethod, state.reactionScores);
 
       return {
         ...state,
@@ -885,7 +865,7 @@ const reducer = (state, action) => {
           [subgroup.key, state.selectedSubgroups[1]] :
           [state.selectedSubgroups[0], subgroup.key];
 
-        updateTree(state.tree, state.subgroups, selectedSubgroups, state.overlapMethod, state.reactionScores);      
+        if (state.output) updateTree(state.output.tree, state.subgroups, selectedSubgroups, state.overlapMethod, state.reactionScores);  
 
         return {
           ...state,
@@ -895,7 +875,7 @@ const reducer = (state, action) => {
     }
 
     case "setOverlapMethod":       
-      updateTree(state.tree, state.subgroups, state.selectedSubgroups, action.method, state.reactionScores);
+    if (state.output) updateTree(state.output.tree, state.subgroups, state.selectedSubgroups, action.method, state.reactionScores);
 
       return {
         ...state,
