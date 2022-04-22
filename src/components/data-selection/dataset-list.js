@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { Table, Button, OverlayTrigger, Popover, Badge } from "react-bootstrap";
-import { XCircle, InfoCircle, CaretRightFill } from "react-bootstrap-icons";
+import { XCircle, InfoCircle, CaretRightFill, ArrowDownCircleFill } from "react-bootstrap-icons";
 import { UserContext, DataContext, ErrorContext } from "contexts";
 import { DatasetStatusIcon } from "components/dataset-status-icon";
 import { SpinnerButton } from "components/spinner-button";
@@ -174,7 +174,7 @@ export const DatasetList = ({ filter }) => {
       classes: "text-center"
     },
     {
-      name: "",
+      name: "Load",
       accessor: d => (
         <div style={{ visibility: (hasData(d) && !failed(d)) ? "visible" : "hidden" }}>
           <SpinnerButton 
@@ -187,7 +187,7 @@ export const DatasetList = ({ filter }) => {
               onLoadClick(d);
             }}
           >
-            Load
+            <ArrowDownCircleFill className="icon-offset" />
           </SpinnerButton>
         </div>
       ),
@@ -197,7 +197,7 @@ export const DatasetList = ({ filter }) => {
 
   if (process.env.NODE_ENV === "development") {
     columns.push({
-      name: "",
+      name: "Remove",
       accessor: d => (
         <div style={{ visibility: d.status === "finished" }}>
           <Button 
