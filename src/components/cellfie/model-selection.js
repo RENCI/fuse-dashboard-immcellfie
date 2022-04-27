@@ -158,7 +158,7 @@ export const ModelSelection = () => {
           </Col>
           <Col>
             <Group controlId="threshold_type_select" className="mb-3">
-              <BoldLabel>{ thresholdType.name }</BoldLabel>
+              <BoldLabel>{ thresholdType.label }</BoldLabel>
               <Control 
                 as="select"
                 value={ thresholdType.value }
