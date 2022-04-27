@@ -78,8 +78,6 @@ const getDataset = async id => {
 
   if (!agent) throw new Error(`Error loading object ${ id }`);
 
-  console.log(response);
-
   const dataset = {};
 
   let finishedTime = -1;

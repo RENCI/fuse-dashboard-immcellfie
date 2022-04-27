@@ -675,7 +675,7 @@ const reducer = (state, action) => {
 
       const selectedSubgroups = [newSubgroups[0].key, newSubgroups.length > 1 ? newSubgroups[1].key : null];
 
-      if (state.output) updateTree(state.output.tree, subgroups, selectedSubgroups, state.overlapMethod, state.reactionScores);
+      if (state.output) updateTree(state.output.tree, subgroups, selectedSubgroups, state.overlapMethod, state.output.reactionScores);
 
       return {
         ...state,
@@ -700,7 +700,7 @@ const reducer = (state, action) => {
         subgroup
       ];
 
-      if (state.output) updateTree(state.output.tree, subgroups, selectedSubgroups, state.overlapMethod, state.reactionScores);
+      if (state.output) updateTree(state.output.tree, subgroups, selectedSubgroups, state.overlapMethod, state.output.reactionScores);
 
       return {
         ...state,
@@ -727,7 +727,7 @@ const reducer = (state, action) => {
         return reset;
       });
 
-      if (state.output) updateTree(state.output.tree, subgroups, state.selectedSubgroups, state.overlapMethod, state.reactionScores);
+      if (state.output) updateTree(state.output.tree, subgroups, state.selectedSubgroups, state.overlapMethod, state.output.reactionScores);
 
       return {
         ...state,
@@ -753,7 +753,7 @@ const reducer = (state, action) => {
         selectedSubgroups[1] = null;
       }
 
-      if (state.output) updateTree(state.output.tree, subgroups, selectedSubgroups, state.overlapMethod, state.reactionScores);
+      if (state.output) updateTree(state.output.tree, subgroups, selectedSubgroups, state.overlapMethod, state.output.reactionScores);
 
       return {
         ...state,
@@ -802,7 +802,7 @@ const reducer = (state, action) => {
         return i === index ? subgroup : sg;
       });
 
-      if (state.output) updateTree(state.output.tree, subgroups, state.selectedSubgroups, state.overlapMethod, state.reactionScores);
+      if (state.output) updateTree(state.output.tree, subgroups, state.selectedSubgroups, state.overlapMethod, state.output.reactionScores);
 
       return {
         ...state,
@@ -825,7 +825,7 @@ const reducer = (state, action) => {
         return i === index ? subgroup : sg;
       });
 
-      if (state.output) updateTree(state.output.tree, subgroups, state.selectedSubgroups, state.overlapMethod, state.reactionScores);
+      if (state.output) updateTree(state.output.tree, subgroups, state.selectedSubgroups, state.overlapMethod, state.output.reactionScores);
 
       return {
         ...state,
@@ -861,7 +861,7 @@ const reducer = (state, action) => {
           [subgroup.key, state.selectedSubgroups[1]] :
           [state.selectedSubgroups[0], subgroup.key];
 
-        if (state.output) updateTree(state.output.tree, state.subgroups, selectedSubgroups, state.overlapMethod, state.reactionScores);  
+        if (state.output) updateTree(state.output.tree, state.subgroups, selectedSubgroups, state.overlapMethod, state.output.reactionScores);  
 
         return {
           ...state,
@@ -871,7 +871,7 @@ const reducer = (state, action) => {
     }
 
     case "setOverlapMethod":       
-    if (state.output) updateTree(state.output.tree, state.subgroups, state.selectedSubgroups, action.method, state.reactionScores);
+    if (state.output) updateTree(state.output.tree, state.subgroups, state.selectedSubgroups, action.method, state.output.reactionScores);
 
       return {
         ...state,
@@ -879,7 +879,7 @@ const reducer = (state, action) => {
       };
 
     case "selectNode": {
-      const hierarchy = [...state.hierarchy];
+      const hierarchy = [...state.output.hierarchy];
 
       const item = hierarchy.find(({ name }) => name === action.name);
 
@@ -894,7 +894,7 @@ const reducer = (state, action) => {
     }
 
     case "deselectAllNodes": {
-      const hierarchy = [...state.hierarchy];
+      const hierarchy = [...state.output.hierarchy];
 
       hierarchy.forEach(item => item.selected = false);
 

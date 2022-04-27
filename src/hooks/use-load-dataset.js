@@ -48,8 +48,6 @@ export const useLoadDataset = ()  => {
         else if (result.service === "fuse-tool-cellfie") {
           // Load all but detail scoring
           const data = await api.getFiles(result, ["detailScoring"]); 
-          
-          console.log(data);
   
           dataDispatch({ type: "setOutput", output: data });
 
