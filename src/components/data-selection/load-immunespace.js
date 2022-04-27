@@ -51,7 +51,7 @@ export const LoadImmuneSpace = () => {
         service: service,
         type: "input",
         user: user,
-        apiKey: apiKey,
+        apiKey: inputApiKey,
         accessionId: groupId,
         description: description
       }

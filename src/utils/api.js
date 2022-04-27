@@ -78,12 +78,16 @@ const getDataset = async id => {
 
   if (!agent) throw new Error(`Error loading object ${ id }`);
 
+  console.log(response);
+
   const dataset = {};
 
   let finishedTime = -1;
 
   const updateTime = file => {
-    const time = new Date(convertDate(file.updated_time));
+    const timeString = file.updated_time ? file.updated_time : file.created_time;
+
+    const time = new Date(convertDate(timeString));
 
     if (!finishedTime || time > finishedTime) finishedTime = time;
   };
