@@ -146,11 +146,12 @@ const parsePropertiesData = data => {
 };
 
 const processPCAOutput = data => {
+  const points = csvParseRows(data);
+
   return {
     type: "PCA",
-    name: data.contents[0].name,
-    size: data.contents[0].size,
-    points: data.contents[0].contents
+    size: [points.length, points.length > 0 ? points[0].length : 0],
+    points: points
   };
 };
 
@@ -159,8 +160,7 @@ const combineOutput = (taskInfo, score, scoreBinary) => {
   const scoreParsed = csvParseRows(score);
   const scoreBinaryParsed = csvParseRows(scoreBinary);
 
-  return {
-    tasks: taskInfoParsed.map((task, i) => {
+  return taskInfoParsed.map((task, i) => {
       return {
         id: task[0],
         name: task[1],        
@@ -168,8 +168,7 @@ const combineOutput = (taskInfo, score, scoreBinary) => {
         scores: scoreParsed[i].map(parseNumber),
         activities: scoreBinaryParsed[i].map(parseNumber)
       };  
-    })
-  }
+  });
 };
 
 const getReactionScores = detailScoring => {
@@ -261,8 +260,8 @@ const createProperties = propertiesData => {
     });
 };
 
-const createHierarchy = output => {
-  const hierarchy = !output ? [] : Object.values(output.tasks.reduce((data, task) => {
+const createHierarchy = tasks => {
+  const hierarchy = !tasks ? [] : Object.values(tasks.reduce((data, task) => {
     // Add nodes for properties
     task.properties.forEach((name, i, a) => { 
       const top = i === a.length - 1;
@@ -540,6 +539,18 @@ const createSubgroup = (name, propertiesData, properties, subgroups) => {
   return subgroup;
 };
 
+const createDefaultSubgroups = tasks => {
+  const numSamples = tasks[0].scores.length;
+
+  return [{
+    name: "All samples",
+    key: 0,
+    samples: new Array(numSamples).fill().map((d, i) => ({ index: i })),
+    properties: [],
+    filters: []
+  }];
+};
+
 const keyIndex = (key, subgroups) => {
   return subgroups.findIndex(subgroup => subgroup.key === key);
 };
@@ -582,12 +593,35 @@ const reducer = (state, action) => {
 
     case "setOutput": {
       // Figure out which type of output
-      if (action.output.length === 1 && action.output[0].contents[0].results_type === "PCA") {
+      if (action.output.pcaTable) {
         // PCA
         return {
           ...state,
-          output: processPCAOutput(action.output[0])
+          output: processPCAOutput(action.output.pcaTable)
         };
+      }
+      else if (action.output.taskInfo) {
+        const tasks = combineOutput(action.output.taskInfo, action.output.score, action.output.scoreBinary);
+        const hierarchy = createHierarchy(tasks);
+        const subgroups = state.subgroups ? state.subgroups : createDefaultSubgroups(tasks);
+        const selectedSubgroups = state.selectedSubgroups ? state.selectedSubgroups : [0, null];
+        const tree = createTree(hierarchy);
+        const reactionScores = null;
+
+        updateTree(tree, subgroups, selectedSubgroups, state.overlapMethod, reactionScores);
+
+        return {
+          ...state,
+          subgroups: subgroups,
+          selectedSubgroups: selectedSubgroups,
+          output: {
+            type: "CellFIE",
+            tasks: tasks,
+            hierarchy: hierarchy,
+            tree: tree,
+            reactionScores: reactionScores
+          }
+        }
       }
       else {
         console.warn("Unknown output type", action.output);
@@ -595,38 +629,17 @@ const reducer = (state, action) => {
         return state;
       }
     }
-/*
-    case "setOutput": {
-      if (!state.subgroups || !state.selectedSubgroups) return state;
 
-      const output = combineOutput(action.output.taskInfo, action.output.score, action.output.scoreBinary);
-      const hierarchy = createHierarchy(output);
-      const tree = createTree(hierarchy);
-      const reactionScores = null;
-
-      updateTree(tree, state.subgroups, state.selectedSubgroups, state.overlapMethod, reactionScores);
-
-      return {
-        ...state,
-        rawOutput: {...action.output},
-        output: output,
-        hierarchy: hierarchy,
-        tree: tree,
-        reactionScores: reactionScores
-      };
-    }   
-*/
     case "setDetailScoring": {
       const reactionScores = getReactionScores(action.data);
-      updateTree(state.tree, state.subgroups, state.selectedSubgroups, state.overlapMethod, reactionScores);
+      if (state.output) updateTree(state.output.tree, state.subgroups, state.selectedSubgroups, state.overlapMethod, reactionScores);
 
       return {
         ...state,
-        rawOutput: {
-          ...state.rawOutput,
-          detailScoring: action.data
-        },
-        reactionScores: reactionScores
+        output: {
+          ...state.output,
+          reactionScores: reactionScores
+        }
       };
     }   
 
@@ -638,11 +651,7 @@ const reducer = (state, action) => {
     case "clearOutput":
       return {
         ...state,
-        rawOutput: null,
-        output: null,
-        hierarchy: null,
-        tree: null,
-        reactionScores: null
+        output: null
       };
 
     case "createSubgroups": {
@@ -666,7 +675,7 @@ const reducer = (state, action) => {
 
       const selectedSubgroups = [newSubgroups[0].key, newSubgroups.length > 1 ? newSubgroups[1].key : null];
 
-      updateTree(state.tree, subgroups, selectedSubgroups, state.overlapMethod, state.reactionScores);
+      if (state.output) updateTree(state.output.tree, subgroups, selectedSubgroups, state.overlapMethod, state.output.reactionScores);
 
       return {
         ...state,
@@ -691,7 +700,7 @@ const reducer = (state, action) => {
         subgroup
       ];
 
-      updateTree(state.tree, subgroups, selectedSubgroups, state.overlapMethod, state.reactionScores);
+      if (state.output) updateTree(state.output.tree, subgroups, selectedSubgroups, state.overlapMethod, state.output.reactionScores);
 
       return {
         ...state,
@@ -718,7 +727,7 @@ const reducer = (state, action) => {
         return reset;
       });
 
-      updateTree(state.tree, subgroups, state.selectedSubgroups, state.overlapMethod, state.reactionScores);
+      if (state.output) updateTree(state.output.tree, subgroups, state.selectedSubgroups, state.overlapMethod, state.output.reactionScores);
 
       return {
         ...state,
@@ -744,7 +753,7 @@ const reducer = (state, action) => {
         selectedSubgroups[1] = null;
       }
 
-      updateTree(state.tree, subgroups, selectedSubgroups, state.overlapMethod, state.reactionScores);
+      if (state.output) updateTree(state.output.tree, subgroups, selectedSubgroups, state.overlapMethod, state.output.reactionScores);
 
       return {
         ...state,
@@ -793,7 +802,7 @@ const reducer = (state, action) => {
         return i === index ? subgroup : sg;
       });
 
-      updateTree(state.tree, subgroups, state.selectedSubgroups, state.overlapMethod, state.reactionScores);
+      if (state.output) updateTree(state.output.tree, subgroups, state.selectedSubgroups, state.overlapMethod, state.output.reactionScores);
 
       return {
         ...state,
@@ -816,7 +825,7 @@ const reducer = (state, action) => {
         return i === index ? subgroup : sg;
       });
 
-      updateTree(state.tree, subgroups, state.selectedSubgroups, state.overlapMethod, state.reactionScores);
+      if (state.output) updateTree(state.output.tree, subgroups, state.selectedSubgroups, state.overlapMethod, state.output.reactionScores);
 
       return {
         ...state,
@@ -852,7 +861,7 @@ const reducer = (state, action) => {
           [subgroup.key, state.selectedSubgroups[1]] :
           [state.selectedSubgroups[0], subgroup.key];
 
-        updateTree(state.tree, state.subgroups, selectedSubgroups, state.overlapMethod, state.reactionScores);      
+        if (state.output) updateTree(state.output.tree, state.subgroups, selectedSubgroups, state.overlapMethod, state.output.reactionScores);  
 
         return {
           ...state,
@@ -862,7 +871,7 @@ const reducer = (state, action) => {
     }
 
     case "setOverlapMethod":       
-      updateTree(state.tree, state.subgroups, state.selectedSubgroups, action.method, state.reactionScores);
+    if (state.output) updateTree(state.output.tree, state.subgroups, state.selectedSubgroups, action.method, state.output.reactionScores);
 
       return {
         ...state,
@@ -870,7 +879,7 @@ const reducer = (state, action) => {
       };
 
     case "selectNode": {
-      const hierarchy = [...state.hierarchy];
+      const hierarchy = [...state.output.hierarchy];
 
       const item = hierarchy.find(({ name }) => name === action.name);
 
@@ -885,7 +894,7 @@ const reducer = (state, action) => {
     }
 
     case "deselectAllNodes": {
-      const hierarchy = [...state.hierarchy];
+      const hierarchy = [...state.output.hierarchy];
 
       hierarchy.forEach(item => item.selected = false);
 

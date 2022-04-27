@@ -78,14 +78,14 @@ const getDataset = async id => {
 
   if (!agent) throw new Error(`Error loading object ${ id }`);
 
-  //console.log(response.data);
-
   const dataset = {};
 
   let finishedTime = -1;
 
   const updateTime = file => {
-    const time = new Date(convertDate(file.updated_time));
+    const timeString = file.updated_time ? file.updated_time : file.created_time;
+
+    const time = new Date(convertDate(timeString));
 
     if (!finishedTime || time > finishedTime) finishedTime = time;
   };
@@ -111,6 +111,22 @@ const getDataset = async id => {
 
         case "filetype_results_PCATable":
           files.pcaTable = file;
+          break;
+
+        case "filetype_results_CellFieTaskInfoTable":
+          files.taskInfo = file;
+          break;
+
+        case "filetype_results_CellFieScoreTable":
+          files.score = file;
+          break;
+
+        case "filetype_results_CellFieScoreBinaryTable":
+          files.scoreBinary = file;
+          break;
+
+        case "filetype_results_CellFieDetailScoringTable":
+          files.detailScoring = file;
           break;
 
         default:
@@ -226,13 +242,15 @@ export const api = {
 
   getFile: getFile,
 
-  getFiles: async dataset => {
-    const files = [];
+  getFiles: async (dataset, omit = []) => {
+    const files = {};
 
     for (const key in dataset.files) {
+      if (omit.includes(key)) continue;
+
       const data = await getFile(dataset, dataset.files[key].file_type);
       
-      files.push(data);
+      files[key] = data;
     }
 
     return files;

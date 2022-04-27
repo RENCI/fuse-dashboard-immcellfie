@@ -14,8 +14,11 @@ const { Item, Link } = Nav;
 const { Container, Content, Pane } = Tab;
 
 export const CellfieOutput = () => {
-  const [{ output, hierarchy, tree, subgroups, selectedSubgroups }] = useContext(DataContext);
+  const [{ output, subgroups, selectedSubgroups }] = useContext(DataContext);
   const [tab, setTab] = useLocalStorage("CellfieOutputTab", "hierarchy");
+
+  const hierarchy = output ? output.hierarchy : null;
+  const tree = output ? output.tree : null;
 
   const currentSubgroups = selectedSubgroups && selectedSubgroups.map(key => {
     return key !== null ? subgroups.find(subgroup => subgroup.key === key) : null;
