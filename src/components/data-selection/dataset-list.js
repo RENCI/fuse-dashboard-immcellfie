@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useRef, useEffect } from "react";
 import { Table, Button, OverlayTrigger, Popover, Badge } from "react-bootstrap";
 import { XCircle, InfoCircle, CaretRightFill, ArrowDownCircleFill } from "react-bootstrap-icons";
 import { UserContext, DataContext, ErrorContext } from "contexts";
@@ -8,7 +8,7 @@ import { DatasetRow } from "./dataset-row";
 import { useLoadDataset } from "hooks";
 import { api } from "utils/api";
 import { getServiceDisplay } from "utils/config-utils";
-import { getIdentifier } from "utils/dataset-utils";
+import { getIdentifier, isActive } from "utils/dataset-utils";
 import styles from "./dataset-list.module.css";
 
 const missingIndicator = "—";
@@ -75,12 +75,53 @@ const getFinishedDisplay = d => {
     d.finishedTime.toLocaleString();
 };
 
+const getElapsedTime = (d, now) => {
+  const pad = n => n.toString().padStart(2, "0");
+
+  const elapsed = now - d.createdTime;
+
+  if (elapsed < 0) return "-:--";
+
+  let s = Math.floor(elapsed / 1000);
+  let m = Math.floor(s / 60);
+  const h = Math.floor(m / 60);
+
+  s = s % 60;
+  m = m % 60;
+
+  let t = h > 0 ? h + "h" : "";
+  if (h > 0 || m > 0) t += (h > 0 ? pad(m) : m) + "m"
+  t += (h > 0 || m > 0 ? pad(s) : s) + "s";
+
+  return t;
+};
+
 export const DatasetList = ({ filter }) => {
   const [{ datasets }, userDispatch] = useContext(UserContext);
   const [{ dataset, propertiesData, result, output }, dataDispatch] = useContext(DataContext);
   const [, errorDispatch] = useContext(ErrorContext);
   const [sortColumn, setSortColumn] = useState(null);
+  const [now, setNow] = useState(new Date());
   const loadDataset = useLoadDataset();
+  const timer = useRef(null);
+
+  // Timer for active datasets
+  const hasActive = datasets.filter(isActive).length > 0;
+
+  if (hasActive && !timer.current) {
+    timer.current = setInterval(() => {
+      setNow(new Date());
+    }, 1000);
+  }
+  else if (!hasActive && timer.current) {
+    clearInterval(timer.current);
+    timer.current = null;
+  }
+
+  // Clean up timer
+  useEffect(() => () => {
+    if (timer.current) clearInterval(timer.current);
+  }, [timer]);
 
   const onLoadClick = async dataset => {
     loadDataset(dataset);
@@ -168,7 +209,12 @@ export const DatasetList = ({ filter }) => {
             </OverlayTrigger>
           </>
         :
-          <DatasetStatusIcon dataset={ d } />
+          <>
+            <DatasetStatusIcon dataset={ d } />
+            { !isActive(d) ? null :
+              <div className="small text-muted">{ getElapsedTime(d, now) }</div>
+            }
+          </>
       },
       sort: (a, b) => statusOrder[getStatus(a)] - statusOrder[getStatus(b)],
       classes: "text-center"
