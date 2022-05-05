@@ -896,7 +896,10 @@ const reducer = (state, action) => {
 
       return {
         ...state,
-        hierarchy: hierarchy
+        output: {
+          ...state.output,
+          hierarchy: hierarchy
+        }
       };
     }
 
@@ -907,7 +910,10 @@ const reducer = (state, action) => {
 
       return {
         ...state,
-        hierarchy: hierarchy
+        output: {
+          ...state.output,
+          hierarchy: hierarchy
+        }
       };
     }
 
