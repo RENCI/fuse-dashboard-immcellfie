@@ -38,7 +38,8 @@ const initialState = {
   overlapMethod: "both",
 
   // Tool-dependent output data
-  output: null
+  output: null,
+  outputFiles: null,
 
 /*
   // XXX: Shouldn't need expression data any more
@@ -597,7 +598,8 @@ const reducer = (state, action) => {
         // PCA
         return {
           ...state,
-          output: processPCAOutput(action.output.pcaTable)
+          output: processPCAOutput(action.output.pcaTable),
+          outputFiles: action.output
         };
       }
       else if (action.output.taskInfo) {
@@ -620,7 +622,8 @@ const reducer = (state, action) => {
             hierarchy: hierarchy,
             tree: tree,
             reactionScores: reactionScores
-          }
+          },
+          outputFiles: action.output
         }
       }
       else {
@@ -639,6 +642,10 @@ const reducer = (state, action) => {
         output: {
           ...state.output,
           reactionScores: reactionScores
+        },
+        outputFiles: {
+          ...state.outputFiles,
+          detailScoring: action.data
         }
       };
     }   

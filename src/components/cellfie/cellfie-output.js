@@ -5,8 +5,7 @@ import { HierarchyVis } from "components/hierarchy-vis";
 import { HeatmapVis } from "components/heatmap-vis";
 import { VolcanoVis } from "components/volcano-vis";
 import { PathwayVis } from "components/pathway-vis";
-import { OutputDownload } from "./output-download";
-import { LoadingSpinner } from "components/loading-spinner";
+import { OutputDownload } from "components/download";
 import { useLocalStorage } from "hooks";
 
 const { Header, Title, Body } = Card;

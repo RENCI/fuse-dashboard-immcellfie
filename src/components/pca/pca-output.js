@@ -1,9 +1,10 @@
 import { useContext } from "react";
-import { Card } from "react-bootstrap";
+import { Card, Row, Col } from "react-bootstrap";
 import { DataContext } from "contexts";
+import { OutputDownload } from "components/download";
 import { PCAScatterVis } from "./pca-scatter-vis";
 
-const { Header, Body } = Card;
+const { Header, Title, Body } = Card;
 
 export const PCAOutput = () => {
   const [{ output, subgroups, selectedSubgroups }] = useContext(DataContext);
@@ -14,8 +15,15 @@ export const PCAOutput = () => {
 
   return (            
     <Card>
-      <Header as="h5">
-        PCA Results
+      <Header>
+        <Row>
+            <Col>
+              <Title>PCA Results</Title>
+            </Col>
+            <Col xs="auto">
+              <OutputDownload name="pca_results" />
+            </Col>
+          </Row>
       </Header>
       <Body>
         { output === null ?

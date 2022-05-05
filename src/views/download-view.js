@@ -4,7 +4,7 @@ import { Download } from "react-bootstrap-icons";
 import { UserContext, DataContext } from "contexts";
 import { ViewWrapper } from "components/view-wrapper";
 import { DataMissing } from "components/data-missing";
-import { UserLink, AnalyzeLink, DataLink } from "components/page-links";
+import { UserLink, AnalyzeLink } from "components/page-links";
 import { LoadExpression } from "components/load-expression";
 import { useDownloadLink, useZipLink } from "hooks";
 
