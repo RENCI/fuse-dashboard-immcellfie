@@ -18,7 +18,7 @@ export const OutputDownload = () => {
   const datasetName = outputFiles ? getName(dataset) : null;
   const resultName = outputFiles ? getName(result) : null;
 
-  const fileName = resultName ? `${ resultName }.csv` : `${ datasetName }_${ output.type }_result.zip`;
+  const fileName = resultName ? `${ resultName }.zip` : `${ datasetName }_${ output.type }_result.zip`;
 
   return (
     <OverlayTrigger
