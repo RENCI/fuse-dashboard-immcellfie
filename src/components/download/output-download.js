@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { Download } from "react-bootstrap-icons";
 import { DataContext } from "contexts";
@@ -8,21 +8,17 @@ import { useZipLink } from "hooks";
 export const OutputDownload = () => {
   const [{ dataset, result, output, outputFiles }] = useContext(DataContext);
 
-  const outputLink = useZipLink(
+  const files = useMemo(() => (
     !outputFiles ? null :
     Object.entries(outputFiles).map(([key, value]) => ({ data: value, fileName: `${ key }.csv` }))
-  );
+  ), [outputFiles]);
 
-    console.log(dataset);
-    console.log(result);
-    console.log(outputFiles);
+  const outputLink = useZipLink(files);
 
   const datasetName = outputFiles ? getName(dataset) : null;
   const resultName = outputFiles ? getName(result) : null;
 
   const fileName = resultName ? `${ resultName }.csv` : `${ datasetName }_${ output.type }_result.zip`;
-
-  console.log(fileName);
 
   return (
     <OverlayTrigger
