@@ -54,7 +54,7 @@ export const ModelSelection = () => {
           user: user,
           parameters: {
             dataset: dataset.id,
-            model: model.value.value,
+            reference_model: model.value.value,
             ...getParameterObject(parameters)
           },
           description: description,
