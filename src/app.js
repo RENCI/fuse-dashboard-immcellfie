@@ -9,6 +9,7 @@ import {
 } from "views";
 import {
   ErrorProvider,
+  RunningProvider,
   ReadyProvider,
   ConfigProvider,
   UserProvider, 
@@ -19,12 +20,14 @@ import {
 } from "contexts";
 import { MenuBar } from "components/menu-bar";
 import { DatasetMonitor } from "components/dataset-monitor";
+import { RunningMessage } from "components/running-message";
 import { ReadyMessage } from "components/ready-message";
 import { ErrorMessage } from "components/error-message";
 
 export const App = () => { 
   return (
     <ErrorProvider>
+    <RunningProvider>
     <ReadyProvider>
     <ConfigProvider>
     <UserProvider>
@@ -43,6 +46,7 @@ export const App = () => {
             <Route exact path="/analyze"><AnalyzeView /></Route>
             <Redirect to="/" />
           </Switch>
+          <RunningMessage />
           <ReadyMessage />
           <ErrorMessage />
         </Container>
@@ -55,6 +59,7 @@ export const App = () => {
     </UserProvider>
     </ConfigProvider>
     </ReadyProvider>
+    </RunningProvider>
     </ErrorProvider>
   ); 
 };
