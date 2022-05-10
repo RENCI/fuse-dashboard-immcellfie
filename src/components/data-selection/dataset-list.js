@@ -96,7 +96,7 @@ const getElapsedTime = (d, now) => {
   return t;
 };
 
-export const DatasetList = ({ filter }) => {
+export const DatasetList = ({ filter, showFailed }) => {
   const [{ datasets }, userDispatch] = useContext(UserContext);
   const [{ dataset, propertiesData, result, output }, dataDispatch] = useContext(DataContext);
   const [, errorDispatch] = useContext(ErrorContext);
@@ -263,10 +263,14 @@ export const DatasetList = ({ filter }) => {
     });
   }
 
-  const inputs = datasets.filter(({ type }) => type === "input");
+  const applyFailed = ({ status }) => showFailed || status !== "failed";
+
+  const inputs = datasets.filter(({ type }) => type === "input").filter(applyFailed);
 
   const re = new RegExp(filter, "i");
   const filterDataset = dataset => {
+    if (!filter) return true;
+
     const identifier = getIdentifier(dataset);
 
     return getType(dataset).match(re) ||
@@ -277,24 +281,26 @@ export const DatasetList = ({ filter }) => {
       getStatus(dataset).match(re);
   };
 
-  const filtered = !filter ? inputs : 
-    inputs.reduce((filtered, input) => {
-      if (filterDataset(input)) {
-        filtered.push(input);
-      }
-      else {
-        const results = input.results.filter(filterDataset);
+  const filtered = inputs.reduce((filtered, input) => {
+    if (filterDataset(input)) {
+      filtered.push({
+        ...input,
+        results: input.results.filter(applyFailed)
+      });
+    }
+    else {
+      const results = input.results.filter(filterDataset).filter(applyFailed);
 
-        if (results.length > 0) {
-          filtered.push({
-            ...input,
-            results: results
-          });
-        }
+      if (results.length > 0) {
+        filtered.push({
+          ...input,
+          results: results
+        });
       }
-      
-      return filtered;
-    }, []);
+    }
+    
+    return filtered;
+  }, []);
 
   return (
     <>
