@@ -47,9 +47,11 @@ export const ErrorMessage = () => {
       show={ error !== null }
       backdrop="static"
       keyboard={ false }
+      onHide={ onClose }
     >
       <Header 
         className="text-danger"
+        closeButton
       >
         <Title>
           <ExclamationCircleFill /> { error && error.name ? error.name : "Error" }

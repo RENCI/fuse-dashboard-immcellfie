@@ -85,7 +85,7 @@ export const DatasetMonitor = () => {
             userDispatch({ type: "updateDataset", id: id, dataset: update });
             dispatched = true;
 
-            if (update.status === "finished") {
+            if (update.status === "finished" || update.status === "failed") {
               readyDispatch({ type: "add", id: id });
             }
           }

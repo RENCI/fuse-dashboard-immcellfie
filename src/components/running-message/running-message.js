@@ -17,9 +17,11 @@ export const RunningMessage = () => {
       show={ running !== null }
       backdrop="static"
       keyboard={ false }
+      onHide={ onClose }
     >
       <Header 
         className="text-success"
+        closeButton
       >
         <Title>
           <Calculator /> Running new { running } analysis
