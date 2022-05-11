@@ -4,6 +4,7 @@ import { XCircle, InfoCircle, CaretRightFill, ArrowDownCircleFill, SendSlash } f
 import { UserContext, DataContext, ErrorContext } from "contexts";
 import { DatasetStatusIcon } from "components/dataset-status-icon";
 import { SpinnerButton } from "components/spinner-button";
+import { LabelEdit } from "components/label-edit";
 import { DatasetRow } from "./dataset-row";
 import { useLoadDataset } from "hooks";
 import { api } from "utils/api";
@@ -62,7 +63,7 @@ const getIdentifierDisplay = d => d.accessionId ? d.accessionId :
       { file.name }
     </div>
   )) :
-  missingIndicator
+  missingIndicator;
 
 const getFinishedDisplay = d => {
   if (!d.finishedTime) return missingIndicator;
@@ -175,7 +176,13 @@ export const DatasetList = ({ filter, showFailed }) => {
     },
     { 
       name: "Description",
-      accessor: getDescription,
+      accessor: d => (
+        <LabelEdit 
+          label={ getDescription(d) }
+          size="sm"
+          onChange={ description => console.log(description) }// NEED TO CALL API
+        />
+      ),
       sort: (a, b) => {
         const da = getDescription(a);
         const db = getDescription(b);
@@ -245,7 +252,8 @@ export const DatasetList = ({ filter, showFailed }) => {
       name: "Remove",
       accessor: d => {
         const subject = 'ImmCellFIE dataset removal request';
-        const body = `User ${ user } requests removal of dataset ${ d.id }`;
+        const newLine = "%0D%0A";
+        const body = `User ${ user } requests removal of dataset ${ d.id }${ newLine }${ newLine}Please indicate reason below:`;
       
         return (
           <Button 

@@ -1,7 +1,8 @@
 import { createContext, useReducer } from "react";
 
 const initialState = {
-  running: null
+  tool: null,
+  time: null
 };
 
 const reducer = (state, action) => {
@@ -9,13 +10,13 @@ const reducer = (state, action) => {
     case "setRunning":
       return {
         ...state,
-        running: action.running
+        tool: action.tool,
+        time: action.time
       };
 
     case "clearRunning":
       return {
-        ...state,
-        running: null
+        ...initialState
       };
 
     default: 

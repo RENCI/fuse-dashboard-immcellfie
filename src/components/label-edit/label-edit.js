@@ -4,29 +4,31 @@ import styles from "./label-edit.module.css";
 
 const { Label } = Form;
 
-export const LabelEdit = ({ subgroup, isNew, onChange }) => {
-  const [editName, setEditName] = useState(isNew);
-  const [name, setName] = useState(subgroup.name);
+export const LabelEdit = ({ label, size = null, isNew = false, onChange }) => {
+  const [editing, setEditing] = useState(isNew);
+  const [editLabel, setEditLabel] = useState(label);
   const inputRef = useRef(null);
 
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
-  }, [editName]);
+  }, [editing]);
 
-  const onNameLabelClick = () => {
-    setEditName(true);
+  const onLabelClick = evt => {
+    evt.stopPropagation();
+
+    setEditing(true);
   };
 
-  const onNameInputBlur = () => {
-    setEditName(false);
+  const onInputBlur = () => {
+    setEditing(false);
 
-    onChange(name);
+    onChange(editLabel);
   };
 
-  const onNameInputChange = evt => {
-    setName(evt.target.value);
+  const onInputChange = evt => {
+    setEditLabel(evt.target.value);
   };
 
   const onKeyPress = evt => {
@@ -39,19 +41,20 @@ export const LabelEdit = ({ subgroup, isNew, onChange }) => {
 
   return (
     <>
-      { editName && canEdit ? 
+      { editing && canEdit ? 
         <FormControl 
           ref={ inputRef }
-          value={ name } 
-          onBlur={ onNameInputBlur }
-          onChange={ onNameInputChange }
+          size={ size }
+          value={ editLabel } 
+          onBlur={ onInputBlur }
+          onChange={ onInputChange }
           onKeyPress={ onKeyPress }
         />
       : <Label
           className={ styles.labelMode + (canEdit ? ` ${ styles.editable }` : "") }
-          onClick={ onNameLabelClick }
+          onClick={ onLabelClick }
         >
-          { subgroup.name }
+          { editLabel }
         </Label> 
       }
     </>

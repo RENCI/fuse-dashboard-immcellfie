@@ -40,8 +40,6 @@ export const ReadyMessage = () => {
   const identifier = dataset && getIdentifier(dataset);
 
   const Label = ({ children }) => <small className="text-muted">{ children }</small>;
-
-  console.log(dataset);
   
   return (
     <Modal     

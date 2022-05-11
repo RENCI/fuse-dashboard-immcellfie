@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef } from "react";
-import { UserContext, ReadyContext, ErrorContext } from "contexts";
+import { UserContext, RunningContext, ReadyContext, ErrorContext } from "contexts";
 import { api } from "utils/api";
 import { isPending, isActive } from "utils/dataset-utils";
 
@@ -9,6 +9,7 @@ const getActive = datasets => datasets.filter(isActive);
 
 export const DatasetMonitor = () => {
   const [{ datasets }, userDispatch] = useContext(UserContext);
+  const [, runningDispatch] = useContext(RunningContext);
   const [, readyDispatch] = useContext(ReadyContext);
   const [, errorDispatch] = useContext(ErrorContext);
   const timer = useRef(-1);
@@ -51,10 +52,17 @@ export const DatasetMonitor = () => {
             );
 
             userDispatch({ type: "updateId", oldId: info.id, newId: id });            
+            
+            runningDispatch({ 
+              type: "setRunning", 
+              tool: info.service === "fuse-tool-pca" ? "PCA" : 
+                info.service === "fuse-tool-cellfie" ? "CellFIE" : 
+                "unknown",
+              time: "unknown"
+            });
           }
           else {
             console.warn(`Unknown service ${ info.service }`);
-
           }
         }  
         catch (error) {

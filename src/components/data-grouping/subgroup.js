@@ -128,7 +128,7 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
       <Row className="align-items-center">
         <Col>
           <LabelEdit     
-            subgroup={ subgroup } 
+            label={ subgroup.name } 
             isNew={ isNew }
             onChange={ editable ? onNameChange : null }
           />

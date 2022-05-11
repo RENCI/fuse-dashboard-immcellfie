@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Row, Col, Card, Form, Button, ButtonGroup, InputGroup } from "react-bootstrap";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
-import { UserContext, DataContext, ModelContext, RunningContext, ErrorContext } from "contexts";
+import { UserContext, DataContext, ModelContext, ErrorContext } from "contexts";
 import { BoldLabel } from "components/bold-label";
 
 const { Header, Body } = Card;
@@ -20,7 +20,6 @@ export const ModelSelection = () => {
   const [{ user }, userDispatch] = useContext(UserContext);
   const [{ dataset }] = useContext(DataContext); 
   const [{ organism, model, parameters, description }, modelDispatch] = useContext(ModelContext);
-  const [, runningDispatch] = useContext(RunningContext);
   const [, errorDispatch] = useContext(ErrorContext);
 
   const thresholdType = parameters.find(({ name }) => name === "threshold_type"); 
@@ -47,8 +46,6 @@ export const ModelSelection = () => {
 
   const onRunCellfieClick = async () => {
     try {
-      runningDispatch({ type: "setRunning", running: "CellFIE" });
-
       userDispatch({
         type: "addDataset",
         dataset: {
