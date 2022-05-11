@@ -1,6 +1,6 @@
 import { useContext, useState, useRef, useEffect } from "react";
 import { Table, Button, OverlayTrigger, Popover, Badge } from "react-bootstrap";
-import { XCircle, InfoCircle, CaretRightFill, ArrowDownCircleFill } from "react-bootstrap-icons";
+import { XCircle, InfoCircle, CaretRightFill, ArrowDownCircleFill, SendSlash } from "react-bootstrap-icons";
 import { UserContext, DataContext, ErrorContext } from "contexts";
 import { DatasetStatusIcon } from "components/dataset-status-icon";
 import { SpinnerButton } from "components/spinner-button";
@@ -10,6 +10,8 @@ import { api } from "utils/api";
 import { getServiceDisplay } from "utils/config-utils";
 import { getIdentifier, isActive } from "utils/dataset-utils";
 import styles from "./dataset-list.module.css";
+
+const txscienceEmail = "txscience@lists.renci.org";
 
 const missingIndicator = "—";
 
@@ -97,7 +99,7 @@ const getElapsedTime = (d, now) => {
 };
 
 export const DatasetList = ({ filter, showFailed }) => {
-  const [{ datasets }, userDispatch] = useContext(UserContext);
+  const [{ user, datasets }, userDispatch] = useContext(UserContext);
   const [{ dataset, propertiesData, result, output }, dataDispatch] = useContext(DataContext);
   const [, errorDispatch] = useContext(ErrorContext);
   const [sortColumn, setSortColumn] = useState(null);
@@ -237,6 +239,25 @@ export const DatasetList = ({ filter, showFailed }) => {
           </SpinnerButton>
         </div>
       ),
+      classes: "text-center"
+    },
+    {
+      name: "Remove",
+      accessor: d => {
+        const subject = 'ImmCellFIE dataset removal request';
+        const body = `User ${ user } requests removal of dataset ${ d.id }`;
+      
+        return (
+          <Button 
+            size="sm"
+            variant="outline-primary"
+            href={ `mailto:${ txscienceEmail }?subject=${ subject }&body=${ body }` }
+            onClick={ evt => evt.stopPropagation() }
+          >
+            <SendSlash className="icon-offset" />
+          </Button>
+        );
+      },
       classes: "text-center"
     }
   ];
