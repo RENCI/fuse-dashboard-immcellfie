@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { Tab, Card, Row, Col, Nav } from "react-bootstrap";
 import { DataContext } from "contexts";
 import { HierarchyVis } from "components/hierarchy-vis";
+import { TreeVis } from "components/tree-vis";
 import { HeatmapVis } from "components/heatmap-vis";
 import { VolcanoVis } from "components/volcano-vis";
 import { PathwayVis } from "components/pathway-vis";
@@ -55,6 +56,9 @@ export const CellfieOutput = () => {
                 <Link eventKey="hierarchy">Hierarchy</Link>
               </Item>
               <Item>
+                <Link eventKey="tree">Tree</Link>
+              </Item>
+              <Item>
                 <Link eventKey="volcano">Volcano plot</Link>
               </Item>
               <Item>
@@ -76,6 +80,12 @@ export const CellfieOutput = () => {
               <Pane eventKey="hierarchy">
                 <HierarchyVis
                   hierarchy={ hierarchy }
+                  tree={ tree } 
+                  subgroups={ currentSubgroups }
+                />
+              </Pane>
+              <Pane eventKey="tree">
+                <TreeVis
                   tree={ tree } 
                   subgroups={ currentSubgroups }
                 />
