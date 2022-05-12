@@ -1,36 +1,21 @@
 import { useContext, useState, useRef, useEffect } from "react";
-import { Table, Button, OverlayTrigger, Popover, Badge, Modal } from "react-bootstrap";
+import { Table, Button, OverlayTrigger, Popover, Badge } from "react-bootstrap";
 import { XCircle, InfoCircle, CaretRightFill, ArrowDownCircleFill, SendSlash, ZoomIn } from "react-bootstrap-icons";
 import { UserContext, DataContext, ErrorContext } from "contexts";
 import { DatasetStatusIcon } from "components/dataset-status-icon";
 import { SpinnerButton } from "components/spinner-button";
 import { LabelEdit } from "components/label-edit";
 import { DatasetRow } from "./dataset-row";
+import { DatasetDetails } from "./dataset-details";
 import { useLoadDataset } from "hooks";
 import { api } from "utils/api";
 import { getServiceDisplay } from "utils/config-utils";
 import { getIdentifier, isActive } from "utils/dataset-utils";
 import styles from "./dataset-list.module.css";
 
-const { Header, Title, Body, Footer } = Modal;
-
 const txscienceEmail = "txscience@lists.renci.org";
 
 const missingIndicator = "—";
-
-// Replace circular references
-const replacer = (key, value) => {
-  switch (key) {
-    case "input":
-      return value.id;
-
-    case "results":
-      return value.map(({ id }) => id);
-
-    default:
-      return value;
-  }
-};
 
 const statusOrder = [
   "pending",
@@ -396,24 +381,11 @@ export const DatasetList = ({ filter, showFailed }) => {
               })}
             </tbody>
           </Table>
-          <Modal
-            show={ details }
-            backdrop="static"
-            keyboard={ false }
-            onHide={ () => setDetails(null) }
-          >
-            <Header closeButton>
-              <Title>
-                Dataset Details
-              </Title>
-            </Header>  
-            <Body>
-              <pre>
-                { JSON.stringify(details, replacer, 2) }
-              </pre>
-            </Body>
-          </Modal>
-        </div>        
+          <DatasetDetails 
+            dataset={ details } 
+            onHide={ () => setDetails(null) } 
+          />
+        </div>       
       }
     </>
   );
