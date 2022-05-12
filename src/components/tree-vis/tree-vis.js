@@ -58,49 +58,47 @@ export const TreeVis = ({ tree, subgroups }) => {
     console.log(1.75, logScale(1.75));
     console.log(2, logScale(2));
 
-  const steps = ([min, max], n) =>
-    new Array(n).fill().map((d, i) => {
-      //const x = Math.pow(2, i) / Math.pow(2, n - 1);
-      const x = i / (n - 1);
+  const steps = ([min, max], n, useLog = false) => {
+    const s = useLog ? Math.log2(min) : min;
+    const f = useLog ? Math.log2(max) : max;
 
-      /*
-      console.log(min, max);
+    return new Array(n).fill().map((d, i) => {
+      const x = s + i / (n - 1) * (f - s);
 
-      const x = Math.pow(2, i / n);
-
-      console.log(x);
-
-      const v = min + x * (max - min);
-      return v;
-      */
-
-      return Math.log2(min + x * (max - min));
+      return useLog ? Math.pow(2, x) : x;
     });
-
-    console.log(steps(scoreDomain, colorScale.values.length));
+  };
 
   const scales = {
-    score: scaleLinear()
-      .domain(steps(scoreDomain, colorScale.values.length))
+    score: (isComparison ? scaleLog().base(2) : scaleLinear())
+      .domain(steps(scoreDomain, colorScale.values.length, isComparison))
       .range(colorScale.values),
     activity: scaleLinear()
       .domain(steps(activityDomain, colorScale.values.length))
       .range(colorScale.values),
+    pValue: scaleLog().base(10)
+      .domain([0.01, 1])
+      .range(["#000", "#fff"]),
+    pValueWidth: scaleLog().base(10)
+      .domain([0.01, 1])
+      .range([0, 2])
   };
 
-  const getColor = (value, scale) => value === "na" ? colorScale.inconclusive : scale(Math.log2(value));
+  const getColor = (value, scale) => value === "na" ? colorScale.inconclusive : scale(value);
 
   console.log(tree);
 
-  const valueGlyph = (data, type) => {
+  const valueGlyph = (data, type, paddingTop) => {
     const field = type === "score" ? scoreField : activityField;
+    const p = data[type + "PValue"];
 
     return (
-      <td>
+      <td style={{ paddingTop: paddingTop }}>
         <div 
           className={ styles.value }
           style={{
-            backgroundColor: getColor(data[field], scales[type])
+            backgroundColor: getColor(data[field], scales[type]),
+            border: isComparison ? `${ scales.pValueWidth(p) }px solid ${ scales.pValue(p) }`: null
           }}
         />
       </td>
@@ -116,6 +114,8 @@ export const TreeVis = ({ tree, subgroups }) => {
     const depth = node.depth - 1;
     const isLeaf = depth === 2;
 
+    const paddingTop = height * 5;
+
     rows.push(
       <tr 
         key={ name } 
@@ -126,15 +126,15 @@ export const TreeVis = ({ tree, subgroups }) => {
       >
         <td
           style={{ 
-            paddingTop: height * 5,
+            paddingTop: paddingTop,
             paddingLeft: depth * 20,
             fontSize: 12 + height * 1,
             cursor: isLeaf ? "default" : "pointer"
           }}
         >{ name }
         </td>
-        { valueGlyph(node.data, "score") }
-        { valueGlyph(node.data, "activity") }
+        { valueGlyph(node.data, "score", paddingTop) }
+        { valueGlyph(node.data, "activity", paddingTop) }
       </tr>
     );
 
