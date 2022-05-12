@@ -1,6 +1,6 @@
 import { useContext, useState, useRef, useEffect } from "react";
-import { Table, Button, OverlayTrigger, Popover, Badge } from "react-bootstrap";
-import { XCircle, InfoCircle, CaretRightFill, ArrowDownCircleFill, SendSlash } from "react-bootstrap-icons";
+import { Table, Button, OverlayTrigger, Popover, Badge, Modal } from "react-bootstrap";
+import { XCircle, InfoCircle, CaretRightFill, ArrowDownCircleFill, SendSlash, ZoomIn } from "react-bootstrap-icons";
 import { UserContext, DataContext, ErrorContext } from "contexts";
 import { DatasetStatusIcon } from "components/dataset-status-icon";
 import { SpinnerButton } from "components/spinner-button";
@@ -12,9 +12,25 @@ import { getServiceDisplay } from "utils/config-utils";
 import { getIdentifier, isActive } from "utils/dataset-utils";
 import styles from "./dataset-list.module.css";
 
+const { Header, Title, Body, Footer } = Modal;
+
 const txscienceEmail = "txscience@lists.renci.org";
 
 const missingIndicator = "—";
+
+// Replace circular references
+const replacer = (key, value) => {
+  switch (key) {
+    case "input":
+      return value.id;
+
+    case "results":
+      return value.map(({ id }) => id);
+
+    default:
+      return value;
+  }
+};
 
 const statusOrder = [
   "pending",
@@ -105,6 +121,7 @@ export const DatasetList = ({ filter, showFailed }) => {
   const [, errorDispatch] = useContext(ErrorContext);
   const [sortColumn, setSortColumn] = useState(null);
   const [now, setNow] = useState(new Date());
+  const [details, setDetails] = useState(null);
   const loadDataset = useLoadDataset();
   const timer = useRef(null);
 
@@ -154,7 +171,7 @@ export const DatasetList = ({ filter, showFailed }) => {
 
   const dataLoading = (dataset && dataset.files.properties && !propertiesData) || (result && !output);
   const isLoading = d => dataLoading && (d === dataset || d === result);
-  const isLoaded = d => (d === dataset || d === result) && !isLoading(d);
+  const isLoaded = d => ((dataset && d.id === dataset.id) || (result && d.id === result.id)) && !isLoading(d);
   
 
   // XXX: useMemo here, or figure out how to move outside of component?
@@ -229,6 +246,19 @@ export const DatasetList = ({ filter, showFailed }) => {
       classes: "text-center"
     },
     {
+      name: "Details",
+      accessor: d => (
+        <Button
+          variant="outline-secondary"
+          size="sm"
+          onClick={ () => setDetails(d) }
+        >
+          <ZoomIn className="icon-offset" />
+        </Button>
+      ),
+      classes: "text-center"
+    },
+    {
       name: "Load",
       accessor: d => (
         <div style={{ visibility: (hasData(d) && !failed(d)) ? "visible" : "hidden" }}>
@@ -238,7 +268,6 @@ export const DatasetList = ({ filter, showFailed }) => {
             spin={ isLoading(d) }
             replace={ true }
             onClick={ evt => {
-              evt.stopPropagation();
               onLoadClick(d);
             }}
           >
@@ -260,7 +289,6 @@ export const DatasetList = ({ filter, showFailed }) => {
             size="sm"
             variant="outline-primary"
             href={ `mailto:${ txscienceEmail }?subject=${ subject }&body=${ body }` }
-            onClick={ evt => evt.stopPropagation() }
           >
             <SendSlash className="icon-offset" />
           </Button>
@@ -280,7 +308,6 @@ export const DatasetList = ({ filter, showFailed }) => {
             variant="outline-danger"
             disabled={ dataLoading || !canDelete(d) }
             onClick={ evt => {
-              evt.stopPropagation();
               onDeleteClick(d);
             }}
           >
@@ -369,7 +396,24 @@ export const DatasetList = ({ filter, showFailed }) => {
               })}
             </tbody>
           </Table>
-        </div>
+          <Modal
+            show={ details }
+            backdrop="static"
+            keyboard={ false }
+            onHide={ () => setDetails(null) }
+          >
+            <Header closeButton>
+              <Title>
+                Dataset Details
+              </Title>
+            </Header>  
+            <Body>
+              <pre>
+                { JSON.stringify(details, replacer, 2) }
+              </pre>
+            </Body>
+          </Modal>
+        </div>        
       }
     </>
   );

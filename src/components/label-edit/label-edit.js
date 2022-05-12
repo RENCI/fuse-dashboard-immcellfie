@@ -16,8 +16,6 @@ export const LabelEdit = ({ label, size = null, isNew = false, onChange }) => {
   }, [editing]);
 
   const onLabelClick = evt => {
-    evt.stopPropagation();
-
     setEditing(true);
   };
 

@@ -70,7 +70,7 @@ export const ReadyMessage = () => {
             { dataset.status === "failed" && dataset.detail && 
               <div>
                 <Label>detail:</Label>
-                <div><code>{ dataset.detail }</code></div>
+                <code>{ dataset.detail }</code>
               </div> 
             }
           </>
