@@ -1,5 +1,18 @@
-.value {
-  height: 100%;
-  width: 30px;
-  border: 1px solid white;
+.table {
+  --valueSize: 30px;
+}
+
+.table th, td {
+  padding-right: 20px;
+}
+
+.table th:not(:first-child) {
+  text-align: center;
+}
+
+.table .value {
+  height: var(--valueSize);
+  width: var(--valueSize);
+  border-radius: 50%;
+  margin: auto;
 }

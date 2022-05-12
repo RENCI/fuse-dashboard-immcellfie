@@ -23,7 +23,7 @@ const sequential = [
     scheme: "yellowgreenblue",
     highlight: "#a50f15",
     inconclusive: "#c6dbef",
-    values: scaleValues(lightGreyRed)
+    values: scaleValues(yellowGreenBlue)
   }
 ];
 
@@ -33,7 +33,7 @@ const diverging = [
     scheme: "blueorange", 
     highlight: "#a50f15",
     inconclusive: "#ccc",
-    values: scaleValues(lightGreyRed)
+    values: scaleValues(blueOrange)
   },
   { 
     name: "blue ↔ red", 
@@ -41,7 +41,7 @@ const diverging = [
     reverse: true, 
     highlight: "#006d2c",
     inconclusive: "#ccc",
-    values: scaleValues(lightGreyRed).reverse()
+    values: scaleValues(redBlue).reverse()
   },
   { 
     name: "grey ↔ red", 
@@ -49,7 +49,7 @@ const diverging = [
     reverse: true, 
     highlight: "#006d2c",
     inconclusive: "#c6dbef",
-    values: scaleValues(lightGreyRed).reverse()
+    values: scaleValues(redGrey).reverse()
   }
 ];
 
