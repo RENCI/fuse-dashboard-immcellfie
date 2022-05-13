@@ -2,17 +2,25 @@ import { useContext, useState, useMemo } from "react";
 import { Form, Row, Col } from "react-bootstrap";
 import { scaleLinear, scaleLog } from "d3-scale";
 import { extent, merge } from "d3-array";
-import { ColorContext } from "contexts";
+import { DataContext, ColorContext } from "contexts";
 import styles from "./styles.module.css";
 
 const { Group, Label, Control } = Form; 
 
 export const TreeVis = ({ tree, subgroups }) => {
+  const [, dataDispatch] = useContext(DataContext);
   const [
     { sequentialScales, divergingScales, sequentialScale, divergingScale }, 
     colorDispatch
   ] = useContext(ColorContext);
+  const [subgroup, setSubgroup] = useState(subgroups[1] ? "comparison" : "1");
   const [update, setUpdate] = useState(false);
+
+  const onSubgroupChange = evt => {
+    const value = evt.target.value;
+
+    setSubgroup(value);
+  };
 
   const onColorMapChange = evt => {
     colorDispatch({ 
@@ -23,7 +31,7 @@ export const TreeVis = ({ tree, subgroups }) => {
   };
 
   const hasSubgroups = subgroups[1] !== null;
-  const isComparison = hasSubgroups;
+  const isComparison = subgroup === "comparison";
 
   const colorScales = isComparison ? divergingScales : sequentialScales;
   const colorScale = isComparison ? divergingScale : sequentialScale;
@@ -37,26 +45,14 @@ export const TreeVis = ({ tree, subgroups }) => {
     return [1 / max, max];
   };
 
-  const scoreField = isComparison ? "scoreFoldChange" : "score1";
+  const scoreField = isComparison ? "scoreFoldChange" : "score" + subgroup;
   const scoreDomain = useMemo(() => 
     isComparison ? logRange(tree.descendants().filter(node => node.height > 0).map(d => d.data[scoreField])) :
     extent(merge(tree.descendants().filter(node => node.height > 0).map(d => [d.data.score1, d.data.score2])))
   , [tree, isComparison, scoreField]);
 
-  const activityField = isComparison ? "activityChange" : "activity1";
+  const activityField = isComparison ? "activityChange" : "activity" + subgroup;
   const activityDomain = isComparison ? [-1, 1] : [0, 1];
-
-  console.log(scoreDomain, activityDomain);
-
-
-  const logScale = scaleLog().base(2)
-    .domain([0.5, 1, 1.5, 2])
-    .range([10, 20, 30, 40]);
-
-    console.log(0.75, logScale(0.5));
-    console.log(1.25, logScale(1.25));
-    console.log(1.75, logScale(1.75));
-    console.log(2, logScale(2));
 
   const steps = ([min, max], n, useLog = false) => {
     const s = useLog ? Math.log2(min) : min;
@@ -86,8 +82,6 @@ export const TreeVis = ({ tree, subgroups }) => {
 
   const getColor = (value, scale) => value === "na" ? colorScale.inconclusive : scale(value);
 
-  console.log(tree);
-
   const valueGlyph = (data, type, paddingTop) => {
     const field = type === "score" ? scoreField : activityField;
     const p = data[type + "PValue"];
@@ -115,10 +109,15 @@ export const TreeVis = ({ tree, subgroups }) => {
     const isLeaf = depth === 2;
 
     const paddingTop = height * 5;
+    const selected = node.data.selected;
+    const descendantSelected = Boolean(node.find(n => n !== node && n.data.selected, false));
 
     rows.push(
       <tr 
         key={ name } 
+        style={{ 
+          cursor: isLeaf ? "default" : "pointer",
+        }}
         onClick={ isLeaf ? null : () => {
           node.data.showChildren = !node.data.showChildren;
           setUpdate(!update);
@@ -128,10 +127,17 @@ export const TreeVis = ({ tree, subgroups }) => {
           style={{ 
             paddingTop: paddingTop,
             paddingLeft: depth * 20,
-            fontSize: 12 + height * 1,
-            cursor: isLeaf ? "default" : "pointer"
+            fontSize: 12 + height * 1
           }}
-        >{ name }
+        >
+          { descendantSelected && <span style={{ color: colorScale.highlight }}>▼ </span> }          
+          <span
+            style={{ 
+              borderBottom: selected ? "2px solid " + colorScale.highlight : null
+            }}
+          >
+            { name }
+          </span>
         </td>
         { valueGlyph(node.data, "score", paddingTop) }
         { valueGlyph(node.data, "activity", paddingTop) }
@@ -142,56 +148,24 @@ export const TreeVis = ({ tree, subgroups }) => {
   };
 
   tree.children.forEach(traverseTree);
-  /*
-  tree.eachBefore(node => {
-    if (node.depth === 0 || node.depth > 3) return;
-
-    const name = node.data.name;
-    const height = node.height - 1;
-    const depth = node.depth - 1
-
-    rows.push(
-      <div 
-        key={ name } 
-        style={{ 
-          marginTop: height * 10,
-          marginLeft: depth * 20,
-          fontSize: 12 + height * 1
-        }}
-      >
-        { name }
-      </div>
-    );
-  });
-  */
-
-
-/*
-  const heatmapData = useMemo(() => {
-    const getValues = subgroup => {
-      return merge(data.filter(node => node.depth === depth).map(node => {
-        const key = value === "score" ? "scores" + (subgroup + 1) : "activities" + (subgroup + 1);
-        const samples = group(node.data[key], ({ index }) => index);
-  
-        return Array.from(samples).map(sample => {
-          return {
-            name: node.data.name,
-            subgroup: subgroups[subgroup].name,
-            index: sample[0],
-            value: mean(sample[1], value => value.value)
-          };
-        });
-      }));
-    };
-
-    return getValues(0).concat(getValues(1));
-  }, [data, subgroups, depth, value]);
-*/  
 
   return (
     <>
       <div className="mb-4">
         <Row>
+          <Group as={ Col } controlId="subgroupSelect">
+            <Label size="sm">Subgroup</Label>
+            <Control
+              size="sm"
+              as="select"
+              value={ subgroup }
+              onChange={ onSubgroupChange }          
+            >
+              { hasSubgroups && <option value="comparison">{ subgroups[0].name + " vs. " + subgroups[1].name}</option> }
+              <option value="1">{ subgroups[0].name }</option>
+              { hasSubgroups && <option value="2">{ subgroups[1].name }</option> }
+            </Control>
+          </Group>
           <Group as={ Col } controlId="colorMapSelect">
             <Label size="sm">Color map</Label>
             <Control

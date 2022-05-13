@@ -56,7 +56,6 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
   const [vis, setVis] = useState(visualizations[0]);
 
   const hasSubgroups = subgroups[1] !== null;
-
   const isComparison = subgroup === "comparison";
 
   const hasVoronoi = tree.descendants()[0].polygon;
