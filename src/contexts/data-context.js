@@ -298,7 +298,8 @@ const createHierarchy = tasks => {
 
   hierarchy.push({
     name: "root",
-    parent: null
+    parent: null,
+    showChildren: true
   });
 
   return hierarchy;
