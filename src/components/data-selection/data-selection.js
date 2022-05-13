@@ -60,6 +60,7 @@ export const DataSelection = () => {
                 />
                 <Button 
                   variant="outline-secondary"
+                  disabled={ filter === "" }
                   onClick={ onClearFilter }
                 >
                   <X className="icon-offset" />

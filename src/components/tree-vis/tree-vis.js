@@ -3,9 +3,37 @@ import { Form, Row, Col, ButtonGroup, Button } from "react-bootstrap";
 import { scaleLinear, scaleLog } from "d3-scale";
 import { extent, merge } from "d3-array";
 import { DataContext, ColorContext } from "contexts";
+import { TextHighlight } from "components/text-highlight";
+import { TaskSearch } from "./task-search";
 import styles from "./styles.module.css";
 
 const { Group, Label, Control } = Form; 
+
+// Based on: https://css-tricks.com/snippets/javascript/lighten-darken-color/
+function adjustColor(color, amount) {
+  let usePound = false;
+
+  if (color[0] == "#") {
+    color = color.slice(1);
+    usePound = true;
+  }
+
+  const num = parseInt(color, 16);
+
+  let r = (num >> 16) + amount;
+  if (r > 255) r = 255;
+  else if  (r < 0) r = 0;
+
+  let b = ((num >> 8) & 0x00FF) + amount;
+  if (b > 255) b = 255;
+  else if  (b < 0) b = 0;
+
+  let g = (num & 0x0000FF) + amount;
+  if (g > 255) g = 255;
+  else if (g < 0) g = 0;
+
+  return (usePound ? "#" : "") + (g | (b << 8) | (r << 16)).toString(16);
+}
 
 export const TreeVis = ({ tree, subgroups }) => {
   const [, dataDispatch] = useContext(DataContext);
@@ -15,6 +43,9 @@ export const TreeVis = ({ tree, subgroups }) => {
   ] = useContext(ColorContext);
   const [subgroup, setSubgroup] = useState(subgroups[1] ? "comparison" : "1");
   const [update, setUpdate] = useState(false);
+  const [search, setSearch] = useState("");
+
+  const nodes = tree.descendants().filter(node => node.depth > 0 && node.height > 0);
 
   const onShowDepthClick = depth => {
     tree.descendants().forEach(node => node.data.showChildren = node.depth <= depth - 1);
@@ -39,6 +70,22 @@ export const TreeVis = ({ tree, subgroups }) => {
     dataDispatch({ type: "selectNode", name: node.data.name, selected: !node.data.selected });
   };
 
+  const onTaskSearch = text => {
+    const lower = text.toLowerCase();
+
+    nodes.forEach(node => node.data.showChildren = false);
+
+    if (text !== "") {
+      nodes.forEach(node => {
+        if (node.data.name.toLowerCase().includes(lower)) {
+          node.ancestors().filter(n => n.parent).forEach(node => node.parent.data.showChildren = true);
+        }      
+      });
+    }
+
+    setSearch(text);
+  };
+
   const hasSubgroups = subgroups[1] !== null;
   const isComparison = subgroup === "comparison";
 
@@ -54,12 +101,12 @@ export const TreeVis = ({ tree, subgroups }) => {
     return [1 / max, max];
   };
 
-  const isVisible = node => node.height > 0 && node.depth > 0 && 
+  const isVisible = node =>
     node.ancestors().filter(n => n !== node).reduce((show, node) => show && node.data.showChildren, true);
 
   const scoreField = isComparison ? "scoreFoldChange" : "score" + subgroup;
-  const scoreDomain = isComparison ? logRange(tree.descendants().filter(isVisible).map(d => d.data[scoreField])) :
-    extent(merge(tree.descendants().filter(isVisible).map(d => [d.data.score1, d.data.score2])));
+  const scoreDomain = isComparison ? logRange(nodes.filter(isVisible).map(d => d.data[scoreField])) :
+    extent(merge(nodes.filter(isVisible).map(d => [d.data.score1, d.data.score2])));
 
   const activityField = isComparison ? "activityChange" : "activity" + subgroup;
   const activityDomain = isComparison ? [-1, 1] : [0, 1];
@@ -122,6 +169,8 @@ export const TreeVis = ({ tree, subgroups }) => {
     const selected = node.data.selected;
     const descendantSelected = Boolean(node.find(n => n !== node && n.data.selected, false));
 
+    const searchColor = adjustColor(colorScale.highlight, 180);
+
     rows.push(
       <tr key={ name }>
         <td
@@ -155,7 +204,11 @@ export const TreeVis = ({ tree, subgroups }) => {
             }}
             onClick={ () => onSelectNode(node) }
           >
-            { name }
+            <TextHighlight 
+              text={ name } 
+              highlight={ search }  
+              style={{ backgroundColor: searchColor }}
+            />
           </span>
         </td>
         { valueGlyph(node.data, "score", paddingTop) }
@@ -172,6 +225,10 @@ export const TreeVis = ({ tree, subgroups }) => {
     <>
       <div className="mb-4">
         <Row>
+          <TaskSearch 
+            nodes={ nodes } 
+            onSearch={ onTaskSearch } 
+          />
           <Group as={ Col } controlId="subgroupSelect">
             <Label size="sm">Depth</Label>
             <div>
