@@ -252,7 +252,7 @@ export const DatasetList = ({ filter, showFailed }) => {
             disabled={ (dataLoading && !isLoading(d)) || isLoaded(d) }
             spin={ isLoading(d) }
             replace={ true }
-            onClick={ evt => {
+            onClick={ () => {
               onLoadClick(d);
             }}
           >
