@@ -187,7 +187,7 @@ export const TreeVis = ({ tree, subgroups }) => {
                 float: "left",
                 cursor: "pointer",
                 color: descendantSelected ? colorScale.highlight : null,
-                transform: node.data.showChildren ? "rotate(-90deg)" : null
+                transform: !node.data.showChildren ? "rotate(-90deg)" : null
               }}
               onClick={ isLeaf ? null : () => {
                 node.data.showChildren = !node.data.showChildren;
