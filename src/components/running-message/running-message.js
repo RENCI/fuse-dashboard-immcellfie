@@ -35,7 +35,7 @@ export const RunningMessage = () => {
           variant="primary"
           onClick={ onClose }
         >
-          Close
+          OK
         </Button>
       </Footer>
     </Modal>
