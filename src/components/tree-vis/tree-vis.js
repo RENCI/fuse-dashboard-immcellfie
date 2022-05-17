@@ -139,12 +139,17 @@ export const TreeVis = ({ tree, subgroups }) => {
 
   const getColor = (value, scale) => value === "na" ? colorScale.inconclusive : scale(value);
 
-  const valueGlyph = (data, type, paddingTop) => {
+  const valueGlyph = (data, type, padding) => {
     const field = type === "score" ? scoreField : activityField;
     const p = data[type + "PValue"];
 
     return (
-      <td style={{ paddingTop: paddingTop }}>
+      <td 
+        style={{ 
+          paddingTop: padding,
+          paddingBottom: padding 
+        }}
+      >
         <div 
           className={ styles.value }
           style={{
@@ -165,7 +170,7 @@ export const TreeVis = ({ tree, subgroups }) => {
     const depth = node.depth - 1;
     const isLeaf = height === 0;
 
-    const paddingTop = height * 5;
+    const padding = height * 2;
     const selected = node.data.selected;
     const descendantSelected = Boolean(node.find(n => n !== node && n.data.selected, false));
 
@@ -175,7 +180,8 @@ export const TreeVis = ({ tree, subgroups }) => {
       <tr key={ name }>
         <td
           style={{ 
-            paddingTop: paddingTop,
+            paddingTop: padding,
+            paddingBottom: padding,
             paddingLeft: depth * 20,
             fontSize: 12 + height * 1
           }}
@@ -211,8 +217,8 @@ export const TreeVis = ({ tree, subgroups }) => {
             />
           </span>
         </td>
-        { valueGlyph(node.data, "score", paddingTop) }
-        { valueGlyph(node.data, "activity", paddingTop) }
+        { valueGlyph(node.data, "score", padding) }
+        { valueGlyph(node.data, "activity", padding) }
       </tr>
     );
 

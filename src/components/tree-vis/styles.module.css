@@ -1,5 +1,9 @@
 .table {
-  --valueSize: 20px;
+  --valueSize: 16px;
+}
+
+.table tr:hover {
+  background-color: #f0f0f0;
 }
 
 .table th, td {
