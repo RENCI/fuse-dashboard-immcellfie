@@ -1,5 +1,5 @@
 import { useContext, useState, useRef, useEffect } from "react";
-import { Table, Button, OverlayTrigger, Popover, Badge } from "react-bootstrap";
+import { Table, Button, OverlayTrigger, Popover, Tooltip, Badge } from "react-bootstrap";
 import { XCircle, InfoCircle, CaretRightFill, ArrowDownCircleFill, SendSlash, ZoomIn } from "react-bootstrap-icons";
 import { UserContext, DataContext, ErrorContext } from "contexts";
 import { DatasetStatusIcon } from "components/dataset-status-icon";
@@ -270,13 +270,20 @@ export const DatasetList = ({ filter, showFailed }) => {
         const body = `User ${ user } requests removal of dataset ${ d.id }${ newLine }${ newLine}Please indicate reason below:`;
       
         return (
-          <Button 
-            size="sm"
-            variant="outline-primary"
-            href={ `mailto:${ txscienceEmail }?subject=${ subject }&body=${ body }` }
+          <OverlayTrigger
+            placement="top"
+            overlay={ 
+              <Tooltip>Request removal of dataset</Tooltip>
+            }
           >
-            <SendSlash className="icon-offset" />
-          </Button>
+            <Button 
+              size="sm"
+              variant="outline-primary"
+              href={ `mailto:${ txscienceEmail }?subject=${ subject }&body=${ body }` }
+            >
+              <SendSlash className="icon-offset" />
+            </Button>
+          </OverlayTrigger>
         );
       },
       classes: "text-center"
