@@ -1,8 +1,9 @@
 import { useContext } from "react";
 import { Row, Col, Card, Form, Button, ButtonGroup, InputGroup } from "react-bootstrap";
 import { ArrowCounterclockwise } from "react-bootstrap-icons";
-import { UserContext, DataContext, ModelContext, RunningContext, ErrorContext } from "contexts";
+import { UserContext, DataContext, ModelContext, ErrorContext } from "contexts";
 import { BoldLabel } from "components/bold-label";
+import { durationDisplay } from "utils/time";
 
 const { Header, Body } = Card;
 const { Label, Group, Control } = Form;
@@ -20,10 +21,12 @@ export const ModelSelection = () => {
   const [{ user }, userDispatch] = useContext(UserContext);
   const [{ dataset }] = useContext(DataContext); 
   const [{ organism, model, parameters, description }, modelDispatch] = useContext(ModelContext);
-  const [, runningDispatch] = useContext(RunningContext);
   const [, errorDispatch] = useContext(ErrorContext);
 
   const thresholdType = parameters.find(({ name }) => name === "threshold_type"); 
+
+  const runtime = dataset.files.expression && dataset.files.expression.runtime ? 
+    durationDisplay(dataset.files.expression.runtime * 1000) : "unknown";
 
   const onOrganismChange = evt => {
     modelDispatch({ type: "setOrganism", value: evt.target.value });
@@ -47,8 +50,6 @@ export const ModelSelection = () => {
 
   const onRunCellfieClick = async () => {
     try {
-      runningDispatch({ type: "setRunning", running: "CellFIE" });
-
       userDispatch({
         type: "addDataset",
         dataset: {
@@ -61,7 +62,8 @@ export const ModelSelection = () => {
             ...getParameterObject(parameters)
           },
           description: description,
-          createdTime: new Date()
+          createdTime: new Date(),
+          runtime: runtime
         }
       });
     }
@@ -210,6 +212,13 @@ export const ModelSelection = () => {
               </div> 
             }
           </Col>       
+        </Row>
+        <Row>
+          <Col>
+            <small className="text-muted">
+              Estimated runtime: <b>{ runtime ? runtime : "unknown" }</b>
+            </small>
+          </Col>
         </Row>
       </Body>
     </Card>

@@ -1,15 +1,20 @@
 import { useContext, useState, useRef, useEffect } from "react";
-import { Table, Button, OverlayTrigger, Popover, Badge } from "react-bootstrap";
-import { XCircle, InfoCircle, CaretRightFill, ArrowDownCircleFill } from "react-bootstrap-icons";
+import { Table, Button, OverlayTrigger, Popover, Tooltip, Badge } from "react-bootstrap";
+import { XCircle, InfoCircle, CaretRightFill, ArrowDownCircleFill, SendSlash, ZoomIn } from "react-bootstrap-icons";
 import { UserContext, DataContext, ErrorContext } from "contexts";
 import { DatasetStatusIcon } from "components/dataset-status-icon";
 import { SpinnerButton } from "components/spinner-button";
+import { LabelEdit } from "components/label-edit";
 import { DatasetRow } from "./dataset-row";
+import { DatasetDetails } from "./dataset-details";
 import { useLoadDataset } from "hooks";
 import { api } from "utils/api";
 import { getServiceDisplay } from "utils/config-utils";
 import { getIdentifier, isActive } from "utils/dataset-utils";
+import { durationDisplay } from "utils/time";
 import styles from "./dataset-list.module.css";
+
+const txscienceEmail = "txscience@lists.renci.org";
 
 const missingIndicator = "—";
 
@@ -60,7 +65,7 @@ const getIdentifierDisplay = d => d.accessionId ? d.accessionId :
       { file.name }
     </div>
   )) :
-  missingIndicator
+  missingIndicator;
 
 const getFinishedDisplay = d => {
   if (!d.finishedTime) return missingIndicator;
@@ -76,32 +81,18 @@ const getFinishedDisplay = d => {
 };
 
 const getElapsedTime = (d, now) => {
-  const pad = n => n.toString().padStart(2, "0");
-
   const elapsed = now - d.createdTime;
 
-  if (elapsed < 0) return "-:--";
-
-  let s = Math.floor(elapsed / 1000);
-  let m = Math.floor(s / 60);
-  const h = Math.floor(m / 60);
-
-  s = s % 60;
-  m = m % 60;
-
-  let t = h > 0 ? h + "h" : "";
-  if (h > 0 || m > 0) t += (h > 0 ? pad(m) : m) + "m"
-  t += (h > 0 || m > 0 ? pad(s) : s) + "s";
-
-  return t;
+  return durationDisplay(elapsed);
 };
 
-export const DatasetList = ({ filter }) => {
-  const [{ datasets }, userDispatch] = useContext(UserContext);
+export const DatasetList = ({ filter, showFailed }) => {
+  const [{ user, datasets }, userDispatch] = useContext(UserContext);
   const [{ dataset, propertiesData, result, output }, dataDispatch] = useContext(DataContext);
   const [, errorDispatch] = useContext(ErrorContext);
   const [sortColumn, setSortColumn] = useState(null);
   const [now, setNow] = useState(new Date());
+  const [details, setDetails] = useState(null);
   const loadDataset = useLoadDataset();
   const timer = useRef(null);
 
@@ -122,6 +113,10 @@ export const DatasetList = ({ filter }) => {
   useEffect(() => () => {
     if (timer.current) clearInterval(timer.current);
   }, [timer]);
+
+  const onDescriptionChange = async (dataset, description) => {
+    api.updateDescription(dataset.id, description);
+  };
 
   const onLoadClick = async dataset => {
     loadDataset(dataset);
@@ -151,7 +146,7 @@ export const DatasetList = ({ filter }) => {
 
   const dataLoading = (dataset && dataset.files.properties && !propertiesData) || (result && !output);
   const isLoading = d => dataLoading && (d === dataset || d === result);
-  const isLoaded = d => (d === dataset || d === result) && !isLoading(d);
+  const isLoaded = d => ((dataset && d.id === dataset.id) || (result && d.id === result.id)) && !isLoading(d);
   
 
   // XXX: useMemo here, or figure out how to move outside of component?
@@ -173,7 +168,13 @@ export const DatasetList = ({ filter }) => {
     },
     { 
       name: "Description",
-      accessor: getDescription,
+      accessor: d => (
+        <LabelEdit 
+          label={ getDescription(d) }
+          size="sm"
+          onChange={ value => onDescriptionChange(d, value) }
+        />
+      ),
       sort: (a, b) => {
         const da = getDescription(a);
         const db = getDescription(b);
@@ -220,6 +221,19 @@ export const DatasetList = ({ filter }) => {
       classes: "text-center"
     },
     {
+      name: "Details",
+      accessor: d => (
+        <Button
+          variant="outline-secondary"
+          size="sm"
+          onClick={ () => setDetails(d) }
+        >
+          <ZoomIn className="icon-offset" />
+        </Button>
+      ),
+      classes: "text-center"
+    },
+    {
       name: "Load",
       accessor: d => (
         <div style={{ visibility: (hasData(d) && !failed(d)) ? "visible" : "hidden" }}>
@@ -228,8 +242,7 @@ export const DatasetList = ({ filter }) => {
             disabled={ (dataLoading && !isLoading(d)) || isLoaded(d) }
             spin={ isLoading(d) }
             replace={ true }
-            onClick={ evt => {
-              evt.stopPropagation();
+            onClick={ () => {
               onLoadClick(d);
             }}
           >
@@ -237,6 +250,32 @@ export const DatasetList = ({ filter }) => {
           </SpinnerButton>
         </div>
       ),
+      classes: "text-center"
+    },
+    {
+      name: "Remove",
+      accessor: d => {
+        const subject = 'ImmCellFIE dataset removal request';
+        const newLine = "%0D%0A";
+        const body = `User ${ user } requests removal of dataset ${ d.id }${ newLine }${ newLine}Please indicate reason below:`;
+      
+        return (
+          <OverlayTrigger
+            placement="top"
+            overlay={ 
+              <Tooltip>Request removal of dataset</Tooltip>
+            }
+          >
+            <Button 
+              size="sm"
+              variant="outline-primary"
+              href={ `mailto:${ txscienceEmail }?subject=${ subject }&body=${ body }` }
+            >
+              <SendSlash className="icon-offset" />
+            </Button>
+          </OverlayTrigger>
+        );
+      },
       classes: "text-center"
     }
   ];
@@ -251,7 +290,6 @@ export const DatasetList = ({ filter }) => {
             variant="outline-danger"
             disabled={ dataLoading || !canDelete(d) }
             onClick={ evt => {
-              evt.stopPropagation();
               onDeleteClick(d);
             }}
           >
@@ -263,10 +301,14 @@ export const DatasetList = ({ filter }) => {
     });
   }
 
-  const inputs = datasets.filter(({ type }) => type === "input");
+  const applyFailed = ({ status }) => showFailed || status !== "failed";
+
+  const inputs = datasets.filter(({ type }) => type === "input").filter(applyFailed);
 
   const re = new RegExp(filter, "i");
   const filterDataset = dataset => {
+    if (!filter) return true;
+
     const identifier = getIdentifier(dataset);
 
     return getType(dataset).match(re) ||
@@ -277,24 +319,26 @@ export const DatasetList = ({ filter }) => {
       getStatus(dataset).match(re);
   };
 
-  const filtered = !filter ? inputs : 
-    inputs.reduce((filtered, input) => {
-      if (filterDataset(input)) {
-        filtered.push(input);
-      }
-      else {
-        const results = input.results.filter(filterDataset);
+  const filtered = inputs.reduce((filtered, input) => {
+    if (filterDataset(input)) {
+      filtered.push({
+        ...input,
+        results: input.results.filter(applyFailed)
+      });
+    }
+    else {
+      const results = input.results.filter(filterDataset).filter(applyFailed);
 
-        if (results.length > 0) {
-          filtered.push({
-            ...input,
-            results: results
-          });
-        }
+      if (results.length > 0) {
+        filtered.push({
+          ...input,
+          results: results
+        });
       }
-      
-      return filtered;
-    }, []);
+    }
+    
+    return filtered;
+  }, []);
 
   return (
     <>
@@ -334,7 +378,11 @@ export const DatasetList = ({ filter }) => {
               })}
             </tbody>
           </Table>
-        </div>
+          <DatasetDetails 
+            dataset={ details } 
+            onHide={ () => setDetails(null) } 
+          />
+        </div>       
       }
     </>
   );

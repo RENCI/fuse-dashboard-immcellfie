@@ -1,0 +1,22 @@
+.table {
+  --valueSize: 16px;
+}
+
+.table tr:hover {
+  background-color: #f0f0f0;
+}
+
+.table th, td {
+  padding-right: 20px;
+}
+
+.table th:not(:first-child) {
+  text-align: center;
+}
+
+.table .value {
+  height: var(--valueSize);
+  width: var(--valueSize);
+  border-radius: 50%;
+  margin: auto;
+}

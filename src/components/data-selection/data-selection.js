@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { Card, Row, Col, Stack, Alert, InputGroup, FormControl, Button } from "react-bootstrap";
+import { Card, Row, Col, Stack, Alert, InputGroup, FormControl, Button, DropdownButton, Dropdown } from "react-bootstrap";
 import { ExclamationTriangle, X } from "react-bootstrap-icons";
 import { ConfigContext, UserContext, DataContext } from "contexts";
 import { AnalyzeLink, SubgroupsLink } from "components/page-links";
@@ -15,6 +15,7 @@ export const DataSelection = () => {
   const [{ datasets }] = useContext(UserContext);
   const [{ dataset, propertiesData, result }] = useContext(DataContext);
   const [filter, setFilter] = useState("");
+  const [showFailed, setShowFailed] = useState(false);
 
   const onFilterChange = evt => {
     setFilter(evt.target.value.trim());
@@ -22,6 +23,10 @@ export const DataSelection = () => {
 
   const onClearFilter = () => {
     setFilter("");
+  };
+
+  const onShowFailedDatasetsClick = () => {
+    setShowFailed(!showFailed);
   };
 
   const pending = datasets.filter(({ status }) => status === "pending");
@@ -48,24 +53,38 @@ export const DataSelection = () => {
             </div>
             <div>
               <InputGroup size="sm">
-                <FormControl 
-                  size="sm"
+                <FormControl
                   placeholder="Filter datasets..."
                   value={ filter }
                   onChange={ onFilterChange }
                 />
                 <Button 
-                  variant="secondary"
-                  size="lg"
+                  variant="outline-secondary"
+                  disabled={ filter === "" }
                   onClick={ onClearFilter }
                 >
                   <X className="icon-offset" />
                 </Button>
+                <DropdownButton
+                  variant="outline-secondary"
+                  id="show-failed-dropdown"
+                  title=""
+                >
+                  <Dropdown.Item 
+                    as="button"
+                    onClick={ onShowFailedDatasetsClick }
+                  >
+                    { showFailed ? "Hide" : "Show" } failed datasets
+                  </Dropdown.Item>
+                </DropdownButton>
               </InputGroup>
             </div>
           </Header>
           <Body>
-            <DatasetList filter={ filter === "" ? null : filter } />
+            <DatasetList 
+              filter={ filter === "" ? null : filter } 
+              showFailed={ showFailed } 
+            />
           </Body>
           { dataset &&
             <Footer>

@@ -9,13 +9,13 @@ import { ResizeWrapper } from "components/resize-wrapper";
 import { VegaWrapper } from "components/vega-wrapper";
 import { VegaTooltip } from "components/vega-tooltip";
 import { DetailVis } from "components/detail-vis";
+import { LoadingSpinner } from "components/loading-spinner";
+import { SelectedList } from "components/selected-list";
 import { 
   treemap, treemapLogScale, treemapPValue,
   enclosure, enclosureLogScale, enclosurePValue,
   voronoiTreemap, voronoiTreemapLogScale, voronoiTreemapPValue
 } from "vega-specs";
-import { LoadingSpinner } from "components/loading-spinner";
-import { SelectedList } from "components/selected-list";
 
 const { Group, Label, Control, Range } = Form; 
 
@@ -56,7 +56,6 @@ export const HierarchyVis = ({ hierarchy, tree, subgroups }) => {
   const [vis, setVis] = useState(visualizations[0]);
 
   const hasSubgroups = subgroups[1] !== null;
-
   const isComparison = subgroup === "comparison";
 
   const hasVoronoi = tree.descendants()[0].polygon;

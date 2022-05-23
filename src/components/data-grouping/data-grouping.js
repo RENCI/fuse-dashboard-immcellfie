@@ -5,11 +5,12 @@ import { DataContext } from "contexts";
 import { LoadingSpinner } from "components/loading-spinner";
 import { AnalyzeLink } from "components/page-links";
 import { Subgroup } from "./subgroup";
+import { getServiceName } from "utils/config-utils";
 
 const { Header, Body, Footer } = Card;
 
 export const DataGrouping = () => {
-  const [{ dataset, propertiesData, subgroups }, dataDispatch] = useContext(DataContext);
+  const [{ dataset, propertiesData, result, subgroups }, dataDispatch] = useContext(DataContext);
   const [newAdded, setNewAdded] = useState(false);  
 
   useEffect(() => {
@@ -60,7 +61,7 @@ export const DataGrouping = () => {
                 </Button>
               </Col>
               <Col className="text-end">
-                <AnalyzeLink />
+                <AnalyzeLink  tool={ result ? getServiceName(result.service) : null } />
               </Col>
             </Row>
           </Footer>

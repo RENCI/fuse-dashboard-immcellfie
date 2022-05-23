@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef } from "react";
-import { UserContext, ReadyContext, ErrorContext } from "contexts";
+import { UserContext, RunningContext, ReadyContext, ErrorContext } from "contexts";
 import { api } from "utils/api";
 import { isPending, isActive } from "utils/dataset-utils";
 
@@ -9,6 +9,7 @@ const getActive = datasets => datasets.filter(isActive);
 
 export const DatasetMonitor = () => {
   const [{ datasets }, userDispatch] = useContext(UserContext);
+  const [, runningDispatch] = useContext(RunningContext);
   const [, readyDispatch] = useContext(ReadyContext);
   const [, errorDispatch] = useContext(ErrorContext);
   const timer = useRef(-1);
@@ -51,10 +52,17 @@ export const DatasetMonitor = () => {
             );
 
             userDispatch({ type: "updateId", oldId: info.id, newId: id });            
+            
+            runningDispatch({ 
+              type: "setRunning", 
+              tool: info.service === "fuse-tool-pca" ? "PCA" : 
+                info.service === "fuse-tool-cellfie" ? "CellFIE" : 
+                "unknown",
+              runtime: info.service === "fuse-tool-cellfie" ? info.runtime : null
+            });
           }
           else {
             console.warn(`Unknown service ${ info.service }`);
-
           }
         }  
         catch (error) {
@@ -85,7 +93,7 @@ export const DatasetMonitor = () => {
             userDispatch({ type: "updateDataset", id: id, dataset: update });
             dispatched = true;
 
-            if (update.status === "finished") {
+            if (update.status === "finished" || update.status === "failed") {
               readyDispatch({ type: "add", id: id });
             }
           }
@@ -104,7 +112,7 @@ export const DatasetMonitor = () => {
 
     loadPending();
     checkStatus();
-  }, [datasets, userDispatch, readyDispatch, errorDispatch]);
+  }, [datasets, userDispatch, runningDispatch, readyDispatch, errorDispatch]);
 
   useEffect(() => {
     return () => clearTimeout(timer.current);

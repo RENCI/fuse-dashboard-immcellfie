@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 import { useHistory } from "react-router-dom";
 import { Modal, Button } from 'react-bootstrap';
-import { CheckCircle } from "react-bootstrap-icons";
+import { CheckCircle, XCircle } from "react-bootstrap-icons";
 import { ReadyContext, UserContext } from '../../contexts';
 import { useLoadDataset } from "hooks";
 import { getServiceName, getServiceDisplay } from "utils/config-utils";
@@ -38,38 +38,54 @@ export const ReadyMessage = () => {
   const dataset = id !== null ? datasets.find(dataset => dataset.id === id) : null;
 
   const identifier = dataset && getIdentifier(dataset);
+
+  const Label = ({ children }) => <small className="text-muted">{ children }</small>;
   
   return (
     <Modal     
       show={ dataset }  
       backdrop="static"
       keyboard={ false }
+      onHide={ () => onClose(dataset) }
     >
       <Header 
-        className="text-success"
+        className={ dataset && dataset.status === "failed" ? "text-danger" : "text-success" }
+        closeButton
       >
         <Title>
-          <CheckCircle /> Dataset Ready
+          { dataset && dataset.status === "failed" ? 
+            <><XCircle /> Dataset Failed</>
+          :
+            <><CheckCircle /> Dataset Ready</>
+          }
         </Title>
       </Header>  
       <Body>        
         { dataset && 
           <>
-            <div><small className="text-muted">type:</small> { dataset.type }</div>
-            <div><small className="text-muted">source:</small> { getServiceDisplay(dataset.service) }</div>
-            { identifier && <div><small className="text-muted">identifier:</small> { identifier }</div> }
-            <div><small className="text-muted">description:</small> { dataset.description }</div>
+            <div><Label>type:</Label> { dataset.type }</div>
+            <div><Label>source:</Label> { getServiceDisplay(dataset.service) }</div>
+            { identifier && <div><Label>identifier:</Label> { identifier }</div> }
+            <div><Label>description:</Label> { dataset.description }</div>
+            { dataset.status === "failed" && dataset.detail && 
+              <div>
+                <Label>detail:</Label>
+                <code>{ dataset.detail }</code>
+              </div> 
+            }
           </>
         }
       </Body>
       <Footer>
-        <Button 
-          variant="primary"
-          disabled={ loading }
-          onClick={ () => onLoad(dataset) }
-        >
-          Load
-        </Button>
+        { dataset && dataset.status !== "failed" &&
+          <Button 
+            variant="primary"
+            disabled={ loading }
+            onClick={ () => onLoad(dataset) }
+          >
+            Load
+          </Button>
+        }
         <Button 
           variant="primary"
           disabled={ loading }

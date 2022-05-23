@@ -92,11 +92,11 @@ export const UploadData = () => {
           <hr />
           <ListGroup variant="flush">
             <ListGroup.Item>
-              { dataImage("Expression data (required)", ["1st column: Entrez gene id", "Subsequent columns: samples"], "ExpressionDataFormat.png") }
+              { dataImage("Expression data (required)", ["1st row (optional—not shown below): header with sample names", "1st column: Entrez gene id", "Subsequent columns: expression values per sample"], "ExpressionDataFormat.png") }
               <FileSelect onChange={ onExpressionFileSelect } />
             </ListGroup.Item>
             <ListGroup.Item>
-              { dataImage("Properties data (optional)", ["1st row: headers", "Subsequent rows: samples"], "PropertiesDataFormat.png") }
+              { dataImage("Properties data (optional)", ["1st row: header with property names", "Subsequent rows: property values per sample", "Note: samples (rows) should be in same order as expression data samples (columns)"], "PropertiesDataFormat.png") }
               <FileSelect onChange={ onPropertiesFileSelect } />
             </ListGroup.Item>
             <ListGroup.Item>

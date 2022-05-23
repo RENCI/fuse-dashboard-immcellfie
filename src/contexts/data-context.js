@@ -270,6 +270,7 @@ const createHierarchy = tasks => {
       data[name] = {
         name: name,
         parent: top ? "root" : a[i + 1],
+        showChildren: false
       };
 
       // Remove "METABOLISM" from top-level for shorter labels
@@ -297,7 +298,8 @@ const createHierarchy = tasks => {
 
   hierarchy.push({
     name: "root",
-    parent: null
+    parent: null,
+    showChildren: true
   });
 
   return hierarchy;
