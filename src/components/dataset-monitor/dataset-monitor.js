@@ -58,7 +58,7 @@ export const DatasetMonitor = () => {
               tool: info.service === "fuse-tool-pca" ? "PCA" : 
                 info.service === "fuse-tool-cellfie" ? "CellFIE" : 
                 "unknown",
-              time: "unknown"
+              runtime: info.service === "fuse-tool-cellfie" ? info.runtime : null
             });
           }
           else {

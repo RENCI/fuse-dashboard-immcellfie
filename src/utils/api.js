@@ -71,6 +71,17 @@ const getOutput = async (path, id) => {
 
 const convertDate = date => date + "Z";
 
+const getRuntime = async (rows, columns) => {
+  const response = await axios.post(`${ process.env.REACT_APP_FUSE_AGENT_API}/cellfie_runtime_predictor`, null, {
+    params: {
+      rows: rows,
+      columns: columns
+    }
+  });
+
+  return +response.data.duration;
+};
+
 const getDataset = async id => {
   const response = await axios.get(`${ process.env.REACT_APP_FUSE_AGENT_API}/objects/${ id }`);
 
@@ -99,6 +110,10 @@ const getDataset = async id => {
       switch (file.file_type) {
         case "filetype_dataset_expression":
           files.expression = file;
+
+          if (file.dimension) {
+            file.runtime = await getRuntime(...file.dimension.split('x'));
+          }
           break;
         
         case "filetype_dataset_properties":
@@ -308,5 +323,14 @@ export const api = {
     const response = await axios.post(`${ process.env.REACT_APP_FUSE_AGENT_API}/analyze`, formData);
 
     return response.data.object_id;  
-  } 
+  },
+
+  updateDescription: async (id, description) => {
+    const response = await axios.post(`${ process.env.REACT_APP_FUSE_AGENT_API}/update_description`, null, {
+      params: {
+        object_id: id,
+        new_description: description
+      }
+    });
+  }
 }

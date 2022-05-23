@@ -11,6 +11,7 @@ import { useLoadDataset } from "hooks";
 import { api } from "utils/api";
 import { getServiceDisplay } from "utils/config-utils";
 import { getIdentifier, isActive } from "utils/dataset-utils";
+import { durationDisplay } from "utils/time";
 import styles from "./dataset-list.module.css";
 
 const txscienceEmail = "txscience@lists.renci.org";
@@ -80,24 +81,9 @@ const getFinishedDisplay = d => {
 };
 
 const getElapsedTime = (d, now) => {
-  const pad = n => n.toString().padStart(2, "0");
-
   const elapsed = now - d.createdTime;
 
-  if (elapsed < 0) return "-:--";
-
-  let s = Math.floor(elapsed / 1000);
-  let m = Math.floor(s / 60);
-  const h = Math.floor(m / 60);
-
-  s = s % 60;
-  m = m % 60;
-
-  let t = h > 0 ? h + "h" : "";
-  if (h > 0 || m > 0) t += (h > 0 ? pad(m) : m) + "m"
-  t += (h > 0 || m > 0 ? pad(s) : s) + "s";
-
-  return t;
+  return durationDisplay(elapsed);
 };
 
 export const DatasetList = ({ filter, showFailed }) => {
@@ -127,6 +113,10 @@ export const DatasetList = ({ filter, showFailed }) => {
   useEffect(() => () => {
     if (timer.current) clearInterval(timer.current);
   }, [timer]);
+
+  const onDescriptionChange = async (dataset, description) => {
+    api.updateDescription(dataset.id, description);
+  };
 
   const onLoadClick = async dataset => {
     loadDataset(dataset);
@@ -182,7 +172,7 @@ export const DatasetList = ({ filter, showFailed }) => {
         <LabelEdit 
           label={ getDescription(d) }
           size="sm"
-          onChange={ description => console.log(description) }// NEED TO CALL API
+          onChange={ value => onDescriptionChange(d, value) }
         />
       ),
       sort: (a, b) => {

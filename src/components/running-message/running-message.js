@@ -6,7 +6,7 @@ import { RunningContext } from '../../contexts';
 const { Header, Title, Body, Footer } = Modal;
 
 export const RunningMessage = () => {
-  const [{ tool, time }, dispatch] = useContext(RunningContext);
+  const [{ tool, runtime }, dispatch] = useContext(RunningContext);
 
   const onClose = () => {
     dispatch({ type: "clearRunning" });
@@ -27,8 +27,8 @@ export const RunningMessage = () => {
           <Calculator /> Running new { tool } analysis
         </Title>
       </Header>  
-      <Body>        
-        Estimated run time: <b>{ time }</b>
+      <Body>       
+        Estimated runtime: <b>{ runtime ? runtime : "unknown" }</b>
       </Body>
       <Footer>
         <Button 
