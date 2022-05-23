@@ -326,7 +326,7 @@ export const api = {
   },
 
   updateDescription: async (id, description) => {
-    const response = await axios.post(`${ process.env.REACT_APP_FUSE_AGENT_API}/update_description`, null, {
+    await axios.post(`${ process.env.REACT_APP_FUSE_AGENT_API}/update_description`, null, {
       params: {
         object_id: id,
         new_description: description
