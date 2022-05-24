@@ -126,7 +126,6 @@ export const Home = () => {
           <ol className="text-muted small">
             { publications.map(publication) }
           </ol>
-          <hr />
         </Footer>
       </Card>
     </ViewWrapper>
