@@ -26,7 +26,7 @@ export const ModelSelection = () => {
 
   const thresholdType = parameters.find(({ name }) => name === "threshold_type"); 
 
-  const runtime = dataset.files.expression && dataset.files.expression.runtime ? dataset.files.expression.runtime : null;
+  const runtime = dataset.runtime;
   const excessiveRuntime = runtime && runtime > process.env.REACT_APP_CELLFIE_RUNTIME_MINUTES_LIMIT * 60;
   const runtimeString = runtime ? durationDisplay(runtime * 1000) : "unknown";
 

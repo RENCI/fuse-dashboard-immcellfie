@@ -112,7 +112,9 @@ const getDataset = async id => {
           files.expression = file;
 
           if (file.dimension) {
-            file.runtime = await getRuntime(...file.dimension.split('x'));
+            const dims = file.dimension.split('x');
+            dataset.runtime = await getRuntime(...dims);
+            dataset.samples = dims[1];            
           }
           break;
         
