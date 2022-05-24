@@ -1,8 +1,9 @@
 import { useContext } from "react";
-import { Row, Col, Card, Form, Button, ButtonGroup, InputGroup } from "react-bootstrap";
-import { ArrowCounterclockwise } from "react-bootstrap-icons";
+import { Row, Col, Card, Form, Button, ButtonGroup, InputGroup, Alert } from "react-bootstrap";
+import { ArrowCounterclockwise, ExclamationTriangleFill } from "react-bootstrap-icons";
 import { UserContext, DataContext, ModelContext, ErrorContext } from "contexts";
 import { BoldLabel } from "components/bold-label";
+import { DataLink } from "components/page-links";
 import { durationDisplay } from "utils/time";
 
 const { Header, Body } = Card;
@@ -25,8 +26,9 @@ export const ModelSelection = () => {
 
   const thresholdType = parameters.find(({ name }) => name === "threshold_type"); 
 
-  const runtime = dataset.files.expression && dataset.files.expression.runtime ? 
-    durationDisplay(dataset.files.expression.runtime * 1000) : "unknown";
+  const runtime = dataset.files.expression && dataset.files.expression.runtime ? dataset.files.expression.runtime : null;
+  const excessiveRuntime = runtime && runtime > process.env.REACT_APP_CELLFIE_RUNTIME_MINUTES_LIMIT * 60;
+  const runtimeString = runtime ? durationDisplay(runtime * 1000) : "unknown";
 
   const onOrganismChange = evt => {
     modelDispatch({ type: "setOrganism", value: evt.target.value });
@@ -197,7 +199,7 @@ export const ModelSelection = () => {
           <Col>
             <ButtonGroup style={{ width: "100%" }}>
               <Button 
-                disabled={ !dataset }
+                disabled={ !dataset || excessiveRuntime }
                 onClick={ onRunCellfieClick }
               >
                 { !dataset ? 
@@ -215,9 +217,18 @@ export const ModelSelection = () => {
         </Row>
         <Row>
           <Col>
-            <small className="text-muted">
-              Estimated runtime: <b>{ runtime ? runtime : "unknown" }</b>
-            </small>
+            { excessiveRuntime ? 
+              <Alert variant="warning" className="small">
+                <ExclamationTriangleFill className="icon-offset" /> Estimated runtime: <b>{ runtimeString }</b>
+                <div>Limit is <b>{ process.env.REACT_APP_CELLFIE_RUNTIME_MINUTES_LIMIT } minutes</b></div>
+                <div>Please select a different input dataset</div>
+                <div><DataLink /></div>
+              </Alert>
+            :
+              <small className="text-muted">
+                Estimated runtime: <b>{ runtimeString }</b>
+              </small>
+            }
           </Col>
         </Row>
       </Body>
