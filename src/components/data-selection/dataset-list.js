@@ -38,6 +38,7 @@ const canDelete = d => !d.results || d.results.length === 0;
 const getType = d => d.type;
 const getSource = d => getServiceDisplay(d.service);
 const getDescription = d => d.description ? d.description : missingIndicator;
+const getSamples = d => d.input ? d.input.samples : d.samples;
 const getFinished = d => d.finishedTime ? d.finishedTime.toLocaleString() : null;
 const getStatus = d => d.status;
 
@@ -181,7 +182,13 @@ export const DatasetList = ({ filter, showFailed }) => {
         return !da && !db ? 0 : !da ? 1 : !db ? -1 : 
           getDescription(a).localeCompare(getDescription(b));
       }
-    },    
+    },
+    {
+      name: "Samples",
+      accessor: getSamples,
+      sort: (a, b) => getSamples(b) - getSamples(a),
+      classes: "text-center"
+    },   
     { 
       name: "Finished",
       accessor: getFinishedDisplay,
