@@ -1,6 +1,6 @@
 import { useState, useContext } from "react";
 import { Modal, ListGroup, Figure, Alert, Form, Button } from "react-bootstrap";
-import { UserContext } from "contexts";
+import { UserContext, ErrorContext } from "contexts";
 import { FileSelect } from "components/file-select";
 import { BoldLabel } from "components/bold-label";
 import { LoadNewButton } from "./load-new-button";
@@ -11,8 +11,11 @@ const { Group, Control } = Form;
 
 const service = "fuse-provider-upload";
 
+const checkFileSize = file => file.size <= process.env.REACT_APP_UPLOAD_MB_LIMIT * 1e6;
+
 export const UploadData = () => {
   const [{ user }, userDispatch] = useContext(UserContext);
+  const [, errorDispatch] = useContext(ErrorContext);
   const [show, setShow] = useState(false);
   const [expressionFile, setExpressionFile] = useState(null);
   const [propertiesFile, setPropertiesFile] = useState(null);
@@ -26,12 +29,28 @@ export const UploadData = () => {
     setShow(false);
   };
 
-  const onPropertiesFileSelect = file => {
-    setPropertiesFile(file);    
-  };
+  const fileSizeError = () => 
+    errorDispatch({ 
+      type: "setError", 
+      error: `File size limit is ${ process.env.REACT_APP_UPLOAD_MB_LIMIT } MB\nPlease select a different file`      
+    });
 
   const onExpressionFileSelect = file => {
-    setExpressionFile(file);
+    if (checkFileSize(file)) {
+      setExpressionFile(file);
+    }
+    else {
+      fileSizeError();
+    }
+  };
+
+  const onPropertiesFileSelect = file => {    
+    if (checkFileSize(file)) {
+      setPropertiesFile(file);
+    }
+    else {
+      fileSizeError();
+    }   
   };
 
   const onDescriptionChange = evt => {

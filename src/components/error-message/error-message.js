@@ -7,14 +7,14 @@ const { Header, Title, Body, Footer } = Modal;
 
 const isString = s => (typeof s === 'string' || s instanceof String);
 
-const splitString = s => s.split(`\n`).map((s, i) => <p key={ i }>{ s }</p>);
+const splitString = s => s.split(`\n`).map((s, i) => <div key={ i }>{ s }</div>);
 
 const getErrorMessage = error => {
   if (!error) {
     return null;
   }
   else if (isString(error)) {
-    return error;
+    return splitString(error);
   }
   else if (error instanceof Error) {
     return (
