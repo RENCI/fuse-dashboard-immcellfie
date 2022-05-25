@@ -9,9 +9,9 @@ Documentation on using the dashboard can be found in the [wiki](https://github.c
 
 This dashboard is dependent on RESTful services provided by [fuse-analysis](https://github.com/RENCI/fuse-analysis)
 
-Point REACT_APP_API_ROOT variable in .env to the RESTful services (e.g., fuse-analysis) instance to use.
+Point REACT_APP_FUSE_AGENT_API variable in .env to the RESTful services (e.g., fuse-analysis) instance to use.
 
 Example:
 ```
-REACT_APP_API_ROOT=http://immcellfie.renci.org:8000
+REACT_APP_FUSE_AGENT_API=http://immcellfie.renci.org:8000
 ```
