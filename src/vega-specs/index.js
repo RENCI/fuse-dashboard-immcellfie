@@ -12,3 +12,4 @@ export * from "./bar-comparison";
 export * from "./properties-bar-chart";
 export * from "./bar-overlap";
 export * from "./pca-scatter-plot";
+export * from "./legend";

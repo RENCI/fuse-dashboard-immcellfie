@@ -4,7 +4,9 @@ import { scaleLinear, scaleLog } from "d3-scale";
 import { extent, merge } from "d3-array";
 import { DataContext, ColorContext } from "contexts";
 import { TextHighlight } from "components/text-highlight";
+import { VegaWrapper } from "components/vega-wrapper";
 import { TaskSearch } from "./task-search";
+import { legend } from "vega-specs";
 import styles from "./styles.module.css";
 
 const { Group, Label, Control } = Form; 
@@ -279,6 +281,10 @@ export const TreeVis = ({ tree, subgroups }) => {
           </Group>
         </Row>
       </div>
+      <VegaWrapper 
+        spec={ legend } 
+        data={ [] } 
+      />
       <table className={ styles.table }>
         <thead>
           <tr>{ headers }</tr>
