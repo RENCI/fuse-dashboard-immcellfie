@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { Calculator } from "react-bootstrap-icons";
 import { RunningContext } from '../../contexts';
+import { durationDisplay } from "utils/time";
 
 const { Header, Title, Body, Footer } = Modal;
 
@@ -11,6 +12,8 @@ export const RunningMessage = () => {
   const onClose = () => {
     dispatch({ type: "clearRunning" });
   };
+
+  const runtimeString = runtime ? durationDisplay(runtime * 1000) : "unknown";
   
   return (
     <Modal             
@@ -28,7 +31,7 @@ export const RunningMessage = () => {
         </Title>
       </Header>  
       <Body>       
-        Estimated runtime: <b>{ runtime ? runtime : "unknown" }</b>
+        Estimated runtime: <b>{ runtimeString }</b>
       </Body>
       <Footer>
         <Button 
