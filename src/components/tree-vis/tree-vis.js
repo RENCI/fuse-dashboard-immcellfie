@@ -6,7 +6,7 @@ import { DataContext, ColorContext } from "contexts";
 import { TextHighlight } from "components/text-highlight";
 import { VegaWrapper } from "components/vega-wrapper";
 import { TaskSearch } from "./task-search";
-import { legend } from "vega-specs";
+import { treeLegend, treeComparisonLegend } from "vega-specs";
 import styles from "./styles.module.css";
 
 const { Group, Label, Control } = Form; 
@@ -281,18 +281,50 @@ export const TreeVis = ({ tree, subgroups }) => {
           </Group>
         </Row>
       </div>
-      <VegaWrapper 
-        spec={ legend } 
-        data={ [] } 
-      />
-      <table className={ styles.table }>
-        <thead>
-          <tr>{ headers }</tr>
-        </thead>
-        <tbody>
-          { rows }
-        </tbody>
-      </table>
+      <div className="d-flex flex-row">
+        <div style={{ flex: "1 1 auto"}}>
+          <table className={ styles.table }>
+            <thead>
+              <tr>{ headers }</tr>
+            </thead>
+            <tbody>
+              { rows }
+            </tbody>
+          </table>
+        </div>
+        <div style={{ flex: "0 1 auto"}}>
+          { isComparison ? 
+            <VegaWrapper 
+              key={ "comparison" }
+              options={{
+                actions: false,
+                renderer: "svg"
+              }}
+              spec={ treeComparisonLegend } 
+              data={ [] } 
+              signals={[
+                { name: "colorScheme", value: colorScale.scheme },
+                { name: "scoreDomain", value: scales.score.domain() }
+              ]}
+            />
+          :
+            <VegaWrapper 
+              key={ "standard" }
+              options={{
+                actions: false,
+                renderer: "svg"
+              }}
+              spec={ treeLegend } 
+              data={ [] } 
+              signals={[
+                { name: "colorScheme", value: colorScale.scheme },
+                { name: "scoreDomain", value: scales.score.domain() }
+              ]}
+            />
+          }
+        </div>
+      </div>
+
     </>
   );
 };           
