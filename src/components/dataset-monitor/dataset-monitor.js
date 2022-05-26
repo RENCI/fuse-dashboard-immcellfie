@@ -9,7 +9,7 @@ const getActive = datasets => datasets.filter(isActive);
 
 export const DatasetMonitor = () => {
   const [{ datasets }, userDispatch] = useContext(UserContext);
-  const [, runningDispatch] = useContext(RunningContext);
+  const [running, runningDispatch] = useContext(RunningContext);
   const [, readyDispatch] = useContext(ReadyContext);
   const [, errorDispatch] = useContext(ErrorContext);
   const timer = useRef(-1);
@@ -58,6 +58,7 @@ export const DatasetMonitor = () => {
               tool: info.service === "fuse-tool-pca" ? "PCA" : 
                 info.service === "fuse-tool-cellfie" ? "CellFIE" : 
                 "unknown",
+              id: id,
               runtime: info.service === "fuse-tool-cellfie" ? info.runtime : null
             });
           }
@@ -94,7 +95,8 @@ export const DatasetMonitor = () => {
             dispatched = true;
 
             if (update.status === "finished" || update.status === "failed") {
-              readyDispatch({ type: "add", id: id });
+              if (running.id === id) runningDispatch({ type: "clearRunning" });
+              readyDispatch({ type: "add", id: id });              
             }
           }
         }

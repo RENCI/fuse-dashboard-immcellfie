@@ -2,6 +2,7 @@ import { createContext, useReducer } from "react";
 
 const initialState = {
   tool: null,
+  id: null,
   runtime: null
 };
 
@@ -11,6 +12,7 @@ const reducer = (state, action) => {
       return {
         ...state,
         tool: action.tool,
+        id: action.id,
         runtime: action.runtime
       };
 
