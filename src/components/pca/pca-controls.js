@@ -50,6 +50,9 @@ export const PCAControls = () => {
         PCA Parameters
       </Header>
       <Body>
+        <p className="small">
+          PCA analysis assumes uploaded expression data contains a header. If not, the first row will be ignored.
+        </p>
         <Group controlId="numComponents" className="mb-3">
           <BoldLabel>Number of components</BoldLabel>
           <Control 
