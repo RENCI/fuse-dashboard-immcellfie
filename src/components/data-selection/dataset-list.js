@@ -68,6 +68,11 @@ const getIdentifierDisplay = d => d.accessionId ? d.accessionId :
   )) :
   missingIndicator;
 
+const getSamplesDisplay = d => {
+  const samples = getSamples(d);
+  return samples ? samples : "unknown";
+};
+
 const getFinishedDisplay = d => {
   if (!d.finishedTime) return missingIndicator;
 
@@ -185,7 +190,7 @@ export const DatasetList = ({ filter, showFailed }) => {
     },
     {
       name: "Samples",
-      accessor: getSamples,
+      accessor: getSamplesDisplay,
       sort: (a, b) => getSamples(b) - getSamples(a),
       classes: "text-center"
     },   
