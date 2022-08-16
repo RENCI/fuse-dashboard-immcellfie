@@ -13,7 +13,7 @@ export const LoadExpression = () => {
   
       dataDispatch({ type: "setExpressionData", data: data });      
     }
-    else if (dataInfo.source.name === "ImmCellFIE") {
+    else if (dataInfo.source.name === "ImmCellFie") {
       const data = await api.loadDataUrl(dataInfo.expressionInfo.url);
 
       dataDispatch({ type: "setExpressionData", data: data });   

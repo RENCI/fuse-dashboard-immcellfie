@@ -267,7 +267,7 @@ export const DatasetList = ({ filter, showFailed }) => {
     {
       name: "Remove",
       accessor: d => {
-        const subject = 'ImmCellFIE dataset removal request';
+        const subject = 'ImmCellFie dataset removal request';
         const newLine = "%0D%0A";
         const body = `User ${ user } requests removal of dataset ${ d.id }${ newLine }${ newLine}Please indicate reason below:`;
       

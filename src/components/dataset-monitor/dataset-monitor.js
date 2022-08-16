@@ -56,7 +56,7 @@ export const DatasetMonitor = () => {
             runningDispatch({ 
               type: "setRunning", 
               tool: info.service === "fuse-tool-pca" ? "PCA" : 
-                info.service === "fuse-tool-cellfie" ? "CellFIE" : 
+                info.service === "fuse-tool-cellfie" ? "CellFie" : 
                 "unknown",
               id: id,
               runtime: info.service === "fuse-tool-cellfie" ? info.runtime : null

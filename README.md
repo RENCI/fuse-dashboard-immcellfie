@@ -1,7 +1,7 @@
 # fuse-dashboard-immcellfie
-Dashboard for FUSE ImmCellFIE project.
+Dashboard for FUSE ImmCellFie project.
 
-Visit the main repo for FUSE ImmCellFIE [here](https://github.com/RENCI/fuse-immcellfie).
+Visit the main repo for FUSE ImmCellFie [here](https://github.com/RENCI/fuse-immcellfie).
 
 Look at .env.sample for an example of how to set the environmental variables.
 

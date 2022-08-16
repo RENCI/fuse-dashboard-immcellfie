@@ -39,7 +39,7 @@ export const CellfieOutput = () => {
         <Header>
           <Row>
             <Col>
-              <Title>CellFIE Results</Title>
+              <Title>CellFie Results</Title>
             </Col>
             <Col xs="auto">
               <OutputDownload />
@@ -73,8 +73,8 @@ export const CellfieOutput = () => {
         <Body>
           { output === null ?
             <>No output data</>
-          : output.type !== "CellFIE" ? 
-            <>Output data is not of type CellFIE</>
+          : output.type !== "CellFie" ? 
+            <>Output data is not of type CellFie</>
           : 
             <Content>
               <Pane eventKey="hierarchy">

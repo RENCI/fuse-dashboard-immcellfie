@@ -43,25 +43,25 @@ const initialState = {
 
 /*
   // XXX: Shouldn't need expression data any more
-  // Expression data used as CellFIE input
+  // Expression data used as CellFie input
   rawExpressionData: null,
   expressionData: null,
 
   //////////////////////////////////////////////////
   // XXX: Group cellfie output as single object
 
-  // CellFIE output
+  // CellFie output
   rawOutput: null,
   output: null,
 
-  // CellFIE output with hierarchy info
+  // CellFie output with hierarchy info
   hierarchy: null,
 
-  // CellFIE output in tree format, used for aggregating info and for the Voronoi treemap,
+  // CellFie output in tree format, used for aggregating info and for the Voronoi treemap,
   // since we have to calculate the layout external to the Vega spec
   tree: null,
 
-  // Reaction scores from detailed CellFIE output
+  // Reaction scores from detailed CellFie output
   reactionScores: null,  
 */
 };
@@ -619,7 +619,7 @@ const reducer = (state, action) => {
           subgroups: subgroups,
           selectedSubgroups: selectedSubgroups,
           output: {
-            type: "CellFIE",
+            type: "CellFie",
             tasks: tasks,
             hierarchy: hierarchy,
             tree: tree,

@@ -133,7 +133,7 @@ export const ModelSelection = () => {
   return (
     <Card>
       <Header as="h5">
-        CellFIE Parameters
+        CellFie Parameters
       </Header>
       <Body>
         <Row>
@@ -204,7 +204,7 @@ export const ModelSelection = () => {
               >
                 { !dataset ? 
                   <>No input data</>
-                : <>Run CellFIE</>
+                : <>Run CellFie</>
                 }
               </Button> 
             </ButtonGroup>

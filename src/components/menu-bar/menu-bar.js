@@ -21,7 +21,7 @@ export const MenuBar = () => {
               height="25px"
               className="me-2 align-text-top"              
             />
-            <span className="align-text-bottom">ImmCellFIE Dashboard</span>
+            <span className="align-text-bottom">ImmCellFie Dashboard</span>
           </Navbar.Brand>
         </Nav.Link>
       </Nav>

@@ -67,7 +67,7 @@ export const DownloadView = () => {
             <Row className="align-items-end">
               <Col className="text-center">{ download(propertiesLink, "properties.csv", "Properties data", UserLink, "No properties data") }</Col>
               <Col className="text-center">{ download(DataLink, "expression.csv", "Expression data", LoadExpression, "No expression data") }</Col>
-              <Col className="text-center">{ download(outputLink, "cellfie_output.zip", "CellFIE output (zipped)", AnalyzeLink, "No result data") }</Col>
+              <Col className="text-center">{ download(outputLink, "cellfie_output.zip", "CellFie output (zipped)", AnalyzeLink, "No result data") }</Col>
             </Row>
             <hr />
             <Row>
