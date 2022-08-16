@@ -5,7 +5,7 @@ export const getServiceDisplay = service => {
   const name = getServiceName(service);
 
   return name === "immunespace" ? "ImmuneSpace" :
-    name === "cellfie" ? "CellFIE" :
+    name === "cellfie" ? "CellFie" :
     name === "pca" ? "PCA" :
     name.charAt(0).toUpperCase() + name.slice(1);
 };

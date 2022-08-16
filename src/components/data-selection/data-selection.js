@@ -39,7 +39,7 @@ export const DataSelection = () => {
             <ExclamationTriangle className="text-warning me-3" size={ 32 }/>
             <div>
               <div>{ pending.length } pending datset{ pending.length > 1 ? "s" : null}</div> 
-              <small className="text-muted">Do not navigate away from the ImmCellFIE Dashboard while datasets are pending or they will be cancelled</small>                      
+              <small className="text-muted">Do not navigate away from the ImmCellFie Dashboard while datasets are pending or they will be cancelled</small>                      
             </div>
           </div>
         </Alert>

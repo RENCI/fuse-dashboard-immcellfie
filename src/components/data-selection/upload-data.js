@@ -102,7 +102,7 @@ export const UploadData = () => {
           <Alert variant="danger">
             <Alert.Heading>Disclaimer</Alert.Heading>
             <ul>
-              <li>Uploaded data will be publicly available to other ImmCellFIE users.</li>
+              <li>Uploaded data will be publicly available to other ImmCellFie users.</li>
               <li>Please ensure that no Protected Health Information (PHI) are uploaded. </li>
               <li>Also take care with uploading unpublished data.</li>
             </ul>

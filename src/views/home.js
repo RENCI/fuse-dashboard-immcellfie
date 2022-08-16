@@ -89,19 +89,19 @@ export const Home = () => {
     <ViewWrapper>
       <Card>
         <Header as="h5">
-          About ImmCellFIE
+          About ImmCellFie
         </Header>
         <Body>
           <Row>
             <Col xs={ 8 }>
               <p>
-                <strong>ImmCellFIE is a portal for inferring cellular function given gene expression samples and their phenotypical data.</strong> Genome-scale network reconstructions are systematically organized and curated knowledgebases that quantitatively describe genotype-properties relationships [1,2].  Genome-scale models (GEMs) are mathematical representations of reconstructed networks that enable the simulation and prediction of pathway activity and flux, and ultimately phenotypic changes [3,4].  Complementary to traditional enrichment methods, these systems biology models provide quantitative and mechanistic insight into the output of pathways following molecular changes (e.g. differential gene expression).  Various methods enable one to analyze omics data in these models, including the popular approach of predicting cell growth and ​ metabolic fluxes using genome-scale metabolic networks [4,5]​. While these approaches yield a wealth of detailed insights into the mechanisms underlying complex biological processes, the reach of these approaches remains limited to those with a comprehensive background and specialized training in computational systems biology.
+                <strong>ImmCellFie is a portal for inferring cellular function given gene expression samples and their phenotypical data.</strong> Genome-scale network reconstructions are systematically organized and curated knowledgebases that quantitatively describe genotype-properties relationships [1,2].  Genome-scale models (GEMs) are mathematical representations of reconstructed networks that enable the simulation and prediction of pathway activity and flux, and ultimately phenotypic changes [3,4].  Complementary to traditional enrichment methods, these systems biology models provide quantitative and mechanistic insight into the output of pathways following molecular changes (e.g. differential gene expression).  Various methods enable one to analyze omics data in these models, including the popular approach of predicting cell growth and ​ metabolic fluxes using genome-scale metabolic networks [4,5]​. While these approaches yield a wealth of detailed insights into the mechanisms underlying complex biological processes, the reach of these approaches remains limited to those with a comprehensive background and specialized training in computational systems biology.
               </p>
               <p>
-                To extend the reach of powerful systems biology techniques, CellFIE (Cell Function InferencE) is an intermediate approach​ [6] that combines the detailed systems biology input/output approach with the simplicity of enrichment analysis. The CellFIE method involves generating a set of curated model-derived “metabolic tasks,”[7]​ which are precomputed sets of genes that together consume a metabolite at the start of a pathway and produce a final metabolic product of interest​.  Using CellFIE, one can overlay transcriptomic or proteomic data onto these precomputed gene modules to predict pathway usage for each metabolic task, thus providing properties-relevant interpretation of how changes in complex omics experiments modify cell or tissue metabolic function. 
+                To extend the reach of powerful systems biology techniques, CellFie (Cellular Functions InferencE) is an intermediate approach​ [6] that combines the detailed systems biology input/output approach with the simplicity of enrichment analysis. The CellFie method involves generating a set of curated model-derived “metabolic tasks,”[7]​ which are precomputed sets of genes that together consume a metabolite at the start of a pathway and produce a final metabolic product of interest​.  Using CellFie, one can overlay transcriptomic or proteomic data onto these precomputed gene modules to predict pathway usage for each metabolic task, thus providing properties-relevant interpretation of how changes in complex omics experiments modify cell or tissue metabolic function. 
               </p>
               <p>
-                The ImmCellFIE Portal makes CellFIE accessible to the broader immunology community and beyond by providing an easy-to-use and easy-to-extend webportal housing the CellFIE toolbox. ImmCellFIE integrates ImmPort data with other data sources enabling users to process and compare data using the CellFIE algorithm.  ImmCellFIE includes interactive visualization tools including heatmaps, treemaps, and Escher pathway visualizations to facilitate exploration and interpretability of CellFIE results.
+                The ImmCellFie Portal makes CellFie accessible to the broader immunology community and beyond by providing an easy-to-use and easy-to-extend webportal housing the CellFie toolbox. ImmCellFie integrates ImmPort data with other data sources enabling users to process and compare data using the CellFie algorithm.  ImmCellFie includes interactive visualization tools including heatmaps, treemaps, and Escher pathway visualizations to facilitate exploration and interpretability of CellFie results.
               </p>
               <p>
                 <UserLink className="mb-3"/><span style={{ verticalAlign: "middle", marginLeft: "-.5em" }}>to begin.</span>
@@ -115,7 +115,7 @@ export const Home = () => {
                 <Figure.Image src="Escher_small.png" />
               </Figure>
               <div className="text-end text-muted small mt-5">
-                ImmCellFIE is funded by a grant from NIH/NIAID
+                ImmCellFie is funded by a grant from NIH/NIAID
                 <br />
                 #1UH2AI153029-01
               </div>

@@ -43,7 +43,7 @@ export const TaskSelection = () => {
       else {
         dataDispatch({ 
           type: "setDataInfo", 
-          source: { name: "CellFIE" }
+          source: { name: "CellFie" }
         });
       }
 
@@ -100,7 +100,7 @@ export const TaskSelection = () => {
   };
 
   const taskDisplays = tasks.length === 0 ? 
-    <Item><span>No current CellFIE tasks found for <b>{ user }</b></span></Item> :
+    <Item><span>No current CellFie tasks found for <b>{ user }</b></span></Item> :
     tasks.sort((a, b) => {
       return a.status === b.status ? 
         b.info.date_created - a.info.date_created :
@@ -117,7 +117,7 @@ export const TaskSelection = () => {
   return (
     <Card>
       <Header as="h5">
-        Select CellFIE Run
+        Select CellFie Run
       </Header>
       <Body>
         <ListGroup variant="flush" as="ul" className="pointer">
