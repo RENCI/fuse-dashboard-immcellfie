@@ -229,7 +229,7 @@ export const volcanoPlot = {
                   value: 1
                 },
                 {
-                  test: "datum.selected || datum.category !== 'not significant'",
+                  test: "datum.selected",
                   value: 1
                 }
               ],              
