@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { Form, Row, Col, ButtonGroup, Button } from "react-bootstrap";
+import { Form, Row, Col, ButtonGroup, Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { scaleLinear, scaleLog } from "d3-scale";
 import { extent, merge } from "d3-array";
 import { DataContext, ColorContext } from "contexts";
@@ -152,13 +152,20 @@ export const TreeVis = ({ tree, subgroups }) => {
           paddingBottom: padding 
         }}
       >
-        <div 
-          className={ styles.value }
-          style={{
-            backgroundColor: getColor(data[field], scales[type]),
-            border: isComparison ? `${ scales.pValueWidth(p) }px solid ${ scales.pValue(p) }`: null
-          }}
-        />
+        <OverlayTrigger
+          placement="top"
+          overlay={ 
+            <Tooltip>{ data[field] }</Tooltip>
+          }
+        >
+          <div 
+            className={ styles.value }
+            style={{
+              backgroundColor: getColor(data[field], scales[type]),
+              border: isComparison ? `${ scales.pValueWidth(p) }px solid ${ scales.pValue(p) }`: null
+            }}
+          />
+        </OverlayTrigger>
       </td>
     );
   };
