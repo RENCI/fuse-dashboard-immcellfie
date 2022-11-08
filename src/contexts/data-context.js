@@ -173,25 +173,33 @@ const combineOutput = (taskInfo, score, scoreBinary) => {
 };
 
 const getReactionScores = detailScoring => {
-  const cols = 8;
-  const idCol = 4;
-  const scoreCol = 5;
-
   const csv = csvParseRows(detailScoring);
 
   if (csv.length === 0) return null;
 
-  const n = csv[0].length / cols;
+  // Find EssentialRxnsTask and ExpressionScoreEssentialRxnsTask
+  const colNums = csv[0].reduce((colNums, col, i) => {
+    const colType = col.split('_')[0];
+    if (colType === 'EssentialRxnsTask' || colType === 'ExpressionScoreEssentialRxnsTask') colNums.push(i);
+    return colNums;
+  }, []);
 
+  if (colNums.length % 2 !== 0) {
+    console.warn('Problem with reaction score column names'); 
+    return [];
+  }
+
+  const n = colNums.length / 2;
   const scores = new Array(n).fill().map(() => ({}));
 
   csv.forEach((row, i) => {
     if (i === 0) return;
 
     scores.forEach((sample, j) => {
-      const offset = j * cols;
+      const i1 = j * 2;
+      const i2 = i1 + 1;
 
-      sample[row[offset + idCol]] = +row[offset + scoreCol];
+      sample[row[colNums[i1]]] = +row[colNums[i2]];
     });
   });
 
