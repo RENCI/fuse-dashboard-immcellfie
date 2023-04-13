@@ -134,6 +134,13 @@ export const SubgroupSelection = () => {
             </Col>
           </Row>
         }
+        { subgroup2 &&
+          <Row>
+            <Col>
+              <div className='mt-1 text-muted small'>In the visualizations to the right, a fold change greater than 1 indicates a higher score for <strong>{ subgroup1.name }</strong> compared to <strong>{ subgroup2.name }</strong>, and less than 1 a lower score for <strong>{ subgroup1.name }</strong> compared to <strong>{ subgroup2.name }</strong>.</div>
+            </Col>
+          </Row>
+        }
       </Body>
     </Card>
   );

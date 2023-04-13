@@ -69,7 +69,7 @@ export const densityComparison = {
           field: "density",
           type: "quantitative",   
           axis: {
-            title: null
+            title: "count"
           }  
         },
         color: {
