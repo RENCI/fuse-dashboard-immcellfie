@@ -460,7 +460,7 @@ const updateTree = (tree, subgroups, selectedSubgroups, overlapMethod, reactionS
 
     // Compute fold change and p value
     if (node.data.score1 !== null && node.data.score2 !== null) {
-      const foldChange = (a, b) => a === 0 ? 0 : b / a;
+      const foldChange = (a, b) => b === 0 ? 0 : a / b;
 
       const pValue = (a1, a2) => {
         const v1 = a1.filter(({ value }) => !isNaN(value)).map(({ value }) => value);
