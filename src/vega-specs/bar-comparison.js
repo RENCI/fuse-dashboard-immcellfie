@@ -52,7 +52,7 @@ export const barComparison = {
       aggregate: "sum",
       field: "fraction",
       scale: { domain: [0, 1] },
-      title: null
+      title: "count"
     },
     color: {
       field: "subgroupName",
