@@ -56,7 +56,7 @@ const diverging = [
 const getColorScale = (scales, name) => scales.find(({ scheme }) => scheme === name);
 const getSubgroupColors = colorScale => {
   const scheme = vega.scheme(colorScale.scheme);
-  const colors = [scheme(0.1), scheme(0.9)];
+  const colors = [scheme(0.9), scheme(0.1)];
   
   return colorScale.reverse ? colors.reverse() : colors;
 };
