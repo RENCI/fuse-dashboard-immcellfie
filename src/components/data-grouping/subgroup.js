@@ -42,7 +42,7 @@ export const Subgroup = ({ all, subgroup, isNew }) => {
     dataDispatch({ type: "removeSubgroup", key: subgroup.key });
   };
 
-  const nameLabel = name => (name[0].toUpperCase() + name.substring(1)).replace(/_/gi, " ");
+  const nameLabel = name => name.length === 0 ? '' : (name[0].toUpperCase() + name.substring(1)).replace(/_/gi, " ");
 
   const filterText = filters => {
     return Array.from(group(filters, filter => filter.properties)).reduce((text, properties, i) => {
